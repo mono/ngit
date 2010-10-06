@@ -1,32 +1,43 @@
-How code generation works
+HOW CODE GENERATION WORKS
 -------------------------
 
-The NGit code is automatically generated from the JGit code using the Sharpen
-utility, provided by db4o. Some documentation about this tool can be found here:
+The NGit code is automatically generated from the JGit code using the
+Sharpen utility, provided by db4o. Some documentation about this tool
+can be found here:
 
 http://developer.db4o.com/Projects/html/projectspaces/db4o_product_design/sharpen.html
 http://developer.db4o.com/Documentation/Reference/db4o-7.12/java/reference/html/reference/sharpen.html
 
-However, Sharpen is not perfect and some manual changes in the code are still required.
-Those changes are done by using two patches:
+However, Sharpen is not perfect and some manual changes in the code are still
+required. Those changes are done by using two patches:
 
  - pre-generation patch, applied to the Java code before code generation
  - post-generation patch, applied to the generated C# code
 
-The Makefile in this directory has targets for automatically downloading, patching and
-converting the JGit code.
+The Makefile in this directory has targets for automatically downloading,
+patching and converting the JGit code.
 
-Generating the NGit code
+
+GENERATION PREREQUISITES
+------------------------
+
+1) Copy the jar files in the 'plugins' subdirectory to the 'plugins' directory
+in your eclipse installation. This location could be for example:
+'/usr/share/eclipse/plugins'.
+
+2) Run './configure.sh'
+
+GENERATING THE NGIT CODE
 ------------------------
 
 To generate the NGit code from the latest JGit code, run the following commands:
 
 1) make pull
 
-This command will pull the JGit source code, together with the required libraries.
-After getting the code, it will try to apply the pre-generation patch.
-This operation may result in conflicts (since the java code may have changed).
-In that case, the conflicts have to be manually resolved. To do it:
+This command will pull the JGit source code, together with the required
+libraries. After getting the code, it will try to apply the pre-generation
+patch. This operation may result in conflicts (since the java code may have
+changed). In that case, the conflicts have to be manually resolved. To do it:
  - cd to the 'source' subdirectory
  - fix the reported conflics
  - run 'git add somefile.java' for every solved conflict
@@ -34,18 +45,21 @@ In that case, the conflicts have to be manually resolved. To do it:
 
 2) make convert
 
-This command will convert the new java code to C#, and will apply the post-generation
-patch. This patch can also cause merge conflicts. To fix the conflics, cd to the
-'generated' subdirectory and follow the same steps explained above.
+This command will convert the new java code to C#, and will apply the
+post-generation patch. This patch can also cause merge conflicts. To fix the
+conflics, cd to the 'generated' subdirectory and follow the same steps
+explained above.
 
 3) make import
 
 This command will copy the generated source code to the NGit project.
 
-Updating the pre and post generation patches
+
+UPDATING THE PRE AND POST GENERATION PATCHES
 --------------------------------------------
 
-Sometimes you'll have to manually modify the java code or the generated C# code in order
-for the library to build. When all changes are done, run 'make update-patch' to include
-your manual changes in the pre/post generation patches.
+Sometimes you'll have to manually modify the java code or the generated C# code
+in order for the library to build. When all changes are done, run
+'make update-patch' to include your manual changes in the pre/post generation
+patches.
 
