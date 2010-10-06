@@ -440,6 +440,7 @@
     <Compile Include="NGit.Errors\UnpackException.cs" />
     <Compile Include="NGit.Storage.File\DeltaBaseCache.cs" />
     <Compile Include="NGit.Api.Errors\InvalidRemoteException.cs" />
+    <Compile Include="NGit.Api\PushCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
