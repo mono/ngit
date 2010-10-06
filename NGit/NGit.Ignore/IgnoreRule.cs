@@ -1,0 +1,232 @@
+using NGit.Errors;
+using NGit.Fnmatch;
+using Sharpen;
+
+namespace NGit.Ignore
+{
+	/// <summary>
+	/// A single ignore rule corresponding to one line in a .gitignore or
+	/// ignore file.
+	/// </summary>
+	/// <remarks>
+	/// A single ignore rule corresponding to one line in a .gitignore or
+	/// ignore file. Parses the ignore pattern
+	/// Inspiration from: Ferry Huberts
+	/// </remarks>
+	public class IgnoreRule
+	{
+		private string pattern;
+
+		private bool negation;
+
+		private bool nameOnly;
+
+		private bool dirOnly;
+
+		private FileNameMatcher matcher;
+
+		/// <summary>Create a new ignore rule with the given pattern.</summary>
+		/// <remarks>
+		/// Create a new ignore rule with the given pattern. Assumes that
+		/// the pattern is already trimmed.
+		/// </remarks>
+		/// <param name="pattern">
+		/// Base pattern for the ignore rule. This pattern will
+		/// be parsed to generate rule parameters.
+		/// </param>
+		public IgnoreRule(string pattern)
+		{
+			this.pattern = pattern;
+			negation = false;
+			nameOnly = false;
+			dirOnly = false;
+			matcher = null;
+			Setup();
+		}
+
+		/// <summary>Remove leading/trailing characters as needed.</summary>
+		/// <remarks>
+		/// Remove leading/trailing characters as needed. Set up
+		/// rule variables for later matching.
+		/// </remarks>
+		private void Setup()
+		{
+			int startIndex = 0;
+			int endIndex = pattern.Length;
+			if (pattern.StartsWith("!"))
+			{
+				startIndex++;
+				negation = true;
+			}
+			if (pattern.EndsWith("/"))
+			{
+				endIndex--;
+				dirOnly = true;
+			}
+			bool hasSlash = pattern.Contains("/");
+			pattern = Sharpen.Runtime.Substring(pattern, startIndex, endIndex);
+			if (!hasSlash)
+			{
+				nameOnly = true;
+			}
+			else
+			{
+				if (!pattern.StartsWith("/"))
+				{
+					//Contains "/" but does not start with one
+					//Adding / to the start should not interfere with matching
+					pattern = "/" + pattern;
+				}
+			}
+			if (pattern.Contains("*") || pattern.Contains("?") || pattern.Contains("["))
+			{
+				try
+				{
+					matcher = new FileNameMatcher(pattern, '/');
+				}
+				catch (InvalidPatternException e)
+				{
+					Sharpen.Runtime.PrintStackTrace(e);
+				}
+			}
+		}
+
+		/// <returns>True if the pattern is just a file name and not a path</returns>
+		public virtual bool GetNameOnly()
+		{
+			return nameOnly;
+		}
+
+		/// <returns>True if the pattern should match directories only</returns>
+		public virtual bool DirOnly()
+		{
+			return dirOnly;
+		}
+
+		/// <returns>True if the pattern had a "!" in front of it</returns>
+		public virtual bool GetNegation()
+		{
+			return negation;
+		}
+
+		/// <returns>The blob pattern to be used as a matcher</returns>
+		public virtual string GetPattern()
+		{
+			return pattern;
+		}
+
+		/// <summary>Returns true if a match was made.</summary>
+		/// <remarks>
+		/// Returns true if a match was made.
+		/// <br />
+		/// This function does NOT return the actual ignore status of the
+		/// target! Please consult
+		/// <see cref="GetResult()">GetResult()</see>
+		/// for the ignore status. The actual
+		/// ignore status may be true or false depending on whether this rule is
+		/// an ignore rule or a negation rule.
+		/// </remarks>
+		/// <param name="target">Name pattern of the file, relative to the base directory of this rule
+		/// 	</param>
+		/// <param name="isDirectory">Whether the target file is a directory or not</param>
+		/// <returns>
+		/// True if a match was made. This does not necessarily mean that
+		/// the target is ignored. Call
+		/// <see cref="GetResult()">getResult()</see>
+		/// for the result.
+		/// </returns>
+		public virtual bool IsMatch(string target, bool isDirectory)
+		{
+			if (!target.StartsWith("/"))
+			{
+				target = "/" + target;
+			}
+			if (matcher == null)
+			{
+				if (target.Equals(pattern))
+				{
+					//Exact match
+					if (dirOnly && !isDirectory)
+					{
+						//Directory expectations not met
+						return false;
+					}
+					else
+					{
+						//Directory expectations met
+						return true;
+					}
+				}
+				if ((target).StartsWith(pattern + "/"))
+				{
+					return true;
+				}
+				if (nameOnly)
+				{
+					//Iterate through each sub-name
+					foreach (string folderName in target.Split("/"))
+					{
+						if (folderName.Equals(pattern))
+						{
+							return true;
+						}
+					}
+				}
+			}
+			else
+			{
+				matcher.Append(target);
+				if (matcher.IsMatch())
+				{
+					return true;
+				}
+				if (nameOnly)
+				{
+					foreach (string folderName in target.Split("/"))
+					{
+						//Iterate through each sub-directory
+						matcher.Reset();
+						matcher.Append(folderName);
+						if (matcher.IsMatch())
+						{
+							return true;
+						}
+					}
+				}
+				else
+				{
+					//TODO: This is the slowest operation
+					//This matches e.g. "/src/ne?" to "/src/new/file.c"
+					matcher.Reset();
+					foreach (string folderName in target.Split("/"))
+					{
+						if (folderName.Length > 0)
+						{
+							matcher.Append("/" + folderName);
+						}
+						if (matcher.IsMatch())
+						{
+							return true;
+						}
+					}
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// If a call to <code>isMatch(String, boolean)</code> was previously
+		/// made, this will return whether or not the target was ignored.
+		/// </summary>
+		/// <remarks>
+		/// If a call to <code>isMatch(String, boolean)</code> was previously
+		/// made, this will return whether or not the target was ignored. Otherwise
+		/// this just indicates whether the rule is non-negation or negation.
+		/// </remarks>
+		/// <returns>True if the target is to be ignored, false otherwise.</returns>
+		public virtual bool GetResult()
+		{
+			return !negation;
+		}
+	}
+}

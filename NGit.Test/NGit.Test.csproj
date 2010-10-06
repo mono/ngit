@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E1FA8F29-5BAB-4FB7-8362-B8CE67ECF7C2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>NGit.Test</RootNamespace>
+    <AssemblyName>NGit.Test</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="nunit.core, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
+    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
+    <Reference Include="ICSharpCode.SharpZipLib" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="NGit\AbbreviatedObjectIdTest.cs" />
+    <Compile Include="NGit\ConfigTest.cs" />
+    <Compile Include="NGit\ConstantsEncodingTest.cs" />
+    <Compile Include="NGit\DirCacheCheckoutTest.cs" />
+    <Compile Include="NGit\IndexDiffTest.cs" />
+    <Compile Include="NGit\IndexTreeWalkerTest.cs" />
+    <Compile Include="NGit\MergeHeadMsgTest.cs" />
+    <Compile Include="NGit\ObjectCheckerTest.cs" />
+    <Compile Include="NGit\ObjectIdRefTest.cs" />
+    <Compile Include="NGit\ObjectLoaderTest.cs" />
+    <Compile Include="NGit\RacyGitTests.cs" />
+    <Compile Include="NGit\ReadTreeTest.cs" />
+    <Compile Include="NGit\RefTest.cs" />
+    <Compile Include="NGit\ReflogConfigTest.cs" />
+    <Compile Include="NGit\RepositoryCacheTest.cs" />
+    <Compile Include="NGit\RepositoryResolveTest.cs" />
+    <Compile Include="NGit\RepositoryTestCase.cs" />
+    <Compile Include="NGit\SampleDataRepositoryTestCase.cs" />
+    <Compile Include="NGit\SymbolicRefTest.cs" />
+    <Compile Include="NGit\T0001_ObjectId.cs" />
+    <Compile Include="NGit\T0001_PersonIdent.cs" />
+    <Compile Include="NGit\T0002_Tree.cs" />
+    <Compile Include="NGit\TreeIteratorLeafOnlyTest.cs" />
+    <Compile Include="NGit\TreeIteratorPostOrderTest.cs" />
+    <Compile Include="NGit\TreeIteratorPreOrderTest.cs" />
+    <Compile Include="NGit\ValidRefNameTest.cs" />
+    <Compile Include="NGit\WorkDirCheckoutTest.cs" />
+    <Compile Include="NGit\WorkDirCheckout_ReadTreeTest.cs" />
+    <Compile Include="NGit.Api\AddCommandTest.cs" />
+    <Compile Include="NGit.Api\CommitAndLogCommandTests.cs" />
+    <Compile Include="NGit.Api\MergeCommandTest.cs" />
+    <Compile Include="NGit.Api\TagCommandTest.cs" />
+    <Compile Include="NGit.Diff\DiffFormatterReflowTest.cs" />
+    <Compile Include="NGit.Diff\DiffFormatterTest.cs" />
+    <Compile Include="NGit.Diff\DiffTestDataGenerator.cs" />
+    <Compile Include="NGit.Diff\EditListTest.cs" />
+    <Compile Include="NGit.Diff\EditTest.cs" />
+    <Compile Include="NGit.Diff\MyersDiffTest.cs" />
+    <Compile Include="NGit.Diff\RawTextIgnoreAllWhitespaceTest.cs" />
+    <Compile Include="NGit.Diff\RawTextIgnoreLeadingWhitespaceTest.cs" />
+    <Compile Include="NGit.Diff\RawTextIgnoreTrailingWhitespaceTest.cs" />
+    <Compile Include="NGit.Diff\RawTextIgnoreWhitespaceChangeTest.cs" />
+    <Compile Include="NGit.Diff\RawTextTest.cs" />
+    <Compile Include="NGit.Diff\RenameDetectorTest.cs" />
+    <Compile Include="NGit.Diff\SimilarityIndexTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheBasicTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheBuilderIteratorTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheBuilderTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheCGitCompatabilityTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheEntryTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheFindTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheIteratorTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheLargePathTest.cs" />
+    <Compile Include="NGit.Dircache\DirCacheTreeTest.cs" />
+    <Compile Include="NGit.Events\ConfigChangeEventTest.cs" />
+    <Compile Include="NGit.Fnmatch\FileNameMatcherTest.cs" />
+    <Compile Include="NGit.Ignore\IgnoreMatcherTest.cs" />
+    <Compile Include="NGit.Ignore\IgnoreNodeTest.cs" />
+    <Compile Include="NGit.Junit\LocalDiskRepositoryTestCase.cs" />
+    <Compile Include="NGit.Junit\MockSystemReader.cs" />
+    <Compile Include="NGit.Junit\TestRepository.cs" />
+    <Compile Include="NGit.Junit\TestRng.cs" />
+    <Compile Include="NGit.Merge\CherryPickTest.cs" />
+    <Compile Include="NGit.Merge\MergeAlgorithmTest.cs" />
+    <Compile Include="NGit.Merge\SimpleMergeTest.cs" />
+    <Compile Include="NGit.Nls\GermanTranslatedBundle.cs" />
+    <Compile Include="NGit.Nls\MissingPropertyBundle.cs" />
+    <Compile Include="NGit.Nls\NoPropertiesBundle.cs" />
+    <Compile Include="NGit.Nls\NonTranslatedBundle.cs" />
+    <Compile Include="NGit.Nls\TestNLS.cs" />
+    <Compile Include="NGit.Nls\TestTranslationBundle.cs" />
+    <Compile Include="NGit.Patch\EditListTest.cs" />
+    <Compile Include="NGit.Patch\FileHeaderTest.cs" />
+    <Compile Include="NGit.Patch\GetTextTest.cs" />
+    <Compile Include="NGit.Patch\PatchCcErrorTest.cs" />
+    <Compile Include="NGit.Patch\PatchCcTest.cs" />
+    <Compile Include="NGit.Patch\PatchErrorTest.cs" />
+    <Compile Include="NGit.Patch\PatchTest.cs" />
+    <Compile Include="NGit.Revwalk\AlwaysEmptyRevQueueTest.cs" />
+    <Compile Include="NGit.Revwalk\DateRevQueueTest.cs" />
+    <Compile Include="NGit.Revwalk\FIFORevQueueTest.cs" />
+    <Compile Include="NGit.Revwalk\FooterLineTest.cs" />
+    <Compile Include="NGit.Revwalk\LIFORevQueueTest.cs" />
+    <Compile Include="NGit.Revwalk\ObjectWalkTest.cs" />
+    <Compile Include="NGit.Revwalk\RevCommitParseTest.cs" />
+    <Compile Include="NGit.Revwalk\RevFlagSetTest.cs" />
+    <Compile Include="NGit.Revwalk\RevObjectTest.cs" />
+    <Compile Include="NGit.Revwalk\RevQueueTestCase.cs" />
+    <Compile Include="NGit.Revwalk\RevTagParseTest.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkCullTest.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkFilterTest.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkMergeBaseTest.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkPathFilter1Test.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkPathFilter6012Test.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkSortTest.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkTestCase.cs" />
+    <Compile Include="NGit.Storage.File\AbbreviationTest.cs" />
+    <Compile Include="NGit.Storage.File\ConcurrentRepackTest.cs" />
+    <Compile Include="NGit.Storage.File\PackFileTest.cs" />
+    <Compile Include="NGit.Storage.File\PackIndexTestCase.cs" />
+    <Compile Include="NGit.Storage.File\PackIndexV1Test.cs" />
+    <Compile Include="NGit.Storage.File\PackIndexV2Test.cs" />
+    <Compile Include="NGit.Storage.File\PackReverseIndexTest.cs" />
+    <Compile Include="NGit.Storage.File\PackWriterTest.cs" />
+    <Compile Include="NGit.Storage.File\RefDirectoryTest.cs" />
+    <Compile Include="NGit.Storage.File\RefUpdateTest.cs" />
+    <Compile Include="NGit.Storage.File\ReflogReaderTest.cs" />
+    <Compile Include="NGit.Storage.File\RepositorySetupWorkDirTest.cs" />
+    <Compile Include="NGit.Storage.File\T0003_Basic.cs" />
+    <Compile Include="NGit.Storage.File\T0004_PackReader.cs" />
+    <Compile Include="NGit.Storage.File\UnpackedObjectTest.cs" />
+    <Compile Include="NGit.Storage.File\WindowCacheGetTest.cs" />
+    <Compile Include="NGit.Storage.File\WindowCacheReconfigureTest.cs" />
+    <Compile Include="NGit.Storage.File\XInputStream.cs" />
+    <Compile Include="NGit.Storage.Pack\DeltaIndexTest.cs" />
+    <Compile Include="NGit.Storage.Pack\DeltaStreamTest.cs" />
+    <Compile Include="NGit.Treewalk\AbstractTreeIteratorTest.cs" />
+    <Compile Include="NGit.Treewalk\CanonicalTreeParserTest.cs" />
+    <Compile Include="NGit.Treewalk\EmptyTreeIteratorTest.cs" />
+    <Compile Include="NGit.Treewalk\FileTreeIteratorTest.cs" />
+    <Compile Include="NGit.Treewalk\FileTreeIteratorWithTimeControl.cs" />
+    <Compile Include="NGit.Treewalk\NameConflictTreeWalkTest.cs" />
+    <Compile Include="NGit.Treewalk\PostOrderTreeWalkTest.cs" />
+    <Compile Include="NGit.Treewalk\TreeWalkBasicDiffTest.cs" />
+    <Compile Include="NGit.Treewalk.Filter\AlwaysCloneTreeFilter.cs" />
+    <Compile Include="NGit.Treewalk.Filter\NotTreeFilterTest.cs" />
+    <Compile Include="NGit.Treewalk.Filter\PathSuffixFilterTestCase.cs" />
+    <Compile Include="NGit.Treewalk.Filter\TreeFilterTest.cs" />
+    <Compile Include="NGit.Util\ChangeIdUtilTest.cs" />
+    <Compile Include="NGit.Util\IntListTest.cs" />
+    <Compile Include="NGit.Util\JGitTestUtil.cs" />
+    <Compile Include="NGit.Util\NBTest.cs" />
+    <Compile Include="NGit.Util\QuotedStringBourneStyleTest.cs" />
+    <Compile Include="NGit.Util\QuotedStringBourneUserPathStyleTest.cs" />
+    <Compile Include="NGit.Util\QuotedStringGitPathStyleTest.cs" />
+    <Compile Include="NGit.Util\RawCharUtilTest.cs" />
+    <Compile Include="NGit.Util\RawParseUtils_FormatTest.cs" />
+    <Compile Include="NGit.Util\RawParseUtils_HexParseTest.cs" />
+    <Compile Include="NGit.Util\RawParseUtils_LineMapTest.cs" />
+    <Compile Include="NGit.Util\RawParseUtils_MatchTest.cs" />
+    <Compile Include="NGit.Util\RawParseUtils_ParsePersonIdentTest.cs" />
+    <Compile Include="NGit.Util\RefListTest.cs" />
+    <Compile Include="NGit.Util\RefMapTest.cs" />
+    <Compile Include="NGit.Util\StringUtilsTest.cs" />
+    <Compile Include="NGit.Util\TemporaryBufferTest.cs" />
+    <Compile Include="NGit.Util.IO\EolCanonicalizingInputStreamTest.cs" />
+    <Compile Include="NGit.Util.IO\TimeoutInputStreamTest.cs" />
+    <Compile Include="NGit.Util.IO\TimeoutOutputStreamTest.cs" />
+    <Compile Include="NGit.Util.IO\UnionInputStreamTest.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\NGit\NGit.csproj">
+      <Project>{E3BFF8B4-189C-496A-A817-7E8B31E22B91}</Project>
+      <Name>NGit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sharpen\Sharpen.csproj">
+      <Project>{72944A6C-45FF-4EF8-B349-8C9CABF519D4}</Project>
+      <Name>Sharpen</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\NGit.Diff\.gitattributes" />
+    <None Include="resources\NGit.Patch\.gitattributes" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="Flat" ResourceNamePolicy="MSBuild" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\NGit.Diff\E.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\E_PostImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\E_PreImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\testContext0.out" />
+    <EmbeddedResource Include="resources\NGit.Diff\testContext1.out" />
+    <EmbeddedResource Include="resources\NGit.Diff\testContext10.out" />
+    <EmbeddedResource Include="resources\NGit.Diff\testContext100.out" />
+    <EmbeddedResource Include="resources\NGit.Diff\testContext3.out" />
+    <EmbeddedResource Include="resources\NGit.Diff\testContext5.out" />
+    <EmbeddedResource Include="resources\NGit.Diff\X.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\X_PostImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\X_PreImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\Y.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\Y_PostImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\Y_PreImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\Z.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\Z_PostImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\Z_PreImage" />
+    <EmbeddedResource Include="resources\NGit.Patch\testEditList_Types.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testError_BodyTooLong.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testError_CcTruncatedOld.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testError_DisconnectedHunk.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testError_GarbageBetweenFiles.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testError_GitBinaryNoForwardHunk.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testError_TruncatedNew.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testError_TruncatedOld.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testGetText_BothISO88591.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testGetText_Convert.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testGetText_DiffCc.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testGetText_NoBinary.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_AddNoNewline.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_CcDeleteFile.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_CcNewFile.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_ConfigCaseInsensitive.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_FixNoNewline.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_GitBinaryDelta.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_GitBinaryLiteral.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_NoBinary.patch" />
+    <EmbeddedResource Include="resources\NGit.Patch\testParse_OneFileCc.patch" />
+    <EmbeddedResource Include="resources\global\all_packed_objects.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\create-second-pack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\gitgit.index">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\gitgit.index.aaaa">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\gitgit.index.badchecksum">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\gitgit.index.v3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\gitgit.index.ZZZZ">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\gitgit.lsfiles">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\gitgit.lstree">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-3280af9c07ee18a87705ef50b0cc4cd20266cf12.idx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-3280af9c07ee18a87705ef50b0cc4cd20266cf12.pack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.idx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.idxV2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.pack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-546ff360fe3488adb20860ce3436a2d6373d2796.idx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-546ff360fe3488adb20860ce3436a2d6373d2796.pack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-9fb5b411fe6dfa89cc2e6b89d2bd8e5de02b5745.idx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-9fb5b411fe6dfa89cc2e6b89d2bd8e5de02b5745.pack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-cbdeda40019ae0e6e789088ea0f51f164f489d14.idx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-cbdeda40019ae0e6e789088ea0f51f164f489d14.pack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-df2982f284bbabb6bdb59ee3fcc6eb0983e20371.idx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-df2982f284bbabb6bdb59ee3fcc6eb0983e20371.idxV2">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-df2982f284bbabb6bdb59ee3fcc6eb0983e20371.pack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-e6d07037cbcf13376308a0a995d1fa48f8f76aaa.idx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-e6d07037cbcf13376308a0a995d1fa48f8f76aaa.pack">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\packed-refs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\pack-huge.idx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\global\excludeTest\src\test.stp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

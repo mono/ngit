@@ -1,0 +1,562 @@
+using System.Collections.Generic;
+using System.IO;
+using NGit;
+using NGit.Errors;
+using NGit.Revwalk;
+using NGit.Storage.File;
+using NGit.Storage.Pack;
+using NGit.Transport;
+using NGit.Util;
+using Sharpen;
+
+namespace NGit.Storage.File
+{
+	public class PackWriterTest : SampleDataRepositoryTestCase
+	{
+		private static readonly IList<ObjectId> EMPTY_LIST_OBJECT = Sharpen.Collections.EmptyList
+			<ObjectId>();
+
+		private static readonly IList<RevObject> EMPTY_LIST_REVS = Sharpen.Collections.EmptyList
+			<RevObject>();
+
+		private PackConfig config;
+
+		private PackWriter writer;
+
+		private ByteArrayOutputStream os;
+
+		private FilePath packBase;
+
+		private FilePath packFile;
+
+		private FilePath indexFile;
+
+		private PackFile pack;
+
+		/// <exception cref="System.Exception"></exception>
+		protected override void SetUp()
+		{
+			base.SetUp();
+			os = new ByteArrayOutputStream();
+			packBase = new FilePath(trash, "tmp_pack");
+			packFile = new FilePath(trash, "tmp_pack.pack");
+			indexFile = new FilePath(trash, "tmp_pack.idx");
+			config = new PackConfig(db);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		protected override void TearDown()
+		{
+			if (writer != null)
+			{
+				writer.Release();
+			}
+			base.TearDown();
+		}
+
+		/// <summary>Test constructor for exceptions, default settings, initialization.</summary>
+		/// <remarks>Test constructor for exceptions, default settings, initialization.</remarks>
+		public virtual void TestContructor()
+		{
+			writer = new PackWriter(config, db.NewObjectReader());
+			NUnit.Framework.Assert.AreEqual(false, writer.IsDeltaBaseAsOffset());
+			NUnit.Framework.Assert.AreEqual(true, config.IsReuseDeltas());
+			NUnit.Framework.Assert.AreEqual(true, config.IsReuseObjects());
+			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectsNumber());
+		}
+
+		/// <summary>Change default settings and verify them.</summary>
+		/// <remarks>Change default settings and verify them.</remarks>
+		public virtual void TestModifySettings()
+		{
+			config.SetReuseDeltas(false);
+			config.SetReuseObjects(false);
+			config.SetDeltaBaseAsOffset(false);
+			NUnit.Framework.Assert.AreEqual(false, config.IsReuseDeltas());
+			NUnit.Framework.Assert.AreEqual(false, config.IsReuseObjects());
+			NUnit.Framework.Assert.AreEqual(false, config.IsDeltaBaseAsOffset());
+			writer = new PackWriter(config, db.NewObjectReader());
+			writer.SetDeltaBaseAsOffset(true);
+			NUnit.Framework.Assert.AreEqual(true, writer.IsDeltaBaseAsOffset());
+			NUnit.Framework.Assert.AreEqual(false, config.IsDeltaBaseAsOffset());
+		}
+
+		/// <summary>
+		/// Write empty pack by providing empty sets of interesting/uninteresting
+		/// objects and check for correct format.
+		/// </summary>
+		/// <remarks>
+		/// Write empty pack by providing empty sets of interesting/uninteresting
+		/// objects and check for correct format.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWriteEmptyPack1()
+		{
+			CreateVerifyOpenPack(EMPTY_LIST_OBJECT, EMPTY_LIST_OBJECT, false, false);
+			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectsNumber());
+			NUnit.Framework.Assert.AreEqual(0, pack.GetObjectCount());
+			NUnit.Framework.Assert.AreEqual("da39a3ee5e6b4b0d3255bfef95601890afd80709", writer
+				.ComputeName().Name);
+		}
+
+		/// <summary>
+		/// Write empty pack by providing empty iterator of objects to write and
+		/// check for correct format.
+		/// </summary>
+		/// <remarks>
+		/// Write empty pack by providing empty iterator of objects to write and
+		/// check for correct format.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWriteEmptyPack2()
+		{
+			CreateVerifyOpenPack(EMPTY_LIST_REVS.Iterator());
+			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectsNumber());
+			NUnit.Framework.Assert.AreEqual(0, pack.GetObjectCount());
+		}
+
+		/// <summary>
+		/// Try to pass non-existing object as uninteresting, with non-ignoring
+		/// setting.
+		/// </summary>
+		/// <remarks>
+		/// Try to pass non-existing object as uninteresting, with non-ignoring
+		/// setting.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestNotIgnoreNonExistingObjects()
+		{
+			ObjectId nonExisting = ObjectId.FromString("0000000000000000000000000000000000000001"
+				);
+			try
+			{
+				CreateVerifyOpenPack(EMPTY_LIST_OBJECT, Sharpen.Collections.NCopies(1, nonExisting
+					), false, false);
+				NUnit.Framework.Assert.Fail("Should have thrown MissingObjectException");
+			}
+			catch (MissingObjectException)
+			{
+			}
+		}
+
+		// expected
+		/// <summary>Try to pass non-existing object as uninteresting, with ignoring setting.
+		/// 	</summary>
+		/// <remarks>Try to pass non-existing object as uninteresting, with ignoring setting.
+		/// 	</remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestIgnoreNonExistingObjects()
+		{
+			ObjectId nonExisting = ObjectId.FromString("0000000000000000000000000000000000000001"
+				);
+			CreateVerifyOpenPack(EMPTY_LIST_OBJECT, Sharpen.Collections.NCopies(1, nonExisting
+				), false, true);
+		}
+
+		// shouldn't throw anything
+		/// <summary>
+		/// Create pack basing on only interesting objects, then precisely verify
+		/// content.
+		/// </summary>
+		/// <remarks>
+		/// Create pack basing on only interesting objects, then precisely verify
+		/// content. No delta reuse here.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWritePack1()
+		{
+			config.SetReuseDeltas(false);
+			WriteVerifyPack1();
+		}
+
+		/// <summary>Test writing pack without object reuse.</summary>
+		/// <remarks>
+		/// Test writing pack without object reuse. Pack content/preparation as in
+		/// <see cref="TestWritePack1()">TestWritePack1()</see>
+		/// .
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWritePack1NoObjectReuse()
+		{
+			config.SetReuseDeltas(false);
+			config.SetReuseObjects(false);
+			WriteVerifyPack1();
+		}
+
+		/// <summary>
+		/// Create pack basing on both interesting and uninteresting objects, then
+		/// precisely verify content.
+		/// </summary>
+		/// <remarks>
+		/// Create pack basing on both interesting and uninteresting objects, then
+		/// precisely verify content. No delta reuse here.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWritePack2()
+		{
+			WriteVerifyPack2(false);
+		}
+
+		/// <summary>Test pack writing with deltas reuse, delta-base first rule.</summary>
+		/// <remarks>
+		/// Test pack writing with deltas reuse, delta-base first rule. Pack
+		/// content/preparation as in
+		/// <see cref="TestWritePack2()">TestWritePack2()</see>
+		/// .
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWritePack2DeltasReuseRefs()
+		{
+			WriteVerifyPack2(true);
+		}
+
+		/// <summary>Test pack writing with delta reuse.</summary>
+		/// <remarks>
+		/// Test pack writing with delta reuse. Delta bases referred as offsets. Pack
+		/// configuration as in
+		/// <see cref="TestWritePack2DeltasReuseRefs()">TestWritePack2DeltasReuseRefs()</see>
+		/// .
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWritePack2DeltasReuseOffsets()
+		{
+			config.SetDeltaBaseAsOffset(true);
+			WriteVerifyPack2(true);
+		}
+
+		/// <summary>Test pack writing with delta reuse.</summary>
+		/// <remarks>
+		/// Test pack writing with delta reuse. Raw-data copy (reuse) is made on a
+		/// pack with CRC32 index. Pack configuration as in
+		/// <see cref="TestWritePack2DeltasReuseRefs()">TestWritePack2DeltasReuseRefs()</see>
+		/// .
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWritePack2DeltasCRC32Copy()
+		{
+			FilePath packDir = new FilePath(db.ObjectDatabase.GetDirectory(), "pack");
+			FilePath crc32Pack = new FilePath(packDir, "pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.pack"
+				);
+			FilePath crc32Idx = new FilePath(packDir, "pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.idx"
+				);
+			CopyFile(JGitTestUtil.GetTestResourceFile("pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.idxV2"
+				), crc32Idx);
+			db.OpenPack(crc32Pack, crc32Idx);
+			WriteVerifyPack2(true);
+		}
+
+		/// <summary>Create pack basing on fixed objects list, then precisely verify content.
+		/// 	</summary>
+		/// <remarks>
+		/// Create pack basing on fixed objects list, then precisely verify content.
+		/// No delta reuse here.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		/// <exception cref="NGit.Errors.MissingObjectException">NGit.Errors.MissingObjectException
+		/// 	</exception>
+		public virtual void TestWritePack3()
+		{
+			config.SetReuseDeltas(false);
+			ObjectId[] forcedOrder = new ObjectId[] { ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
+				), ObjectId.FromString("c59759f143fb1fe21c197981df75a7ee00290799"), ObjectId.FromString
+				("aabf2ffaec9b497f0950352b3e582d73035c2035"), ObjectId.FromString("902d5476fa249b7abc9d84c611577a81381f0327"
+				), ObjectId.FromString("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259"), ObjectId.FromString
+				("6ff87c4664981e4397625791c8ea3bbb5f2279a3") };
+			RevWalk parser = new RevWalk(db);
+			RevObject[] forcedOrderRevs = new RevObject[forcedOrder.Length];
+			for (int i = 0; i < forcedOrder.Length; i++)
+			{
+				forcedOrderRevs[i] = parser.ParseAny(forcedOrder[i]);
+			}
+			CreateVerifyOpenPack(Arrays.AsList(forcedOrderRevs).Iterator());
+			NUnit.Framework.Assert.AreEqual(forcedOrder.Length, writer.GetObjectsNumber());
+			VerifyObjectsOrder(forcedOrder);
+			NUnit.Framework.Assert.AreEqual("ed3f96b8327c7c66b0f8f70056129f0769323d86", writer
+				.ComputeName().Name);
+		}
+
+		/// <summary>
+		/// Another pack creation: basing on both interesting and uninteresting
+		/// objects.
+		/// </summary>
+		/// <remarks>
+		/// Another pack creation: basing on both interesting and uninteresting
+		/// objects. No delta reuse possible here, as this is a specific case when we
+		/// write only 1 commit, associated with 1 tree, 1 blob.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWritePack4()
+		{
+			WriteVerifyPack4(false);
+		}
+
+		/// <summary>Test thin pack writing: 1 blob delta base is on objects edge.</summary>
+		/// <remarks>
+		/// Test thin pack writing: 1 blob delta base is on objects edge. Pack
+		/// configuration as in
+		/// <see cref="TestWritePack4()">TestWritePack4()</see>
+		/// .
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void TestWritePack4ThinPack()
+		{
+			WriteVerifyPack4(true);
+		}
+
+		/// <summary>
+		/// Compare sizes of packs created using
+		/// <see cref="TestWritePack2()">TestWritePack2()</see>
+		/// and
+		/// <see cref="TestWritePack2DeltasReuseRefs()">TestWritePack2DeltasReuseRefs()</see>
+		/// . The pack using deltas should
+		/// be smaller.
+		/// </summary>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		public virtual void TestWritePack2SizeDeltasVsNoDeltas()
+		{
+			TestWritePack2();
+			long sizePack2NoDeltas = os.Size();
+			TearDown();
+			SetUp();
+			TestWritePack2DeltasReuseRefs();
+			long sizePack2DeltasRefs = os.Size();
+			NUnit.Framework.Assert.IsTrue(sizePack2NoDeltas > sizePack2DeltasRefs);
+		}
+
+		/// <summary>
+		/// Compare sizes of packs created using
+		/// <see cref="TestWritePack2DeltasReuseRefs()">TestWritePack2DeltasReuseRefs()</see>
+		/// and
+		/// <see cref="TestWritePack2DeltasReuseOffsets()">TestWritePack2DeltasReuseOffsets()
+		/// 	</see>
+		/// . The pack with delta bases
+		/// written as offsets should be smaller.
+		/// </summary>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		public virtual void TestWritePack2SizeOffsetsVsRefs()
+		{
+			TestWritePack2DeltasReuseRefs();
+			long sizePack2DeltasRefs = os.Size();
+			TearDown();
+			SetUp();
+			TestWritePack2DeltasReuseOffsets();
+			long sizePack2DeltasOffsets = os.Size();
+			NUnit.Framework.Assert.IsTrue(sizePack2DeltasRefs > sizePack2DeltasOffsets);
+		}
+
+		/// <summary>
+		/// Compare sizes of packs created using
+		/// <see cref="TestWritePack4()">TestWritePack4()</see>
+		/// and
+		/// <see cref="TestWritePack4ThinPack()">TestWritePack4ThinPack()</see>
+		/// . Obviously, the thin pack should be
+		/// smaller.
+		/// </summary>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		public virtual void TestWritePack4SizeThinVsNoThin()
+		{
+			TestWritePack4();
+			long sizePack4 = os.Size();
+			TearDown();
+			SetUp();
+			TestWritePack4ThinPack();
+			long sizePack4Thin = os.Size();
+			NUnit.Framework.Assert.IsTrue(sizePack4 > sizePack4Thin);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestWriteIndex()
+		{
+			config.SetIndexVersion(2);
+			WriteVerifyPack4(false);
+			// Validate that IndexPack came up with the right CRC32 value.
+			PackIndex idx1 = PackIndex.Open(indexFile);
+			NUnit.Framework.Assert.IsTrue(idx1 is PackIndexV2);
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x4743F1E4L)), idx1.FindCRC32(ObjectId
+				.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7")));
+			// Validate that an index written by PackWriter is the same.
+			FilePath idx2File = new FilePath(indexFile.GetAbsolutePath() + ".2");
+			FileOutputStream @is = new FileOutputStream(idx2File);
+			try
+			{
+				writer.WriteIndex(@is);
+			}
+			finally
+			{
+				@is.Close();
+			}
+			PackIndex idx2 = PackIndex.Open(idx2File);
+			NUnit.Framework.Assert.IsTrue(idx2 is PackIndexV2);
+			NUnit.Framework.Assert.AreEqual(idx1.GetObjectCount(), idx2.GetObjectCount());
+			NUnit.Framework.Assert.AreEqual(idx1.GetOffset64Count(), idx2.GetOffset64Count());
+			for (int i = 0; i < idx1.GetObjectCount(); i++)
+			{
+				ObjectId id = idx1.GetObjectId(i);
+				AssertEquals(id, idx2.GetObjectId(i));
+				NUnit.Framework.Assert.AreEqual(idx1.FindOffset(id), idx2.FindOffset(id));
+				NUnit.Framework.Assert.AreEqual(idx1.FindCRC32(id), idx2.FindCRC32(id));
+			}
+		}
+
+		// TODO: testWritePackDeltasCycle()
+		// TODO: testWritePackDeltasDepth()
+		/// <exception cref="System.IO.IOException"></exception>
+		private void WriteVerifyPack1()
+		{
+			List<ObjectId> interestings = new List<ObjectId>();
+			interestings.AddItem(ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
+				));
+			CreateVerifyOpenPack(interestings, EMPTY_LIST_OBJECT, false, false);
+			ObjectId[] expectedOrder = new ObjectId[] { ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
+				), ObjectId.FromString("c59759f143fb1fe21c197981df75a7ee00290799"), ObjectId.FromString
+				("540a36d136cf413e4b064c2b0e0a4db60f77feab"), ObjectId.FromString("aabf2ffaec9b497f0950352b3e582d73035c2035"
+				), ObjectId.FromString("902d5476fa249b7abc9d84c611577a81381f0327"), ObjectId.FromString
+				("4b825dc642cb6eb9a060e54bf8d69288fbee4904"), ObjectId.FromString("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259"
+				), ObjectId.FromString("6ff87c4664981e4397625791c8ea3bbb5f2279a3") };
+			NUnit.Framework.Assert.AreEqual(expectedOrder.Length, writer.GetObjectsNumber());
+			VerifyObjectsOrder(expectedOrder);
+			NUnit.Framework.Assert.AreEqual("34be9032ac282b11fa9babdc2b2a93ca996c9c2f", writer
+				.ComputeName().Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void WriteVerifyPack2(bool deltaReuse)
+		{
+			config.SetReuseDeltas(deltaReuse);
+			List<ObjectId> interestings = new List<ObjectId>();
+			interestings.AddItem(ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
+				));
+			List<ObjectId> uninterestings = new List<ObjectId>();
+			uninterestings.AddItem(ObjectId.FromString("540a36d136cf413e4b064c2b0e0a4db60f77feab"
+				));
+			CreateVerifyOpenPack(interestings, uninterestings, false, false);
+			ObjectId[] expectedOrder = new ObjectId[] { ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
+				), ObjectId.FromString("c59759f143fb1fe21c197981df75a7ee00290799"), ObjectId.FromString
+				("aabf2ffaec9b497f0950352b3e582d73035c2035"), ObjectId.FromString("902d5476fa249b7abc9d84c611577a81381f0327"
+				), ObjectId.FromString("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259"), ObjectId.FromString
+				("6ff87c4664981e4397625791c8ea3bbb5f2279a3") };
+			if (deltaReuse)
+			{
+				// objects order influenced (swapped) by delta-base first rule
+				ObjectId temp = expectedOrder[4];
+				expectedOrder[4] = expectedOrder[5];
+				expectedOrder[5] = temp;
+			}
+			NUnit.Framework.Assert.AreEqual(expectedOrder.Length, writer.GetObjectsNumber());
+			VerifyObjectsOrder(expectedOrder);
+			NUnit.Framework.Assert.AreEqual("ed3f96b8327c7c66b0f8f70056129f0769323d86", writer
+				.ComputeName().Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void WriteVerifyPack4(bool thin)
+		{
+			List<ObjectId> interestings = new List<ObjectId>();
+			interestings.AddItem(ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
+				));
+			List<ObjectId> uninterestings = new List<ObjectId>();
+			uninterestings.AddItem(ObjectId.FromString("c59759f143fb1fe21c197981df75a7ee00290799"
+				));
+			CreateVerifyOpenPack(interestings, uninterestings, thin, false);
+			ObjectId[] writtenObjects = new ObjectId[] { ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
+				), ObjectId.FromString("aabf2ffaec9b497f0950352b3e582d73035c2035"), ObjectId.FromString
+				("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259") };
+			NUnit.Framework.Assert.AreEqual(writtenObjects.Length, writer.GetObjectsNumber());
+			ObjectId[] expectedObjects;
+			if (thin)
+			{
+				expectedObjects = new ObjectId[4];
+				System.Array.Copy(writtenObjects, 0, expectedObjects, 0, writtenObjects.Length);
+				expectedObjects[3] = ObjectId.FromString("6ff87c4664981e4397625791c8ea3bbb5f2279a3"
+					);
+			}
+			else
+			{
+				expectedObjects = writtenObjects;
+			}
+			VerifyObjectsOrder(expectedObjects);
+			NUnit.Framework.Assert.AreEqual("cded4b74176b4456afa456768b2b5aafb41c44fc", writer
+				.ComputeName().Name);
+		}
+
+		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private void CreateVerifyOpenPack(ICollection<ObjectId> interestings, ICollection
+			<ObjectId> uninterestings, bool thin, bool ignoreMissingUninteresting)
+		{
+			NullProgressMonitor m = NullProgressMonitor.INSTANCE;
+			writer = new PackWriter(config, db.NewObjectReader());
+			writer.SetThin(thin);
+			writer.SetIgnoreMissingUninteresting(ignoreMissingUninteresting);
+			writer.PreparePack(m, interestings, uninterestings);
+			writer.WritePack(m, m, os);
+			writer.Release();
+			VerifyOpenPack(thin);
+		}
+
+		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private void CreateVerifyOpenPack(Iterator<RevObject> objectSource)
+		{
+			NullProgressMonitor m = NullProgressMonitor.INSTANCE;
+			writer = new PackWriter(config, db.NewObjectReader());
+			writer.PreparePack(objectSource);
+			writer.WritePack(m, m, os);
+			writer.Release();
+			VerifyOpenPack(false);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void VerifyOpenPack(bool thin)
+		{
+			if (thin)
+			{
+				InputStream @is = new ByteArrayInputStream(os.ToByteArray());
+				IndexPack indexer = new IndexPack(db, @is, packBase);
+				try
+				{
+					indexer.Index(new TextProgressMonitor());
+					NUnit.Framework.Assert.Fail("indexer should grumble about missing object");
+				}
+				catch (IOException)
+				{
+				}
+			}
+			// expected
+			InputStream is_1 = new ByteArrayInputStream(os.ToByteArray());
+			IndexPack indexer_1 = new IndexPack(db, is_1, packBase);
+			indexer_1.SetKeepEmpty(true);
+			indexer_1.SetFixThin(thin);
+			indexer_1.SetIndexVersion(2);
+			indexer_1.Index(new TextProgressMonitor());
+			pack = new PackFile(indexFile, packFile);
+		}
+
+		private void VerifyObjectsOrder(ObjectId[] objectsOrder)
+		{
+			IList<PackIndex.MutableEntry> entries = new AList<PackIndex.MutableEntry>();
+			foreach (PackIndex.MutableEntry me in pack)
+			{
+				entries.AddItem(me.CloneEntry());
+			}
+			entries.Sort(new _IComparer_544());
+			int i = 0;
+			foreach (PackIndex.MutableEntry me_1 in entries)
+			{
+				AssertEquals(objectsOrder[i++].ToObjectId(), me_1.ToObjectId());
+			}
+		}
+
+		private sealed class _IComparer_544 : IComparer<PackIndex.MutableEntry>
+		{
+			public _IComparer_544()
+			{
+			}
+
+			public int Compare(PackIndex.MutableEntry o1, PackIndex.MutableEntry o2)
+			{
+				return Sharpen.Extensions.Signum(o1.GetOffset() - o2.GetOffset());
+			}
+		}
+	}
+}

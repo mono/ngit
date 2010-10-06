@@ -1,0 +1,333 @@
+using NGit;
+using NGit.Dircache;
+using NGit.Merge;
+using NGit.Treewalk;
+using Sharpen;
+
+namespace NGit.Merge
+{
+	public class SimpleMergeTest : SampleDataRepositoryTestCase
+	{
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestOurs()
+		{
+			Merger ourMerger = MergeStrategy.OURS.NewMerger(db);
+			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a"), db.Resolve("c") });
+			NUnit.Framework.Assert.IsTrue(merge);
+			AssertEquals(db.MapTree("a").GetId(), ourMerger.GetResultTreeId());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestTheirs()
+		{
+			Merger ourMerger = MergeStrategy.THEIRS.NewMerger(db);
+			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a"), db.Resolve("c") });
+			NUnit.Framework.Assert.IsTrue(merge);
+			AssertEquals(db.MapTree("c").GetId(), ourMerger.GetResultTreeId());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestTrivialTwoWay()
+		{
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a"), db.Resolve("c") });
+			NUnit.Framework.Assert.IsTrue(merge);
+			NUnit.Framework.Assert.AreEqual("02ba32d3649e510002c21651936b7077aa75ffa9", ourMerger
+				.GetResultTreeId().Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestTrivialTwoWay_disjointhistories()
+		{
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a"), db.Resolve("c~4") }
+				);
+			NUnit.Framework.Assert.IsTrue(merge);
+			NUnit.Framework.Assert.AreEqual("86265c33b19b2be71bdd7b8cb95823f2743d03a8", ourMerger
+				.GetResultTreeId().Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestTrivialTwoWay_ok()
+		{
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a^0^0^0"), db.Resolve("a^0^0^1"
+				) });
+			NUnit.Framework.Assert.IsTrue(merge);
+			AssertEquals(db.MapTree("a^0^0").GetId(), ourMerger.GetResultTreeId());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestTrivialTwoWay_conflict()
+		{
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("f"), db.Resolve("g") });
+			NUnit.Framework.Assert.IsFalse(merge);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestTrivialTwoWay_validSubtreeSort()
+		{
+			DirCache treeB = db.ReadDirCache();
+			DirCache treeO = db.ReadDirCache();
+			DirCache treeT = db.ReadDirCache();
+			{
+				DirCacheBuilder b = treeB.Builder();
+				DirCacheBuilder o = treeO.Builder();
+				DirCacheBuilder t = treeT.Builder();
+				b.Add(MakeEntry("libelf-po/a", FileMode.REGULAR_FILE));
+				b.Add(MakeEntry("libelf/c", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("Makefile", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("libelf-po/a", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("libelf/c", FileMode.REGULAR_FILE));
+				t.Add(MakeEntry("libelf-po/a", FileMode.REGULAR_FILE));
+				t.Add(MakeEntry("libelf/c", FileMode.REGULAR_FILE, "blah"));
+				b.Finish();
+				o.Finish();
+				t.Finish();
+			}
+			ObjectInserter ow = db.NewObjectInserter();
+			ObjectId b_1 = Commit(ow, treeB, new ObjectId[] {  });
+			ObjectId o_1 = Commit(ow, treeO, new ObjectId[] { b_1 });
+			ObjectId t_1 = Commit(ow, treeT, new ObjectId[] { b_1 });
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { o_1, t_1 });
+			NUnit.Framework.Assert.IsTrue(merge);
+			TreeWalk tw = new TreeWalk(db);
+			tw.Recursive = true;
+			tw.Reset(ourMerger.GetResultTreeId());
+			NUnit.Framework.Assert.IsTrue(tw.Next());
+			NUnit.Framework.Assert.AreEqual("Makefile", tw.PathString);
+			AssertCorrectId(treeO, tw);
+			NUnit.Framework.Assert.IsTrue(tw.Next());
+			NUnit.Framework.Assert.AreEqual("libelf-po/a", tw.PathString);
+			AssertCorrectId(treeO, tw);
+			NUnit.Framework.Assert.IsTrue(tw.Next());
+			NUnit.Framework.Assert.AreEqual("libelf/c", tw.PathString);
+			AssertCorrectId(treeT, tw);
+			NUnit.Framework.Assert.IsFalse(tw.Next());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestTrivialTwoWay_concurrentSubtreeChange()
+		{
+			DirCache treeB = db.ReadDirCache();
+			DirCache treeO = db.ReadDirCache();
+			DirCache treeT = db.ReadDirCache();
+			{
+				DirCacheBuilder b = treeB.Builder();
+				DirCacheBuilder o = treeO.Builder();
+				DirCacheBuilder t = treeT.Builder();
+				b.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("d/o", FileMode.REGULAR_FILE, "o !"));
+				o.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
+				t.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				t.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "t !"));
+				b.Finish();
+				o.Finish();
+				t.Finish();
+			}
+			ObjectInserter ow = db.NewObjectInserter();
+			ObjectId b_1 = Commit(ow, treeB, new ObjectId[] {  });
+			ObjectId o_1 = Commit(ow, treeO, new ObjectId[] { b_1 });
+			ObjectId t_1 = Commit(ow, treeT, new ObjectId[] { b_1 });
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { o_1, t_1 });
+			NUnit.Framework.Assert.IsTrue(merge);
+			TreeWalk tw = new TreeWalk(db);
+			tw.Recursive = true;
+			tw.Reset(ourMerger.GetResultTreeId());
+			NUnit.Framework.Assert.IsTrue(tw.Next());
+			NUnit.Framework.Assert.AreEqual("d/o", tw.PathString);
+			AssertCorrectId(treeO, tw);
+			NUnit.Framework.Assert.IsTrue(tw.Next());
+			NUnit.Framework.Assert.AreEqual("d/t", tw.PathString);
+			AssertCorrectId(treeT, tw);
+			NUnit.Framework.Assert.IsFalse(tw.Next());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestTrivialTwoWay_conflictSubtreeChange()
+		{
+			DirCache treeB = db.ReadDirCache();
+			DirCache treeO = db.ReadDirCache();
+			DirCache treeT = db.ReadDirCache();
+			{
+				DirCacheBuilder b = treeB.Builder();
+				DirCacheBuilder o = treeO.Builder();
+				DirCacheBuilder t = treeT.Builder();
+				b.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "o !"));
+				t.Add(MakeEntry("d/o", FileMode.REGULAR_FILE, "t !"));
+				t.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "t !"));
+				b.Finish();
+				o.Finish();
+				t.Finish();
+			}
+			ObjectInserter ow = db.NewObjectInserter();
+			ObjectId b_1 = Commit(ow, treeB, new ObjectId[] {  });
+			ObjectId o_1 = Commit(ow, treeO, new ObjectId[] { b_1 });
+			ObjectId t_1 = Commit(ow, treeT, new ObjectId[] { b_1 });
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { o_1, t_1 });
+			NUnit.Framework.Assert.IsFalse(merge);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestTrivialTwoWay_leftDFconflict1()
+		{
+			DirCache treeB = db.ReadDirCache();
+			DirCache treeO = db.ReadDirCache();
+			DirCache treeT = db.ReadDirCache();
+			{
+				DirCacheBuilder b = treeB.Builder();
+				DirCacheBuilder o = treeO.Builder();
+				DirCacheBuilder t = treeT.Builder();
+				b.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("d", FileMode.REGULAR_FILE));
+				t.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				t.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "t !"));
+				b.Finish();
+				o.Finish();
+				t.Finish();
+			}
+			ObjectInserter ow = db.NewObjectInserter();
+			ObjectId b_1 = Commit(ow, treeB, new ObjectId[] {  });
+			ObjectId o_1 = Commit(ow, treeO, new ObjectId[] { b_1 });
+			ObjectId t_1 = Commit(ow, treeT, new ObjectId[] { b_1 });
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { o_1, t_1 });
+			NUnit.Framework.Assert.IsFalse(merge);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestTrivialTwoWay_rightDFconflict1()
+		{
+			DirCache treeB = db.ReadDirCache();
+			DirCache treeO = db.ReadDirCache();
+			DirCache treeT = db.ReadDirCache();
+			{
+				DirCacheBuilder b = treeB.Builder();
+				DirCacheBuilder o = treeO.Builder();
+				DirCacheBuilder t = treeT.Builder();
+				b.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "o !"));
+				t.Add(MakeEntry("d", FileMode.REGULAR_FILE));
+				b.Finish();
+				o.Finish();
+				t.Finish();
+			}
+			ObjectInserter ow = db.NewObjectInserter();
+			ObjectId b_1 = Commit(ow, treeB, new ObjectId[] {  });
+			ObjectId o_1 = Commit(ow, treeO, new ObjectId[] { b_1 });
+			ObjectId t_1 = Commit(ow, treeT, new ObjectId[] { b_1 });
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { o_1, t_1 });
+			NUnit.Framework.Assert.IsFalse(merge);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestTrivialTwoWay_leftDFconflict2()
+		{
+			DirCache treeB = db.ReadDirCache();
+			DirCache treeO = db.ReadDirCache();
+			DirCache treeT = db.ReadDirCache();
+			{
+				DirCacheBuilder b = treeB.Builder();
+				DirCacheBuilder o = treeO.Builder();
+				DirCacheBuilder t = treeT.Builder();
+				b.Add(MakeEntry("d", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("d", FileMode.REGULAR_FILE, "o !"));
+				t.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				b.Finish();
+				o.Finish();
+				t.Finish();
+			}
+			ObjectInserter ow = db.NewObjectInserter();
+			ObjectId b_1 = Commit(ow, treeB, new ObjectId[] {  });
+			ObjectId o_1 = Commit(ow, treeO, new ObjectId[] { b_1 });
+			ObjectId t_1 = Commit(ow, treeT, new ObjectId[] { b_1 });
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { o_1, t_1 });
+			NUnit.Framework.Assert.IsFalse(merge);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestTrivialTwoWay_rightDFconflict2()
+		{
+			DirCache treeB = db.ReadDirCache();
+			DirCache treeO = db.ReadDirCache();
+			DirCache treeT = db.ReadDirCache();
+			{
+				DirCacheBuilder b = treeB.Builder();
+				DirCacheBuilder o = treeO.Builder();
+				DirCacheBuilder t = treeT.Builder();
+				b.Add(MakeEntry("d", FileMode.REGULAR_FILE));
+				o.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				t.Add(MakeEntry("d", FileMode.REGULAR_FILE, "t !"));
+				b.Finish();
+				o.Finish();
+				t.Finish();
+			}
+			ObjectInserter ow = db.NewObjectInserter();
+			ObjectId b_1 = Commit(ow, treeB, new ObjectId[] {  });
+			ObjectId o_1 = Commit(ow, treeO, new ObjectId[] { b_1 });
+			ObjectId t_1 = Commit(ow, treeT, new ObjectId[] { b_1 });
+			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
+				(db));
+			bool merge = ourMerger.Merge(new ObjectId[] { o_1, t_1 });
+			NUnit.Framework.Assert.IsFalse(merge);
+		}
+
+		private void AssertCorrectId(DirCache treeT, TreeWalk tw)
+		{
+			AssertEquals(treeT.GetEntry(tw.PathString).GetObjectId(), tw.GetObjectId(0));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		private ObjectId Commit(ObjectInserter odi, DirCache treeB, ObjectId[] parentIds)
+		{
+			NGit.CommitBuilder c = new NGit.CommitBuilder();
+			c.TreeId = treeB.WriteTree(odi);
+			c.Author = new PersonIdent("A U Thor", "a.u.thor", 1L, 0);
+			c.Committer = c.Author;
+			c.SetParentIds(parentIds);
+			c.Message = "Tree " + c.TreeId.Name;
+			ObjectId id = odi.Insert(c);
+			odi.Flush();
+			return id;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		private DirCacheEntry MakeEntry(string path, FileMode mode)
+		{
+			return MakeEntry(path, mode, path);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		private DirCacheEntry MakeEntry(string path, FileMode mode, string content)
+		{
+			DirCacheEntry ent = new DirCacheEntry(path);
+			ent.SetFileMode(mode);
+			ent.SetObjectId(new ObjectInserter.Formatter().IdFor(Constants.OBJ_BLOB, Constants
+				.Encode(content)));
+			return ent;
+		}
+	}
+}

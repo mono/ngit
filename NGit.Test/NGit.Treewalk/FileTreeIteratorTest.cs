@@ -1,0 +1,137 @@
+using NGit;
+using NGit.Storage.File;
+using NGit.Treewalk;
+using NGit.Util;
+using Sharpen;
+
+namespace NGit.Treewalk
+{
+	public class FileTreeIteratorTest : RepositoryTestCase
+	{
+		private readonly string[] paths = new string[] { "a,", "a,b", "a/b", "a0b" };
+
+		private long[] mtime;
+
+		/// <exception cref="System.Exception"></exception>
+		protected override void SetUp()
+		{
+			base.SetUp();
+			// We build the entries backwards so that on POSIX systems we
+			// are likely to get the entries in the trash directory in the
+			// opposite order of what they should be in for the iteration.
+			// This should stress the sorting code better than doing it in
+			// the correct order.
+			//
+			mtime = new long[paths.Length];
+			for (int i = paths.Length - 1; i >= 0; i--)
+			{
+				string s = paths[i];
+				WriteTrashFile(s, s);
+				mtime[i] = new FilePath(trash, s).LastModified();
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestEmptyIfRootIsFile()
+		{
+			FilePath r = new FilePath(trash, paths[0]);
+			NUnit.Framework.Assert.IsTrue(r.IsFile());
+			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, WorkingTreeOptions.
+				CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			NUnit.Framework.Assert.IsTrue(fti.First());
+			NUnit.Framework.Assert.IsTrue(fti.Eof());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestEmptyIfRootDoesNotExist()
+		{
+			FilePath r = new FilePath(trash, "not-existing-file");
+			NUnit.Framework.Assert.IsFalse(r.Exists());
+			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, WorkingTreeOptions.
+				CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			NUnit.Framework.Assert.IsTrue(fti.First());
+			NUnit.Framework.Assert.IsTrue(fti.Eof());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestEmptyIfRootIsEmpty()
+		{
+			FilePath r = new FilePath(trash, "not-existing-file");
+			NUnit.Framework.Assert.IsFalse(r.Exists());
+			r.Mkdir();
+			NUnit.Framework.Assert.IsTrue(r.IsDirectory());
+			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, WorkingTreeOptions.
+				CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			NUnit.Framework.Assert.IsTrue(fti.First());
+			NUnit.Framework.Assert.IsTrue(fti.Eof());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestSimpleIterate()
+		{
+			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, WorkingTreeOptions
+				.CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			NUnit.Framework.Assert.IsTrue(top.First());
+			NUnit.Framework.Assert.IsFalse(top.Eof());
+			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), top.mode);
+			NUnit.Framework.Assert.AreEqual(paths[0], NameOf(top));
+			NUnit.Framework.Assert.AreEqual(paths[0].Length, top.GetEntryLength());
+			NUnit.Framework.Assert.AreEqual(mtime[0], top.GetEntryLastModified());
+			top.Next(1);
+			NUnit.Framework.Assert.IsFalse(top.First());
+			NUnit.Framework.Assert.IsFalse(top.Eof());
+			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), top.mode);
+			NUnit.Framework.Assert.AreEqual(paths[1], NameOf(top));
+			NUnit.Framework.Assert.AreEqual(paths[1].Length, top.GetEntryLength());
+			NUnit.Framework.Assert.AreEqual(mtime[1], top.GetEntryLastModified());
+			top.Next(1);
+			NUnit.Framework.Assert.IsFalse(top.First());
+			NUnit.Framework.Assert.IsFalse(top.Eof());
+			NUnit.Framework.Assert.AreEqual(FileMode.TREE.GetBits(), top.mode);
+			ObjectReader reader = db.NewObjectReader();
+			AbstractTreeIterator sub = top.CreateSubtreeIterator(reader);
+			NUnit.Framework.Assert.IsTrue(sub is FileTreeIterator);
+			FileTreeIterator subfti = (FileTreeIterator)sub;
+			NUnit.Framework.Assert.IsTrue(sub.First());
+			NUnit.Framework.Assert.IsFalse(sub.Eof());
+			NUnit.Framework.Assert.AreEqual(paths[2], NameOf(sub));
+			NUnit.Framework.Assert.AreEqual(paths[2].Length, subfti.GetEntryLength());
+			NUnit.Framework.Assert.AreEqual(mtime[2], subfti.GetEntryLastModified());
+			sub.Next(1);
+			NUnit.Framework.Assert.IsTrue(sub.Eof());
+			top.Next(1);
+			NUnit.Framework.Assert.IsFalse(top.First());
+			NUnit.Framework.Assert.IsFalse(top.Eof());
+			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), top.mode);
+			NUnit.Framework.Assert.AreEqual(paths[3], NameOf(top));
+			NUnit.Framework.Assert.AreEqual(paths[3].Length, top.GetEntryLength());
+			NUnit.Framework.Assert.AreEqual(mtime[3], top.GetEntryLastModified());
+			top.Next(1);
+			NUnit.Framework.Assert.IsTrue(top.Eof());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestComputeFileObjectId()
+		{
+			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, WorkingTreeOptions
+				.CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			MessageDigest md = Constants.NewMessageDigest();
+			md.Update(Constants.EncodeASCII(Constants.TYPE_BLOB));
+			md.Update(unchecked((byte)' '));
+			md.Update(Constants.EncodeASCII(paths[0].Length));
+			md.Update(unchecked((byte)0));
+			md.Update(Constants.Encode(paths[0]));
+			ObjectId expect = ObjectId.FromRaw(md.Digest());
+			AssertEquals(expect, top.GetEntryObjectId());
+			// Verify it was cached by removing the file and getting it again.
+			//
+			new FilePath(trash, paths[0]).Delete();
+			AssertEquals(expect, top.GetEntryObjectId());
+		}
+
+		private static string NameOf(AbstractTreeIterator i)
+		{
+			return RawParseUtils.Decode(Constants.CHARSET, i.path, 0, i.pathLen);
+		}
+	}
+}

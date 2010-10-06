@@ -1,0 +1,185 @@
+using NGit;
+using NGit.Util;
+using NUnit.Framework;
+using Sharpen;
+
+namespace NGit.Util
+{
+	public class QuotedStringGitPathStyleTest : TestCase
+	{
+		private static void AssertQuote(string exp, string @in)
+		{
+			string r = QuotedString.GIT_PATH.Quote(@in);
+			NUnit.Framework.Assert.AreNotSame(@in, r);
+			NUnit.Framework.Assert.IsFalse(@in.Equals(r));
+			NUnit.Framework.Assert.AreEqual('"' + exp + '"', r);
+		}
+
+		private static void AssertDequote(string exp, string @in)
+		{
+			byte[] b;
+			try
+			{
+				b = Sharpen.Runtime.GetBytesForString(('"' + @in + '"'), "ISO-8859-1");
+			}
+			catch (UnsupportedEncodingException e)
+			{
+				throw new RuntimeException(e);
+			}
+			string r = QuotedString.GIT_PATH.Dequote(b, 0, b.Length);
+			NUnit.Framework.Assert.AreEqual(exp, r);
+		}
+
+		public virtual void TestQuote_Empty()
+		{
+			NUnit.Framework.Assert.AreEqual("\"\"", QuotedString.GIT_PATH.Quote(string.Empty)
+				);
+		}
+
+		public virtual void TestDequote_Empty1()
+		{
+			NUnit.Framework.Assert.AreEqual(string.Empty, QuotedString.GIT_PATH.Dequote(new byte
+				[0], 0, 0));
+		}
+
+		public virtual void TestDequote_Empty2()
+		{
+			NUnit.Framework.Assert.AreEqual(string.Empty, QuotedString.GIT_PATH.Dequote(new byte
+				[] { (byte)('"'), (byte)('"') }, 0, 2));
+		}
+
+		public virtual void TestDequote_SoleDq()
+		{
+			NUnit.Framework.Assert.AreEqual("\"", QuotedString.GIT_PATH.Dequote(new byte[] { 
+				(byte)('"') }, 0, 1));
+		}
+
+		public virtual void TestQuote_BareA()
+		{
+			string @in = "a";
+			NUnit.Framework.Assert.AreSame(@in, QuotedString.GIT_PATH.Quote(@in));
+		}
+
+		public virtual void TestDequote_BareA()
+		{
+			string @in = "a";
+			byte[] b = Constants.Encode(@in);
+			NUnit.Framework.Assert.AreEqual(@in, QuotedString.GIT_PATH.Dequote(b, 0, b.Length
+				));
+		}
+
+		public virtual void TestDequote_BareABCZ_OnlyBC()
+		{
+			string @in = "abcz";
+			byte[] b = Constants.Encode(@in);
+			int p = @in.IndexOf('b');
+			NUnit.Framework.Assert.AreEqual("bc", QuotedString.GIT_PATH.Dequote(b, p, p + 2));
+		}
+
+		public virtual void TestDequote_LoneBackslash()
+		{
+			AssertDequote("\\", "\\");
+		}
+
+		public virtual void TestQuote_NamedEscapes()
+		{
+			AssertQuote("\\a", "\u0007");
+			AssertQuote("\\b", "\b");
+			AssertQuote("\\f", "\f");
+			AssertQuote("\\n", "\n");
+			AssertQuote("\\r", "\r");
+			AssertQuote("\\t", "\t");
+			AssertQuote("\\v", "\u000B");
+			AssertQuote("\\\\", "\\");
+			AssertQuote("\\\"", "\"");
+		}
+
+		public virtual void TestDequote_NamedEscapes()
+		{
+			AssertDequote("\u0007", "\\a");
+			AssertDequote("\b", "\\b");
+			AssertDequote("\f", "\\f");
+			AssertDequote("\n", "\\n");
+			AssertDequote("\r", "\\r");
+			AssertDequote("\t", "\\t");
+			AssertDequote("\u000B", "\\v");
+			AssertDequote("\\", "\\\\");
+			AssertDequote("\"", "\\\"");
+		}
+
+		public virtual void TestDequote_OctalAll()
+		{
+			for (int i = 0; i < 127; i++)
+			{
+				AssertDequote(string.Empty + (char)i, OctalEscape(i));
+			}
+			for (int i_1 = 128; i_1 < 256; i_1++)
+			{
+				int f = unchecked((int)(0xC0)) | (i_1 >> 6);
+				int s = unchecked((int)(0x80)) | (i_1 & unchecked((int)(0x3f)));
+				AssertDequote(string.Empty + (char)i_1, OctalEscape(f) + OctalEscape(s));
+			}
+		}
+
+		private string OctalEscape(int i)
+		{
+			string s = Sharpen.Extensions.ToOctalString(i);
+			while (s.Length < 3)
+			{
+				s = "0" + s;
+			}
+			return "\\" + s;
+		}
+
+		public virtual void TestQuote_OctalAll()
+		{
+			AssertQuote("\\001", "\x1");
+			AssertQuote("\\177", "\u007f");
+			AssertQuote("\\303\\277", "\u00ff");
+		}
+
+		// \u00ff in UTF-8
+		public virtual void TestDequote_UnknownEscapeQ()
+		{
+			AssertDequote("\\q", "\\q");
+		}
+
+		public virtual void TestDequote_FooTabBar()
+		{
+			AssertDequote("foo\tbar", "foo\\tbar");
+		}
+
+		public virtual void TestDequote_Latin1()
+		{
+			AssertDequote("\u00c5ngstr\u00f6m", "\\305ngstr\\366m");
+		}
+
+		// Latin1
+		public virtual void TestDequote_UTF8()
+		{
+			AssertDequote("\u00c5ngstr\u00f6m", "\\303\\205ngstr\\303\\266m");
+		}
+
+		public virtual void TestDequote_RawUTF8()
+		{
+			AssertDequote("\u00c5ngstr\u00f6m", "\x12f\xcdngstr\x12f\x10am");
+		}
+
+		public virtual void TestDequote_RawLatin1()
+		{
+			AssertDequote("\u00c5ngstr\u00f6m", "\x131ngstr\x16em");
+		}
+
+		public virtual void TestQuote_Ang()
+		{
+			AssertQuote("\\303\\205ngstr\\303\\266m", "\u00c5ngstr\u00f6m");
+		}
+
+		public virtual void TestQuoteAtAndNumber()
+		{
+			NUnit.Framework.Assert.AreSame("abc@2x.png", QuotedString.GIT_PATH.Quote("abc@2x.png"
+				));
+			AssertDequote("abc@2x.png", "abc\\1002x.png");
+		}
+	}
+}

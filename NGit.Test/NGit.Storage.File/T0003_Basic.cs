@@ -1,0 +1,795 @@
+using System;
+using System.IO;
+using NGit;
+using NGit.Revwalk;
+using NGit.Storage.File;
+using Sharpen;
+
+namespace NGit.Storage.File
+{
+	public class T0003_Basic : SampleDataRepositoryTestCase
+	{
+		public virtual void Test001_Initalize()
+		{
+			FilePath gitdir = new FilePath(trash, Constants.DOT_GIT);
+			FilePath objects = new FilePath(gitdir, "objects");
+			FilePath objects_pack = new FilePath(objects, "pack");
+			FilePath objects_info = new FilePath(objects, "info");
+			FilePath refs = new FilePath(gitdir, "refs");
+			FilePath refs_heads = new FilePath(refs, "heads");
+			FilePath refs_tags = new FilePath(refs, "tags");
+			FilePath HEAD = new FilePath(gitdir, "HEAD");
+			NUnit.Framework.Assert.IsTrue("Exists " + trash, trash.IsDirectory());
+			NUnit.Framework.Assert.IsTrue("Exists " + objects, objects.IsDirectory());
+			NUnit.Framework.Assert.IsTrue("Exists " + objects_pack, objects_pack.IsDirectory(
+				));
+			NUnit.Framework.Assert.IsTrue("Exists " + objects_info, objects_info.IsDirectory(
+				));
+			NUnit.Framework.Assert.AreEqual(2, objects.ListFiles().Length);
+			NUnit.Framework.Assert.IsTrue("Exists " + refs, refs.IsDirectory());
+			NUnit.Framework.Assert.IsTrue("Exists " + refs_heads, refs_heads.IsDirectory());
+			NUnit.Framework.Assert.IsTrue("Exists " + refs_tags, refs_tags.IsDirectory());
+			NUnit.Framework.Assert.IsTrue("Exists " + HEAD, HEAD.IsFile());
+			NUnit.Framework.Assert.AreEqual(23, HEAD.Length());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test000_openRepoBadArgs()
+		{
+			try
+			{
+				new FileRepositoryBuilder().Build();
+				NUnit.Framework.Assert.Fail("Must pass either GIT_DIR or GIT_WORK_TREE");
+			}
+			catch (ArgumentException e)
+			{
+				NUnit.Framework.Assert.AreEqual(JGitText.Get().eitherGitDirOrWorkTreeRequired, e.
+					Message);
+			}
+		}
+
+		/// <summary>
+		/// Check the default rules for looking up directories and files within a
+		/// repo when the gitDir is given.
+		/// </summary>
+		/// <remarks>
+		/// Check the default rules for looking up directories and files within a
+		/// repo when the gitDir is given.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void Test000_openrepo_default_gitDirSet()
+		{
+			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
+			Repository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants.
+				DOT_GIT));
+			repo1initial.Create();
+			repo1initial.Close();
+			FilePath theDir = new FilePath(repo1Parent, Constants.DOT_GIT);
+			FileRepository r = new FileRepositoryBuilder().SetGitDir(theDir).Build();
+			AssertEqualsPath(theDir, r.Directory);
+			AssertEqualsPath(repo1Parent, r.WorkTree);
+			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
+			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
+				);
+		}
+
+		/// <summary>
+		/// Check that we can pass both a git directory and a work tree
+		/// repo when the gitDir is given.
+		/// </summary>
+		/// <remarks>
+		/// Check that we can pass both a git directory and a work tree
+		/// repo when the gitDir is given.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void Test000_openrepo_default_gitDirAndWorkTreeSet()
+		{
+			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
+			Repository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants.
+				DOT_GIT));
+			repo1initial.Create();
+			repo1initial.Close();
+			FilePath theDir = new FilePath(repo1Parent, Constants.DOT_GIT);
+			FileRepository r = new FileRepositoryBuilder().SetGitDir(theDir).SetWorkTree(repo1Parent
+				.GetParentFile()).Build();
+			AssertEqualsPath(theDir, r.Directory);
+			AssertEqualsPath(repo1Parent.GetParentFile(), r.WorkTree);
+			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
+			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
+				);
+		}
+
+		/// <summary>
+		/// Check the default rules for looking up directories and files within a
+		/// repo when the workTree is given.
+		/// </summary>
+		/// <remarks>
+		/// Check the default rules for looking up directories and files within a
+		/// repo when the workTree is given.
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void Test000_openrepo_default_workDirSet()
+		{
+			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
+			Repository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants.
+				DOT_GIT));
+			repo1initial.Create();
+			repo1initial.Close();
+			FilePath theDir = new FilePath(repo1Parent, Constants.DOT_GIT);
+			FileRepository r = new FileRepositoryBuilder().SetWorkTree(repo1Parent).Build();
+			AssertEqualsPath(theDir, r.Directory);
+			AssertEqualsPath(repo1Parent, r.WorkTree);
+			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
+			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
+				);
+		}
+
+		/// <summary>Check that worktree config has an effect, given absolute path.</summary>
+		/// <remarks>Check that worktree config has an effect, given absolute path.</remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void Test000_openrepo_default_absolute_workdirconfig()
+		{
+			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
+			FilePath workdir = new FilePath(trash.GetParentFile(), "rw");
+			workdir.Mkdir();
+			FileRepository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants
+				.DOT_GIT));
+			repo1initial.Create();
+			((FileBasedConfig)repo1initial.GetConfig()).SetString("core", null, "worktree", workdir
+				.GetAbsolutePath());
+			((FileBasedConfig)repo1initial.GetConfig()).Save();
+			repo1initial.Close();
+			FilePath theDir = new FilePath(repo1Parent, Constants.DOT_GIT);
+			FileRepository r = new FileRepositoryBuilder().SetGitDir(theDir).Build();
+			AssertEqualsPath(theDir, r.Directory);
+			AssertEqualsPath(workdir, r.WorkTree);
+			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
+			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
+				);
+		}
+
+		/// <summary>Check that worktree config has an effect, given a relative path.</summary>
+		/// <remarks>Check that worktree config has an effect, given a relative path.</remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void Test000_openrepo_default_relative_workdirconfig()
+		{
+			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
+			FilePath workdir = new FilePath(trash.GetParentFile(), "rw");
+			workdir.Mkdir();
+			FileRepository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants
+				.DOT_GIT));
+			repo1initial.Create();
+			((FileBasedConfig)repo1initial.GetConfig()).SetString("core", null, "worktree", "../../rw"
+				);
+			((FileBasedConfig)repo1initial.GetConfig()).Save();
+			repo1initial.Close();
+			FilePath theDir = new FilePath(repo1Parent, Constants.DOT_GIT);
+			FileRepository r = new FileRepositoryBuilder().SetGitDir(theDir).Build();
+			AssertEqualsPath(theDir, r.Directory);
+			AssertEqualsPath(workdir, r.WorkTree);
+			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
+			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
+				);
+		}
+
+		/// <summary>
+		/// Check that the given index file is honored and the alternate object
+		/// directories too
+		/// </summary>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void Test000_openrepo_alternate_index_file_and_objdirs()
+		{
+			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
+			FilePath indexFile = new FilePath(trash, "idx");
+			FilePath objDir = new FilePath(trash, "../obj");
+			FilePath altObjDir = db.ObjectDatabase.GetDirectory();
+			Repository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants.
+				DOT_GIT));
+			repo1initial.Create();
+			repo1initial.Close();
+			FilePath theDir = new FilePath(repo1Parent, Constants.DOT_GIT);
+			FileRepository r = new FileRepositoryBuilder().SetGitDir(theDir).SetObjectDirectory
+				(objDir).AddAlternateObjectDirectory(altObjDir).SetIndexFile(indexFile).Build();
+			//
+			//
+			//
+			//
+			AssertEqualsPath(theDir, r.Directory);
+			AssertEqualsPath(theDir.GetParentFile(), r.WorkTree);
+			AssertEqualsPath(indexFile, r.GetIndexFile());
+			AssertEqualsPath(objDir, r.ObjectDatabase.GetDirectory());
+			NUnit.Framework.Assert.IsNotNull(r.Open(ObjectId.FromString("6db9c2ebf75590eef973081736730a9ea169a0c4"
+				)));
+			// Must close or the default repo pack files created by this test gets
+			// locked via the alternate object directories on Windows.
+			r.Close();
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		protected internal virtual void AssertEqualsPath(FilePath expected, FilePath actual
+			)
+		{
+			NUnit.Framework.Assert.AreEqual(expected.GetCanonicalPath(), actual.GetCanonicalPath
+				());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test002_WriteEmptyTree()
+		{
+			// One of our test packs contains the empty tree object. If the pack is
+			// open when we create it we won't write the object file out as a loose
+			// object (as it already exists in the pack).
+			//
+			Repository newdb = CreateBareRepository();
+			Tree t = new Tree(newdb);
+			t.Accept(new WriteTree(trash, newdb), TreeEntry.MODIFIED_ONLY);
+			NUnit.Framework.Assert.AreEqual("4b825dc642cb6eb9a060e54bf8d69288fbee4904", t.GetId
+				().Name);
+			FilePath o = new FilePath(new FilePath(new FilePath(newdb.Directory, "objects"), 
+				"4b"), "825dc642cb6eb9a060e54bf8d69288fbee4904");
+			NUnit.Framework.Assert.IsTrue("Exists " + o, o.IsFile());
+			NUnit.Framework.Assert.IsTrue("Read-only " + o, !o.CanWrite());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test002_WriteEmptyTree2()
+		{
+			// File shouldn't exist as it is in a test pack.
+			//
+			Tree t = new Tree(db);
+			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
+			NUnit.Framework.Assert.AreEqual("4b825dc642cb6eb9a060e54bf8d69288fbee4904", t.GetId
+				().Name);
+			FilePath o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "4b"
+				), "825dc642cb6eb9a060e54bf8d69288fbee4904");
+			NUnit.Framework.Assert.IsFalse("Exists " + o, o.IsFile());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test003_WriteShouldBeEmptyTree()
+		{
+			Tree t = new Tree(db);
+			ObjectId emptyId = InsertEmptyBlob();
+			t.AddFile("should-be-empty").SetId(emptyId);
+			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
+			NUnit.Framework.Assert.AreEqual("7bb943559a305bdd6bdee2cef6e5df2413c3d30a", t.GetId
+				().Name);
+			FilePath o;
+			o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "7b"), "b943559a305bdd6bdee2cef6e5df2413c3d30a"
+				);
+			NUnit.Framework.Assert.IsTrue("Exists " + o, o.IsFile());
+			NUnit.Framework.Assert.IsTrue("Read-only " + o, !o.CanWrite());
+			o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "e6"), "9de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+				);
+			NUnit.Framework.Assert.IsTrue("Exists " + o, o.IsFile());
+			NUnit.Framework.Assert.IsTrue("Read-only " + o, !o.CanWrite());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		public virtual void Test006_ReadUglyConfig()
+		{
+			FilePath cfg = new FilePath(db.Directory, "config");
+			FileBasedConfig c = new FileBasedConfig(cfg, db.FileSystem);
+			FileWriter pw = new FileWriter(cfg);
+			string configStr = "  [core];comment\n\tfilemode = yes\n" + "[user]\n" + "  email = A U Thor <thor@example.com> # Just an example...\n"
+				 + " name = \"A  Thor \\\\ \\\"\\t \"\n" + "    defaultCheckInComment = a many line\\n\\\ncomment\\n\\\n"
+				 + " to test\n";
+			pw.Write(configStr);
+			pw.Close();
+			c.Load();
+			NUnit.Framework.Assert.AreEqual("yes", c.GetString("core", null, "filemode"));
+			NUnit.Framework.Assert.AreEqual("A U Thor <thor@example.com>", c.GetString("user"
+				, null, "email"));
+			NUnit.Framework.Assert.AreEqual("A  Thor \\ \"\t ", c.GetString("user", null, "name"
+				));
+			NUnit.Framework.Assert.AreEqual("a many line\ncomment\n to test", c.GetString("user"
+				, null, "defaultCheckInComment"));
+			c.Save();
+			FileReader fr = new FileReader(cfg);
+			char[] cbuf = new char[configStr.Length];
+			fr.Read(cbuf);
+			fr.Close();
+			NUnit.Framework.Assert.AreEqual(configStr, Sharpen.Extensions.CreateString(cbuf));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test007_Open()
+		{
+			FileRepository db2 = new FileRepository(db.Directory);
+			NUnit.Framework.Assert.AreEqual(db.Directory, db2.Directory);
+			NUnit.Framework.Assert.AreEqual(db.ObjectDatabase.GetDirectory(), db2.ObjectDatabase
+				.GetDirectory());
+			NUnit.Framework.Assert.AreNotSame(((FileBasedConfig)db.GetConfig()), ((FileBasedConfig
+				)db2.GetConfig()));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test008_FailOnWrongVersion()
+		{
+			FilePath cfg = new FilePath(db.Directory, "config");
+			FileWriter pw = new FileWriter(cfg);
+			string badvers = "ihopethisisneveraversion";
+			string configStr = "[core]\n" + "\trepositoryFormatVersion=" + badvers + "\n";
+			pw.Write(configStr);
+			pw.Close();
+			try
+			{
+				new FileRepository(db.Directory);
+				NUnit.Framework.Assert.Fail("incorrectly opened a bad repository");
+			}
+			catch (IOException ioe)
+			{
+				NUnit.Framework.Assert.IsTrue(ioe.Message.IndexOf("format") > 0);
+				NUnit.Framework.Assert.IsTrue(ioe.Message.IndexOf(badvers) > 0);
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test009_CreateCommitOldFormat()
+		{
+			Tree t = new Tree(db);
+			FileTreeEntry f = t.AddFile("i-am-a-file");
+			WriteTrashFile(f.GetName(), "and this is the data in me\n");
+			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
+			AssertEquals(ObjectId.FromString("00b1f73724f493096d1ffa0b0f1f1482dbb8c936"), t.GetTreeId
+				());
+			NGit.CommitBuilder c = new NGit.CommitBuilder();
+			c.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
+			c.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
+			c.Message = "A Commit\n";
+			c.TreeId = t.GetTreeId();
+			AssertEquals(t.GetTreeId(), c.TreeId);
+			InsertCommit(c);
+			ObjectId cmtid = ObjectId.FromString("803aec4aba175e8ab1d666873c984c0308179099");
+			AssertEquals(cmtid, c.CommitId);
+			// Verify the commit we just wrote is in the correct format.
+			ObjectDatabase odb = db.ObjectDatabase;
+			NUnit.Framework.Assert.IsTrue("is ObjectDirectory", odb is ObjectDirectory);
+			XInputStream xis = new XInputStream(new FileInputStream(((ObjectDirectory)odb).FileFor
+				(cmtid)));
+			try
+			{
+				NUnit.Framework.Assert.AreEqual(unchecked((int)(0x78)), xis.ReadUInt8());
+				NUnit.Framework.Assert.AreEqual(unchecked((int)(0x9c)), xis.ReadUInt8());
+				NUnit.Framework.Assert.IsTrue(unchecked((int)(0x789c)) % 31 == 0);
+			}
+			finally
+			{
+				xis.Close();
+			}
+			// Verify we can read it.
+			RevCommit c2 = ParseCommit(c.CommitId);
+			NUnit.Framework.Assert.IsNotNull(c2);
+			NUnit.Framework.Assert.AreEqual(c.Message, c2.GetFullMessage());
+			AssertEquals(c.TreeId, c2.Tree);
+			NUnit.Framework.Assert.AreEqual(c.Author, c2.GetAuthorIdent());
+			NUnit.Framework.Assert.AreEqual(c.Committer, c2.GetCommitterIdent());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test012_SubtreeExternalSorting()
+		{
+			ObjectId emptyBlob = InsertEmptyBlob();
+			Tree t = new Tree(db);
+			FileTreeEntry e0 = t.AddFile("a-");
+			FileTreeEntry e1 = t.AddFile("a-b");
+			FileTreeEntry e2 = t.AddFile("a/b");
+			FileTreeEntry e3 = t.AddFile("a=");
+			FileTreeEntry e4 = t.AddFile("a=b");
+			e0.SetId(emptyBlob);
+			e1.SetId(emptyBlob);
+			e2.SetId(emptyBlob);
+			e3.SetId(emptyBlob);
+			e4.SetId(emptyBlob);
+			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
+			AssertEquals(ObjectId.FromString("b47a8f0a4190f7572e11212769090523e23eb1ea"), t.GetId
+				());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test020_createBlobTag()
+		{
+			ObjectId emptyId = InsertEmptyBlob();
+			TagBuilder t = new TagBuilder();
+			t.SetObjectId(emptyId, Constants.OBJ_BLOB);
+			t.SetTag("test020");
+			t.SetTagger(new PersonIdent(author, 1154236443000L, -4 * 60));
+			t.SetMessage("test020 tagged\n");
+			InsertTag(t);
+			NUnit.Framework.Assert.AreEqual("6759556b09fbb4fd8ae5e315134481cc25d46954", t.GetTagId
+				().Name);
+			RevTag mapTag = ParseTag(t.GetTagId());
+			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, mapTag.GetObject().Type);
+			NUnit.Framework.Assert.AreEqual("test020 tagged\n", mapTag.GetFullMessage());
+			NUnit.Framework.Assert.AreEqual(new PersonIdent(author, 1154236443000L, -4 * 60), 
+				mapTag.GetTaggerIdent());
+			NUnit.Framework.Assert.AreEqual("e69de29bb2d1d6434b8b29ae775ad8c2e48c5391", mapTag
+				.GetObject().Id.Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test021_createTreeTag()
+		{
+			ObjectId emptyId = InsertEmptyBlob();
+			Tree almostEmptyTree = new Tree(db);
+			almostEmptyTree.AddEntry(new FileTreeEntry(almostEmptyTree, emptyId, Sharpen.Runtime.GetBytesForString
+				("empty"), false));
+			ObjectId almostEmptyTreeId = InsertTree(almostEmptyTree);
+			TagBuilder t = new TagBuilder();
+			t.SetObjectId(almostEmptyTreeId, Constants.OBJ_TREE);
+			t.SetTag("test021");
+			t.SetTagger(new PersonIdent(author, 1154236443000L, -4 * 60));
+			t.SetMessage("test021 tagged\n");
+			InsertTag(t);
+			NUnit.Framework.Assert.AreEqual("b0517bc8dbe2096b419d42424cd7030733f4abe5", t.GetTagId
+				().Name);
+			RevTag mapTag = ParseTag(t.GetTagId());
+			NUnit.Framework.Assert.AreEqual(Constants.OBJ_TREE, mapTag.GetObject().Type);
+			NUnit.Framework.Assert.AreEqual("test021 tagged\n", mapTag.GetFullMessage());
+			NUnit.Framework.Assert.AreEqual(new PersonIdent(author, 1154236443000L, -4 * 60), 
+				mapTag.GetTaggerIdent());
+			NUnit.Framework.Assert.AreEqual("417c01c8795a35b8e835113a85a5c0c1c77f67fb", mapTag
+				.GetObject().Id.Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test022_createCommitTag()
+		{
+			ObjectId emptyId = InsertEmptyBlob();
+			Tree almostEmptyTree = new Tree(db);
+			almostEmptyTree.AddEntry(new FileTreeEntry(almostEmptyTree, emptyId, Sharpen.Runtime.GetBytesForString
+				("empty"), false));
+			ObjectId almostEmptyTreeId = InsertTree(almostEmptyTree);
+			NGit.CommitBuilder almostEmptyCommit = new NGit.CommitBuilder();
+			almostEmptyCommit.Author = new PersonIdent(author, 1154236443000L, -2 * 60);
+			// not exactly the same
+			almostEmptyCommit.Committer = new PersonIdent(author, 1154236443000L, -2 * 60);
+			almostEmptyCommit.Message = "test022\n";
+			almostEmptyCommit.TreeId = almostEmptyTreeId;
+			ObjectId almostEmptyCommitId = InsertCommit(almostEmptyCommit);
+			TagBuilder t = new TagBuilder();
+			t.SetObjectId(almostEmptyCommitId, Constants.OBJ_COMMIT);
+			t.SetTag("test022");
+			t.SetTagger(new PersonIdent(author, 1154236443000L, -4 * 60));
+			t.SetMessage("test022 tagged\n");
+			InsertTag(t);
+			NUnit.Framework.Assert.AreEqual("0ce2ebdb36076ef0b38adbe077a07d43b43e3807", t.GetTagId
+				().Name);
+			RevTag mapTag = ParseTag(t.GetTagId());
+			NUnit.Framework.Assert.AreEqual(Constants.OBJ_COMMIT, mapTag.GetObject().Type);
+			NUnit.Framework.Assert.AreEqual("test022 tagged\n", mapTag.GetFullMessage());
+			NUnit.Framework.Assert.AreEqual(new PersonIdent(author, 1154236443000L, -4 * 60), 
+				mapTag.GetTaggerIdent());
+			NUnit.Framework.Assert.AreEqual("b5d3b45a96b340441f5abb9080411705c51cc86c", mapTag
+				.GetObject().Id.Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test023_createCommitNonAnullii()
+		{
+			ObjectId emptyId = InsertEmptyBlob();
+			Tree almostEmptyTree = new Tree(db);
+			almostEmptyTree.AddEntry(new FileTreeEntry(almostEmptyTree, emptyId, Sharpen.Runtime.GetBytesForString
+				("empty"), false));
+			ObjectId almostEmptyTreeId = InsertTree(almostEmptyTree);
+			NGit.CommitBuilder commit = new NGit.CommitBuilder();
+			commit.TreeId = almostEmptyTreeId;
+			commit.Author = new PersonIdent("Joe H\u00e4cker", "joe@example.com", 4294967295000L
+				, 60);
+			commit.Committer = new PersonIdent("Joe Hacker", "joe2@example.com", 4294967295000L
+				, 60);
+			commit.SetEncoding("UTF-8");
+			commit.Message = "\u00dcbergeeks";
+			ObjectId cid = InsertCommit(commit);
+			NUnit.Framework.Assert.AreEqual("4680908112778718f37e686cbebcc912730b3154", cid.Name
+				);
+			RevCommit loadedCommit = ParseCommit(cid);
+			NUnit.Framework.Assert.AreEqual(commit.Message, loadedCommit.GetFullMessage());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test024_createCommitNonAscii()
+		{
+			ObjectId emptyId = InsertEmptyBlob();
+			Tree almostEmptyTree = new Tree(db);
+			almostEmptyTree.AddEntry(new FileTreeEntry(almostEmptyTree, emptyId, Sharpen.Runtime.GetBytesForString
+				("empty"), false));
+			ObjectId almostEmptyTreeId = InsertTree(almostEmptyTree);
+			NGit.CommitBuilder commit = new NGit.CommitBuilder();
+			commit.TreeId = almostEmptyTreeId;
+			commit.Author = new PersonIdent("Joe H\u00e4cker", "joe@example.com", 4294967295000L
+				, 60);
+			commit.Committer = new PersonIdent("Joe Hacker", "joe2@example.com", 4294967295000L
+				, 60);
+			commit.SetEncoding("ISO-8859-1");
+			commit.Message = "\u00dcbergeeks";
+			ObjectId cid = InsertCommit(commit);
+			NUnit.Framework.Assert.AreEqual("2979b39d385014b33287054b87f77bcb3ecb5ebf", cid.Name
+				);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test025_computeSha1NoStore()
+		{
+			byte[] data = Sharpen.Runtime.GetBytesForString("test025 some data, more than 16 bytes to get good coverage"
+				, "ISO-8859-1");
+			ObjectId id = new ObjectInserter.Formatter().IdFor(Constants.OBJ_BLOB, data);
+			NUnit.Framework.Assert.AreEqual("4f561df5ecf0dfbd53a0dc0f37262fef075d9dde", id.Name
+				);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test026_CreateCommitMultipleparents()
+		{
+			Tree t = new Tree(db);
+			FileTreeEntry f = t.AddFile("i-am-a-file");
+			WriteTrashFile(f.GetName(), "and this is the data in me\n");
+			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
+			AssertEquals(ObjectId.FromString("00b1f73724f493096d1ffa0b0f1f1482dbb8c936"), t.GetTreeId
+				());
+			NGit.CommitBuilder c1 = new NGit.CommitBuilder();
+			c1.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
+			c1.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
+			c1.Message = "A Commit\n";
+			c1.TreeId = t.GetTreeId();
+			AssertEquals(t.GetTreeId(), c1.TreeId);
+			InsertCommit(c1);
+			ObjectId cmtid1 = ObjectId.FromString("803aec4aba175e8ab1d666873c984c0308179099");
+			AssertEquals(cmtid1, c1.CommitId);
+			NGit.CommitBuilder c2 = new NGit.CommitBuilder();
+			c2.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
+			c2.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
+			c2.Message = "A Commit 2\n";
+			c2.TreeId = t.GetTreeId();
+			AssertEquals(t.GetTreeId(), c2.TreeId);
+			c2.SetParentIds(c1.CommitId);
+			InsertCommit(c2);
+			ObjectId cmtid2 = ObjectId.FromString("95d068687c91c5c044fb8c77c5154d5247901553");
+			AssertEquals(cmtid2, c2.CommitId);
+			RevCommit rm2 = ParseCommit(cmtid2);
+			NUnit.Framework.Assert.AreNotSame(c2, rm2);
+			// assert the parsed objects is not from the cache
+			NUnit.Framework.Assert.AreEqual(c2.Author, rm2.GetAuthorIdent());
+			AssertEquals(c2.CommitId, rm2.Id);
+			NUnit.Framework.Assert.AreEqual(c2.Message, rm2.GetFullMessage());
+			AssertEquals(c2.TreeId, rm2.Tree.Id);
+			NUnit.Framework.Assert.AreEqual(1, rm2.ParentCount);
+			AssertEquals(c1.CommitId, rm2.GetParent(0));
+			NGit.CommitBuilder c3 = new NGit.CommitBuilder();
+			c3.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
+			c3.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
+			c3.Message = "A Commit 3\n";
+			c3.TreeId = t.GetTreeId();
+			AssertEquals(t.GetTreeId(), c3.TreeId);
+			c3.SetParentIds(c1.CommitId, c2.CommitId);
+			InsertCommit(c3);
+			ObjectId cmtid3 = ObjectId.FromString("ce6e1ce48fbeeb15a83f628dc8dc2debefa066f4");
+			AssertEquals(cmtid3, c3.CommitId);
+			RevCommit rm3 = ParseCommit(cmtid3);
+			NUnit.Framework.Assert.AreNotSame(c3, rm3);
+			// assert the parsed objects is not from the cache
+			NUnit.Framework.Assert.AreEqual(c3.Author, rm3.GetAuthorIdent());
+			AssertEquals(c3.CommitId, rm3.Id);
+			NUnit.Framework.Assert.AreEqual(c3.Message, rm3.GetFullMessage());
+			AssertEquals(c3.TreeId, rm3.Tree.Id);
+			NUnit.Framework.Assert.AreEqual(2, rm3.ParentCount);
+			AssertEquals(c1.CommitId, rm3.GetParent(0));
+			AssertEquals(c2.CommitId, rm3.GetParent(1));
+			NGit.CommitBuilder c4 = new NGit.CommitBuilder();
+			c4.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
+			c4.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
+			c4.Message = "A Commit 4\n";
+			c4.TreeId = t.GetTreeId();
+			AssertEquals(t.GetTreeId(), c3.TreeId);
+			c4.SetParentIds(c1.CommitId, c2.CommitId, c3.CommitId);
+			InsertCommit(c4);
+			ObjectId cmtid4 = ObjectId.FromString("d1fca9fe3fef54e5212eb67902c8ed3e79736e27");
+			AssertEquals(cmtid4, c4.CommitId);
+			RevCommit rm4 = ParseCommit(cmtid4);
+			NUnit.Framework.Assert.AreNotSame(c4, rm3);
+			// assert the parsed objects is not from the cache
+			NUnit.Framework.Assert.AreEqual(c4.Author, rm4.GetAuthorIdent());
+			AssertEquals(c4.CommitId, rm4.Id);
+			NUnit.Framework.Assert.AreEqual(c4.Message, rm4.GetFullMessage());
+			AssertEquals(c4.TreeId, rm4.Tree.Id);
+			NUnit.Framework.Assert.AreEqual(3, rm4.ParentCount);
+			AssertEquals(c1.CommitId, rm4.GetParent(0));
+			AssertEquals(c2.CommitId, rm4.GetParent(1));
+			AssertEquals(c3.CommitId, rm4.GetParent(2));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test027_UnpackedRefHigherPriorityThanPacked()
+		{
+			PrintWriter writer = new PrintWriter(new FileWriter(new FilePath(db.Directory, "refs/heads/a"
+				)));
+			string unpackedId = "7f822839a2fe9760f386cbbbcb3f92c5fe81def7";
+			writer.Write(unpackedId);
+			writer.Write('\n');
+			writer.Close();
+			ObjectId resolved = db.Resolve("refs/heads/a");
+			NUnit.Framework.Assert.AreEqual(unpackedId, resolved.Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void Test028_LockPackedRef()
+		{
+			WriteTrashFile(".git/packed-refs", "7f822839a2fe9760f386cbbbcb3f92c5fe81def7 refs/heads/foobar"
+				);
+			WriteTrashFile(".git/HEAD", "ref: refs/heads/foobar\n");
+			BUG_WorkAroundRacyGitIssues("packed-refs");
+			BUG_WorkAroundRacyGitIssues("HEAD");
+			ObjectId resolve = db.Resolve("HEAD");
+			NUnit.Framework.Assert.AreEqual("7f822839a2fe9760f386cbbbcb3f92c5fe81def7", resolve
+				.Name);
+			RefUpdate lockRef = db.UpdateRef("HEAD");
+			ObjectId newId = ObjectId.FromString("07f822839a2fe9760f386cbbbcb3f92c5fe81def");
+			lockRef.SetNewObjectId(newId);
+			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, lockRef.ForceUpdate());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "refs/heads/foobar").Exists
+				());
+			AssertEquals(newId, db.Resolve("refs/heads/foobar"));
+			// Again. The ref already exists
+			RefUpdate lockRef2 = db.UpdateRef("HEAD");
+			ObjectId newId2 = ObjectId.FromString("7f822839a2fe9760f386cbbbcb3f92c5fe81def7");
+			lockRef2.SetNewObjectId(newId2);
+			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, lockRef2.ForceUpdate());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "refs/heads/foobar").Exists
+				());
+			AssertEquals(newId2, db.Resolve("refs/heads/foobar"));
+		}
+
+		public virtual void Test30_stripWorkDir()
+		{
+			FilePath relCwd = new FilePath(".");
+			FilePath absCwd = relCwd.GetAbsoluteFile();
+			FilePath absBase = new FilePath(new FilePath(absCwd, "repo"), "workdir");
+			FilePath relBase = new FilePath(new FilePath(relCwd, "repo"), "workdir");
+			NUnit.Framework.Assert.AreEqual(absBase.GetAbsolutePath(), relBase.GetAbsolutePath
+				());
+			FilePath relBaseFile = new FilePath(new FilePath(relBase, "other"), "module.c");
+			FilePath absBaseFile = new FilePath(new FilePath(absBase, "other"), "module.c");
+			NUnit.Framework.Assert.AreEqual("other/module.c", Repository.StripWorkDir(relBase
+				, relBaseFile));
+			NUnit.Framework.Assert.AreEqual("other/module.c", Repository.StripWorkDir(relBase
+				, absBaseFile));
+			NUnit.Framework.Assert.AreEqual("other/module.c", Repository.StripWorkDir(absBase
+				, relBaseFile));
+			NUnit.Framework.Assert.AreEqual("other/module.c", Repository.StripWorkDir(absBase
+				, absBaseFile));
+			FilePath relNonFile = new FilePath(new FilePath(relCwd, "not-repo"), ".gitignore"
+				);
+			FilePath absNonFile = new FilePath(new FilePath(absCwd, "not-repo"), ".gitignore"
+				);
+			NUnit.Framework.Assert.AreEqual(string.Empty, Repository.StripWorkDir(relBase, relNonFile
+				));
+			NUnit.Framework.Assert.AreEqual(string.Empty, Repository.StripWorkDir(absBase, absNonFile
+				));
+			NUnit.Framework.Assert.AreEqual(string.Empty, Repository.StripWorkDir(db.WorkTree
+				, db.WorkTree));
+			FilePath file = new FilePath(new FilePath(db.WorkTree, "subdir"), "File.java");
+			NUnit.Framework.Assert.AreEqual("subdir/File.java", Repository.StripWorkDir(db.WorkTree
+				, file));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private ObjectId InsertEmptyBlob()
+		{
+			ObjectId emptyId;
+			ObjectInserter oi = db.NewObjectInserter();
+			try
+			{
+				emptyId = oi.Insert(Constants.OBJ_BLOB, new byte[] {  });
+				oi.Flush();
+			}
+			finally
+			{
+				oi.Release();
+			}
+			return emptyId;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private ObjectId InsertTree(Tree tree)
+		{
+			ObjectInserter oi = db.NewObjectInserter();
+			try
+			{
+				ObjectId id = oi.Insert(Constants.OBJ_TREE, tree.Format());
+				oi.Flush();
+				return id;
+			}
+			finally
+			{
+				oi.Release();
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		private ObjectId InsertCommit(NGit.CommitBuilder builder)
+		{
+			ObjectInserter oi = db.NewObjectInserter();
+			try
+			{
+				ObjectId id = oi.Insert(builder);
+				oi.Flush();
+				return id;
+			}
+			finally
+			{
+				oi.Release();
+			}
+		}
+
+		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private RevCommit ParseCommit(AnyObjectId id)
+		{
+			RevWalk rw = new RevWalk(db);
+			try
+			{
+				return rw.ParseCommit(id);
+			}
+			finally
+			{
+				rw.Release();
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		private ObjectId InsertTag(TagBuilder tag)
+		{
+			ObjectInserter oi = db.NewObjectInserter();
+			try
+			{
+				ObjectId id = oi.Insert(tag);
+				oi.Flush();
+				return id;
+			}
+			finally
+			{
+				oi.Release();
+			}
+		}
+
+		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private RevTag ParseTag(AnyObjectId id)
+		{
+			RevWalk rw = new RevWalk(db);
+			try
+			{
+				return rw.ParseTag(id);
+			}
+			finally
+			{
+				rw.Release();
+			}
+		}
+
+		/// <summary>Kick the timestamp of a local file.</summary>
+		/// <remarks>
+		/// Kick the timestamp of a local file.
+		/// <p>
+		/// We shouldn't have to make these method calls. The cache is using file
+		/// system timestamps, and on many systems unit tests run faster than the
+		/// modification clock. Dumping the cache after we make an edit behind
+		/// RefDirectory's back allows the tests to pass.
+		/// </remarks>
+		/// <param name="name">the file in the repository to force a time change on.</param>
+		private void BUG_WorkAroundRacyGitIssues(string name)
+		{
+			FilePath path = new FilePath(db.Directory, name);
+			long old = path.LastModified();
+			long set = 1250379778668L;
+			// Sat Aug 15 20:12:58 GMT-03:30 2009
+			path.SetLastModified(set);
+			NUnit.Framework.Assert.IsTrue("time changed", old != path.LastModified());
+		}
+	}
+}

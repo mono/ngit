@@ -1,0 +1,212 @@
+using System.Collections.Generic;
+using System.IO;
+using NGit;
+using NGit.Api;
+using NGit.Api.Errors;
+using NGit.Dircache;
+using NGit.Treewalk;
+using NGit.Treewalk.Filter;
+using Sharpen;
+
+namespace NGit.Api
+{
+	/// <summary>
+	/// A class used to execute a
+	/// <code>Add</code>
+	/// command. It has setters for all
+	/// supported options and arguments of this command and a
+	/// <see cref="Call()">Call()</see>
+	/// method
+	/// to finally execute the command. Each instance of this class should only be
+	/// used for one invocation of the command (means: one call to
+	/// <see cref="Call()">Call()</see>
+	/// )
+	/// </summary>
+	/// <seealso><a href="http://www.kernel.org/pub/software/scm/git/docs/git-add.html"
+	/// *      >Git documentation about Add</a></seealso>
+	public class AddCommand : GitCommand<DirCache>
+	{
+		private ICollection<string> filepatterns;
+
+		private WorkingTreeIterator workingTreeIterator;
+
+		private bool update = false;
+
+		/// <param name="repo"></param>
+		protected internal AddCommand(Repository repo) : base(repo)
+		{
+			filepatterns = new List<string>();
+		}
+
+		/// <param name="filepattern">
+		/// File to add content from. Also a leading directory name (e.g.
+		/// dir to add dir/file1 and dir/file2) can be given to add all
+		/// files in the directory, recursively. Fileglobs (e.g. *.c) are
+		/// not yet supported.
+		/// </param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.AddCommand AddFilepattern(string filepattern)
+		{
+			CheckCallable();
+			filepatterns.AddItem(filepattern);
+			return this;
+		}
+
+		/// <summary>Allow clients to provide their own implementation of a FileTreeIterator</summary>
+		/// <param name="f"></param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.AddCommand SetWorkingTreeIterator(WorkingTreeIterator f)
+		{
+			workingTreeIterator = f;
+			return this;
+		}
+
+		/// <summary>
+		/// Executes the
+		/// <code>Add</code>
+		/// command. Each instance of this class should only
+		/// be used for one invocation of the command. Don't call this method twice
+		/// on an instance.
+		/// </summary>
+		/// <returns>the DirCache after Add</returns>
+		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		public override DirCache Call()
+		{
+			if (filepatterns.IsEmpty())
+			{
+				throw new NoFilepatternException(JGitText.Get().atLeastOnePatternIsRequired);
+			}
+			CheckCallable();
+			DirCache dc = null;
+			bool addAll = false;
+			if (filepatterns.Contains("."))
+			{
+				addAll = true;
+			}
+			ObjectInserter inserter = repo.NewObjectInserter();
+			try
+			{
+				dc = repo.LockDirCache();
+				DirCacheIterator c;
+				DirCacheBuilder builder = dc.Builder();
+				TreeWalk tw = new TreeWalk(repo);
+				tw.Reset();
+				tw.AddTree(new DirCacheBuildIterator(builder));
+				if (workingTreeIterator == null)
+				{
+					workingTreeIterator = new FileTreeIterator(repo);
+				}
+				tw.AddTree(workingTreeIterator);
+				tw.Recursive = true;
+				if (!addAll)
+				{
+					tw.Filter = PathFilterGroup.CreateFromStrings(filepatterns);
+				}
+				string lastAddedFile = null;
+				while (tw.Next())
+				{
+					string path = tw.PathString;
+					WorkingTreeIterator f = tw.GetTree<WorkingTreeIterator>(1);
+					if (tw.GetTree<DirCacheIterator>(0) == null && f != null && f.IsEntryIgnored())
+					{
+					}
+					else
+					{
+						// file is not in index but is ignored, do nothing
+						// In case of an existing merge conflict the
+						// DirCacheBuildIterator iterates over all stages of
+						// this path, we however want to add only one
+						// new DirCacheEntry per path.
+						if (!(path.Equals(lastAddedFile)))
+						{
+							if (!(update && tw.GetTree<DirCacheIterator>(0) == null))
+							{
+								if (f != null)
+								{
+									// the file exists
+									long sz = f.GetEntryLength();
+									DirCacheEntry entry = new DirCacheEntry(path);
+									entry.SetLength(sz);
+									entry.SetLastModified(f.GetEntryLastModified());
+									entry.SetFileMode(f.GetEntryFileMode());
+									InputStream @in = f.OpenEntryStream();
+									try
+									{
+										entry.SetObjectId(inserter.Insert(Constants.OBJ_BLOB, sz, @in));
+									}
+									finally
+									{
+										@in.Close();
+									}
+									builder.Add(entry);
+									lastAddedFile = path;
+								}
+								else
+								{
+									if (!update)
+									{
+										c = tw.GetTree<DirCacheIterator>(0);
+										builder.Add(c.GetDirCacheEntry());
+									}
+								}
+							}
+						}
+					}
+				}
+				inserter.Flush();
+				builder.Commit();
+				SetCallable(false);
+			}
+			catch (IOException e)
+			{
+				throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfAddCommand
+					, e);
+			}
+			finally
+			{
+				inserter.Release();
+				if (dc != null)
+				{
+					dc.Unlock();
+				}
+			}
+			return dc;
+		}
+
+		/// <param name="update">
+		/// If set to true, the command only matches
+		/// <code>filepattern</code>
+		/// against already tracked files in the index rather than the
+		/// working tree. That means that it will never stage new files,
+		/// but that it will stage modified new contents of tracked files
+		/// and that it will remove files from the index if the
+		/// corresponding files in the working tree have been removed.
+		/// In contrast to the git command line a
+		/// <code>filepattern</code>
+		/// must
+		/// exist also if update is set to true as there is no
+		/// concept of a working directory here.
+		/// </param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.AddCommand SetUpdate(bool update)
+		{
+			this.update = update;
+			return this;
+		}
+
+		/// <returns>is the parameter update is set</returns>
+		public virtual bool IsUpdate()
+		{
+			return update;
+		}
+	}
+}

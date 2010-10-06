@@ -1,0 +1,255 @@
+using System;
+using NGit;
+using NGit.Errors;
+using NGit.Revwalk;
+using NGit.Storage.File;
+using NGit.Storage.Pack;
+using Sharpen;
+
+namespace NGit.Storage.File
+{
+	public class ConcurrentRepackTest : RepositoryTestCase
+	{
+		/// <exception cref="System.Exception"></exception>
+		protected override void SetUp()
+		{
+			WindowCacheConfig windowCacheConfig = new WindowCacheConfig();
+			windowCacheConfig.SetPackedGitOpenFiles(1);
+			WindowCache.Reconfigure(windowCacheConfig);
+			base.SetUp();
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		protected override void TearDown()
+		{
+			base.TearDown();
+			WindowCacheConfig windowCacheConfig = new WindowCacheConfig();
+			WindowCache.Reconfigure(windowCacheConfig);
+		}
+
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestObjectInNewPack()
+		{
+			// Create a new object in a new pack, and test that it is present.
+			//
+			Repository eden = CreateBareRepository();
+			RevObject o1 = WriteBlob(eden, "o1");
+			Pack(eden, o1);
+			NUnit.Framework.Assert.AreEqual(o1.Name, Parse(o1).Name);
+		}
+
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestObjectMovedToNewPack1()
+		{
+			// Create an object and pack it. Then remove that pack and put the
+			// object into a different pack file, with some other object. We
+			// still should be able to access the objects.
+			//
+			Repository eden = CreateBareRepository();
+			RevObject o1 = WriteBlob(eden, "o1");
+			FilePath[] out1 = Pack(eden, o1);
+			NUnit.Framework.Assert.AreEqual(o1.Name, Parse(o1).Name);
+			RevObject o2 = WriteBlob(eden, "o2");
+			Pack(eden, o2, o1);
+			// Force close, and then delete, the old pack.
+			//
+			WhackCache();
+			Delete(out1);
+			// Now here is the interesting thing. Will git figure the new
+			// object exists in the new pack, and not the old one.
+			//
+			NUnit.Framework.Assert.AreEqual(o2.Name, Parse(o2).Name);
+			NUnit.Framework.Assert.AreEqual(o1.Name, Parse(o1).Name);
+		}
+
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestObjectMovedWithinPack()
+		{
+			// Create an object and pack it.
+			//
+			Repository eden = CreateBareRepository();
+			RevObject o1 = WriteBlob(eden, "o1");
+			FilePath[] out1 = Pack(eden, o1);
+			NUnit.Framework.Assert.AreEqual(o1.Name, Parse(o1).Name);
+			// Force close the old pack.
+			//
+			WhackCache();
+			// Now overwrite the old pack in place. This method of creating a
+			// different pack under the same file name is partially broken. We
+			// should also have a different file name because the list of objects
+			// within the pack has been modified.
+			//
+			RevObject o2 = WriteBlob(eden, "o2");
+			PackWriter pw = new PackWriter(eden);
+			pw.AddObject(o2);
+			pw.AddObject(o1);
+			Write(out1, pw);
+			pw.Release();
+			// Try the old name, then the new name. The old name should cause the
+			// pack to reload when it opens and the index and pack mismatch.
+			//
+			NUnit.Framework.Assert.AreEqual(o1.Name, Parse(o1).Name);
+			NUnit.Framework.Assert.AreEqual(o2.Name, Parse(o2).Name);
+		}
+
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestObjectMovedToNewPack2()
+		{
+			// Create an object and pack it. Then remove that pack and put the
+			// object into a different pack file, with some other object. We
+			// still should be able to access the objects.
+			//
+			Repository eden = CreateBareRepository();
+			RevObject o1 = WriteBlob(eden, "o1");
+			FilePath[] out1 = Pack(eden, o1);
+			NUnit.Framework.Assert.AreEqual(o1.Name, Parse(o1).Name);
+			ObjectLoader load1 = db.Open(o1, Constants.OBJ_BLOB);
+			NUnit.Framework.Assert.IsNotNull(load1);
+			RevObject o2 = WriteBlob(eden, "o2");
+			Pack(eden, o2, o1);
+			// Force close, and then delete, the old pack.
+			//
+			WhackCache();
+			Delete(out1);
+			// Now here is the interesting thing... can the loader we made
+			// earlier still resolve the object, even though its underlying
+			// pack is gone, but the object still exists.
+			//
+			ObjectLoader load2 = db.Open(o1, Constants.OBJ_BLOB);
+			NUnit.Framework.Assert.IsNotNull(load2);
+			NUnit.Framework.Assert.AreNotSame(load1, load2);
+			byte[] data2 = load2.GetCachedBytes();
+			byte[] data1 = load1.GetCachedBytes();
+			NUnit.Framework.Assert.IsNotNull(data2);
+			NUnit.Framework.Assert.IsNotNull(data1);
+			NUnit.Framework.Assert.AreNotSame(data1, data2);
+			// cache should be per-pack, not per object
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data1, data2));
+			NUnit.Framework.Assert.AreEqual(load2.GetType(), load1.GetType());
+		}
+
+		private static void WhackCache()
+		{
+			WindowCacheConfig config = new WindowCacheConfig();
+			config.SetPackedGitOpenFiles(1);
+			WindowCache.Reconfigure(config);
+		}
+
+		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private RevObject Parse(AnyObjectId id)
+		{
+			return new RevWalk(db).ParseAny(id);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private FilePath[] Pack(Repository src, params RevObject[] list)
+		{
+			PackWriter pw = new PackWriter(src);
+			foreach (RevObject o in list)
+			{
+				pw.AddObject(o);
+			}
+			ObjectId name = pw.ComputeName();
+			FilePath packFile = FullPackFileName(name, ".pack");
+			FilePath idxFile = FullPackFileName(name, ".idx");
+			FilePath[] files = new FilePath[] { packFile, idxFile };
+			Write(files, pw);
+			pw.Release();
+			return files;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private static void Write(FilePath[] files, PackWriter pw)
+		{
+			long begin = files[0].GetParentFile().LastModified();
+			NullProgressMonitor m = NullProgressMonitor.INSTANCE;
+			OutputStream @out;
+			@out = new BufferedOutputStream(new FileOutputStream(files[0]));
+			try
+			{
+				pw.WritePack(m, m, @out);
+			}
+			finally
+			{
+				@out.Close();
+			}
+			@out = new BufferedOutputStream(new FileOutputStream(files[1]));
+			try
+			{
+				pw.WriteIndex(@out);
+			}
+			finally
+			{
+				@out.Close();
+			}
+			Touch(begin, files[0].GetParentFile());
+		}
+
+		private static void Delete(FilePath[] list)
+		{
+			long begin = list[0].GetParentFile().LastModified();
+			foreach (FilePath f in list)
+			{
+				f.Delete();
+				NUnit.Framework.Assert.IsFalse(f + " was removed", f.Exists());
+			}
+			Touch(begin, list[0].GetParentFile());
+		}
+
+		private static void Touch(long begin, FilePath dir)
+		{
+			while (begin >= dir.LastModified())
+			{
+				try
+				{
+					Sharpen.Thread.Sleep(25);
+				}
+				catch (Exception)
+				{
+				}
+				//
+				dir.SetLastModified(Runtime.CurrentTimeMillis());
+			}
+		}
+
+		private FilePath FullPackFileName(ObjectId name, string suffix)
+		{
+			FilePath packdir = new FilePath(db.ObjectDatabase.GetDirectory(), "pack");
+			return new FilePath(packdir, "pack-" + name.Name + suffix);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private RevObject WriteBlob(Repository repo, string data)
+		{
+			RevWalk revWalk = new RevWalk(repo);
+			byte[] bytes = Constants.Encode(data);
+			ObjectInserter inserter = repo.NewObjectInserter();
+			ObjectId id;
+			try
+			{
+				id = inserter.Insert(Constants.OBJ_BLOB, bytes);
+				inserter.Flush();
+			}
+			finally
+			{
+				inserter.Release();
+			}
+			try
+			{
+				Parse(id);
+				NUnit.Framework.Assert.Fail("Object " + id.Name + " should not exist in test repository"
+					);
+			}
+			catch (MissingObjectException)
+			{
+			}
+			// Ok
+			return revWalk.LookupBlob(id);
+		}
+	}
+}
