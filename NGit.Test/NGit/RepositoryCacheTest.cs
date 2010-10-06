@@ -49,6 +49,7 @@ namespace NGit
 {
 	public class RepositoryCacheTest : RepositoryTestCase
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestNonBareFileKey()
 		{
 			FilePath gitdir = db.Directory;
@@ -69,6 +70,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBareFileKey()
 		{
 			Repository bare = CreateBareRepository();
@@ -86,6 +88,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFileKeyOpenExisting()
 		{
 			Repository r;
@@ -100,6 +103,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFileKeyOpenNew()
 		{
 			Repository n = CreateBareRepository();
@@ -123,6 +127,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCacheRegisterOpen()
 		{
 			FilePath dir = db.Directory;
@@ -136,6 +141,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCacheOpen()
 		{
 			RepositoryCache.FileKey loc = RepositoryCache.FileKey.Exact(db.Directory, db.FileSystem

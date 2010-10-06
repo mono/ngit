@@ -45,14 +45,15 @@ using System.Collections.Generic;
 using NGit;
 using NGit.Diff;
 using NGit.Patch;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Patch
 {
-	public class PatchCcTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class PatchCcTest
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_OneFileCc()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -72,12 +73,12 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, cfh.GetOldMode(0));
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, cfh.GetOldMode(1));
 			NUnit.Framework.Assert.AreSame(FileMode.EXECUTABLE_FILE, cfh.GetNewMode());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.MODIFY, cfh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, cfh.GetPatchType());
-			NUnit.Framework.Assert.AreEqual(1, ((IList<CombinedHunkHeader>)cfh.GetHunks()).Count
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.MODIFY, cfh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, cfh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(1, ((IList<HunkHeader>)cfh.GetHunks()).Count
 				);
 			{
-				CombinedHunkHeader h = ((IList<CombinedHunkHeader>)cfh.GetHunks())[0];
+				CombinedHunkHeader h = (CombinedHunkHeader)(cfh.GetHunks()[0]);
 				NUnit.Framework.Assert.AreSame(cfh, ((CombinedFileHeader)h.GetFileHeader()));
 				NUnit.Framework.Assert.AreEqual(346, h.startOffset);
 				NUnit.Framework.Assert.AreEqual(764, h.endOffset);
@@ -99,6 +100,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_CcNewFile()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -117,12 +119,12 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreSame(FileMode.MISSING, cfh.GetOldMode(0));
 			NUnit.Framework.Assert.AreSame(FileMode.MISSING, cfh.GetOldMode(1));
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, cfh.GetNewMode());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.ADD, cfh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, cfh.GetPatchType());
-			NUnit.Framework.Assert.AreEqual(1, ((IList<CombinedHunkHeader>)cfh.GetHunks()).Count
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.ADD, cfh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, cfh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(1, ((IList<HunkHeader>)cfh.GetHunks()).Count
 				);
 			{
-				CombinedHunkHeader h = ((IList<CombinedHunkHeader>)cfh.GetHunks())[0];
+				CombinedHunkHeader h = (CombinedHunkHeader)(cfh.GetHunks()[0]);
 				NUnit.Framework.Assert.AreSame(cfh, ((CombinedFileHeader)h.GetFileHeader()));
 				NUnit.Framework.Assert.AreEqual(273, h.startOffset);
 				NUnit.Framework.Assert.AreEqual(300, h.endOffset);
@@ -144,6 +146,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_CcDeleteFile()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -162,8 +165,8 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, cfh.GetOldMode(0));
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, cfh.GetOldMode(1));
 			NUnit.Framework.Assert.AreSame(FileMode.MISSING, cfh.GetNewMode());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.DELETE, cfh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, cfh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.DELETE, cfh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, cfh.GetPatchType());
 			NUnit.Framework.Assert.IsTrue(((IList<CombinedHunkHeader>)cfh.GetHunks()).IsEmpty
 				());
 		}

@@ -54,6 +54,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public override void TestEmpty()
 		{
 			base.TestEmpty();
@@ -62,6 +63,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloneEmpty()
 		{
 			q = new DateRevQueue(AbstractRevQueue.EMPTY_QUEUE);
@@ -69,6 +71,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInsertOutOfOrder()
 		{
 			RevCommit a = ParseBody(Commit());
@@ -87,6 +90,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInsertTie()
 		{
 			RevCommit a = ParseBody(Commit());
@@ -110,6 +114,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloneFIFO()
 		{
 			RevCommit a = ParseBody(Commit());

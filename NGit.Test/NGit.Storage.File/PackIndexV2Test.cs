@@ -67,6 +67,7 @@ namespace NGit.Storage.File
 		/// <exception cref="System.NotSupportedException">System.NotSupportedException</exception>
 		/// <exception cref="NGit.Errors.MissingObjectException">NGit.Errors.MissingObjectException
 		/// 	</exception>
+		[NUnit.Framework.Test]
 		public override void TestCRC32()
 		{
 			NUnit.Framework.Assert.IsTrue(smallIdx.HasCRC32Support());

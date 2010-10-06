@@ -43,13 +43,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class IntListTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class IntListTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty_DefaultCapacity()
 		{
 			IntList i = new IntList();
@@ -65,6 +66,7 @@ namespace NGit.Util
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty_SpecificCapacity()
 		{
 			IntList i = new IntList(5);
@@ -80,6 +82,7 @@ namespace NGit.Util
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAdd_SmallGroup()
 		{
 			IntList i = new IntList();
@@ -104,6 +107,7 @@ namespace NGit.Util
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAdd_ZeroCapacity()
 		{
 			IntList i = new IntList(0);
@@ -112,6 +116,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(1, i.Get(0));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAdd_LargeGroup()
 		{
 			IntList i = new IntList();
@@ -136,6 +141,7 @@ namespace NGit.Util
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFillTo0()
 		{
 			IntList i = new IntList();
@@ -143,6 +149,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(0, i.Size());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFillTo1()
 		{
 			IntList i = new IntList();
@@ -153,6 +160,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(0, i.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFillTo100()
 		{
 			IntList i = new IntList();
@@ -163,6 +171,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(3, i.Get(100));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestClear()
 		{
 			IntList i = new IntList();
@@ -185,6 +194,7 @@ namespace NGit.Util
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSet()
 		{
 			IntList i = new IntList();
@@ -207,6 +217,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(2, i.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestToString()
 		{
 			IntList i = new IntList();

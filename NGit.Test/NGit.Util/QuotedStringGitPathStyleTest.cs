@@ -43,12 +43,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class QuotedStringGitPathStyleTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class QuotedStringGitPathStyleTest
 	{
 		private static void AssertQuote(string exp, string @in)
 		{
@@ -73,36 +73,42 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(exp, r);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuote_Empty()
 		{
 			NUnit.Framework.Assert.AreEqual("\"\"", QuotedString.GIT_PATH.Quote(string.Empty)
 				);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_Empty1()
 		{
 			NUnit.Framework.Assert.AreEqual(string.Empty, QuotedString.GIT_PATH.Dequote(new byte
 				[0], 0, 0));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_Empty2()
 		{
 			NUnit.Framework.Assert.AreEqual(string.Empty, QuotedString.GIT_PATH.Dequote(new byte
 				[] { (byte)('"'), (byte)('"') }, 0, 2));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_SoleDq()
 		{
 			NUnit.Framework.Assert.AreEqual("\"", QuotedString.GIT_PATH.Dequote(new byte[] { 
 				(byte)('"') }, 0, 1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuote_BareA()
 		{
 			string @in = "a";
 			NUnit.Framework.Assert.AreSame(@in, QuotedString.GIT_PATH.Quote(@in));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_BareA()
 		{
 			string @in = "a";
@@ -111,6 +117,7 @@ namespace NGit.Util
 				));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_BareABCZ_OnlyBC()
 		{
 			string @in = "abcz";
@@ -119,11 +126,13 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual("bc", QuotedString.GIT_PATH.Dequote(b, p, p + 2));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_LoneBackslash()
 		{
 			AssertDequote("\\", "\\");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuote_NamedEscapes()
 		{
 			AssertQuote("\\a", "\u0007");
@@ -137,6 +146,7 @@ namespace NGit.Util
 			AssertQuote("\\\"", "\"");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_NamedEscapes()
 		{
 			AssertDequote("\u0007", "\\a");
@@ -150,6 +160,7 @@ namespace NGit.Util
 			AssertDequote("\"", "\\\"");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_OctalAll()
 		{
 			for (int i = 0; i < 127; i++)
@@ -174,6 +185,7 @@ namespace NGit.Util
 			return "\\" + s;
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuote_OctalAll()
 		{
 			AssertQuote("\\001", "\x1");
@@ -182,42 +194,50 @@ namespace NGit.Util
 		}
 
 		// \u00ff in UTF-8
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_UnknownEscapeQ()
 		{
 			AssertDequote("\\q", "\\q");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_FooTabBar()
 		{
 			AssertDequote("foo\tbar", "foo\\tbar");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_Latin1()
 		{
 			AssertDequote("\u00c5ngstr\u00f6m", "\\305ngstr\\366m");
 		}
 
 		// Latin1
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_UTF8()
 		{
 			AssertDequote("\u00c5ngstr\u00f6m", "\\303\\205ngstr\\303\\266m");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_RawUTF8()
 		{
 			AssertDequote("\u00c5ngstr\u00f6m", "\x12f\xcdngstr\x12f\x10am");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_RawLatin1()
 		{
 			AssertDequote("\u00c5ngstr\u00f6m", "\x131ngstr\x16em");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuote_Ang()
 		{
 			AssertQuote("\\303\\205ngstr\\303\\266m", "\u00c5ngstr\u00f6m");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuoteAtAndNumber()
 		{
 			NUnit.Framework.Assert.AreSame("abc@2x.png", QuotedString.GIT_PATH.Quote("abc@2x.png"

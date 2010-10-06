@@ -88,6 +88,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateFileHeader_Add()
 		{
 			ObjectId adId = Blob("a\nd\n");
@@ -117,6 +118,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateFileHeader_Delete()
 		{
 			ObjectId adId = Blob("a\nd\n");
@@ -146,6 +148,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateFileHeader_Modify()
 		{
 			ObjectId adId = Blob("a\nd\n");
@@ -173,6 +176,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateFileHeader_Binary()
 		{
 			ObjectId adId = Blob("a\nd\n");
@@ -190,6 +194,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateFileHeader_GitLink()
 		{
 			ObjectId aId = Blob("a\n");

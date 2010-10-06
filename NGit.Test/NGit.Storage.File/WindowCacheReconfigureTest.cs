@@ -50,6 +50,7 @@ namespace NGit.Storage.File
 {
 	public class WindowCacheReconfigureTest : RepositoryTestCase
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestConfigureCache_PackedGitLimit_0()
 		{
 			try
@@ -65,6 +66,7 @@ namespace NGit.Storage.File
 		}
 
 		//
+		[NUnit.Framework.Test]
 		public virtual void TestConfigureCache_PackedGitWindowSize_0()
 		{
 			try
@@ -80,6 +82,7 @@ namespace NGit.Storage.File
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestConfigureCache_PackedGitWindowSize_512()
 		{
 			try
@@ -95,6 +98,7 @@ namespace NGit.Storage.File
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestConfigureCache_PackedGitWindowSize_4097()
 		{
 			try
@@ -110,6 +114,7 @@ namespace NGit.Storage.File
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestConfigureCache_PackedGitOpenFiles_0()
 		{
 			try
@@ -125,6 +130,7 @@ namespace NGit.Storage.File
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestConfigureCache_PackedGitWindowSizeAbovePackedGitLimit()
 		{
 			try
@@ -142,6 +148,7 @@ namespace NGit.Storage.File
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestConfigureCache_Limits1()
 		{
 			// This test is just to force coverage over some lower bounds for

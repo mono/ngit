@@ -61,6 +61,7 @@ namespace NGit
 		// go there to see what they mean.
 		// Rule 0 is left out for obvious reasons :)
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRules1thru3_NoIndexEntry()
 		{
 			Tree head = new Tree(db);
@@ -166,6 +167,7 @@ namespace NGit
 		// but it doesn't matter if the entry is clean or not
 		// so we can just ignore the state in the filesystem entirely
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRules4thru13_IndexEntryNotInHead()
 		{
 			// rules 4 and 5
@@ -249,6 +251,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileSimple()
 		{
 			Tree treeDF = BuildTree(Mkmap("DF", "DF"));
@@ -265,6 +268,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_1()
 		{
 			// 1
@@ -275,6 +279,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_2()
 		{
 			// 2
@@ -285,6 +290,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_3()
 		{
 			// 3 - the first to break!
@@ -294,6 +300,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_4()
 		{
 			// 4 (basically same as 3, just with H and M different)
@@ -303,6 +310,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_5()
 		{
 			// 5
@@ -311,6 +319,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_6()
 		{
 			// 6
@@ -321,6 +330,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_7()
 		{
 			// 7
@@ -348,6 +358,7 @@ namespace NGit
 		// throwing away unsaved contents.
 		// This test would fail in DirCacheCheckoutTests.
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_8()
 		{
 			// 8
@@ -359,6 +370,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_9()
 		{
 			// 9
@@ -368,6 +380,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_10()
 		{
 			// 10
@@ -377,6 +390,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_11()
 		{
 			// 11
@@ -385,6 +399,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_12()
 		{
 			// 12
@@ -395,6 +410,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_13()
 		{
 			// 13
@@ -407,6 +423,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_14()
 		{
 			// 14
@@ -417,6 +434,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_15()
 		{
 			// 15
@@ -428,6 +446,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_15b()
 		{
 			// 15, take 2, just to check multi-leveled
@@ -440,6 +459,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_16()
 		{
 			// 16
@@ -450,6 +470,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_17()
 		{
 			// 17
@@ -466,6 +487,7 @@ namespace NGit
 		// This test would fail in DirCacheCheckout
 		// assertUpdated("DF");
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_18()
 		{
 			// 18
@@ -476,6 +498,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_19()
 		{
 			// 19
@@ -541,6 +564,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUntrackedConflicts()
 		{
 			SetupCase(null, Mk("foo"), null);
@@ -574,6 +598,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloseNameConflictsX0()
 		{
 			SetupCase(Mkmap("a/a", "a/a-c"), Mkmap("a/a", "a/a", "b.b/b.b", "b.b/b.bs"), Mkmap
@@ -588,6 +613,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloseNameConflicts1()
 		{
 			SetupCase(Mkmap("a/a", "a/a-c"), Mkmap("a/a", "a/a", "a.a/a.a", "a.a/a.a"), Mkmap
@@ -602,6 +628,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCheckoutHierarchy()
 		{
 			SetupCase(Mkmap("a", "a", "b/c", "b/c", "d", "d", "e/f", "e/f", "e/g", "e/g"), Mkmap
@@ -620,6 +647,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCheckoutOutChanges()
 		{
 			SetupCase(Mk("foo"), Mk("foo/bar"), Mk("foo"));
@@ -652,6 +680,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCheckoutUncachedChanges()
 		{
 			SetupCase(Mk("foo"), Mk("foo"), Mk("foo"));
@@ -663,6 +692,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDontOverwriteDirtyFile()
 		{
 			SetupCase(Mk("foo"), Mk("other"), Mk("foo"));
@@ -698,8 +728,8 @@ namespace NGit
 				ft = walk.GetTree<FileTreeIterator>(0);
 				path = ft.GetEntryPathString();
 				expectedValue = i.Get(path);
-				NUnit.Framework.Assert.IsNotNull("found unexpected file for path " + path + " in workdir"
-					, expectedValue);
+				NUnit.Framework.Assert.IsNotNull(expectedValue, "found unexpected file for path "
+					 + path + " in workdir");
 				FilePath file = new FilePath(db.WorkTree, path);
 				NUnit.Framework.Assert.IsTrue(file.Exists());
 				if (file.IsFile())
@@ -714,13 +744,13 @@ namespace NGit
 						offset += numRead;
 					}
 					@is.Close();
-					NUnit.Framework.Assert.IsTrue("unexpected content for path " + path + " in workDir. Expected: <"
-						 + expectedValue + ">", Arrays.Equals(buffer, Sharpen.Runtime.GetBytesForString(
-						i.Get(path))));
+					NUnit.Framework.Assert.IsTrue(Arrays.Equals(buffer, Sharpen.Runtime.GetBytesForString
+						(i.Get(path))), "unexpected content for path " + path + " in workDir. Expected: <"
+						 + expectedValue + ">");
 					nrFiles++;
 				}
 			}
-			NUnit.Framework.Assert.AreEqual("WorkDir has not the right size.", i.Count, nrFiles
+			NUnit.Framework.Assert.AreEqual(i.Count, nrFiles, "WorkDir has not the right size."
 				);
 		}
 
@@ -735,17 +765,17 @@ namespace NGit
 			// is updated multiple times inside a FileSystemTimer tick db.getIndex will
 			// not reload the index and return a cached (stale) index.
 			theIndex.Read();
-			NUnit.Framework.Assert.AreEqual("Index has not the right size.", i.Count, theIndex
-				.GetMembers().Length);
+			NUnit.Framework.Assert.AreEqual(i.Count, theIndex.GetMembers().Length, "Index has not the right size."
+				);
 			for (int j = 0; j < theIndex.GetMembers().Length; j++)
 			{
 				path = theIndex.GetMembers()[j].GetName();
 				expectedValue = i.Get(path);
-				NUnit.Framework.Assert.IsNotNull("found unexpected entry for path " + path + " in index"
-					, expectedValue);
-				NUnit.Framework.Assert.IsTrue("unexpected content for path " + path + " in index. Expected: <"
-					 + expectedValue + ">", Arrays.Equals(db.Open(theIndex.GetMembers()[j].GetObjectId
-					()).GetCachedBytes(), Sharpen.Runtime.GetBytesForString(i.Get(path))));
+				NUnit.Framework.Assert.IsNotNull(expectedValue, "found unexpected entry for path "
+					 + path + " in index");
+				NUnit.Framework.Assert.IsTrue(Arrays.Equals(db.Open(theIndex.GetMembers()[j].GetObjectId
+					()).GetCachedBytes(), Sharpen.Runtime.GetBytesForString(i.Get(path))), "unexpected content for path "
+					 + path + " in index. Expected: <" + expectedValue + ">");
 			}
 		}
 

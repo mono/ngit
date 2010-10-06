@@ -77,6 +77,7 @@ namespace NGit.Storage.File
 		/// <exception cref="NGit.Errors.MissingObjectException">NGit.Errors.MissingObjectException
 		/// 	</exception>
 		/// <exception cref="System.NotSupportedException">System.NotSupportedException</exception>
+		[NUnit.Framework.Test]
 		public abstract void TestCRC32();
 
 		/// <summary>
@@ -87,6 +88,7 @@ namespace NGit.Storage.File
 		/// Test contracts of Iterator methods and this implementation remove()
 		/// limitations.
 		/// </remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestIteratorMethodsContract()
 		{
 			Iterator<PackIndex.MutableEntry> iter = smallIdx.Iterator();
@@ -122,6 +124,7 @@ namespace NGit.Storage.File
 		/// Test results of iterator comparing to content of well-known (prepared)
 		/// small index.
 		/// </remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestIteratorReturnedValues1()
 		{
 			Iterator<PackIndex.MutableEntry> iter = smallIdx.Iterator();
@@ -148,6 +151,7 @@ namespace NGit.Storage.File
 		/// 	</summary>
 		/// <remarks>Compare offset from iterator entries with output of findOffset() method.
 		/// 	</remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestCompareEntriesOffsetsWithFindOffsets()
 		{
 			foreach (PackIndex.MutableEntry me in smallIdx)
@@ -170,6 +174,7 @@ namespace NGit.Storage.File
 		/// Test partial results of iterator comparing to content of well-known
 		/// (prepared) dense index, that may need multi-level indexing.
 		/// </remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestIteratorReturnedValues2()
 		{
 			Iterator<PackIndex.MutableEntry> iter = denseIdx.Iterator();

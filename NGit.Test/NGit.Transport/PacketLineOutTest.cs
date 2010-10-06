@@ -48,7 +48,8 @@ using Sharpen;
 
 namespace NGit.Transport
 {
-	public class PacketLineOutTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class PacketLineOutTest
 	{
 		private ByteArrayOutputStream rawOut;
 
@@ -58,15 +59,16 @@ namespace NGit.Transport
 		//
 		// perl -e 'printf "%4.4x%s\n", 4+length($ARGV[0]),$ARGV[0]'
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			rawOut = new ByteArrayOutputStream();
 			@out = new PacketLineOut(rawOut);
 		}
 
 		// writeString
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteString1()
 		{
 			@out.WriteString("a");
@@ -75,6 +77,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteString2()
 		{
 			@out.WriteString("a\n");
@@ -83,6 +86,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteString3()
 		{
 			@out.WriteString(string.Empty);
@@ -91,6 +95,7 @@ namespace NGit.Transport
 
 		// end
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteEnd()
 		{
 			int[] flushCnt = new int[1];
@@ -127,6 +132,7 @@ namespace NGit.Transport
 
 		// writePacket
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePacket1()
 		{
 			@out.WritePacket(new byte[] { (byte)('a') });
@@ -134,6 +140,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePacket2()
 		{
 			@out.WritePacket(new byte[] { (byte)('a'), (byte)('b'), (byte)('c'), (byte)('d') }
@@ -142,6 +149,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePacket3()
 		{
 			int buflen = SideBandOutputStream.MAX_BUF - 5;
@@ -165,6 +173,7 @@ namespace NGit.Transport
 
 		// flush
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFlush()
 		{
 			int[] flushCnt = new int[1];

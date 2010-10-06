@@ -43,14 +43,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using NGit.Util.IO;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util.IO
 {
-	public class EolCanonicalizingInputStreamTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class EolCanonicalizingInputStreamTest
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLF()
 		{
 			byte[] bytes = AsBytes("1\n2\n3");
@@ -58,6 +59,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCR()
 		{
 			byte[] bytes = AsBytes("1\r2\r3");
@@ -65,12 +67,14 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCRLF()
 		{
 			Test(AsBytes("1\r\n2\r\n3"), AsBytes("1\n2\n3"));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLFCR()
 		{
 			byte[] bytes = AsBytes("1\n\r2\n\r3");

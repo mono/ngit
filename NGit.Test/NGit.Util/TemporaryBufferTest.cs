@@ -45,14 +45,15 @@ using System;
 using System.IO;
 using NGit.Junit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class TemporaryBufferTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class TemporaryBufferTest
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -71,6 +72,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneByte()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -103,6 +105,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneBlock_BulkWrite()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -138,6 +141,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneBlockAndHalf_BulkWrite()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -173,6 +177,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneBlockAndHalf_SingleWrite()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -208,6 +213,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneBlockAndHalf_Copy()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -242,6 +248,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLarge_SingleWrite()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -274,6 +281,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInCoreLimit_SwitchOnAppendByte()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -307,6 +315,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInCoreLimit_SwitchBeforeAppendByte()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -340,6 +349,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInCoreLimit_SwitchOnCopy()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -375,6 +385,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDestroyWhileOpen()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -390,6 +401,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRandomWrites()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
@@ -443,6 +455,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHeap()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.Heap(2 * 8 * 1024);

@@ -53,6 +53,7 @@ namespace NGit.Transport
 	public class BundleWriterTest : SampleDataRepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite0()
 		{
 			// Create a tiny bundle, (well one of) the first commits only
@@ -74,6 +75,7 @@ namespace NGit.Transport
 
 		/// <summary>Incremental bundle test</summary>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite1()
 		{
 			byte[] bundle;

@@ -67,39 +67,39 @@ namespace NGit.Revplot
 
 			public virtual PlotCommitListTest.CommitListAssert Commit(RevCommit id)
 			{
-				NUnit.Framework.Assert.IsTrue("Unexpected end of list at pos#" + this.nextIndex, 
-					this.pcl.Count > this.nextIndex);
+				NUnit.Framework.Assert.IsTrue(this.pcl.Count > this.nextIndex, "Unexpected end of list at pos#"
+					 + this.nextIndex);
 				this.current = this.pcl[this.nextIndex++];
-				NUnit.Framework.Assert.AreEqual("Expected commit not found at pos#" + (this.nextIndex
-					 - 1), id.Id, this.current.Id);
+				NUnit.Framework.Assert.AreEqual(id.Id, this.current.Id, "Expected commit not found at pos#"
+					 + (this.nextIndex - 1));
 				return this;
 			}
 
 			public virtual PlotCommitListTest.CommitListAssert LanePos(int pos)
 			{
 				PlotLane lane = this.current.GetLane();
-				NUnit.Framework.Assert.AreEqual("Position of lane of commit #" + (this.nextIndex 
-					- 1) + " not as expected.", pos, lane.GetPosition());
+				NUnit.Framework.Assert.AreEqual(pos, lane.GetPosition(), "Position of lane of commit #"
+					 + (this.nextIndex - 1) + " not as expected.");
 				return this;
 			}
 
 			public virtual PlotCommitListTest.CommitListAssert Parents(params RevCommit[] parents
 				)
 			{
-				NUnit.Framework.Assert.AreEqual("Number of parents of commit #" + (this.nextIndex
-					 - 1) + " not as expected.", parents.Length, this.current.ParentCount);
+				NUnit.Framework.Assert.AreEqual(parents.Length, this.current.ParentCount, "Number of parents of commit #"
+					 + (this.nextIndex - 1) + " not as expected.");
 				for (int i = 0; i < parents.Length; i++)
 				{
-					NUnit.Framework.Assert.AreEqual("Unexpected parent of commit #" + (this.nextIndex
-						 - 1), parents[i], this.current.GetParent(i));
+					NUnit.Framework.Assert.AreEqual(parents[i], this.current.GetParent(i), "Unexpected parent of commit #"
+						 + (this.nextIndex - 1));
 				}
 				return this;
 			}
 
 			public virtual PlotCommitListTest.CommitListAssert NoMoreCommits()
 			{
-				NUnit.Framework.Assert.AreEqual("Unexpected size of list", this.nextIndex, this.pcl
-					.Count);
+				NUnit.Framework.Assert.AreEqual(this.nextIndex, this.pcl.Count, "Unexpected size of list"
+					);
 				return this;
 			}
 
@@ -107,6 +107,7 @@ namespace NGit.Revplot
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLinear()
 		{
 			RevCommit a = Commit();
@@ -126,6 +127,7 @@ namespace NGit.Revplot
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMerged()
 		{
 			RevCommit a = Commit();
@@ -147,6 +149,7 @@ namespace NGit.Revplot
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSideBranch()
 		{
 			RevCommit a = Commit();
@@ -167,6 +170,7 @@ namespace NGit.Revplot
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test2SideBranches()
 		{
 			RevCommit a = Commit();
@@ -190,6 +194,7 @@ namespace NGit.Revplot
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBug300282_1()
 		{
 			RevCommit a = Commit();
@@ -227,6 +232,7 @@ namespace NGit.Revplot
 
 		// test the history of the egit project between 9fdaf3c1 and e76ad9170f
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEgitHistory()
 		{
 			RevCommit merge_fix = Commit();

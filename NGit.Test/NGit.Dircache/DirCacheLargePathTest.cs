@@ -51,30 +51,35 @@ namespace NGit.Dircache
 	public class DirCacheLargePathTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPath_4090()
 		{
 			TestLongPath(4090);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPath_4094()
 		{
 			TestLongPath(4094);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPath_4095()
 		{
 			TestLongPath(4095);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPath_4096()
 		{
 			TestLongPath(4096);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPath_16384()
 		{
 			TestLongPath(16384);

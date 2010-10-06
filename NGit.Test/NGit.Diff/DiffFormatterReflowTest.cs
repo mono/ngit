@@ -45,12 +45,12 @@ using System;
 using NGit.Diff;
 using NGit.Patch;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Diff
 {
-	public class DiffFormatterReflowTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class DiffFormatterReflowTest
 	{
 		private RawText a;
 
@@ -63,14 +63,15 @@ namespace NGit.Diff
 		private DiffFormatter fmt;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			@out = new ByteArrayOutputStream();
 			fmt = new DiffFormatter(@out);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNegativeContextFails()
 		{
 			Init("X");
@@ -86,6 +87,7 @@ namespace NGit.Diff
 
 		// pass
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestContext0()
 		{
 			Init("X");
@@ -94,6 +96,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestContext1()
 		{
 			Init("X");
@@ -102,6 +105,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestContext3()
 		{
 			Init("X");
@@ -110,6 +114,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestContext5()
 		{
 			Init("X");
@@ -118,6 +123,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestContext10()
 		{
 			Init("X");
@@ -126,6 +132,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestContext100()
 		{
 			Init("X");
@@ -134,6 +141,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty1()
 		{
 			Init("E");
@@ -141,6 +149,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoNewLine1()
 		{
 			Init("Y");
@@ -148,6 +157,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoNewLine2()
 		{
 			Init("Z");

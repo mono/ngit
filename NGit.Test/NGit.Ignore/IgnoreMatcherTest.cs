@@ -48,8 +48,10 @@ using Sharpen;
 namespace NGit.Ignore
 {
 	/// <summary>Tests ignore pattern matches</summary>
-	public class IgnoreMatcherTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class IgnoreMatcherTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestBasic()
 		{
 			string pattern = "/test.stp";
@@ -58,6 +60,7 @@ namespace NGit.Ignore
 			AssertNotMatched(pattern, "/test.stp");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFileNameWildcards()
 		{
 			//Test basic * and ? for any pattern + any character
@@ -113,6 +116,7 @@ namespace NGit.Ignore
 			AssertNotMatched(pattern, "/src/new.c");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestTargetWithoutLeadingSlash()
 		{
 			//Test basic * and ? for any pattern + any character
@@ -168,6 +172,7 @@ namespace NGit.Ignore
 			AssertNotMatched(pattern, "src/new.c");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParentDirectoryGitIgnores()
 		{
 			//Contains git ignore patterns such as might be seen in a parent directory
@@ -198,6 +203,7 @@ namespace NGit.Ignore
 			AssertNotMatched(pattern, "/src/new/a/file.c");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestTrailingSlash()
 		{
 			string pattern = "/src/";
@@ -209,6 +215,7 @@ namespace NGit.Ignore
 			AssertNotMatched(pattern, "/srcA/");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNameOnlyMatches()
 		{
 			//Test matches for file extension
@@ -254,12 +261,14 @@ namespace NGit.Ignore
 			AssertNotMatched(pattern, "/cr3");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNegation()
 		{
 			string pattern = "!/test.stp";
 			AssertMatched(pattern, "/test.stp");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestGetters()
 		{
 			IgnoreRule r = new IgnoreRule("/pattern/");
@@ -309,8 +318,8 @@ namespace NGit.Ignore
 		public virtual void AssertMatched(string pattern, string target)
 		{
 			bool value = Match(pattern, target);
-			NUnit.Framework.Assert.IsTrue("Expected a match for: " + pattern + " with: " + target
-				, value);
+			NUnit.Framework.Assert.IsTrue(value, "Expected a match for: " + pattern + " with: "
+				 + target);
 		}
 
 		/// <summary>Check for a match.</summary>
@@ -323,8 +332,8 @@ namespace NGit.Ignore
 		public virtual void AssertNotMatched(string pattern, string target)
 		{
 			bool value = Match(pattern, target);
-			NUnit.Framework.Assert.IsFalse("Expected no match for: " + pattern + " with: " + 
-				target, value);
+			NUnit.Framework.Assert.IsFalse(value, "Expected no match for: " + pattern + " with: "
+				 + target);
 		}
 
 		/// <summary>Check for a match.</summary>

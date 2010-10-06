@@ -43,13 +43,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Transport;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Transport
 {
-	public class RefSpecTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RefSpecTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestMasterMaster()
 		{
 			string sn = "refs/heads/master";
@@ -69,6 +70,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(rs.MatchDestination(r));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSplitLastColon()
 		{
 			string lhs = ":m:a:i:n:t";
@@ -82,6 +84,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(rs, new RefSpec(rs.ToString()));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestForceMasterMaster()
 		{
 			string sn = "refs/heads/master";
@@ -101,6 +104,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(rs.MatchDestination(r));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestMaster()
 		{
 			string sn = "refs/heads/master";
@@ -120,6 +124,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(rs.MatchDestination(r));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestForceMaster()
 		{
 			string sn = "refs/heads/master";
@@ -139,6 +144,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(rs.MatchDestination(r));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteMaster()
 		{
 			string sn = "refs/heads/master";
@@ -158,6 +164,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(rs.MatchDestination(r));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestForceRemotesOrigin()
 		{
 			string srcn = "refs/heads/*";
@@ -189,6 +196,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(rs.MatchDestination(r));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCreateEmpty()
 		{
 			RefSpec rs = new RefSpec();
@@ -199,6 +207,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual("HEAD", rs.ToString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSetForceUpdate()
 		{
 			string s = "refs/heads/*:refs/remotes/origin/*";
@@ -212,6 +221,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual("+" + s, b.ToString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSetSource()
 		{
 			RefSpec a = new RefSpec();
@@ -221,6 +231,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", b.ToString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSetDestination()
 		{
 			RefSpec a = new RefSpec();
@@ -230,6 +241,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual("HEAD:refs/heads/master", b.ToString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSetDestination_SourceNull()
 		{
 			RefSpec a = new RefSpec();
@@ -241,6 +253,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(":refs/heads/master", b.ToString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSetSourceDestination()
 		{
 			RefSpec a = new RefSpec();
@@ -252,6 +265,7 @@ namespace NGit.Transport
 				));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestExpandFromDestination_NonWildcard()
 		{
 			string src = "refs/heads/master";
@@ -264,6 +278,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(dst, r.GetDestination());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestExpandFromDestination_Wildcard()
 		{
 			string src = "refs/heads/master";

@@ -69,6 +69,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Test findObject() for all index entries.</summary>
 		/// <remarks>Test findObject() for all index entries.</remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestFindObject()
 		{
 			foreach (PackIndex.MutableEntry me in idx)
@@ -79,6 +80,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Test findObject() with illegal argument.</summary>
 		/// <remarks>Test findObject() with illegal argument.</remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestFindObjectWrongOffset()
 		{
 			NUnit.Framework.Assert.IsNull(reverseIdx.FindObject(0));
@@ -88,6 +90,7 @@ namespace NGit.Storage.File
 		/// <remarks>Test findNextOffset() for all index entries.</remarks>
 		/// <exception cref="NGit.Errors.CorruptObjectException">NGit.Errors.CorruptObjectException
 		/// 	</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindNextOffset()
 		{
 			long offset = FindFirstOffset();
@@ -111,6 +114,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Test findNextOffset() with wrong illegal argument as offset.</summary>
 		/// <remarks>Test findNextOffset() with wrong illegal argument as offset.</remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestFindNextOffsetWrongOffset()
 		{
 			try

@@ -44,12 +44,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System.IO;
 using NGit;
 using NGit.Transport;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Transport
 {
-	public class PacketLineInTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class PacketLineInTest
 	{
 		private ByteArrayInputStream rawIn;
 
@@ -60,6 +60,7 @@ namespace NGit.Transport
 		// perl -e 'printf "%4.4x%s\n", 4+length($ARGV[0]),$ARGV[0]'
 		// readString
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadString1()
 		{
 			Init("0006a\n0007bc\n");
@@ -69,6 +70,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadString2()
 		{
 			Init("0032want fcfcfb1fd94829c1a1704f894fc111d14770d34e\n");
@@ -79,6 +81,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadString4()
 		{
 			Init("0005a0006bc");
@@ -88,6 +91,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadString5()
 		{
 			// accept both upper and lower case
@@ -99,6 +103,7 @@ namespace NGit.Transport
 			AssertEOF();
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadString_LenHELO()
 		{
 			Init("HELO");
@@ -113,6 +118,7 @@ namespace NGit.Transport
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadString_Len0001()
 		{
 			Init("0001");
@@ -127,6 +133,7 @@ namespace NGit.Transport
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadString_Len0002()
 		{
 			Init("0002");
@@ -141,6 +148,7 @@ namespace NGit.Transport
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadString_Len0003()
 		{
 			Init("0003");
@@ -156,6 +164,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadString_Len0004()
 		{
 			Init("0004");
@@ -166,6 +175,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadString_End()
 		{
 			Init("0000");
@@ -175,6 +185,7 @@ namespace NGit.Transport
 
 		// readStringNoLF
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadStringRaw1()
 		{
 			Init("0005a0006bc");
@@ -184,6 +195,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadStringRaw2()
 		{
 			Init("0031want fcfcfb1fd94829c1a1704f894fc111d14770d34e");
@@ -194,6 +206,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadStringRaw3()
 		{
 			Init("0004");
@@ -204,6 +217,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadStringRaw_End()
 		{
 			Init("0000");
@@ -211,6 +225,7 @@ namespace NGit.Transport
 			AssertEOF();
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadStringRaw4()
 		{
 			Init("HELO");
@@ -227,66 +242,72 @@ namespace NGit.Transport
 
 		// readACK
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_NAK()
 		{
 			ObjectId expid = ObjectId.FromString("fcfcfb1fd94829c1a1704f894fc111d14770d34e");
 			MutableObjectId actid = new MutableObjectId();
 			actid.FromString(expid.Name);
 			Init("0008NAK\n");
-			NUnit.Framework.Assert.AreSame(PacketLineIn.AckNackResult.NAK, @in.ReadACK(actid)
-				);
+			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.NAK, @in.ReadACK(actid
+				));
 			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
 			AssertEOF();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_ACK1()
 		{
 			ObjectId expid = ObjectId.FromString("fcfcfb1fd94829c1a1704f894fc111d14770d34e");
 			MutableObjectId actid = new MutableObjectId();
 			Init("0031ACK fcfcfb1fd94829c1a1704f894fc111d14770d34e\n");
-			NUnit.Framework.Assert.AreSame(PacketLineIn.AckNackResult.ACK, @in.ReadACK(actid)
-				);
+			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.ACK, @in.ReadACK(actid
+				));
 			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
 			AssertEOF();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_ACKcontinue1()
 		{
 			ObjectId expid = ObjectId.FromString("fcfcfb1fd94829c1a1704f894fc111d14770d34e");
 			MutableObjectId actid = new MutableObjectId();
 			Init("003aACK fcfcfb1fd94829c1a1704f894fc111d14770d34e continue\n");
-			NUnit.Framework.Assert.AreSame(PacketLineIn.AckNackResult.ACK_CONTINUE, @in.ReadACK
+			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.ACK_CONTINUE, @in.ReadACK
 				(actid));
 			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
 			AssertEOF();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_ACKcommon1()
 		{
 			ObjectId expid = ObjectId.FromString("fcfcfb1fd94829c1a1704f894fc111d14770d34e");
 			MutableObjectId actid = new MutableObjectId();
 			Init("0038ACK fcfcfb1fd94829c1a1704f894fc111d14770d34e common\n");
-			NUnit.Framework.Assert.AreSame(PacketLineIn.AckNackResult.ACK_COMMON, @in.ReadACK
+			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.ACK_COMMON, @in.ReadACK
 				(actid));
 			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
 			AssertEOF();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_ACKready1()
 		{
 			ObjectId expid = ObjectId.FromString("fcfcfb1fd94829c1a1704f894fc111d14770d34e");
 			MutableObjectId actid = new MutableObjectId();
 			Init("0037ACK fcfcfb1fd94829c1a1704f894fc111d14770d34e ready\n");
-			NUnit.Framework.Assert.AreSame(PacketLineIn.AckNackResult.ACK_READY, @in.ReadACK(
-				actid));
+			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.ACK_READY, @in.ReadACK
+				(actid));
 			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
 			AssertEOF();
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_Invalid1()
 		{
 			Init("HELO");
@@ -301,6 +322,7 @@ namespace NGit.Transport
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_Invalid2()
 		{
 			Init("0009HELO\n");
@@ -315,6 +337,7 @@ namespace NGit.Transport
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_Invalid3()
 		{
 			string s = "ACK fcfcfb1fd94829c1a1704f894fc111d14770d34e neverhappen";
@@ -330,6 +353,7 @@ namespace NGit.Transport
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReadACK_Invalid4()
 		{
 			Init("0000");

@@ -43,12 +43,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Treewalk;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Treewalk
 {
-	public class AbstractTreeIteratorTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class AbstractTreeIteratorTest
 	{
 		private static string Prefix(string path)
 		{
@@ -82,6 +82,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPathCompare()
 		{
 			NUnit.Framework.Assert.IsTrue(new AbstractTreeIteratorTest.FakeTreeIterator(this, 
@@ -99,6 +100,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGrowPath()
 		{
 			AbstractTreeIteratorTest.FakeTreeIterator i = new AbstractTreeIteratorTest.FakeTreeIterator
@@ -114,6 +116,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEnsurePathCapacityFastCase()
 		{
 			AbstractTreeIteratorTest.FakeTreeIterator i = new AbstractTreeIteratorTest.FakeTreeIterator
@@ -130,6 +133,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEnsurePathCapacityGrows()
 		{
 			AbstractTreeIteratorTest.FakeTreeIterator i = new AbstractTreeIteratorTest.FakeTreeIterator
@@ -146,6 +150,7 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.AreEqual(i.path[1], 'b');
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEntryFileMode()
 		{
 			foreach (FileMode m in new FileMode[] { FileMode.TREE, FileMode.REGULAR_FILE, FileMode
@@ -158,6 +163,7 @@ namespace NGit.Treewalk
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEntryPath()
 		{
 			AbstractTreeIteratorTest.FakeTreeIterator i = new AbstractTreeIteratorTest.FakeTreeIterator
@@ -172,6 +178,7 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.AreEqual('d', b[2]);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCreateEmptyTreeIterator()
 		{
 			AbstractTreeIteratorTest.FakeTreeIterator i = new AbstractTreeIteratorTest.FakeTreeIterator

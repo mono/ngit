@@ -52,6 +52,7 @@ namespace NGit.Revwalk
 		private readonly AbstractRevQueue q = AbstractRevQueue.EMPTY_QUEUE;
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			NUnit.Framework.Assert.IsNull(q.Next());
@@ -61,6 +62,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestClear()
 		{
 			q.Clear();
@@ -68,6 +70,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddFails()
 		{
 			try

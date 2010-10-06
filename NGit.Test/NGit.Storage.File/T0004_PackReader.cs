@@ -59,6 +59,7 @@ namespace NGit.Storage.File
 			 + ".idx");
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test003_lookupCompressedObject()
 		{
 			PackFile pr;
@@ -74,6 +75,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test004_lookupDeltifiedObject()
 		{
 			ObjectId id;

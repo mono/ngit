@@ -45,12 +45,12 @@ using System;
 using System.Text;
 using NGit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class RefListTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RefListTest
 	{
 		private static readonly ObjectId ID = ObjectId.FromString("41eb0d88f833b558bddeb269b7ab77399cdf98ed"
 			);
@@ -61,6 +61,7 @@ namespace NGit.Util
 
 		private static readonly Ref REF_c = NewRef("c");
 
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			RefList<Ref> list = RefList.EmptyList();
@@ -82,6 +83,7 @@ namespace NGit.Util
 		}
 
 		// expected
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyBuilder()
 		{
 			RefList<Ref> list = new RefListBuilder<Ref>().ToRefList();
@@ -106,6 +108,7 @@ namespace NGit.Util
 		}
 
 		// expected
+		[NUnit.Framework.Test]
 		public virtual void TestBuilder_AddThenSort()
 		{
 			RefListBuilder<Ref> builder = new RefListBuilder<Ref>(1);
@@ -122,6 +125,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_B, list.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestBuilder_AddAll()
 		{
 			RefListBuilder<Ref> builder = new RefListBuilder<Ref>(1);
@@ -133,6 +137,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_c, list.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestBuilder_Set()
 		{
 			RefListBuilder<Ref> builder = new RefListBuilder<Ref>();
@@ -152,6 +157,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_B, list.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestBuilder_Remove()
 		{
 			RefListBuilder<Ref> builder = new RefListBuilder<Ref>();
@@ -162,6 +168,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_B, builder.Get(0));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSet()
 		{
 			RefList<Ref> one = ToList(REF_A, REF_A);
@@ -177,6 +184,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_B, two.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAddToEmptyList()
 		{
 			RefList<Ref> one = ToList();
@@ -189,6 +197,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_B, two.Get(0));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAddToFrontOfList()
 		{
 			RefList<Ref> one = ToList(REF_A);
@@ -202,6 +211,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_A, two.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAddToEndOfList()
 		{
 			RefList<Ref> one = ToList(REF_A);
@@ -215,6 +225,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_B, two.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAddToMiddleOfListByInsertionPosition()
 		{
 			RefList<Ref> one = ToList(REF_A, REF_c);
@@ -231,6 +242,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_c, two.Get(2));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPutNewEntry()
 		{
 			RefList<Ref> one = ToList(REF_A, REF_c);
@@ -246,6 +258,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_c, two.Get(2));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPutReplaceEntry()
 		{
 			Ref otherc = NewRef(REF_c.GetName());
@@ -262,6 +275,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(otherc, two.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveFrontOfList()
 		{
 			RefList<Ref> one = ToList(REF_A, REF_B, REF_c);
@@ -276,6 +290,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_c, two.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveMiddleOfList()
 		{
 			RefList<Ref> one = ToList(REF_A, REF_B, REF_c);
@@ -290,6 +305,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_c, two.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveEndOfList()
 		{
 			RefList<Ref> one = ToList(REF_A, REF_B, REF_c);
@@ -304,14 +320,16 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_B, two.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveMakesEmpty()
 		{
 			RefList<Ref> one = ToList(REF_A);
 			RefList<Ref> two = one.Remove(1);
 			NUnit.Framework.Assert.AreNotSame(one, two);
-			NUnit.Framework.Assert.AreSame(two, RefList.EmptyList());
+			NUnit.Framework.Assert.AreSame(two, RefList.EmptyList<Ref>());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestToString()
 		{
 			StringBuilder exp = new StringBuilder();
@@ -324,6 +342,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(exp.ToString(), list.ToString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestBuilder_ToString()
 		{
 			StringBuilder exp = new StringBuilder();
@@ -338,6 +357,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(exp.ToString(), list.ToString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFindContainsGet()
 		{
 			RefList<Ref> list = ToList(REF_A, REF_B, REF_c);
@@ -360,6 +380,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.IsFalse(list.Contains("z"));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestIterable()
 		{
 			RefList<Ref> list = ToList(REF_A, REF_B, REF_c);
@@ -393,6 +414,7 @@ namespace NGit.Util
 		}
 
 		// expected
+		[NUnit.Framework.Test]
 		public virtual void TestCopyLeadingPrefix()
 		{
 			RefList<Ref> one = ToList(REF_A, REF_B, REF_c);
@@ -407,6 +429,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreSame(REF_B, two.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCopyConstructorReusesArray()
 		{
 			RefListBuilder<Ref> one = new RefListBuilder<Ref>();

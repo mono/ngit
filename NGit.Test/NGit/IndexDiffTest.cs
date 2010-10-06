@@ -50,6 +50,7 @@ namespace NGit
 	public class IndexDiffTest : RepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAdded()
 		{
 			GitIndex index = new GitIndex(db);
@@ -72,6 +73,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRemoved()
 		{
 			WriteTrashFile("file2", "file2");
@@ -99,6 +101,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestModified()
 		{
 			GitIndex index = new GitIndex(db);
@@ -129,6 +132,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnchangedSimple()
 		{
 			GitIndex index = new GitIndex(db);
@@ -167,6 +171,7 @@ namespace NGit
 		/// the tricky ordering used by Git.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnchangedComplex()
 		{
 			GitIndex index = new GitIndex(db);

@@ -57,6 +57,7 @@ namespace NGit.Api
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPush()
 		{
 			// create other repository

@@ -59,6 +59,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSomeCommits()
 		{
 			// do 4 commits
@@ -96,6 +97,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrongParams()
 		{
 			Git git = new Git(db);
@@ -117,6 +119,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMultipleInvocations()
 		{
 			Git git = new Git(db);
@@ -150,6 +153,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMergeEmptyBranches()
 		{
 			Git git = new Git(db);
@@ -182,6 +186,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddUnstagedChanges()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");

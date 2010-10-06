@@ -54,6 +54,7 @@ namespace NGit.Api
 	public class MergeCommandTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMergeInItself()
 		{
 			Git git = new Git(db);
@@ -64,6 +65,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlreadyUpToDate()
 		{
 			Git git = new Git(db);
@@ -78,6 +80,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFastForward()
 		{
 			Git git = new Git(db);
@@ -93,6 +96,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFastForwardWithFiles()
 		{
 			Git git = new Git(db);
@@ -117,6 +121,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMultipleHeads()
 		{
 			Git git = new Git(db);
@@ -149,6 +154,7 @@ namespace NGit.Api
 
 		// expected this exception
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestContentMerge()
 		{
 			Git git = new Git(db);
@@ -187,6 +193,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSuccessfulContentMerge()
 		{
 			Git git = new Git(db);
@@ -237,6 +244,7 @@ namespace NGit.Api
 
 		// test index state
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSuccessfulContentMergeAndDirtyworkingTree()
 		{
 			Git git = new Git(db);
@@ -288,6 +296,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMergeFailingWithDirtyWorkingTree()
 		{
 			Git git = new Git(db);
@@ -322,6 +331,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMergeConflictFileFolder()
 		{
 			Git git = new Git(db);

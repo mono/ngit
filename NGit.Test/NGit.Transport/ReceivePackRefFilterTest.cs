@@ -125,6 +125,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilterHidesPrivate()
 		{
 			IDictionary<string, Ref> refs;
@@ -146,11 +147,11 @@ namespace NGit.Transport
 				t.Close();
 			}
 			NUnit.Framework.Assert.IsNotNull(refs);
-			NUnit.Framework.Assert.IsNull("no private", refs.Get(R_PRIVATE));
-			NUnit.Framework.Assert.IsNull("no HEAD", refs.Get(Constants.HEAD));
+			NUnit.Framework.Assert.IsNull(refs.Get(R_PRIVATE), "no private");
+			NUnit.Framework.Assert.IsNull(refs.Get(Constants.HEAD), "no HEAD");
 			NUnit.Framework.Assert.AreEqual(1, refs.Count);
 			Ref master = refs.Get(R_MASTER);
-			NUnit.Framework.Assert.IsNotNull("has master", master);
+			NUnit.Framework.Assert.IsNotNull(master, "has master");
 			AssertEquals(B, master.GetObjectId());
 		}
 
@@ -175,6 +176,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSuccess()
 		{
 			// Manually force a delta of an object so we reuse it later.
@@ -192,8 +194,8 @@ namespace NGit.Transport
 			// Verify the only storage of b is our packed delta above.
 			//
 			ObjectDirectory od = (ObjectDirectory)src.ObjectDatabase;
-			NUnit.Framework.Assert.IsTrue("has b", src.HasObject(b));
-			NUnit.Framework.Assert.IsFalse("b not loose", od.FileFor(b).Exists());
+			NUnit.Framework.Assert.IsTrue(src.HasObject(b), "has b");
+			NUnit.Framework.Assert.IsFalse(od.FileFor(b).Exists(), "b not loose");
 			// Now use b but in a different commit than what is hidden.
 			//
 			TestRepository s = new TestRepository(src);
@@ -221,11 +223,11 @@ namespace NGit.Transport
 			{
 				t.Close();
 			}
-			NUnit.Framework.Assert.IsNotNull("have result", r);
-			NUnit.Framework.Assert.IsNull("private not advertised", r.GetAdvertisedRef(R_PRIVATE
-				));
-			NUnit.Framework.Assert.AreSame("master updated", RemoteRefUpdate.Status.OK, u.GetStatus
-				());
+			NUnit.Framework.Assert.IsNotNull(r, "have result");
+			NUnit.Framework.Assert.IsNull(r.GetAdvertisedRef(R_PRIVATE), "private not advertised"
+				);
+			NUnit.Framework.Assert.AreEqual(RemoteRefUpdate.Status.OK, u.GetStatus(), "master updated"
+				);
 			AssertEquals(N, dst.Resolve(R_MASTER));
 		}
 
@@ -252,6 +254,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateBranchAtHiddenCommitFails()
 		{
 			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(64);
@@ -283,7 +286,7 @@ namespace NGit.Transport
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
 			int nul = master.IndexOf('\0');
-			NUnit.Framework.Assert.IsTrue("has capability list", nul > 0);
+			NUnit.Framework.Assert.IsTrue(nul > 0, "has capability list");
 			NUnit.Framework.Assert.AreEqual(B.Name + ' ' + R_MASTER, Sharpen.Runtime.Substring
 				(master, 0, nul));
 			NUnit.Framework.Assert.AreSame(PacketLineIn.END, r.ReadString());
@@ -302,6 +305,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUsingHiddenDeltaBaseFails()
 		{
 			byte[] delta = new byte[] { unchecked((int)(0x1)), unchecked((int)(0x1)), unchecked(
@@ -343,7 +347,7 @@ namespace NGit.Transport
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
 			int nul = master.IndexOf('\0');
-			NUnit.Framework.Assert.IsTrue("has capability list", nul > 0);
+			NUnit.Framework.Assert.IsTrue(nul > 0, "has capability list");
 			NUnit.Framework.Assert.AreEqual(B.Name + ' ' + R_MASTER, Sharpen.Runtime.Substring
 				(master, 0, nul));
 			NUnit.Framework.Assert.AreSame(PacketLineIn.END, r.ReadString());
@@ -355,6 +359,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUsingHiddenCommonBlobFails()
 		{
 			// Try to use the 'b' blob that is hidden.
@@ -394,7 +399,7 @@ namespace NGit.Transport
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
 			int nul = master.IndexOf('\0');
-			NUnit.Framework.Assert.IsTrue("has capability list", nul > 0);
+			NUnit.Framework.Assert.IsTrue(nul > 0, "has capability list");
 			NUnit.Framework.Assert.AreEqual(B.Name + ' ' + R_MASTER, Sharpen.Runtime.Substring
 				(master, 0, nul));
 			NUnit.Framework.Assert.AreSame(PacketLineIn.END, r.ReadString());
@@ -406,6 +411,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUsingUnknownBlobFails()
 		{
 			// Try to use the 'n' blob that is not on the server.
@@ -446,7 +452,7 @@ namespace NGit.Transport
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
 			int nul = master.IndexOf('\0');
-			NUnit.Framework.Assert.IsTrue("has capability list", nul > 0);
+			NUnit.Framework.Assert.IsTrue(nul > 0, "has capability list");
 			NUnit.Framework.Assert.AreEqual(B.Name + ' ' + R_MASTER, Sharpen.Runtime.Substring
 				(master, 0, nul));
 			NUnit.Framework.Assert.AreSame(PacketLineIn.END, r.ReadString());
@@ -458,6 +464,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUsingUnknownTreeFails()
 		{
 			TestRepository<Repository> s = new TestRepository<Repository>(src);
@@ -495,7 +502,7 @@ namespace NGit.Transport
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
 			int nul = master.IndexOf('\0');
-			NUnit.Framework.Assert.IsTrue("has capability list", nul > 0);
+			NUnit.Framework.Assert.IsTrue(nul > 0, "has capability list");
 			NUnit.Framework.Assert.AreEqual(B.Name + ' ' + R_MASTER, Sharpen.Runtime.Substring
 				(master, 0, nul));
 			NUnit.Framework.Assert.AreSame(PacketLineIn.END, r.ReadString());

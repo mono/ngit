@@ -44,14 +44,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Junit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
 	/// <summary>Portions of this test is from CommitMsgHookTest in the Android project Gerrit
 	/// 	</summary>
-	public class ChangeIdUtilTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class ChangeIdUtilTest
 	{
 		private readonly string SOB1 = "Signed-off-by: J Author <ja@example.com>\n";
 
@@ -82,7 +82,7 @@ namespace NGit.Util
 
 		internal MockSystemReader mockSystemReader = new MockSystemReader();
 
-		internal readonly long when = mockSystemReader.GetCurrentTime();
+		internal readonly long when;
 
 		internal readonly int tz;
 
@@ -91,6 +91,7 @@ namespace NGit.Util
 		internal PersonIdent committer = new PersonIdent("J. Committer", "jc@example.com"
 			);
 
+		[NUnit.Framework.Test]
 		public virtual void TestClean()
 		{
 			NUnit.Framework.Assert.AreEqual("hej", ChangeIdUtil.Clean("hej\n\n"));
@@ -107,6 +108,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestId()
 		{
 			string msg = "A\nMessage\n";
@@ -116,6 +118,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHasChangeid()
 		{
 			NUnit.Framework.Assert.AreEqual("has changeid\n\nBug: 33\nmore text\nSigned-off-by: me@you.too\nChange-Id: I0123456789012345678901234567890123456789\nAnd then some\n"
@@ -124,6 +127,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHasChangeidWithReplacement()
 		{
 			NUnit.Framework.Assert.AreEqual("has changeid\n\nBug: 33\nmore text\nSigned-off-by: me@you.too\nChange-Id: I988d2d7a6f2c0578fccabd4ebd3cec0768bc7f9f\nAnd then some\n"
@@ -132,6 +136,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneliner()
 		{
 			NUnit.Framework.Assert.AreEqual("oneliner\n\nChange-Id: I3a98091ce4470de88d52ae317fcd297e2339f063\n"
@@ -139,6 +144,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOnelinerFollowedByBlank()
 		{
 			NUnit.Framework.Assert.AreEqual("oneliner followed by blank\n\nChange-Id: I3a12c21ef342a18498f95c62efbc186cd782b743\n"
@@ -146,6 +152,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestATwoLines()
 		{
 			NUnit.Framework.Assert.AreEqual("a two lines\nwith text withour break after subject line\n\nChange-Id: I549a0fed3d69b7876c54b4f5a35637135fd43fac\n"
@@ -153,6 +160,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRegularCommit()
 		{
 			NUnit.Framework.Assert.AreEqual("regular commit\n\nwith header and body\n\nChange-Id: I62d8749d3c3a888c11e3fadc3924220a19389766\n"
@@ -160,6 +168,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRegularCommitWithSob_ButNoBody()
 		{
 			NUnit.Framework.Assert.AreEqual("regular commit with sob, but no body\n\nChange-Id: I0f0b4307e9944ecbd5a9f6b9489e25cfaede43c4\nSigned-off-by: me@you.too\n"
@@ -167,6 +176,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestACommitWithBug_SubButNoBody()
 		{
 			NUnit.Framework.Assert.AreEqual("a commit with bug, sub but no body\n\nBug: 33\nChange-Id: I337e264868613dab6d1e11a34f394db369487412\nSigned-off-by: me@you.too\n"
@@ -175,6 +185,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestACommitWithSubject_NoBodySobAndBug()
 		{
 			NUnit.Framework.Assert.AreEqual("a commit with subject, no body sob and bug\n\nChange-Id: Ib3616d4bf77707a3215a6cb0602c004ee119a445\nSigned-off-by: me@you.too\nBug: 33\n"
@@ -183,6 +194,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestACommitWithSubjectBug_NonFooterLineAndSob()
 		{
 			NUnit.Framework.Assert.AreEqual("a commit with subject bug, non-footer line and sob\n\nBug: 33\nmore text\nSigned-off-by: me@you.too\n\nChange-Id: Ia8500eab2304e6e5eac6ae488ff44d5d850d118a\n"
@@ -191,6 +203,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestACommitWithSubject_NonFooterAndBugAndSob()
 		{
 			NUnit.Framework.Assert.AreEqual("a commit with subject, non-footer and bug and sob\n\nmore text (two empty lines after bug)\nBug: 33\n\n\nChange-Id: Idac75ccbad2ab6727b8612e344df5190d87891dd\nSigned-off-by: me@you.too\n"
@@ -199,6 +212,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestACommitWithSubjectBodyBugBrackersAndSob()
 		{
 			NUnit.Framework.Assert.AreEqual("a commit with subject body, bug. brackers and sob\n\nText\n\nBug: 33\nChange-Id: I90ecb589bef766302532c3e00915e10114b00f62\n[bracket]\nSigned-off-by: me@you.too\n"
@@ -207,6 +221,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestACommitWithSubjectBodyBugLineWithASpaceAndSob()
 		{
 			NUnit.Framework.Assert.AreEqual("a commit with subject body, bug. line with a space and sob\n\nText\n\nBug: 33\nChange-Id: I864e2218bdee033c8ce9a7f923af9e0d5dc16863\n \nSigned-off-by: me@you.too\n"
@@ -215,6 +230,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestACommitWithSubjectBodyBugEmptyLineAndSob()
 		{
 			NUnit.Framework.Assert.AreEqual("a commit with subject body, bug. empty line and sob\n\nText\n\nBug: 33\nChange-Id: I33f119f533313883e6ada3df600c4f0d4db23a76\n \nSigned-off-by: me@you.too\n"
@@ -223,6 +239,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyMessages()
 		{
 			// Empty input must not produce a change id.
@@ -241,6 +258,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestChangeIdAlreadySet()
 		{
 			// If a Change-Id is already present in the footer, the hook must
@@ -269,6 +287,7 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestChangeIdAlreadySetWithReplacement()
 		{
 			// If a Change-Id is already present in the footer, the hook
@@ -312,8 +331,12 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeAltersId()
 		{
+			PersonIdent oldAuthor = author;
+			PersonIdent oldCommitter = committer;
+			
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: I7fc3876fee63c766a2063df97fbe04a2dddd8d7c\n"
 				, Call("a\n"));
 			//
@@ -328,6 +351,9 @@ namespace NGit.Util
 			Tick();
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: I69adf9208d828f41a3d7e41afbca63aff37c0c5c\n"
 				, Call("a\n"));
+			
+			author = oldAuthor;
+			committer = oldCommitter;
 		}
 
 		//
@@ -349,6 +375,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFirstParentAltersId()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: I7fc3876fee63c766a2063df97fbe04a2dddd8d7c\n"
@@ -356,15 +383,18 @@ namespace NGit.Util
 			//
 			//
 			//
+			ObjectId old = parentId1;
 			parentId1 = parentId2;
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: I51e86482bde7f92028541aaf724d3a3f996e7ea2\n"
 				, Call("a\n"));
+			parentId1 = old;
 		}
 
 		//
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDirCacheAltersId()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: I7fc3876fee63c766a2063df97fbe04a2dddd8d7c\n"
@@ -372,15 +402,18 @@ namespace NGit.Util
 			//
 			//
 			//
+			ObjectId old = treeId1;
 			treeId1 = treeId2;
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: If56597ea9759f23b070677ea6f064c60c38da631\n"
 				, Call("a\n"));
+			treeId1 = old;
 		}
 
 		//
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSingleLineMessages()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: I7fc3876fee63c766a2063df97fbe04a2dddd8d7c\n"
@@ -411,6 +444,7 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMultiLineMessagesWithoutFooter()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "b\n" + "\n" + "Change-Id: Id0b4f42d3d6fc1569595c9b97cb665e738486f5d\n"
@@ -440,6 +474,7 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSingleLineMessagesWithSignedOffBy()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: I7fc3876fee63c766a2063df97fbe04a2dddd8d7c\n"
@@ -458,6 +493,7 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMultiLineMessagesWithSignedOffBy()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "b\nc\nd\ne\n" + "\n" + "f\ng\nh\n"
@@ -513,6 +549,7 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoteInMiddle()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "NOTE: This\n" + "does not fix it.\n"
@@ -530,6 +567,7 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestKernelStyleFooter()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Change-Id: I1bd787f9e7590a2ac82b02c404c955ffb21877c4\n"
@@ -550,6 +588,7 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestChangeIdAfterBugOrIssue()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "Bug: 42\n" + "Change-Id: I8c0321227c4324e670b9ae8cf40eccc87af21b1b\n"
@@ -597,6 +636,7 @@ namespace NGit.Util
 		//
 		//
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWithEndingURL()
 		{
 			NUnit.Framework.Assert.AreEqual("a\n" + "\n" + "http://example.com/ fixes this\n"
@@ -667,6 +707,7 @@ namespace NGit.Util
 
 		public ChangeIdUtilTest()
 		{
+			when = mockSystemReader.GetCurrentTime();
 			tz = new MockSystemReader().GetTimezone(when);
 			{
 				author = new PersonIdent(author, when, tz);

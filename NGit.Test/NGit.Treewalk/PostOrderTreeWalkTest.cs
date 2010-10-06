@@ -51,6 +51,7 @@ namespace NGit.Treewalk
 	public class PostOrderTreeWalkTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInitialize_NoPostOrder()
 		{
 			TreeWalk tw = new TreeWalk(db);
@@ -58,6 +59,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInitialize_TogglePostOrder()
 		{
 			TreeWalk tw = new TreeWalk(db);
@@ -69,6 +71,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestResetDoesNotAffectPostOrder()
 		{
 			TreeWalk tw = new TreeWalk(db);
@@ -83,6 +86,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoPostOrder()
 		{
 			DirCache tree = db.ReadDirCache();
@@ -110,6 +114,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWithPostOrder_EnterSubtree()
 		{
 			DirCache tree = db.ReadDirCache();
@@ -140,6 +145,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWithPostOrder_NoEnterSubtree()
 		{
 			DirCache tree = db.ReadDirCache();
@@ -176,7 +182,7 @@ namespace NGit.Treewalk
 		/// <exception cref="System.Exception"></exception>
 		private static void AssertModes(string path, FileMode mode0, TreeWalk tw)
 		{
-			NUnit.Framework.Assert.IsTrue("has " + path, tw.Next());
+			NUnit.Framework.Assert.IsTrue(tw.Next(), "has " + path);
 			NUnit.Framework.Assert.AreEqual(path, tw.PathString);
 			NUnit.Framework.Assert.AreEqual(mode0, tw.GetFileMode(0));
 		}

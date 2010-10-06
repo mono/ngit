@@ -50,6 +50,7 @@ namespace NGit.Dircache
 	public class DirCacheBasicTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadMissing_RealIndex()
 		{
 			FilePath idx = new FilePath(db.Directory, "index");
@@ -60,6 +61,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadMissing_TempIndex()
 		{
 			FilePath idx = new FilePath(db.Directory, "tmp_index");
@@ -70,6 +72,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLockMissing_RealIndex()
 		{
 			FilePath idx = new FilePath(db.Directory, "index");
@@ -87,6 +90,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLockMissing_TempIndex()
 		{
 			FilePath idx = new FilePath(db.Directory, "tmp_index");
@@ -104,6 +108,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteEmptyUnlock_RealIndex()
 		{
 			FilePath idx = new FilePath(db.Directory, "index");
@@ -120,6 +125,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteEmptyCommit_RealIndex()
 		{
 			FilePath idx = new FilePath(db.Directory, "index");
@@ -137,6 +143,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteEmptyReadEmpty_RealIndex()
 		{
 			FilePath idx = new FilePath(db.Directory, "index");
@@ -156,6 +163,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteEmptyLockEmpty_RealIndex()
 		{
 			FilePath idx = new FilePath(db.Directory, "index");
@@ -178,6 +186,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBuildThenClear()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -202,6 +211,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDetectUnmergedPaths()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -222,6 +232,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindOnEmpty()
 		{
 			DirCache dc = DirCache.NewInCore();

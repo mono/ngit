@@ -50,6 +50,7 @@ namespace NGit.Treewalk
 	public class EmptyTreeIteratorTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAtEOF()
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
@@ -58,6 +59,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateSubtreeIterator()
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
@@ -70,6 +72,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEntryObjectId()
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
@@ -80,6 +83,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNextDoesNothing()
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
@@ -94,6 +98,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBackDoesNothing()
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
@@ -108,6 +113,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStopWalkCallsParent()
 		{
 			bool[] called = new bool[1];

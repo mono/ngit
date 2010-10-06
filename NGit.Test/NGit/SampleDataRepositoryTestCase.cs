@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
+using NGit.Storage.File;
 using NGit.Util;
 using Sharpen;
 
@@ -60,7 +61,8 @@ namespace NGit
 				, "pack-546ff360fe3488adb20860ce3436a2d6373d2796", "pack-cbdeda40019ae0e6e789088ea0f51f164f489d14"
 				, "pack-e6d07037cbcf13376308a0a995d1fa48f8f76aaa", "pack-3280af9c07ee18a87705ef50b0cc4cd20266cf12"
 				 };
-			FilePath packDir = new FilePath(db.ObjectDatabase.GetDirectory(), "pack");
+			FilePath packDir = new FilePath(((ObjectDirectory)db.ObjectDatabase).GetDirectory
+				(), "pack");
 			foreach (string n in packs)
 			{
 				CopyFile(JGitTestUtil.GetTestResourceFile(n + ".pack"), new FilePath(packDir, n +

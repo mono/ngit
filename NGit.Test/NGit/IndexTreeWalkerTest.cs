@@ -86,6 +86,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTreeOnlyOneLevel()
 		{
 			GitIndex index = new GitIndex(db);
@@ -99,6 +100,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIndexOnlyOneLevel()
 		{
 			GitIndex index = new GitIndex(db);
@@ -112,6 +114,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBoth()
 		{
 			GitIndex index = new GitIndex(db);
@@ -128,6 +131,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIndexOnlySubDirs()
 		{
 			GitIndex index = new GitIndex(db);
@@ -141,6 +145,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLeavingTree()
 		{
 			GitIndex index = new GitIndex(db);

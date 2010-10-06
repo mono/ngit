@@ -99,6 +99,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Test constructor for exceptions, default settings, initialization.</summary>
 		/// <remarks>Test constructor for exceptions, default settings, initialization.</remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestContructor()
 		{
 			writer = new PackWriter(config, db.NewObjectReader());
@@ -110,6 +111,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Change default settings and verify them.</summary>
 		/// <remarks>Change default settings and verify them.</remarks>
+		[NUnit.Framework.Test]
 		public virtual void TestModifySettings()
 		{
 			config.SetReuseDeltas(false);
@@ -133,6 +135,7 @@ namespace NGit.Storage.File
 		/// objects and check for correct format.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteEmptyPack1()
 		{
 			CreateVerifyOpenPack(EMPTY_LIST_OBJECT, EMPTY_LIST_OBJECT, false, false);
@@ -151,6 +154,7 @@ namespace NGit.Storage.File
 		/// check for correct format.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteEmptyPack2()
 		{
 			CreateVerifyOpenPack(EMPTY_LIST_REVS.Iterator());
@@ -167,6 +171,7 @@ namespace NGit.Storage.File
 		/// setting.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNotIgnoreNonExistingObjects()
 		{
 			ObjectId nonExisting = ObjectId.FromString("0000000000000000000000000000000000000001"
@@ -188,6 +193,7 @@ namespace NGit.Storage.File
 		/// <remarks>Try to pass non-existing object as uninteresting, with ignoring setting.
 		/// 	</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIgnoreNonExistingObjects()
 		{
 			ObjectId nonExisting = ObjectId.FromString("0000000000000000000000000000000000000001"
@@ -206,6 +212,7 @@ namespace NGit.Storage.File
 		/// content. No delta reuse here.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack1()
 		{
 			config.SetReuseDeltas(false);
@@ -219,6 +226,7 @@ namespace NGit.Storage.File
 		/// .
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack1NoObjectReuse()
 		{
 			config.SetReuseDeltas(false);
@@ -235,6 +243,7 @@ namespace NGit.Storage.File
 		/// precisely verify content. No delta reuse here.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack2()
 		{
 			WriteVerifyPack2(false);
@@ -248,6 +257,7 @@ namespace NGit.Storage.File
 		/// .
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack2DeltasReuseRefs()
 		{
 			WriteVerifyPack2(true);
@@ -261,6 +271,7 @@ namespace NGit.Storage.File
 		/// .
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack2DeltasReuseOffsets()
 		{
 			config.SetDeltaBaseAsOffset(true);
@@ -275,9 +286,11 @@ namespace NGit.Storage.File
 		/// .
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack2DeltasCRC32Copy()
 		{
-			FilePath packDir = new FilePath(db.ObjectDatabase.GetDirectory(), "pack");
+			FilePath packDir = new FilePath(((ObjectDirectory)db.ObjectDatabase).GetDirectory
+				(), "pack");
 			FilePath crc32Pack = new FilePath(packDir, "pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.pack"
 				);
 			FilePath crc32Idx = new FilePath(packDir, "pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.idx"
@@ -297,6 +310,7 @@ namespace NGit.Storage.File
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		/// <exception cref="NGit.Errors.MissingObjectException">NGit.Errors.MissingObjectException
 		/// 	</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack3()
 		{
 			config.SetReuseDeltas(false);
@@ -328,6 +342,7 @@ namespace NGit.Storage.File
 		/// write only 1 commit, associated with 1 tree, 1 blob.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack4()
 		{
 			WriteVerifyPack4(false);
@@ -341,6 +356,7 @@ namespace NGit.Storage.File
 		/// .
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack4ThinPack()
 		{
 			WriteVerifyPack4(true);
@@ -355,6 +371,7 @@ namespace NGit.Storage.File
 		/// be smaller.
 		/// </summary>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack2SizeDeltasVsNoDeltas()
 		{
 			TestWritePack2();
@@ -376,6 +393,7 @@ namespace NGit.Storage.File
 		/// written as offsets should be smaller.
 		/// </summary>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack2SizeOffsetsVsRefs()
 		{
 			TestWritePack2DeltasReuseRefs();
@@ -396,6 +414,7 @@ namespace NGit.Storage.File
 		/// smaller.
 		/// </summary>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWritePack4SizeThinVsNoThin()
 		{
 			TestWritePack4();
@@ -408,6 +427,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteIndex()
 		{
 			config.SetIndexVersion(2);

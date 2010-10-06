@@ -52,6 +52,7 @@ namespace NGit.Merge
 	public class CherryPickTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPick()
 		{
 			// B---O

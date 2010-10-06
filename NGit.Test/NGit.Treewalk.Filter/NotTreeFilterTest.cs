@@ -51,6 +51,7 @@ namespace NGit.Treewalk.Filter
 	public class NotTreeFilterTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrap()
 		{
 			TreeWalk tw = new TreeWalk(db);
@@ -62,6 +63,7 @@ namespace NGit.Treewalk.Filter
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNegateIsUnwrap()
 		{
 			TreeFilter a = PathFilter.Create("a/b");
@@ -70,6 +72,7 @@ namespace NGit.Treewalk.Filter
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestShouldBeRecursive_ALL()
 		{
 			TreeFilter a = TreeFilter.ALL;
@@ -78,6 +81,7 @@ namespace NGit.Treewalk.Filter
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestShouldBeRecursive_PathFilter()
 		{
 			TreeFilter a = PathFilter.Create("a/b");
@@ -87,6 +91,7 @@ namespace NGit.Treewalk.Filter
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloneIsDeepClone()
 		{
 			TreeFilter a = new AlwaysCloneTreeFilter();
@@ -96,6 +101,7 @@ namespace NGit.Treewalk.Filter
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloneIsSparseWhenPossible()
 		{
 			TreeFilter a = TreeFilter.ALL;

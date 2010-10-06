@@ -52,6 +52,7 @@ namespace NGit.Storage.File
 {
 	public class T0003_Basic : SampleDataRepositoryTestCase
 	{
+		[NUnit.Framework.Test]
 		public virtual void Test001_Initalize()
 		{
 			FilePath gitdir = new FilePath(trash, Constants.DOT_GIT);
@@ -62,21 +63,22 @@ namespace NGit.Storage.File
 			FilePath refs_heads = new FilePath(refs, "heads");
 			FilePath refs_tags = new FilePath(refs, "tags");
 			FilePath HEAD = new FilePath(gitdir, "HEAD");
-			NUnit.Framework.Assert.IsTrue("Exists " + trash, trash.IsDirectory());
-			NUnit.Framework.Assert.IsTrue("Exists " + objects, objects.IsDirectory());
-			NUnit.Framework.Assert.IsTrue("Exists " + objects_pack, objects_pack.IsDirectory(
-				));
-			NUnit.Framework.Assert.IsTrue("Exists " + objects_info, objects_info.IsDirectory(
-				));
+			NUnit.Framework.Assert.IsTrue(trash.IsDirectory(), "Exists " + trash);
+			NUnit.Framework.Assert.IsTrue(objects.IsDirectory(), "Exists " + objects);
+			NUnit.Framework.Assert.IsTrue(objects_pack.IsDirectory(), "Exists " + objects_pack
+				);
+			NUnit.Framework.Assert.IsTrue(objects_info.IsDirectory(), "Exists " + objects_info
+				);
 			NUnit.Framework.Assert.AreEqual(2, objects.ListFiles().Length);
-			NUnit.Framework.Assert.IsTrue("Exists " + refs, refs.IsDirectory());
-			NUnit.Framework.Assert.IsTrue("Exists " + refs_heads, refs_heads.IsDirectory());
-			NUnit.Framework.Assert.IsTrue("Exists " + refs_tags, refs_tags.IsDirectory());
-			NUnit.Framework.Assert.IsTrue("Exists " + HEAD, HEAD.IsFile());
+			NUnit.Framework.Assert.IsTrue(refs.IsDirectory(), "Exists " + refs);
+			NUnit.Framework.Assert.IsTrue(refs_heads.IsDirectory(), "Exists " + refs_heads);
+			NUnit.Framework.Assert.IsTrue(refs_tags.IsDirectory(), "Exists " + refs_tags);
+			NUnit.Framework.Assert.IsTrue(HEAD.IsFile(), "Exists " + HEAD);
 			NUnit.Framework.Assert.AreEqual(23, HEAD.Length());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_openRepoBadArgs()
 		{
 			try
@@ -100,6 +102,7 @@ namespace NGit.Storage.File
 		/// repo when the gitDir is given.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_openrepo_default_gitDirSet()
 		{
 			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
@@ -112,8 +115,8 @@ namespace NGit.Storage.File
 			AssertEqualsPath(theDir, r.Directory);
 			AssertEqualsPath(repo1Parent, r.WorkTree);
 			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
-			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
-				);
+			AssertEqualsPath(new FilePath(theDir, "objects"), ((ObjectDirectory)r.ObjectDatabase
+				).GetDirectory());
 		}
 
 		/// <summary>
@@ -125,6 +128,7 @@ namespace NGit.Storage.File
 		/// repo when the gitDir is given.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_openrepo_default_gitDirAndWorkTreeSet()
 		{
 			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
@@ -138,8 +142,8 @@ namespace NGit.Storage.File
 			AssertEqualsPath(theDir, r.Directory);
 			AssertEqualsPath(repo1Parent.GetParentFile(), r.WorkTree);
 			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
-			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
-				);
+			AssertEqualsPath(new FilePath(theDir, "objects"), ((ObjectDirectory)r.ObjectDatabase
+				).GetDirectory());
 		}
 
 		/// <summary>
@@ -151,6 +155,7 @@ namespace NGit.Storage.File
 		/// repo when the workTree is given.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_openrepo_default_workDirSet()
 		{
 			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
@@ -163,13 +168,14 @@ namespace NGit.Storage.File
 			AssertEqualsPath(theDir, r.Directory);
 			AssertEqualsPath(repo1Parent, r.WorkTree);
 			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
-			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
-				);
+			AssertEqualsPath(new FilePath(theDir, "objects"), ((ObjectDirectory)r.ObjectDatabase
+				).GetDirectory());
 		}
 
 		/// <summary>Check that worktree config has an effect, given absolute path.</summary>
 		/// <remarks>Check that worktree config has an effect, given absolute path.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_openrepo_default_absolute_workdirconfig()
 		{
 			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
@@ -187,13 +193,14 @@ namespace NGit.Storage.File
 			AssertEqualsPath(theDir, r.Directory);
 			AssertEqualsPath(workdir, r.WorkTree);
 			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
-			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
-				);
+			AssertEqualsPath(new FilePath(theDir, "objects"), ((ObjectDirectory)r.ObjectDatabase
+				).GetDirectory());
 		}
 
 		/// <summary>Check that worktree config has an effect, given a relative path.</summary>
 		/// <remarks>Check that worktree config has an effect, given a relative path.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_openrepo_default_relative_workdirconfig()
 		{
 			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
@@ -211,8 +218,8 @@ namespace NGit.Storage.File
 			AssertEqualsPath(theDir, r.Directory);
 			AssertEqualsPath(workdir, r.WorkTree);
 			AssertEqualsPath(new FilePath(theDir, "index"), r.GetIndexFile());
-			AssertEqualsPath(new FilePath(theDir, "objects"), r.ObjectDatabase.GetDirectory()
-				);
+			AssertEqualsPath(new FilePath(theDir, "objects"), ((ObjectDirectory)r.ObjectDatabase
+				).GetDirectory());
 		}
 
 		/// <summary>
@@ -220,12 +227,13 @@ namespace NGit.Storage.File
 		/// directories too
 		/// </summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_openrepo_alternate_index_file_and_objdirs()
 		{
 			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
 			FilePath indexFile = new FilePath(trash, "idx");
 			FilePath objDir = new FilePath(trash, "../obj");
-			FilePath altObjDir = db.ObjectDatabase.GetDirectory();
+			FilePath altObjDir = ((ObjectDirectory)db.ObjectDatabase).GetDirectory();
 			Repository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants.
 				DOT_GIT));
 			repo1initial.Create();
@@ -240,7 +248,7 @@ namespace NGit.Storage.File
 			AssertEqualsPath(theDir, r.Directory);
 			AssertEqualsPath(theDir.GetParentFile(), r.WorkTree);
 			AssertEqualsPath(indexFile, r.GetIndexFile());
-			AssertEqualsPath(objDir, r.ObjectDatabase.GetDirectory());
+			AssertEqualsPath(objDir, ((ObjectDirectory)r.ObjectDatabase).GetDirectory());
 			NUnit.Framework.Assert.IsNotNull(r.Open(ObjectId.FromString("6db9c2ebf75590eef973081736730a9ea169a0c4"
 				)));
 			// Must close or the default repo pack files created by this test gets
@@ -257,6 +265,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test002_WriteEmptyTree()
 		{
 			// One of our test packs contains the empty tree object. If the pack is
@@ -270,11 +279,12 @@ namespace NGit.Storage.File
 				().Name);
 			FilePath o = new FilePath(new FilePath(new FilePath(newdb.Directory, "objects"), 
 				"4b"), "825dc642cb6eb9a060e54bf8d69288fbee4904");
-			NUnit.Framework.Assert.IsTrue("Exists " + o, o.IsFile());
-			NUnit.Framework.Assert.IsTrue("Read-only " + o, !o.CanWrite());
+			NUnit.Framework.Assert.IsTrue(o.IsFile(), "Exists " + o);
+			NUnit.Framework.Assert.IsTrue(!o.CanWrite(), "Read-only " + o);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test002_WriteEmptyTree2()
 		{
 			// File shouldn't exist as it is in a test pack.
@@ -285,10 +295,11 @@ namespace NGit.Storage.File
 				().Name);
 			FilePath o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "4b"
 				), "825dc642cb6eb9a060e54bf8d69288fbee4904");
-			NUnit.Framework.Assert.IsFalse("Exists " + o, o.IsFile());
+			NUnit.Framework.Assert.IsFalse(o.IsFile(), "Exists " + o);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test003_WriteShouldBeEmptyTree()
 		{
 			Tree t = new Tree(db);
@@ -300,16 +311,17 @@ namespace NGit.Storage.File
 			FilePath o;
 			o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "7b"), "b943559a305bdd6bdee2cef6e5df2413c3d30a"
 				);
-			NUnit.Framework.Assert.IsTrue("Exists " + o, o.IsFile());
-			NUnit.Framework.Assert.IsTrue("Read-only " + o, !o.CanWrite());
+			NUnit.Framework.Assert.IsTrue(o.IsFile(), "Exists " + o);
+			NUnit.Framework.Assert.IsTrue(!o.CanWrite(), "Read-only " + o);
 			o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "e6"), "9de29bb2d1d6434b8b29ae775ad8c2e48c5391"
 				);
-			NUnit.Framework.Assert.IsTrue("Exists " + o, o.IsFile());
-			NUnit.Framework.Assert.IsTrue("Read-only " + o, !o.CanWrite());
+			NUnit.Framework.Assert.IsTrue(o.IsFile(), "Exists " + o);
+			NUnit.Framework.Assert.IsTrue(!o.CanWrite(), "Read-only " + o);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test006_ReadUglyConfig()
 		{
 			FilePath cfg = new FilePath(db.Directory, "config");
@@ -337,17 +349,19 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test007_Open()
 		{
 			FileRepository db2 = new FileRepository(db.Directory);
 			NUnit.Framework.Assert.AreEqual(db.Directory, db2.Directory);
-			NUnit.Framework.Assert.AreEqual(db.ObjectDatabase.GetDirectory(), db2.ObjectDatabase
-				.GetDirectory());
+			NUnit.Framework.Assert.AreEqual(((ObjectDirectory)db.ObjectDatabase).GetDirectory
+				(), ((ObjectDirectory)db2.ObjectDatabase).GetDirectory());
 			NUnit.Framework.Assert.AreNotSame(((FileBasedConfig)db.GetConfig()), ((FileBasedConfig
 				)db2.GetConfig()));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test008_FailOnWrongVersion()
 		{
 			FilePath cfg = new FilePath(db.Directory, "config");
@@ -369,6 +383,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test009_CreateCommitOldFormat()
 		{
 			Tree t = new Tree(db);
@@ -387,8 +402,8 @@ namespace NGit.Storage.File
 			ObjectId cmtid = ObjectId.FromString("803aec4aba175e8ab1d666873c984c0308179099");
 			AssertEquals(cmtid, c.CommitId);
 			// Verify the commit we just wrote is in the correct format.
-			ObjectDatabase odb = db.ObjectDatabase;
-			NUnit.Framework.Assert.IsTrue("is ObjectDirectory", odb is ObjectDirectory);
+			ObjectDatabase odb = ((ObjectDirectory)db.ObjectDatabase);
+			NUnit.Framework.Assert.IsTrue(odb is ObjectDirectory, "is ObjectDirectory");
 			XInputStream xis = new XInputStream(new FileInputStream(((ObjectDirectory)odb).FileFor
 				(cmtid)));
 			try
@@ -411,6 +426,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test012_SubtreeExternalSorting()
 		{
 			ObjectId emptyBlob = InsertEmptyBlob();
@@ -431,6 +447,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test020_createBlobTag()
 		{
 			ObjectId emptyId = InsertEmptyBlob();
@@ -452,6 +469,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test021_createTreeTag()
 		{
 			ObjectId emptyId = InsertEmptyBlob();
@@ -477,6 +495,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test022_createCommitTag()
 		{
 			ObjectId emptyId = InsertEmptyBlob();
@@ -509,6 +528,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test023_createCommitNonAnullii()
 		{
 			ObjectId emptyId = InsertEmptyBlob();
@@ -532,6 +552,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test024_createCommitNonAscii()
 		{
 			ObjectId emptyId = InsertEmptyBlob();
@@ -553,6 +574,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test025_computeSha1NoStore()
 		{
 			byte[] data = Sharpen.Runtime.GetBytesForString("test025 some data, more than 16 bytes to get good coverage"
@@ -563,6 +585,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test026_CreateCommitMultipleparents()
 		{
 			Tree t = new Tree(db);
@@ -643,6 +666,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test027_UnpackedRefHigherPriorityThanPacked()
 		{
 			PrintWriter writer = new PrintWriter(new FileWriter(new FilePath(db.Directory, "refs/heads/a"
@@ -656,6 +680,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test028_LockPackedRef()
 		{
 			WriteTrashFile(".git/packed-refs", "7f822839a2fe9760f386cbbbcb3f92c5fe81def7 refs/heads/foobar"
@@ -683,6 +708,7 @@ namespace NGit.Storage.File
 			AssertEquals(newId2, db.Resolve("refs/heads/foobar"));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test30_stripWorkDir()
 		{
 			FilePath relCwd = new FilePath(".");
@@ -832,7 +858,7 @@ namespace NGit.Storage.File
 			long set = 1250379778668L;
 			// Sat Aug 15 20:12:58 GMT-03:30 2009
 			path.SetLastModified(set);
-			NUnit.Framework.Assert.IsTrue("time changed", old != path.LastModified());
+			NUnit.Framework.Assert.IsTrue(old != path.LastModified(), "time changed");
 		}
 	}
 }

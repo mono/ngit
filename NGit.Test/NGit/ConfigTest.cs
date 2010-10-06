@@ -46,15 +46,16 @@ using System.Collections.Generic;
 using NGit;
 using NGit.Junit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
 {
 	/// <summary>Test reading of git config</summary>
-	public class ConfigTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class ConfigTest
 	{
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test001_ReadBareKey()
 		{
 			Config c = Parse("[foo]\nbar\n");
@@ -63,6 +64,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test002_ReadWithSubsection()
 		{
 			Config c = Parse("[foo \"zip\"]\nbar\n[foo \"zap\"]\nbar=false\nn=3\n");
@@ -74,6 +76,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(4, c.GetInt("foo", "zap", "m", 4));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test003_PutRemote()
 		{
 			Config c = new Config();
@@ -83,6 +86,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(expText, c.ToText());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test004_PutGetSimple()
 		{
 			Config c = new Config();
@@ -91,6 +95,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual("[my]\n\tsomename = false\n", c.ToText());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test005_PutGetStringList()
 		{
 			Config c = new Config();
@@ -106,6 +111,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test006_readCaseInsensitive()
 		{
 			Config c = Parse("[Foo]\nBar\n");
@@ -113,6 +119,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(string.Empty, c.GetString("foo", null, "bar"));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test007_readUserConfig()
 		{
 			MockSystemReader mockSystemReader = new MockSystemReader();
@@ -168,6 +175,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadBoolean_TrueFalse1()
 		{
 			Config c = Parse("[s]\na = true\nb = false\n");
@@ -178,6 +186,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadBoolean_TrueFalse2()
 		{
 			Config c = Parse("[s]\na = TrUe\nb = fAlSe\n");
@@ -188,6 +197,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadBoolean_YesNo1()
 		{
 			Config c = Parse("[s]\na = yes\nb = no\n");
@@ -198,6 +208,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadBoolean_YesNo2()
 		{
 			Config c = Parse("[s]\na = yEs\nb = NO\n");
@@ -208,6 +219,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadBoolean_OnOff1()
 		{
 			Config c = Parse("[s]\na = on\nb = off\n");
@@ -218,6 +230,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadBoolean_OnOff2()
 		{
 			Config c = Parse("[s]\na = ON\nb = OFF\n");
@@ -233,25 +246,27 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetEnum()
 		{
 			Config c = Parse("[s]\na = ON\nb = input\nc = true\nd = off\n");
-			NUnit.Framework.Assert.AreSame(CoreConfig.AutoCRLF.TRUE, c.GetEnum("s", null, "a"
+			NUnit.Framework.Assert.AreEqual(CoreConfig.AutoCRLF.TRUE, c.GetEnum("s", null, "a"
 				, CoreConfig.AutoCRLF.FALSE));
-			NUnit.Framework.Assert.AreSame(CoreConfig.AutoCRLF.INPUT, c.GetEnum("s", null, "b"
+			NUnit.Framework.Assert.AreEqual(CoreConfig.AutoCRLF.INPUT, c.GetEnum("s", null, "b"
 				, CoreConfig.AutoCRLF.FALSE));
-			NUnit.Framework.Assert.AreSame(CoreConfig.AutoCRLF.TRUE, c.GetEnum("s", null, "c"
+			NUnit.Framework.Assert.AreEqual(CoreConfig.AutoCRLF.TRUE, c.GetEnum("s", null, "c"
 				, CoreConfig.AutoCRLF.FALSE));
-			NUnit.Framework.Assert.AreSame(CoreConfig.AutoCRLF.FALSE, c.GetEnum("s", null, "d"
+			NUnit.Framework.Assert.AreEqual(CoreConfig.AutoCRLF.FALSE, c.GetEnum("s", null, "d"
 				, CoreConfig.AutoCRLF.TRUE));
 			c = new Config();
-			NUnit.Framework.Assert.AreSame(CoreConfig.AutoCRLF.FALSE, c.GetEnum("s", null, "d"
+			NUnit.Framework.Assert.AreEqual(CoreConfig.AutoCRLF.FALSE, c.GetEnum("s", null, "d"
 				, CoreConfig.AutoCRLF.FALSE));
 			c = Parse("[s \"b\"]\n\tc = one two\n");
-			NUnit.Framework.Assert.AreSame(ConfigTest.TestEnum.ONE_TWO, c.GetEnum("s", "b", "c"
-				, ConfigTest.TestEnum.ONE_TWO));
+			NUnit.Framework.Assert.AreEqual(ConfigTest.TestEnum.ONE_TWO, c.GetEnum("s", "b", 
+				"c", ConfigTest.TestEnum.ONE_TWO));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSetEnum()
 		{
 			Config c = new Config();
@@ -260,6 +275,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadLong()
 		{
 			AssertReadLong(1L);
@@ -281,6 +297,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBooleanWithNoValue()
 		{
 			Config c = Parse("[my]\n\tempty\n");
@@ -293,6 +310,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyString()
 		{
 			Config c = Parse("[my]\n\tempty =\n");
@@ -311,6 +329,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnsetBranchSection()
 		{
 			Config c = Parse(string.Empty + "[branch \"keep\"]\n" + "  merge = master.branch.to.keep.in.the.file\n"
@@ -326,6 +345,7 @@ namespace NGit
 
 		//
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnsetSingleSection()
 		{
 			Config c = Parse(string.Empty + "[branch \"keep\"]\n" + "  merge = master.branch.to.keep.in.the.file\n"
@@ -340,29 +360,32 @@ namespace NGit
 
 		//
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test008_readSectionNames()
 		{
 			Config c = Parse("[a]\n [B]\n");
 			ICollection<string> sections = c.GetSections();
-			NUnit.Framework.Assert.IsTrue("Sections should contain \"a\"", sections.Contains(
-				"a"));
-			NUnit.Framework.Assert.IsTrue("Sections should contain \"b\"", sections.Contains(
-				"b"));
+			NUnit.Framework.Assert.IsTrue(sections.Contains("a"), "Sections should contain \"a\""
+				);
+			NUnit.Framework.Assert.IsTrue(sections.Contains("b"), "Sections should contain \"b\""
+				);
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test009_readNamesInSection()
 		{
 			string configString = "[core]\n" + "repositoryformatversion = 0\n" + "filemode = false\n"
 				 + "logallrefupdates = true\n";
 			Config c = Parse(configString);
 			ICollection<string> names = c.GetNames("core");
-			NUnit.Framework.Assert.AreEqual("Core section size", 3, names.Count);
-			NUnit.Framework.Assert.IsTrue("Core section should contain \"filemode\"", names.Contains
-				("filemode"));
+			NUnit.Framework.Assert.AreEqual(3, names.Count, "Core section size");
+			NUnit.Framework.Assert.IsTrue(names.Contains("filemode"), "Core section should contain \"filemode\""
+				);
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test010_readNamesInSubSection()
 		{
 			string configString = "[a \"sub1\"]\n" + "x = 0\n" + "y = false\n" + "z = true\n"
@@ -375,21 +398,22 @@ namespace NGit
 			//
 			Config c = Parse(configString);
 			ICollection<string> names = c.GetNames("a", "sub1");
-			NUnit.Framework.Assert.AreEqual("Subsection size", 3, names.Count);
-			NUnit.Framework.Assert.IsTrue("Subsection should contain \"x\"", names.Contains("x"
-				));
-			NUnit.Framework.Assert.IsTrue("Subsection should contain \"y\"", names.Contains("y"
-				));
-			NUnit.Framework.Assert.IsTrue("Subsection should contain \"z\"", names.Contains("z"
-				));
+			NUnit.Framework.Assert.AreEqual(3, names.Count, "Subsection size");
+			NUnit.Framework.Assert.IsTrue(names.Contains("x"), "Subsection should contain \"x\""
+				);
+			NUnit.Framework.Assert.IsTrue(names.Contains("y"), "Subsection should contain \"y\""
+				);
+			NUnit.Framework.Assert.IsTrue(names.Contains("z"), "Subsection should contain \"z\""
+				);
 			names = c.GetNames("a", "sub2");
-			NUnit.Framework.Assert.AreEqual("Subsection size", 2, names.Count);
-			NUnit.Framework.Assert.IsTrue("Subsection should contain \"a\"", names.Contains("a"
-				));
-			NUnit.Framework.Assert.IsTrue("Subsection should contain \"b\"", names.Contains("b"
-				));
+			NUnit.Framework.Assert.AreEqual(2, names.Count, "Subsection size");
+			NUnit.Framework.Assert.IsTrue(names.Contains("a"), "Subsection should contain \"a\""
+				);
+			NUnit.Framework.Assert.IsTrue(names.Contains("b"), "Subsection should contain \"b\""
+				);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuotingForSubSectionNames()
 		{
 			string resultPattern = "[testsection \"{0}\"]\n\ttestname = testvalue\n";

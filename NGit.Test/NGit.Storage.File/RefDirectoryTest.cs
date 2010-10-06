@@ -79,6 +79,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreate()
 		{
 			// setUp above created the directory. We just have to test it.
@@ -102,18 +103,20 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_EmptyDatabase()
 		{
 			IDictionary<string, Ref> all;
 			all = refdir.GetRefs(RefDatabase.ALL);
-			NUnit.Framework.Assert.IsTrue("no references", all.IsEmpty());
+			NUnit.Framework.Assert.IsTrue(all.IsEmpty(), "no references");
 			all = refdir.GetRefs(Constants.R_HEADS);
-			NUnit.Framework.Assert.IsTrue("no references", all.IsEmpty());
+			NUnit.Framework.Assert.IsTrue(all.IsEmpty(), "no references");
 			all = refdir.GetRefs(Constants.R_TAGS);
-			NUnit.Framework.Assert.IsTrue("no references", all.IsEmpty());
+			NUnit.Framework.Assert.IsTrue(all.IsEmpty(), "no references");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_HeadOnOneBranch()
 		{
 			IDictionary<string, Ref> all;
@@ -122,22 +125,23 @@ namespace NGit.Storage.File
 			WriteLooseRef("refs/heads/master", A);
 			all = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(2, all.Count);
-			NUnit.Framework.Assert.IsTrue("has HEAD", all.ContainsKey(Constants.HEAD));
-			NUnit.Framework.Assert.IsTrue("has master", all.ContainsKey("refs/heads/master"));
+			NUnit.Framework.Assert.IsTrue(all.ContainsKey(Constants.HEAD), "has HEAD");
+			NUnit.Framework.Assert.IsTrue(all.ContainsKey("refs/heads/master"), "has master");
 			head = all.Get(Constants.HEAD);
 			master = all.Get("refs/heads/master");
 			NUnit.Framework.Assert.AreEqual(Constants.HEAD, head.GetName());
 			NUnit.Framework.Assert.IsTrue(head.IsSymbolic());
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, head.GetStorage());
-			NUnit.Framework.Assert.AreSame("uses same ref as target", master, head.GetTarget(
-				));
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, head.GetStorage());
+			NUnit.Framework.Assert.AreSame(master, head.GetTarget(), "uses same ref as target"
+				);
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", master.GetName());
 			NUnit.Framework.Assert.IsFalse(master.IsSymbolic());
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, master.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, master.GetStorage());
 			AssertEquals(A, master.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DeatchedHead1()
 		{
 			IDictionary<string, Ref> all;
@@ -146,15 +150,16 @@ namespace NGit.Storage.File
 			BUG_WorkAroundRacyGitIssues(Constants.HEAD);
 			all = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(1, all.Count);
-			NUnit.Framework.Assert.IsTrue("has HEAD", all.ContainsKey(Constants.HEAD));
+			NUnit.Framework.Assert.IsTrue(all.ContainsKey(Constants.HEAD), "has HEAD");
 			head = all.Get(Constants.HEAD);
 			NUnit.Framework.Assert.AreEqual(Constants.HEAD, head.GetName());
 			NUnit.Framework.Assert.IsFalse(head.IsSymbolic());
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, head.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, head.GetStorage());
 			AssertEquals(A, head.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DeatchedHead2()
 		{
 			IDictionary<string, Ref> all;
@@ -169,15 +174,16 @@ namespace NGit.Storage.File
 			master = all.Get("refs/heads/master");
 			NUnit.Framework.Assert.AreEqual(Constants.HEAD, head.GetName());
 			NUnit.Framework.Assert.IsFalse(head.IsSymbolic());
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, head.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, head.GetStorage());
 			AssertEquals(A, head.GetObjectId());
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", master.GetName());
 			NUnit.Framework.Assert.IsFalse(master.IsSymbolic());
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, master.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, master.GetStorage());
 			AssertEquals(B, master.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DeeplyNestedBranch()
 		{
 			string name = "refs/heads/a/b/c/d/e/f/g/h/i/j/k";
@@ -189,11 +195,12 @@ namespace NGit.Storage.File
 			r = all.Get(name);
 			NUnit.Framework.Assert.AreEqual(name, r.GetName());
 			NUnit.Framework.Assert.IsFalse(r.IsSymbolic());
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, r.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, r.GetStorage());
 			AssertEquals(A, r.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_HeadBranchNotBorn()
 		{
 			IDictionary<string, Ref> all;
@@ -203,7 +210,7 @@ namespace NGit.Storage.File
 			WriteLooseRef("refs/heads/B", B);
 			all = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(2, all.Count);
-			NUnit.Framework.Assert.IsFalse("no HEAD", all.ContainsKey(Constants.HEAD));
+			NUnit.Framework.Assert.IsFalse(all.ContainsKey(Constants.HEAD), "no HEAD");
 			a = all.Get("refs/heads/A");
 			b = all.Get("refs/heads/B");
 			AssertEquals(A, a.GetObjectId());
@@ -213,6 +220,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_LooseOverridesPacked()
 		{
 			IDictionary<string, Ref> heads;
@@ -227,6 +235,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_IgnoresGarbageRef1()
 		{
 			IDictionary<string, Ref> heads;
@@ -241,6 +250,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_IgnoresGarbageRef2()
 		{
 			IDictionary<string, Ref> heads;
@@ -255,6 +265,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_IgnoresGarbageRef3()
 		{
 			IDictionary<string, Ref> heads;
@@ -269,6 +280,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_IgnoresGarbageRef4()
 		{
 			IDictionary<string, Ref> heads;
@@ -292,24 +304,26 @@ namespace NGit.Storage.File
 			c = heads.Get("refs/heads/C");
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
 			AssertEquals(A, a.GetObjectId());
-			NUnit.Framework.Assert.IsNull("no refs/heads/B", b);
+			NUnit.Framework.Assert.IsNull(b, "no refs/heads/B");
 			NUnit.Framework.Assert.AreEqual("refs/heads/C", c.GetName());
 			AssertEquals(A, c.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_InvalidName()
 		{
 			WriteLooseRef("refs/heads/A", A);
-			NUnit.Framework.Assert.IsTrue("empty refs/heads", refdir.GetRefs("refs/heads").IsEmpty
-				());
-			NUnit.Framework.Assert.IsTrue("empty objects", refdir.GetRefs("objects").IsEmpty(
-				));
-			NUnit.Framework.Assert.IsTrue("empty objects/", refdir.GetRefs("objects/").IsEmpty
-				());
+			NUnit.Framework.Assert.IsTrue(refdir.GetRefs("refs/heads").IsEmpty(), "empty refs/heads"
+				);
+			NUnit.Framework.Assert.IsTrue(refdir.GetRefs("objects").IsEmpty(), "empty objects"
+				);
+			NUnit.Framework.Assert.IsTrue(refdir.GetRefs("objects/").IsEmpty(), "empty objects/"
+				);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_HeadsOnly_AllLoose()
 		{
 			IDictionary<string, Ref> heads;
@@ -329,6 +343,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_HeadsOnly_AllPacked1()
 		{
 			IDictionary<string, Ref> heads;
@@ -343,6 +358,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_HeadsOnly_SymrefToPacked()
 		{
 			IDictionary<string, Ref> heads;
@@ -362,6 +378,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_HeadsOnly_Mixed()
 		{
 			IDictionary<string, Ref> heads;
@@ -381,6 +398,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_TagsOnly_AllLoose()
 		{
 			IDictionary<string, Ref> tags;
@@ -395,6 +413,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_TagsOnly_AllPacked()
 		{
 			IDictionary<string, Ref> tags;
@@ -409,6 +428,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DiscoversNewLoose1()
 		{
 			IDictionary<string, Ref> orig;
@@ -426,17 +446,18 @@ namespace NGit.Storage.File
 			orig_r = orig.Get("refs/heads/master");
 			next_r = next.Get("refs/heads/master");
 			AssertEquals(A, orig_r.GetObjectId());
-			NUnit.Framework.Assert.AreSame("uses cached instance", orig_r, next_r);
-			NUnit.Framework.Assert.AreSame("same HEAD", orig_r, orig.Get(Constants.HEAD).GetTarget
-				());
-			NUnit.Framework.Assert.AreSame("same HEAD", orig_r, next.Get(Constants.HEAD).GetTarget
-				());
+			NUnit.Framework.Assert.AreSame(orig_r, next_r, "uses cached instance");
+			NUnit.Framework.Assert.AreSame(orig_r, orig.Get(Constants.HEAD).GetTarget(), "same HEAD"
+				);
+			NUnit.Framework.Assert.AreSame(orig_r, next.Get(Constants.HEAD).GetTarget(), "same HEAD"
+				);
 			next_r = next.Get("refs/heads/next");
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, next_r.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, next_r.GetStorage());
 			AssertEquals(B, next_r.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DiscoversNewLoose2()
 		{
 			IDictionary<string, Ref> orig;
@@ -459,6 +480,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DiscoversModifiedLoose()
 		{
 			IDictionary<string, Ref> all;
@@ -472,6 +494,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRef_DiscoversModifiedLoose()
 		{
 			IDictionary<string, Ref> all;
@@ -485,6 +508,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DiscoversDeletedLoose1()
 		{
 			IDictionary<string, Ref> orig;
@@ -503,17 +527,18 @@ namespace NGit.Storage.File
 			orig_r = orig.Get("refs/heads/master");
 			next_r = next.Get("refs/heads/master");
 			AssertEquals(A, orig_r.GetObjectId());
-			NUnit.Framework.Assert.AreSame("uses cached instance", orig_r, next_r);
-			NUnit.Framework.Assert.AreSame("same HEAD", orig_r, orig.Get(Constants.HEAD).GetTarget
-				());
-			NUnit.Framework.Assert.AreSame("same HEAD", orig_r, next.Get(Constants.HEAD).GetTarget
-				());
+			NUnit.Framework.Assert.AreSame(orig_r, next_r, "uses cached instance");
+			NUnit.Framework.Assert.AreSame(orig_r, orig.Get(Constants.HEAD).GetTarget(), "same HEAD"
+				);
+			NUnit.Framework.Assert.AreSame(orig_r, next.Get(Constants.HEAD).GetTarget(), "same HEAD"
+				);
 			orig_r = orig.Get("refs/heads/B");
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, orig_r.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, orig_r.GetStorage());
 			AssertEquals(B, orig_r.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRef_DiscoversDeletedLoose()
 		{
 			IDictionary<string, Ref> all;
@@ -526,6 +551,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DiscoversDeletedLoose2()
 		{
 			IDictionary<string, Ref> orig;
@@ -542,6 +568,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DiscoversDeletedLoose3()
 		{
 			IDictionary<string, Ref> orig;
@@ -563,6 +590,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DiscoversDeletedLoose4()
 		{
 			IDictionary<string, Ref> orig;
@@ -583,10 +611,11 @@ namespace NGit.Storage.File
 			orig_r = orig.Get("refs/heads/B");
 			next_r = next.Get("B");
 			AssertEquals(B, orig_r.GetObjectId());
-			NUnit.Framework.Assert.AreSame("uses cached instance", orig_r, next_r);
+			NUnit.Framework.Assert.AreSame(orig_r, next_r, "uses cached instance");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_DiscoversDeletedLoose5()
 		{
 			IDictionary<string, Ref> orig;
@@ -606,6 +635,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_SkipsLockFiles()
 		{
 			IDictionary<string, Ref> all;
@@ -619,6 +649,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_CycleInSymbolicRef()
 		{
 			IDictionary<string, Ref> all;
@@ -631,7 +662,7 @@ namespace NGit.Storage.File
 			WriteLooseRef("refs/end", A);
 			all = refdir.GetRefs(RefDatabase.ALL);
 			r = all.Get("refs/1");
-			NUnit.Framework.Assert.IsNotNull("has 1", r);
+			NUnit.Framework.Assert.IsNotNull(r, "has 1");
 			NUnit.Framework.Assert.AreEqual("refs/1", r.GetName());
 			AssertEquals(A, r.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(r.IsSymbolic());
@@ -660,10 +691,11 @@ namespace NGit.Storage.File
 			BUG_WorkAroundRacyGitIssues("refs/5");
 			all = refdir.GetRefs(RefDatabase.ALL);
 			r = all.Get("refs/1");
-			NUnit.Framework.Assert.IsNull("mising 1 due to cycle", r);
+			NUnit.Framework.Assert.IsNull(r, "mising 1 due to cycle");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_PackedNotPeeled_Sorted()
 		{
 			IDictionary<string, Ref> all;
@@ -694,6 +726,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRef_PackedNotPeeled_WrongSort()
 		{
 			WritePackedRefs(string.Empty + v1_0.Name + " refs/tags/v1.0\n" + B.Name + " refs/heads/other\n"
@@ -721,6 +754,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_PackedWithPeeled()
 		{
 			IDictionary<string, Ref> all;
@@ -753,14 +787,15 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRef_EmptyDatabase()
 		{
 			Ref r;
 			r = refdir.GetRef(Constants.HEAD);
 			NUnit.Framework.Assert.IsTrue(r.IsSymbolic());
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, r.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, r.GetStorage());
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", r.GetTarget().GetName());
-			NUnit.Framework.Assert.AreSame(RefStorage.NEW, r.GetTarget().GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.NEW, r.GetTarget().GetStorage());
 			NUnit.Framework.Assert.IsNull(r.GetTarget().GetObjectId());
 			NUnit.Framework.Assert.IsNull(refdir.GetRef("refs/heads/master"));
 			NUnit.Framework.Assert.IsNull(refdir.GetRef("refs/tags/v1.0"));
@@ -771,6 +806,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRef_FetchHead()
 		{
 			// This is an odd special case where we need to make sure we read
@@ -787,6 +823,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRef_AnyHeadWithGarbage()
 		{
 			Write(new FilePath(diskRepo.Directory, "refs/heads/A"), A.Name + "012345 . this is not a standard reference\n"
@@ -800,6 +837,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_CorruptSymbolicReference()
 		{
 			string name = "refs/heads/A";
@@ -808,6 +846,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRef_CorruptSymbolicReference()
 		{
 			string name = "refs/heads/A";
@@ -825,6 +864,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_CorruptObjectIdReference()
 		{
 			string name = "refs/heads/A";
@@ -834,6 +874,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRef_CorruptObjectIdReference()
 		{
 			string name = "refs/heads/A";
@@ -852,6 +893,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIsNameConflicting()
 		{
 			WriteLooseRef("refs/heads/a/b", A);
@@ -871,6 +913,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPeelLooseTag()
 		{
 			WriteLooseRef("refs/tags/v1_0", v1_0);
@@ -914,6 +957,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPeelCommit()
 		{
 			WriteLooseRef("refs/heads/master", A);
@@ -964,7 +1008,7 @@ namespace NGit.Storage.File
 		private void DeleteLooseRef(string name)
 		{
 			FilePath path = new FilePath(diskRepo.Directory, name);
-			NUnit.Framework.Assert.IsTrue("deleted " + name, path.Delete());
+			NUnit.Framework.Assert.IsTrue(path.Delete(), "deleted " + name);
 		}
 
 		/// <summary>Kick the timestamp of a local file.</summary>
@@ -984,7 +1028,7 @@ namespace NGit.Storage.File
 			long set = 1250379778668L;
 			// Sat Aug 15 20:12:58 GMT-03:30 2009
 			path.SetLastModified(set);
-			NUnit.Framework.Assert.IsTrue("time changed", old != path.LastModified());
+			NUnit.Framework.Assert.IsTrue(old != path.LastModified(), "time changed");
 		}
 	}
 }

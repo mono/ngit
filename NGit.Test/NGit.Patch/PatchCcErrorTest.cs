@@ -43,14 +43,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Patch;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Patch
 {
-	public class PatchCcErrorTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class PatchCcErrorTest
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestError_CcTruncatedOld()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -58,7 +59,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(3, p.GetErrors().Count);
 			{
 				FormatError e = p.GetErrors()[0];
-				NUnit.Framework.Assert.AreSame(FormatError.Severity.ERROR, e.GetSeverity());
+				NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().truncatedHunkLinesMissingForAncestor
 					, 1, 1), e.GetMessage());
 				NUnit.Framework.Assert.AreEqual(346, e.GetOffset());
@@ -67,7 +68,7 @@ namespace NGit.Patch
 			}
 			{
 				FormatError e = p.GetErrors()[1];
-				NUnit.Framework.Assert.AreSame(FormatError.Severity.ERROR, e.GetSeverity());
+				NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().truncatedHunkLinesMissingForAncestor
 					, 2, 2), e.GetMessage());
 				NUnit.Framework.Assert.AreEqual(346, e.GetOffset());
@@ -76,7 +77,7 @@ namespace NGit.Patch
 			}
 			{
 				FormatError e = p.GetErrors()[2];
-				NUnit.Framework.Assert.AreSame(FormatError.Severity.ERROR, e.GetSeverity());
+				NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 				NUnit.Framework.Assert.AreEqual("Truncated hunk, at least 3 new lines is missing"
 					, e.GetMessage());
 				NUnit.Framework.Assert.AreEqual(346, e.GetOffset());

@@ -44,12 +44,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Junit;
 using NGit.Storage.Pack;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Storage.Pack
 {
-	public class DeltaIndexTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class DeltaIndexTest
 	{
 		private TestRng rng;
 
@@ -66,9 +66,9 @@ namespace NGit.Storage.Pack
 		private ByteArrayOutputStream dstBuf;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			rng = new TestRng(Sharpen.Extensions.GetTestName(this));
 			actDeltaBuf = new ByteArrayOutputStream();
 			expDeltaBuf = new ByteArrayOutputStream();
@@ -77,6 +77,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInsertWholeObject_Length12()
 		{
 			src = rng.NextBytes(12);
@@ -85,6 +86,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCopyWholeObject_Length128()
 		{
 			src = rng.NextBytes(128);
@@ -93,6 +95,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCopyWholeObject_Length123()
 		{
 			src = rng.NextBytes(123);
@@ -101,6 +104,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCopyZeros_Length128()
 		{
 			src = new byte[2048];
@@ -114,6 +118,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestShuffleSegments()
 		{
 			src = rng.NextBytes(128);
@@ -123,6 +128,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInsertHeadMiddle()
 		{
 			src = rng.NextBytes(1024);
@@ -134,6 +140,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInsertTail()
 		{
 			src = rng.NextBytes(1024);
@@ -142,6 +149,7 @@ namespace NGit.Storage.Pack
 			DoTest();
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestIndexSize()
 		{
 			src = rng.NextBytes(1024);
@@ -151,6 +159,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_Length12InsertFails()
 		{
 			src = rng.NextBytes(12);
@@ -160,6 +169,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_Length130InsertFails()
 		{
 			src = rng.NextBytes(130);
@@ -169,6 +179,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_Length130CopyOk()
 		{
 			src = rng.NextBytes(130);
@@ -184,6 +195,7 @@ namespace NGit.Storage.Pack
 
 		//
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_Length130CopyFails()
 		{
 			src = rng.NextBytes(130);
@@ -198,6 +210,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_InsertFrontFails()
 		{
 			src = rng.NextBytes(130);
@@ -243,7 +256,7 @@ namespace NGit.Storage.Pack
 			NUnit.Framework.Assert.AreEqual(BinaryDelta.Format(expDelta, false), BinaryDelta.
 				Format(actDelta, false));
 			//
-			NUnit.Framework.Assert.IsTrue("delta is not empty", actDelta.Length > 0);
+			NUnit.Framework.Assert.IsTrue(actDelta.Length > 0, "delta is not empty");
 			NUnit.Framework.Assert.AreEqual(src.Length, BinaryDelta.GetBaseSize(actDelta));
 			NUnit.Framework.Assert.AreEqual(dst.Length, BinaryDelta.GetResultSize(actDelta));
 			NUnit.Framework.Assert.IsTrue(Arrays.Equals(dst, BinaryDelta.Apply(src, actDelta)

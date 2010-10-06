@@ -75,12 +75,14 @@ namespace NGit
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_sort_01()
 		{
 			NUnit.Framework.Assert.AreEqual(0, CompareNamesUsingSpecialCompare("a", "a"));
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_sort_02()
 		{
 			NUnit.Framework.Assert.AreEqual(-1, CompareNamesUsingSpecialCompare("a", "b"));
@@ -88,6 +90,7 @@ namespace NGit
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_sort_03()
 		{
 			NUnit.Framework.Assert.AreEqual(1, CompareNamesUsingSpecialCompare("a:", "a"));
@@ -99,6 +102,7 @@ namespace NGit
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_sort_04()
 		{
 			NUnit.Framework.Assert.AreEqual(-1, CompareNamesUsingSpecialCompare("a.a", "a/a")
@@ -107,6 +111,7 @@ namespace NGit
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test000_sort_05()
 		{
 			NUnit.Framework.Assert.AreEqual(-1, CompareNamesUsingSpecialCompare("a.", "a/"));
@@ -114,157 +119,164 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test001_createEmpty()
 		{
 			Tree t = new Tree(db);
-			NUnit.Framework.Assert.IsTrue("isLoaded", t.IsLoaded());
-			NUnit.Framework.Assert.IsTrue("isModified", t.IsModified());
-			NUnit.Framework.Assert.IsTrue("no parent", t.GetParent() == null);
-			NUnit.Framework.Assert.IsTrue("isRoot", t.IsRoot());
-			NUnit.Framework.Assert.IsTrue("no name", t.GetName() == null);
-			NUnit.Framework.Assert.IsTrue("no nameUTF8", t.GetNameUTF8() == null);
-			NUnit.Framework.Assert.IsTrue("has entries array", t.Members() != null);
-			NUnit.Framework.Assert.IsTrue("entries is empty", t.Members().Length == 0);
-			NUnit.Framework.Assert.AreEqual("full name is empty", string.Empty, t.GetFullName
-				());
-			NUnit.Framework.Assert.IsTrue("no id", t.GetId() == null);
-			NUnit.Framework.Assert.IsTrue("tree is self", t.GetTree() == t);
-			NUnit.Framework.Assert.IsTrue("database is r", t.GetRepository() == db);
-			NUnit.Framework.Assert.IsTrue("no foo child", t.FindTreeMember("foo") == null);
-			NUnit.Framework.Assert.IsTrue("no foo child", t.FindBlobMember("foo") == null);
+			NUnit.Framework.Assert.IsTrue(t.IsLoaded(), "isLoaded");
+			NUnit.Framework.Assert.IsTrue(t.IsModified(), "isModified");
+			NUnit.Framework.Assert.IsTrue(t.GetParent() == null, "no parent");
+			NUnit.Framework.Assert.IsTrue(t.IsRoot(), "isRoot");
+			NUnit.Framework.Assert.IsTrue(t.GetName() == null, "no name");
+			NUnit.Framework.Assert.IsTrue(t.GetNameUTF8() == null, "no nameUTF8");
+			NUnit.Framework.Assert.IsTrue(t.Members() != null, "has entries array");
+			NUnit.Framework.Assert.IsTrue(t.Members().Length == 0, "entries is empty");
+			NUnit.Framework.Assert.AreEqual(string.Empty, t.GetFullName(), "full name is empty"
+				);
+			NUnit.Framework.Assert.IsTrue(t.GetId() == null, "no id");
+			NUnit.Framework.Assert.IsTrue(t.GetTree() == t, "tree is self");
+			NUnit.Framework.Assert.IsTrue(t.GetRepository() == db, "database is r");
+			NUnit.Framework.Assert.IsTrue(t.FindTreeMember("foo") == null, "no foo child");
+			NUnit.Framework.Assert.IsTrue(t.FindBlobMember("foo") == null, "no foo child");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test002_addFile()
 		{
 			Tree t = new Tree(db);
 			t.SetId(SOME_FAKE_ID);
-			NUnit.Framework.Assert.IsTrue("has id", t.GetId() != null);
-			NUnit.Framework.Assert.IsFalse("not modified", t.IsModified());
+			NUnit.Framework.Assert.IsTrue(t.GetId() != null, "has id");
+			NUnit.Framework.Assert.IsFalse(t.IsModified(), "not modified");
 			string n = "bob";
 			FileTreeEntry f = t.AddFile(n);
-			NUnit.Framework.Assert.IsNotNull("have file", f);
-			NUnit.Framework.Assert.AreEqual("name matches", n, f.GetName());
-			NUnit.Framework.Assert.AreEqual("name matches", f.GetName(), Sharpen.Extensions.CreateString
-				(f.GetNameUTF8(), "UTF-8"));
-			NUnit.Framework.Assert.AreEqual("full name matches", n, f.GetFullName());
-			NUnit.Framework.Assert.IsTrue("no id", f.GetId() == null);
-			NUnit.Framework.Assert.IsTrue("is modified", t.IsModified());
-			NUnit.Framework.Assert.IsTrue("has no id", t.GetId() == null);
-			NUnit.Framework.Assert.IsTrue("found bob", t.FindBlobMember(f.GetName()) == f);
+			NUnit.Framework.Assert.IsNotNull(f, "have file");
+			NUnit.Framework.Assert.AreEqual(n, f.GetName(), "name matches");
+			NUnit.Framework.Assert.AreEqual(f.GetName(), Sharpen.Extensions.CreateString(f.GetNameUTF8
+				(), "UTF-8"), "name matches");
+			NUnit.Framework.Assert.AreEqual(n, f.GetFullName(), "full name matches");
+			NUnit.Framework.Assert.IsTrue(f.GetId() == null, "no id");
+			NUnit.Framework.Assert.IsTrue(t.IsModified(), "is modified");
+			NUnit.Framework.Assert.IsTrue(t.GetId() == null, "has no id");
+			NUnit.Framework.Assert.IsTrue(t.FindBlobMember(f.GetName()) == f, "found bob");
 			TreeEntry[] i = t.Members();
-			NUnit.Framework.Assert.IsNotNull("members array not null", i);
-			NUnit.Framework.Assert.IsTrue("iterator is not empty", i != null && i.Length > 0);
-			NUnit.Framework.Assert.IsTrue("iterator returns file", i != null && i[0] == f);
-			NUnit.Framework.Assert.IsTrue("iterator is empty", i != null && i.Length == 1);
+			NUnit.Framework.Assert.IsNotNull(i, "members array not null");
+			NUnit.Framework.Assert.IsTrue(i != null && i.Length > 0, "iterator is not empty");
+			NUnit.Framework.Assert.IsTrue(i != null && i[0] == f, "iterator returns file");
+			NUnit.Framework.Assert.IsTrue(i != null && i.Length == 1, "iterator is empty");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test004_addTree()
 		{
 			Tree t = new Tree(db);
 			t.SetId(SOME_FAKE_ID);
-			NUnit.Framework.Assert.IsTrue("has id", t.GetId() != null);
-			NUnit.Framework.Assert.IsFalse("not modified", t.IsModified());
+			NUnit.Framework.Assert.IsTrue(t.GetId() != null, "has id");
+			NUnit.Framework.Assert.IsFalse(t.IsModified(), "not modified");
 			string n = "bob";
 			Tree f = t.AddTree(n);
-			NUnit.Framework.Assert.IsNotNull("have tree", f);
-			NUnit.Framework.Assert.AreEqual("name matches", n, f.GetName());
-			NUnit.Framework.Assert.AreEqual("name matches", f.GetName(), Sharpen.Extensions.CreateString
-				(f.GetNameUTF8(), "UTF-8"));
-			NUnit.Framework.Assert.AreEqual("full name matches", n, f.GetFullName());
-			NUnit.Framework.Assert.IsTrue("no id", f.GetId() == null);
-			NUnit.Framework.Assert.IsTrue("parent matches", f.GetParent() == t);
-			NUnit.Framework.Assert.IsTrue("repository matches", f.GetRepository() == db);
-			NUnit.Framework.Assert.IsTrue("isLoaded", f.IsLoaded());
-			NUnit.Framework.Assert.IsFalse("has items", f.Members().Length > 0);
-			NUnit.Framework.Assert.IsFalse("is root", f.IsRoot());
-			NUnit.Framework.Assert.IsTrue("tree is self", f.GetTree() == f);
-			NUnit.Framework.Assert.IsTrue("parent is modified", t.IsModified());
-			NUnit.Framework.Assert.IsTrue("parent has no id", t.GetId() == null);
-			NUnit.Framework.Assert.IsTrue("found bob child", t.FindTreeMember(f.GetName()) ==
-				 f);
+			NUnit.Framework.Assert.IsNotNull(f, "have tree");
+			NUnit.Framework.Assert.AreEqual(n, f.GetName(), "name matches");
+			NUnit.Framework.Assert.AreEqual(f.GetName(), Sharpen.Extensions.CreateString(f.GetNameUTF8
+				(), "UTF-8"), "name matches");
+			NUnit.Framework.Assert.AreEqual(n, f.GetFullName(), "full name matches");
+			NUnit.Framework.Assert.IsTrue(f.GetId() == null, "no id");
+			NUnit.Framework.Assert.IsTrue(f.GetParent() == t, "parent matches");
+			NUnit.Framework.Assert.IsTrue(f.GetRepository() == db, "repository matches");
+			NUnit.Framework.Assert.IsTrue(f.IsLoaded(), "isLoaded");
+			NUnit.Framework.Assert.IsFalse(f.Members().Length > 0, "has items");
+			NUnit.Framework.Assert.IsFalse(f.IsRoot(), "is root");
+			NUnit.Framework.Assert.IsTrue(f.GetTree() == f, "tree is self");
+			NUnit.Framework.Assert.IsTrue(t.IsModified(), "parent is modified");
+			NUnit.Framework.Assert.IsTrue(t.GetId() == null, "parent has no id");
+			NUnit.Framework.Assert.IsTrue(t.FindTreeMember(f.GetName()) == f, "found bob child"
+				);
 			TreeEntry[] i = t.Members();
-			NUnit.Framework.Assert.IsTrue("iterator is not empty", i.Length > 0);
-			NUnit.Framework.Assert.IsTrue("iterator returns file", i[0] == f);
-			NUnit.Framework.Assert.IsTrue("iterator is empty", i.Length == 1);
+			NUnit.Framework.Assert.IsTrue(i.Length > 0, "iterator is not empty");
+			NUnit.Framework.Assert.IsTrue(i[0] == f, "iterator returns file");
+			NUnit.Framework.Assert.IsTrue(i.Length == 1, "iterator is empty");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test005_addRecursiveFile()
 		{
 			Tree t = new Tree(db);
 			FileTreeEntry f = t.AddFile("a/b/c");
-			NUnit.Framework.Assert.IsNotNull("created f", f);
+			NUnit.Framework.Assert.IsNotNull(f, "created f");
 			NUnit.Framework.Assert.AreEqual("c", f.GetName());
 			NUnit.Framework.Assert.AreEqual("b", f.GetParent().GetName());
 			NUnit.Framework.Assert.AreEqual("a", f.GetParent().GetParent().GetName());
-			NUnit.Framework.Assert.IsTrue("t is great-grandparent", t == f.GetParent().GetParent
-				().GetParent());
+			NUnit.Framework.Assert.IsTrue(t == f.GetParent().GetParent().GetParent(), "t is great-grandparent"
+				);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test005_addRecursiveTree()
 		{
 			Tree t = new Tree(db);
 			Tree f = t.AddTree("a/b/c");
-			NUnit.Framework.Assert.IsNotNull("created f", f);
+			NUnit.Framework.Assert.IsNotNull(f, "created f");
 			NUnit.Framework.Assert.AreEqual("c", f.GetName());
 			NUnit.Framework.Assert.AreEqual("b", f.GetParent().GetName());
 			NUnit.Framework.Assert.AreEqual("a", f.GetParent().GetParent().GetName());
-			NUnit.Framework.Assert.IsTrue("t is great-grandparent", t == f.GetParent().GetParent
-				().GetParent());
+			NUnit.Framework.Assert.IsTrue(t == f.GetParent().GetParent().GetParent(), "t is great-grandparent"
+				);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test006_addDeepTree()
 		{
 			Tree t = new Tree(db);
 			Tree e = t.AddTree("e");
-			NUnit.Framework.Assert.IsNotNull("have e", e);
-			NUnit.Framework.Assert.IsTrue("e.parent == t", e.GetParent() == t);
+			NUnit.Framework.Assert.IsNotNull(e, "have e");
+			NUnit.Framework.Assert.IsTrue(e.GetParent() == t, "e.parent == t");
 			Tree f = t.AddTree("f");
-			NUnit.Framework.Assert.IsNotNull("have f", f);
-			NUnit.Framework.Assert.IsTrue("f.parent == t", f.GetParent() == t);
+			NUnit.Framework.Assert.IsNotNull(f, "have f");
+			NUnit.Framework.Assert.IsTrue(f.GetParent() == t, "f.parent == t");
 			Tree g = f.AddTree("g");
-			NUnit.Framework.Assert.IsNotNull("have g", g);
-			NUnit.Framework.Assert.IsTrue("g.parent == f", g.GetParent() == f);
+			NUnit.Framework.Assert.IsNotNull(g, "have g");
+			NUnit.Framework.Assert.IsTrue(g.GetParent() == f, "g.parent == f");
 			Tree h = g.AddTree("h");
-			NUnit.Framework.Assert.IsNotNull("have h", h);
-			NUnit.Framework.Assert.IsTrue("h.parent = g", h.GetParent() == g);
+			NUnit.Framework.Assert.IsNotNull(h, "have h");
+			NUnit.Framework.Assert.IsTrue(h.GetParent() == g, "h.parent = g");
 			h.SetId(SOME_FAKE_ID);
-			NUnit.Framework.Assert.IsTrue("h not modified", !h.IsModified());
+			NUnit.Framework.Assert.IsTrue(!h.IsModified(), "h not modified");
 			g.SetId(SOME_FAKE_ID);
-			NUnit.Framework.Assert.IsTrue("g not modified", !g.IsModified());
+			NUnit.Framework.Assert.IsTrue(!g.IsModified(), "g not modified");
 			f.SetId(SOME_FAKE_ID);
-			NUnit.Framework.Assert.IsTrue("f not modified", !f.IsModified());
+			NUnit.Framework.Assert.IsTrue(!f.IsModified(), "f not modified");
 			e.SetId(SOME_FAKE_ID);
-			NUnit.Framework.Assert.IsTrue("e not modified", !e.IsModified());
+			NUnit.Framework.Assert.IsTrue(!e.IsModified(), "e not modified");
 			t.SetId(SOME_FAKE_ID);
-			NUnit.Framework.Assert.IsTrue("t not modified.", !t.IsModified());
-			NUnit.Framework.Assert.AreEqual("full path of h ok", "f/g/h", h.GetFullName());
-			NUnit.Framework.Assert.IsTrue("Can find h", t.FindTreeMember(h.GetFullName()) == 
-				h);
-			NUnit.Framework.Assert.IsTrue("Can't find f/z", t.FindBlobMember("f/z") == null);
-			NUnit.Framework.Assert.IsTrue("Can't find y/z", t.FindBlobMember("y/z") == null);
+			NUnit.Framework.Assert.IsTrue(!t.IsModified(), "t not modified.");
+			NUnit.Framework.Assert.AreEqual("f/g/h", h.GetFullName(), "full path of h ok");
+			NUnit.Framework.Assert.IsTrue(t.FindTreeMember(h.GetFullName()) == h, "Can find h"
+				);
+			NUnit.Framework.Assert.IsTrue(t.FindBlobMember("f/z") == null, "Can't find f/z");
+			NUnit.Framework.Assert.IsTrue(t.FindBlobMember("y/z") == null, "Can't find y/z");
 			FileTreeEntry i = h.AddFile("i");
 			NUnit.Framework.Assert.IsNotNull(i);
-			NUnit.Framework.Assert.AreEqual("full path of i ok", "f/g/h/i", i.GetFullName());
-			NUnit.Framework.Assert.IsTrue("Can find i", t.FindBlobMember(i.GetFullName()) == 
-				i);
-			NUnit.Framework.Assert.IsTrue("h modified", h.IsModified());
-			NUnit.Framework.Assert.IsTrue("g modified", g.IsModified());
-			NUnit.Framework.Assert.IsTrue("f modified", f.IsModified());
-			NUnit.Framework.Assert.IsTrue("e not modified", !e.IsModified());
-			NUnit.Framework.Assert.IsTrue("t modified", t.IsModified());
-			NUnit.Framework.Assert.IsTrue("h no id", h.GetId() == null);
-			NUnit.Framework.Assert.IsTrue("g no id", g.GetId() == null);
-			NUnit.Framework.Assert.IsTrue("f no id", f.GetId() == null);
-			NUnit.Framework.Assert.IsTrue("e has id", e.GetId() != null);
-			NUnit.Framework.Assert.IsTrue("t no id", t.GetId() == null);
+			NUnit.Framework.Assert.AreEqual("f/g/h/i", i.GetFullName(), "full path of i ok");
+			NUnit.Framework.Assert.IsTrue(t.FindBlobMember(i.GetFullName()) == i, "Can find i"
+				);
+			NUnit.Framework.Assert.IsTrue(h.IsModified(), "h modified");
+			NUnit.Framework.Assert.IsTrue(g.IsModified(), "g modified");
+			NUnit.Framework.Assert.IsTrue(f.IsModified(), "f modified");
+			NUnit.Framework.Assert.IsTrue(!e.IsModified(), "e not modified");
+			NUnit.Framework.Assert.IsTrue(t.IsModified(), "t modified");
+			NUnit.Framework.Assert.IsTrue(h.GetId() == null, "h no id");
+			NUnit.Framework.Assert.IsTrue(g.GetId() == null, "g no id");
+			NUnit.Framework.Assert.IsTrue(f.GetId() == null, "f no id");
+			NUnit.Framework.Assert.IsTrue(e.GetId() != null, "e has id");
+			NUnit.Framework.Assert.IsTrue(t.GetId() == null, "t no id");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test007_manyFileLookup()
 		{
 			Tree t = new Tree(db);
@@ -275,7 +287,7 @@ namespace NGit
 				{
 					string n = "." + level1 + level2 + "9";
 					FileTreeEntry f = t.AddFile(n);
-					NUnit.Framework.Assert.IsNotNull("File " + n + " added.", f);
+					NUnit.Framework.Assert.IsNotNull(f, "File " + n + " added.");
 					NUnit.Framework.Assert.AreEqual(n, f.GetName());
 					files.AddItem(f);
 				}
@@ -286,12 +298,13 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(files.Count, ents.Length);
 			for (int k = 0; k < ents.Length; k++)
 			{
-				NUnit.Framework.Assert.IsTrue("File " + files[k].GetName() + " is at " + k + ".", 
-					files[k] == ents[k]);
+				NUnit.Framework.Assert.IsTrue(files[k] == ents[k], "File " + files[k].GetName() +
+					 " is at " + k + ".");
 			}
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test008_SubtreeInternalSorting()
 		{
 			Tree t = new Tree(db);
@@ -309,14 +322,15 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test009_SymlinkAndGitlink()
 		{
 			Tree symlinkTree = db.MapTree("symlink");
-			NUnit.Framework.Assert.IsTrue("Symlink entry exists", symlinkTree.ExistsBlob("symlink.txt"
-				));
+			NUnit.Framework.Assert.IsTrue(symlinkTree.ExistsBlob("symlink.txt"), "Symlink entry exists"
+				);
 			Tree gitlinkTree = db.MapTree("gitlink");
-			NUnit.Framework.Assert.IsTrue("Gitlink entry exists", gitlinkTree.ExistsBlob("submodule"
-				));
+			NUnit.Framework.Assert.IsTrue(gitlinkTree.ExistsBlob("submodule"), "Gitlink entry exists"
+				);
 		}
 	}
 }

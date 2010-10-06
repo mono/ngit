@@ -43,13 +43,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Diff;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Diff
 {
-	public class SimilarityIndexTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class SimilarityIndexTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestIndexingSmallObject()
 		{
 			SimilarityIndex si = Hash(string.Empty + "A\n" + "B\n" + "D\n" + "B\n");
@@ -69,6 +70,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIndexingLargeObject()
 		{
 			byte[] @in = Sharpen.Runtime.GetBytesForString((string.Empty + "A\n" + "B\n" + "B\n"
@@ -82,6 +84,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(2, si.Size());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCommonScore_SameFiles()
 		{
 			string text = string.Empty + "A\n" + "B\n" + "D\n" + "B\n";
@@ -97,6 +100,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(100, dst.Score(src, 100));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCommonScore_EmptyFiles()
 		{
 			SimilarityIndex src = Hash(string.Empty);
@@ -105,6 +109,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(0, dst.Common(src));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCommonScore_TotallyDifferentFiles()
 		{
 			SimilarityIndex src = Hash("A\n");
@@ -113,6 +118,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(0, dst.Common(src));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCommonScore_SimiliarBy75()
 		{
 			SimilarityIndex src = Hash("A\nB\nC\nD\n");
@@ -162,7 +168,7 @@ namespace NGit.Diff
 		private static int KeyFor(string line)
 		{
 			SimilarityIndex si = Hash(line);
-			NUnit.Framework.Assert.AreEqual("single line scored", 1, si.Size());
+			NUnit.Framework.Assert.AreEqual(1, si.Size(), "single line scored");
 			return si.Key(0);
 		}
 	}

@@ -46,12 +46,12 @@ using NGit.Errors;
 using NGit.Junit;
 using NGit.Storage.Pack;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Storage.Pack
 {
-	public class DeltaStreamTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class DeltaStreamTest
 	{
 		private TestRng rng;
 
@@ -68,14 +68,15 @@ namespace NGit.Storage.Pack
 		private byte[] delta;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			rng = new TestRng(Sharpen.Extensions.GetTestName(this));
 			deltaBuf = new ByteArrayOutputStream();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCopy_SingleOp()
 		{
 			Init((1 << 16) + 1, (1 << 8) + 1);
@@ -84,6 +85,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCopy_MaxSize()
 		{
 			int max = (unchecked((int)(0xff)) << 16) + (unchecked((int)(0xff)) << 8) + unchecked(
@@ -94,6 +96,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCopy_64k()
 		{
 			Init(unchecked((int)(0x10000)) + 2, unchecked((int)(0x10000)) + 1);
@@ -103,6 +106,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCopy_Gap()
 		{
 			Init(256, 8);
@@ -112,6 +116,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCopy_OutOfOrder()
 		{
 			Init((1 << 16) + 1, (1 << 16) + 1);
@@ -121,6 +126,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInsert_SingleOp()
 		{
 			Init((1 << 16) + 1, 2);
@@ -129,6 +135,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInsertAndCopy()
 		{
 			Init(8, 512);
@@ -141,6 +148,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSkip()
 		{
 			Init(32, 15);
@@ -160,7 +168,7 @@ namespace NGit.Storage.Pack
 				NUnit.Framework.Assert.AreEqual(data.Length - p, @in.Read(act, p, data.Length - p
 					));
 				NUnit.Framework.Assert.AreEqual(-1, @in.Read());
-				NUnit.Framework.Assert.IsTrue("skipping " + p, Arrays.Equals(data, act));
+				NUnit.Framework.Assert.IsTrue(Arrays.Equals(data, act), "skipping " + p);
 			}
 			// Skip all the way to the end should still recognize EOF.
 			DeltaStream in_1 = Open();
@@ -172,9 +180,9 @@ namespace NGit.Storage.Pack
 			bool[] opened = new bool[1];
 			in_1 = new _DeltaStream_160(this, opened, new ByteArrayInputStream(delta));
 			IOUtil.SkipFully(in_1, 7);
-			NUnit.Framework.Assert.IsFalse("not yet open", opened[0]);
+			NUnit.Framework.Assert.IsFalse(opened[0], "not yet open");
 			NUnit.Framework.Assert.AreEqual(data[7], in_1.Read());
-			NUnit.Framework.Assert.IsTrue("now open", opened[0]);
+			NUnit.Framework.Assert.IsTrue(opened[0], "now open");
 		}
 
 		private sealed class _DeltaStream_160 : DeltaStream
@@ -205,6 +213,7 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIncorrectBaseSize()
 		{
 			Init(4, 4);
@@ -280,6 +289,7 @@ namespace NGit.Storage.Pack
 			@base = rng.NextBytes(baseSize);
 			data = new byte[dataSize];
 			deltaEnc = new DeltaEncoder(deltaBuf, baseSize, dataSize);
+			dataPtr = 0;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -309,7 +319,7 @@ namespace NGit.Storage.Pack
 		/// <exception cref="System.IO.IOException"></exception>
 		private void AssertValidState()
 		{
-			NUnit.Framework.Assert.AreEqual("test filled example result", data.Length, dataPtr
+			NUnit.Framework.Assert.AreEqual(data.Length, dataPtr, "test filled example result"
 				);
 			delta = deltaBuf.ToByteArray();
 			NUnit.Framework.Assert.AreEqual(@base.Length, BinaryDelta.GetBaseSize(delta));
@@ -323,8 +333,8 @@ namespace NGit.Storage.Pack
 			NUnit.Framework.Assert.AreEqual(data.Length, @in.GetSize());
 			NUnit.Framework.Assert.AreEqual(data.Length, @in.Read(act));
 			NUnit.Framework.Assert.AreEqual(-1, @in.Read());
-			NUnit.Framework.Assert.IsTrue("bulk read has same content", Arrays.Equals(data, act
-				));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data, act), "bulk read has same content"
+				);
 			// Assert that smaller tiny reads have the same result too.
 			//
 			act = new byte[data.Length];
@@ -341,8 +351,8 @@ namespace NGit.Storage.Pack
 			}
 			NUnit.Framework.Assert.AreEqual(data.Length, read);
 			NUnit.Framework.Assert.AreEqual(-1, @in.Read());
-			NUnit.Framework.Assert.IsTrue("small reads have same content", Arrays.Equals(data
-				, act));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data, act), "small reads have same content"
+				);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

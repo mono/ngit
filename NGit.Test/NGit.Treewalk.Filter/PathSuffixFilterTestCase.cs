@@ -53,6 +53,7 @@ namespace NGit.Treewalk.Filter
 	public class PathSuffixFilterTestCase : RepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNonRecursiveFiltering()
 		{
 			ObjectInserter odi = db.NewObjectInserter();
@@ -87,6 +88,7 @@ namespace NGit.Treewalk.Filter
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRecursiveFiltering()
 		{
 			ObjectInserter odi = db.NewObjectInserter();

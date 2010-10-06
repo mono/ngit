@@ -42,13 +42,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class NBTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class NBTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestCompareUInt32()
 		{
 			NUnit.Framework.Assert.IsTrue(NB.CompareUInt32(0, 0) == 0);
@@ -60,6 +61,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.IsTrue(NB.CompareUInt32(1, -1) < 0);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDecodeUInt16()
 		{
 			NUnit.Framework.Assert.AreEqual(0, NB.DecodeUInt16(B(0, 0), 0));
@@ -80,6 +82,7 @@ namespace NGit.Util
 				unchecked((int)(0xff)), unchecked((int)(0xff))), 3));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDecodeInt32()
 		{
 			NUnit.Framework.Assert.AreEqual(0, NB.DecodeInt32(B(0, 0, 0, 0), 0));
@@ -106,6 +109,7 @@ namespace NGit.Util
 				(int)(0xff))), 3));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDecodeUInt32()
 		{
 			NUnit.Framework.Assert.AreEqual(0L, NB.DecodeUInt32(B(0, 0, 0, 0), 0));
@@ -132,6 +136,7 @@ namespace NGit.Util
 				(int)(0xff))), 3));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDecodeUInt64()
 		{
 			NUnit.Framework.Assert.AreEqual(0L, NB.DecodeUInt64(B(0, 0, 0, 0, 0, 0, 0, 0), 0)
@@ -178,6 +183,7 @@ namespace NGit.Util
 				(int)(0xff)), unchecked((int)(0xff))), 3));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEncodeInt16()
 		{
 			byte[] @out = new byte[16];
@@ -204,6 +210,7 @@ namespace NGit.Util
 			AssertOutput(B(unchecked((int)(0xff)), unchecked((int)(0xff))), @out, 3);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEncodeInt32()
 		{
 			byte[] @out = new byte[16];
@@ -239,6 +246,7 @@ namespace NGit.Util
 				)), unchecked((int)(0xff))), @out, 3);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEncodeInt64()
 		{
 			byte[] @out = new byte[16];

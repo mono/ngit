@@ -50,7 +50,7 @@ namespace NGit.Storage.File
 	{
 		private readonly byte[] intbuf = new byte[8];
 
-		protected XInputStream(InputStream s) : base(s)
+		internal XInputStream(InputStream s) : base(s)
 		{
 		}
 

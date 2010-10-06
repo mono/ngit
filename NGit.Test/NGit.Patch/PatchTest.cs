@@ -44,13 +44,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Diff;
 using NGit.Patch;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Patch
 {
-	public class PatchTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class PatchTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			NGit.Patch.Patch p = new NGit.Patch.Patch();
@@ -59,6 +60,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ConfigCaseInsensitive()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -74,7 +76,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(1490, fRepositoryConfig.startOffset);
 			NUnit.Framework.Assert.AreEqual("da7e704", fRepositoryConfigTest.GetOldId().Name);
 			NUnit.Framework.Assert.AreEqual("34ce04a", fRepositoryConfigTest.GetNewId().Name);
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fRepositoryConfigTest
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fRepositoryConfigTest
 				.GetPatchType());
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, fRepositoryConfigTest.GetOldMode
 				());
@@ -98,7 +100,7 @@ namespace NGit.Patch
 			}
 			NUnit.Framework.Assert.AreEqual("45c2f8a", fRepositoryConfig.GetOldId().Name);
 			NUnit.Framework.Assert.AreEqual("3291bba", fRepositoryConfig.GetNewId().Name);
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fRepositoryConfig.GetPatchType
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fRepositoryConfig.GetPatchType
 				());
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, fRepositoryConfig.GetOldMode
 				());
@@ -147,6 +149,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_NoBinary()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -155,7 +158,7 @@ namespace NGit.Patch
 			for (int i = 0; i < 4; i++)
 			{
 				FileHeader fh = p.GetFiles()[i];
-				NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.ADD, fh.GetChangeType());
+				NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.ADD, fh.GetChangeType());
 				NUnit.Framework.Assert.IsNotNull(fh.GetOldId());
 				NUnit.Framework.Assert.IsNotNull(fh.GetNewId());
 				NUnit.Framework.Assert.AreEqual("0000000", fh.GetOldId().Name);
@@ -163,7 +166,7 @@ namespace NGit.Patch
 				NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, fh.GetNewMode());
 				NUnit.Framework.Assert.IsTrue(fh.GetNewPath().StartsWith("org.spearce.egit.ui/icons/toolbar/"
 					));
-				NUnit.Framework.Assert.AreSame(FileHeader.PatchType.BINARY, fh.GetPatchType());
+				NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.BINARY, fh.GetPatchType());
 				NUnit.Framework.Assert.IsTrue(fh.GetHunks().IsEmpty());
 				NUnit.Framework.Assert.IsTrue(fh.HasMetaDataChanges());
 				NUnit.Framework.Assert.IsNull(fh.GetForwardBinaryHunk());
@@ -172,8 +175,10 @@ namespace NGit.Patch
 			FileHeader fh_1 = p.GetFiles()[4];
 			NUnit.Framework.Assert.AreEqual("org.spearce.egit.ui/plugin.xml", fh_1.GetNewPath
 				());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.MODIFY, fh_1.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh_1.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.MODIFY, fh_1.GetChangeType()
+				);
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh_1.GetPatchType()
+				);
 			NUnit.Framework.Assert.IsFalse(fh_1.HasMetaDataChanges());
 			NUnit.Framework.Assert.AreEqual("ee8a5a0", fh_1.GetNewId().Name);
 			NUnit.Framework.Assert.IsNull(fh_1.GetForwardBinaryHunk());
@@ -184,6 +189,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_GitBinaryLiteral()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -193,15 +199,15 @@ namespace NGit.Patch
 			for (int i = 0; i < 4; i++)
 			{
 				FileHeader fh = p.GetFiles()[i];
-				NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.ADD, fh.GetChangeType());
+				NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.ADD, fh.GetChangeType());
 				NUnit.Framework.Assert.IsNotNull(fh.GetOldId());
 				NUnit.Framework.Assert.IsNotNull(fh.GetNewId());
 				NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId.Name, fh.GetOldId().Name);
 				NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, fh.GetNewMode());
 				NUnit.Framework.Assert.IsTrue(fh.GetNewPath().StartsWith("org.spearce.egit.ui/icons/toolbar/"
 					));
-				NUnit.Framework.Assert.AreSame(FileHeader.PatchType.GIT_BINARY, fh.GetPatchType()
-					);
+				NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.GIT_BINARY, fh.GetPatchType(
+					));
 				NUnit.Framework.Assert.IsTrue(fh.GetHunks().IsEmpty());
 				NUnit.Framework.Assert.IsTrue(fh.HasMetaDataChanges());
 				BinaryHunk fwd = fh.GetForwardBinaryHunk();
@@ -212,14 +218,16 @@ namespace NGit.Patch
 				NUnit.Framework.Assert.AreEqual(0, rev.GetSize());
 				NUnit.Framework.Assert.AreSame(fh, fwd.GetFileHeader());
 				NUnit.Framework.Assert.AreSame(fh, rev.GetFileHeader());
-				NUnit.Framework.Assert.AreSame(BinaryHunk.Type.LITERAL_DEFLATED, fwd.GetType());
-				NUnit.Framework.Assert.AreSame(BinaryHunk.Type.LITERAL_DEFLATED, rev.GetType());
+				NUnit.Framework.Assert.AreEqual(BinaryHunk.Type.LITERAL_DEFLATED, fwd.GetType());
+				NUnit.Framework.Assert.AreEqual(BinaryHunk.Type.LITERAL_DEFLATED, rev.GetType());
 			}
 			FileHeader fh_1 = p.GetFiles()[4];
 			NUnit.Framework.Assert.AreEqual("org.spearce.egit.ui/plugin.xml", fh_1.GetNewPath
 				());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.MODIFY, fh_1.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh_1.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.MODIFY, fh_1.GetChangeType()
+				);
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh_1.GetPatchType()
+				);
 			NUnit.Framework.Assert.IsFalse(fh_1.HasMetaDataChanges());
 			NUnit.Framework.Assert.AreEqual("ee8a5a0", fh_1.GetNewId().Name);
 			NUnit.Framework.Assert.IsNull(fh_1.GetForwardBinaryHunk());
@@ -230,6 +238,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_GitBinaryDelta()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -237,9 +246,9 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsTrue(p.GetErrors().IsEmpty());
 			FileHeader fh = p.GetFiles()[0];
 			NUnit.Framework.Assert.IsTrue(fh.GetNewPath().StartsWith("zero.bin"));
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.MODIFY, fh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.GIT_BINARY, fh.GetPatchType()
-				);
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.MODIFY, fh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.GIT_BINARY, fh.GetPatchType(
+				));
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, fh.GetNewMode());
 			NUnit.Framework.Assert.IsNotNull(fh.GetOldId());
 			NUnit.Framework.Assert.IsNotNull(fh.GetNewId());
@@ -257,12 +266,13 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(11, rev.GetSize());
 			NUnit.Framework.Assert.AreSame(fh, fwd.GetFileHeader());
 			NUnit.Framework.Assert.AreSame(fh, rev.GetFileHeader());
-			NUnit.Framework.Assert.AreSame(BinaryHunk.Type.DELTA_DEFLATED, fwd.GetType());
-			NUnit.Framework.Assert.AreSame(BinaryHunk.Type.DELTA_DEFLATED, rev.GetType());
+			NUnit.Framework.Assert.AreEqual(BinaryHunk.Type.DELTA_DEFLATED, fwd.GetType());
+			NUnit.Framework.Assert.AreEqual(BinaryHunk.Type.DELTA_DEFLATED, rev.GetType());
 			NUnit.Framework.Assert.AreEqual(496, fh.endOffset);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_FixNoNewline()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -273,7 +283,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(252, f.startOffset);
 			NUnit.Framework.Assert.AreEqual("2e65efe", f.GetOldId().Name);
 			NUnit.Framework.Assert.AreEqual("f2ad6c7", f.GetNewId().Name);
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, f.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, f.GetPatchType());
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, f.GetOldMode());
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, f.GetNewMode());
 			NUnit.Framework.Assert.AreEqual(1, f.GetHunks().Count);
@@ -294,6 +304,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_AddNoNewline()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -304,7 +315,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(256, f.startOffset);
 			NUnit.Framework.Assert.AreEqual("f2ad6c7", f.GetOldId().Name);
 			NUnit.Framework.Assert.AreEqual("c59d9b6", f.GetNewId().Name);
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, f.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, f.GetPatchType());
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, f.GetOldMode());
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, f.GetNewMode());
 			NUnit.Framework.Assert.AreEqual(1, f.GetHunks().Count);

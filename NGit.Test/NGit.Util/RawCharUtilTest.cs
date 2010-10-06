@@ -42,18 +42,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class RawCharUtilTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RawCharUtilTest
 	{
 		/// <summary>
 		/// Test method for
 		/// <see cref="RawCharUtil.IsWhitespace(byte)">RawCharUtil.IsWhitespace(byte)</see>
 		/// .
 		/// </summary>
+		[NUnit.Framework.Test]
 		public virtual void TestIsWhitespace()
 		{
 			for (byte c = unchecked((byte)(-128)); ((sbyte)c) < 127; c++)
@@ -86,6 +87,7 @@ namespace NGit.Util
 		/// </summary>
 		/// <exception cref="Sharpen.UnsupportedEncodingException">Sharpen.UnsupportedEncodingException
 		/// 	</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrimTrailingWhitespace()
 		{
 			NUnit.Framework.Assert.AreEqual(0, RawCharUtil.TrimTrailingWhitespace(Sharpen.Runtime.GetBytesForString
@@ -110,6 +112,7 @@ namespace NGit.Util
 		/// </summary>
 		/// <exception cref="Sharpen.UnsupportedEncodingException">Sharpen.UnsupportedEncodingException
 		/// 	</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrimLeadingWhitespace()
 		{
 			NUnit.Framework.Assert.AreEqual(0, RawCharUtil.TrimLeadingWhitespace(Sharpen.Runtime.GetBytesForString

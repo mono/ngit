@@ -52,6 +52,7 @@ namespace NGit
 		/// <exception cref="System.InvalidOperationException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIterator()
 		{
 			TreeSet<long> modTimes = new TreeSet<long>();
@@ -137,6 +138,7 @@ namespace NGit
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="System.InvalidOperationException"></exception>
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRacyGitDetection()
 		{
 			TreeSet<long> modTimes = new TreeSet<long>();

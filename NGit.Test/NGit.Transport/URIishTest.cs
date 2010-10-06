@@ -43,16 +43,17 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using NGit.Transport;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Transport
 {
-	public class URIishTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class URIishTest
 	{
 		private static readonly string GIT_SCHEME = "git://";
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnixFile()
 		{
 			string str = "/home/m y";
@@ -65,6 +66,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWindowsFile()
 		{
 			string str = "D:/m y";
@@ -77,6 +79,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWindowsFile2()
 		{
 			string str = "D:\\m y";
@@ -89,6 +92,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRelativePath()
 		{
 			string str = "../../foo/bar";
@@ -101,6 +105,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUNC()
 		{
 			string str = "\\\\some\\place";
@@ -113,6 +118,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFileProtoUnix()
 		{
 			string str = "file:///home/m y";
@@ -125,6 +131,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFileProtoWindows()
 		{
 			string str = "file:///D:/m y";
@@ -137,6 +144,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGitProtoUnix()
 		{
 			string str = "git://example.com/home/m y";
@@ -150,6 +158,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGitProtoUnixPort()
 		{
 			string str = "git://example.com:333/home/m y";
@@ -164,6 +173,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGitProtoWindowsPort()
 		{
 			string str = "git://example.com:338/D:/m y";
@@ -178,6 +188,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGitProtoWindows()
 		{
 			string str = "git://example.com/D:/m y";
@@ -192,6 +203,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestScpStyleWithoutUser()
 		{
 			string str = "example.com:some/p ath";
@@ -206,6 +218,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestScpStyleWithUser()
 		{
 			string str = "user@example.com:some/p ath";
@@ -221,6 +234,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGitSshProto()
 		{
 			string str = "git+ssh://example.com/some/p ath";
@@ -235,6 +249,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSshGitProto()
 		{
 			string str = "ssh+git://example.com/some/p ath";
@@ -249,6 +264,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSshProto()
 		{
 			string str = "ssh://example.com/some/p ath";
@@ -263,6 +279,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSshProtoWithUserAndPort()
 		{
 			string str = "ssh://user@example.com:33/some/p ath";
@@ -279,6 +296,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSshProtoWithUserPassAndPort()
 		{
 			string str = "ssh://user:pass@example.com:33/some/p ath";
@@ -296,6 +314,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGitWithUserHome()
 		{
 			string str = "git://example.com/~some/p ath";
@@ -313,6 +332,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFileWithNoneUserHomeWithTilde()
 		{
 			string str = "/~some/p ath";
@@ -329,6 +349,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestGetNullHumanishName()
 		{
 			try
@@ -343,6 +364,7 @@ namespace NGit.Transport
 
 		// expected
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetEmptyHumanishName()
 		{
 			try
@@ -356,6 +378,7 @@ namespace NGit.Transport
 		}
 
 		// expected
+		[NUnit.Framework.Test]
 		public virtual void TestGetAbsEmptyHumanishName()
 		{
 			try
@@ -371,6 +394,7 @@ namespace NGit.Transport
 		// expected
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidWithEmptySlashDotGitHumanishName()
 		{
 			string humanishName = new URIish("/a/b/.git").GetHumanishName();
@@ -378,6 +402,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetWithSlashDotGitHumanishName()
 		{
 			NUnit.Framework.Assert.AreEqual(string.Empty, new URIish("/.git").GetHumanishName
@@ -385,6 +410,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetTwoSlashesDotGitHumanishName()
 		{
 			NUnit.Framework.Assert.AreEqual(string.Empty, new URIish("/.git").GetHumanishName
@@ -393,6 +419,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidHumanishName()
 		{
 			string humanishName = new URIish(GIT_SCHEME + "abc").GetHumanishName();
@@ -401,6 +428,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidSlashHumanishName()
 		{
 			string humanishName = new URIish(GIT_SCHEME + "abc/").GetHumanishName();
@@ -409,6 +437,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetSlashValidSlashHumanishName()
 		{
 			string humanishName = new URIish("/abc/").GetHumanishName();
@@ -417,6 +446,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetSlashValidSlashDotGitSlashHumanishName()
 		{
 			string humanishName = new URIish("/abc/.git").GetHumanishName();
@@ -425,15 +455,17 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetSlashSlashDotGitSlashHumanishName()
 		{
 			string humanishName = new URIish(GIT_SCHEME + "/abc//.git").GetHumanishName();
-			NUnit.Framework.Assert.AreEqual("may return an empty humanish name", string.Empty
-				, humanishName);
+			NUnit.Framework.Assert.AreEqual(string.Empty, humanishName, "may return an empty humanish name"
+				);
 		}
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetSlashesValidSlashHumanishName()
 		{
 			string humanishName = new URIish("/a/b/c/").GetHumanishName();
@@ -442,6 +474,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidDotGitHumanishName()
 		{
 			string humanishName = new URIish(GIT_SCHEME + "abc.git").GetHumanishName();
@@ -450,6 +483,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidDotGitSlashHumanishName()
 		{
 			string humanishName = new URIish(GIT_SCHEME + "abc.git/").GetHumanishName();
@@ -458,6 +492,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidWithSlashDotGitHumanishName()
 		{
 			string humanishName = new URIish("/abc.git").GetHumanishName();
@@ -466,6 +501,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidWithSlashDotGitSlashHumanishName()
 		{
 			string humanishName = new URIish("/abc.git/").GetHumanishName();
@@ -474,6 +510,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidWithSlashesDotGitHumanishName()
 		{
 			string humanishName = new URIish("/a/b/c.git").GetHumanishName();
@@ -482,6 +519,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetValidWithSlashesDotGitSlashHumanishName()
 		{
 			string humanishName = new URIish("/a/b/c.git/").GetHumanishName();

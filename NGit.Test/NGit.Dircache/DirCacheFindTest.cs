@@ -50,6 +50,7 @@ namespace NGit.Dircache
 	public class DirCacheFindTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEntriesWithin()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -77,7 +78,7 @@ namespace NGit.Dircache
 				DirCacheEntry[] aContents = dc.GetEntriesWithin("a");
 				NUnit.Framework.Assert.IsNotNull(aContents);
 				NUnit.Framework.Assert.AreEqual(aLast - aFirst + 1, aContents.Length);
-				for (int i_3 = aFirst; i_3 <= aLast; i_3++, j++)
+				for (int i_3 = aFirst, j=0; i_3 <= aLast; i_3++, j++)
 				{
 					NUnit.Framework.Assert.AreSame(ents[i_3], aContents[j]);
 				}
@@ -86,7 +87,7 @@ namespace NGit.Dircache
 				DirCacheEntry[] aContents = dc.GetEntriesWithin("a/");
 				NUnit.Framework.Assert.IsNotNull(aContents);
 				NUnit.Framework.Assert.AreEqual(aLast - aFirst + 1, aContents.Length);
-				for (int i_3 = aFirst; i_3 <= aLast; i_3++, j++)
+				for (int i_3 = aFirst, j=0; i_3 <= aLast; i_3++, j++)
 				{
 					NUnit.Framework.Assert.AreSame(ents[i_3], aContents[j]);
 				}

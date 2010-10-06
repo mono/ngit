@@ -51,6 +51,7 @@ namespace NGit.Events
 	public class ConfigChangeEventTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFileRepository_ChangeEventsOnlyOnSave()
 		{
 			ConfigChangedEvent[] events = new ConfigChangedEvent[1];

@@ -72,6 +72,7 @@ namespace NGit.Storage.File
 
 		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectInNewPack()
 		{
 			// Create a new object in a new pack, and test that it is present.
@@ -84,6 +85,7 @@ namespace NGit.Storage.File
 
 		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectMovedToNewPack1()
 		{
 			// Create an object and pack it. Then remove that pack and put the
@@ -109,6 +111,7 @@ namespace NGit.Storage.File
 
 		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectMovedWithinPack()
 		{
 			// Create an object and pack it.
@@ -140,6 +143,7 @@ namespace NGit.Storage.File
 
 		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectMovedToNewPack2()
 		{
 			// Create an object and pack it. Then remove that pack and put the
@@ -239,7 +243,7 @@ namespace NGit.Storage.File
 			foreach (FilePath f in list)
 			{
 				f.Delete();
-				NUnit.Framework.Assert.IsFalse(f + " was removed", f.Exists());
+				NUnit.Framework.Assert.IsFalse(f.Exists(), f + " was removed");
 			}
 			Touch(begin, list[0].GetParentFile());
 		}
@@ -262,7 +266,8 @@ namespace NGit.Storage.File
 
 		private FilePath FullPackFileName(ObjectId name, string suffix)
 		{
-			FilePath packdir = new FilePath(db.ObjectDatabase.GetDirectory(), "pack");
+			FilePath packdir = new FilePath(((ObjectDirectory)db.ObjectDatabase).GetDirectory
+				(), "pack");
 			return new FilePath(packdir, "pack-" + name.Name + suffix);
 		}
 

@@ -44,13 +44,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Globalization;
 using NGit.Nls;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Nls
 {
-	public class TestNLS : TestCase
+	[NUnit.Framework.TestFixture]
+	public class TestNLS
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestNLSLocale()
 		{
 			NLS.SetLocale(NLS.ROOT_LOCALE);
@@ -62,6 +63,7 @@ namespace NGit.Nls
 				());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestJVMDefaultLocale()
 		{
 			System.Threading.Thread.CurrentThread.CurrentCulture = NLS.ROOT_LOCALE;
@@ -76,6 +78,7 @@ namespace NGit.Nls
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestThreadTranslationBundleInheritance()
 		{
 			NLS.SetLocale(NLS.ROOT_LOCALE);
@@ -110,18 +113,19 @@ namespace NGit.Nls
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParallelThreadsWithDifferentLocales()
 		{
 			CyclicBarrier barrier = new CyclicBarrier(2);
 			// wait for the other thread to set its locale
-			_T1972088541 t1 = new _T1972088541(this, NLS.ROOT_LOCALE);
-			_T1972088541 t2 = new _T1972088541(this, Sharpen.Extensions.GetGermanCulture());
+			_T1972088541 t1 = new _T1972088541(this, NLS.ROOT_LOCALE, barrier);
+			_T1972088541 t2 = new _T1972088541(this, Sharpen.Extensions.GetGermanCulture(), barrier);
 			t1.Start();
 			t2.Start();
 			t1.Join();
 			t2.Join();
-			NUnit.Framework.Assert.IsNull("t1 was interrupted or barrier was broken", t1.e);
-			NUnit.Framework.Assert.IsNull("t2 was interrupted or barrier was broken", t2.e);
+			NUnit.Framework.Assert.IsNull(t1.e, "t1 was interrupted or barrier was broken");
+			NUnit.Framework.Assert.IsNull(t2.e, "t2 was interrupted or barrier was broken");
 			NUnit.Framework.Assert.AreEqual(NLS.ROOT_LOCALE, t1.bundle.EffectiveLocale());
 			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.GetGermanCulture(), t2.bundle.
 				EffectiveLocale());
@@ -134,11 +138,14 @@ namespace NGit.Nls
 			internal GermanTranslatedBundle bundle;
 
 			internal Exception e;
+			
+			CyclicBarrier barrier;
 
-			internal _T1972088541(TestNLS _enclosing, CultureInfo locale)
+			internal _T1972088541(TestNLS _enclosing, CultureInfo locale, CyclicBarrier barrier)
 			{
 				this._enclosing = _enclosing;
 				this.locale = locale;
+				this.barrier = barrier;
 			}
 
 			public override void Run()
@@ -150,10 +157,6 @@ namespace NGit.Nls
 					this.bundle = GermanTranslatedBundle.Get();
 				}
 				catch (Exception e)
-				{
-					this.e = e;
-				}
-				catch (BrokenBarrierException e)
 				{
 					this.e = e;
 				}

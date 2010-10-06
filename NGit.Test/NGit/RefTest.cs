@@ -76,6 +76,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadAllIncludingSymrefs()
 		{
 			ObjectId masterId = db.Resolve("refs/heads/master");
@@ -99,18 +100,20 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadSymRefToPacked()
 		{
 			WriteSymref("HEAD", "refs/heads/b");
 			Ref @ref = db.GetRef("HEAD");
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, @ref.GetStorage());
-			NUnit.Framework.Assert.IsTrue("is symref", @ref.IsSymbolic());
+			NUnit.Framework.Assert.IsTrue(@ref.IsSymbolic(), "is symref");
 			@ref = @ref.GetTarget();
 			NUnit.Framework.Assert.AreEqual("refs/heads/b", @ref.GetName());
 			NUnit.Framework.Assert.AreEqual(RefStorage.PACKED, @ref.GetStorage());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadSymRefToLoosePacked()
 		{
 			ObjectId pid = db.Resolve("refs/heads/master^");
@@ -129,6 +132,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadLooseRef()
 		{
 			RefUpdate updateRef = db.UpdateRef("ref/heads/new");
@@ -142,6 +146,7 @@ namespace NGit
 		/// <summary>Let an "outsider" create a loose ref with the same name as a packed one</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadLoosePackedRef()
 		{
 			Ref @ref = db.GetRef("refs/heads/master");
@@ -161,6 +166,7 @@ namespace NGit
 		/// LOOSE_PACKED
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadSimplePackedRefSameRepo()
 		{
 			Ref @ref = db.GetRef("refs/heads/master");
@@ -176,6 +182,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestResolvedNamesBranch()
 		{
 			Ref @ref = db.GetRef("a");
@@ -183,14 +190,15 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestResolvedSymRef()
 		{
 			Ref @ref = db.GetRef(Constants.HEAD);
 			NUnit.Framework.Assert.AreEqual(Constants.HEAD, @ref.GetName());
-			NUnit.Framework.Assert.IsTrue("is symbolic ref", @ref.IsSymbolic());
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, @ref.GetStorage());
+			NUnit.Framework.Assert.IsTrue(@ref.IsSymbolic(), "is symbolic ref");
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, @ref.GetStorage());
 			Ref dst = @ref.GetTarget();
-			NUnit.Framework.Assert.IsNotNull("has target", dst);
+			NUnit.Framework.Assert.IsNotNull(dst, "has target");
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", dst.GetName());
 			NUnit.Framework.Assert.AreSame(dst.GetObjectId(), @ref.GetObjectId());
 			NUnit.Framework.Assert.AreSame(dst.GetPeeledObjectId(), @ref.GetPeeledObjectId());

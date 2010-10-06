@@ -50,6 +50,7 @@ namespace NGit.Dircache
 	public class DirCacheTreeTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyCache_NoCacheTree()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -57,6 +58,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyCache_CreateEmptyCacheTree()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -72,6 +74,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyCache_Clear_NoCacheTree()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -83,6 +86,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSingleSubtree()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -121,6 +125,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoLevelSubtree()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -178,6 +183,7 @@ namespace NGit.Dircache
 		/// <exception cref="NGit.Errors.CorruptObjectException">NGit.Errors.CorruptObjectException
 		/// 	</exception>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteReadTree()
 		{
 			DirCache dc = db.LockDirCache();

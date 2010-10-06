@@ -64,6 +64,7 @@ namespace NGit.Ignore
 		private TreeWalk walk;
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRules()
 		{
 			WriteIgnoreFile(".git/info/exclude", "*~", "/out");
@@ -99,6 +100,7 @@ namespace NGit.Ignore
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNegation()
 		{
 			WriteIgnoreFile(".gitignore", "*.o");
@@ -116,6 +118,7 @@ namespace NGit.Ignore
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSlashOnlyMatchesDirectory()
 		{
 			WriteIgnoreFile(".gitignore", "out/");
@@ -132,6 +135,7 @@ namespace NGit.Ignore
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWithSlashDoesNotMatchInSubDirectory()
 		{
 			WriteIgnoreFile(".gitignore", "a/b");
@@ -161,12 +165,12 @@ namespace NGit.Ignore
 		/// <exception cref="System.IO.IOException"></exception>
 		private void AssertEntry(FileMode type, bool entryIgnored, string pathName)
 		{
-			NUnit.Framework.Assert.IsTrue("walk has entry", walk.Next());
+			NUnit.Framework.Assert.IsTrue(walk.Next(), "walk has entry");
 			NUnit.Framework.Assert.AreEqual(pathName, walk.PathString);
 			NUnit.Framework.Assert.AreEqual(type, walk.GetFileMode(0));
 			WorkingTreeIterator itr = walk.GetTree<WorkingTreeIterator>(0);
-			NUnit.Framework.Assert.IsNotNull("has tree", itr);
-			NUnit.Framework.Assert.AreEqual("is ignored", entryIgnored, itr.IsEntryIgnored());
+			NUnit.Framework.Assert.IsNotNull(itr, "has tree");
+			NUnit.Framework.Assert.AreEqual(entryIgnored, itr.IsEntryIgnored(), "is ignored");
 			if (D.Equals(type))
 			{
 				walk.EnterSubtree();

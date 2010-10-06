@@ -49,65 +49,68 @@ using Sharpen;
 
 namespace NGit
 {
-	public class ObjectLoaderTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class ObjectLoaderTest
 	{
 		private TestRng rng;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			rng = new TestRng(Sharpen.Extensions.GetTestName(this));
 		}
 
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSmallObjectLoader()
 		{
 			byte[] act = rng.NextBytes(512);
 			ObjectLoader ldr = new ObjectLoader.SmallObject(Constants.OBJ_BLOB, act);
 			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, ldr.GetType());
 			NUnit.Framework.Assert.AreEqual(act.Length, ldr.GetSize());
-			NUnit.Framework.Assert.IsFalse("not is large", ldr.IsLarge());
+			NUnit.Framework.Assert.IsFalse(ldr.IsLarge(), "not is large");
 			NUnit.Framework.Assert.AreSame(act, ldr.GetCachedBytes());
 			NUnit.Framework.Assert.AreSame(act, ldr.GetCachedBytes(1));
 			NUnit.Framework.Assert.AreSame(act, ldr.GetCachedBytes(int.MaxValue));
 			byte[] copy = ldr.GetBytes();
 			NUnit.Framework.Assert.AreNotSame(act, copy);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, copy));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 			copy = ldr.GetBytes(1);
 			NUnit.Framework.Assert.AreNotSame(act, copy);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, copy));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 			copy = ldr.GetBytes(int.MaxValue);
 			NUnit.Framework.Assert.AreNotSame(act, copy);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, copy));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 			ObjectStream @in = ldr.OpenStream();
-			NUnit.Framework.Assert.IsNotNull("has stream", @in);
-			NUnit.Framework.Assert.IsTrue("is small stream", @in is ObjectStream.SmallStream);
+			NUnit.Framework.Assert.IsNotNull(@in, "has stream");
+			NUnit.Framework.Assert.IsTrue(@in is ObjectStream.SmallStream, "is small stream");
 			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, @in.GetType());
 			NUnit.Framework.Assert.AreEqual(act.Length, @in.GetSize());
 			NUnit.Framework.Assert.AreEqual(act.Length, @in.Available());
-			NUnit.Framework.Assert.IsTrue("mark supported", @in.MarkSupported());
+			NUnit.Framework.Assert.IsTrue(@in.MarkSupported(), "mark supported");
 			copy = new byte[act.Length];
 			NUnit.Framework.Assert.AreEqual(act.Length, @in.Read(copy));
 			NUnit.Framework.Assert.AreEqual(0, @in.Available());
 			NUnit.Framework.Assert.AreEqual(-1, @in.Read());
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, copy));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 			ByteArrayOutputStream tmp = new ByteArrayOutputStream();
 			ldr.CopyTo(tmp);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, tmp.ToByteArray(
-				)));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, tmp.ToByteArray()), "same content"
+				);
 		}
 
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLargeObjectLoader()
 		{
 			byte[] act = rng.NextBytes(512);
 			ObjectLoader ldr = new _ObjectLoader_112(act);
 			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, ldr.GetType());
 			NUnit.Framework.Assert.AreEqual(act.Length, ldr.GetSize());
-			NUnit.Framework.Assert.IsTrue("is large", ldr.IsLarge());
+			NUnit.Framework.Assert.IsTrue(ldr.IsLarge(), "is large");
 			try
 			{
 				ldr.GetCachedBytes();
@@ -137,22 +140,22 @@ namespace NGit
 			// expected
 			byte[] copy = ldr.GetCachedBytes(1024);
 			NUnit.Framework.Assert.AreNotSame(act, copy);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, copy));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 			ObjectStream @in = ldr.OpenStream();
-			NUnit.Framework.Assert.IsNotNull("has stream", @in);
+			NUnit.Framework.Assert.IsNotNull(@in, "has stream");
 			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, @in.GetType());
 			NUnit.Framework.Assert.AreEqual(act.Length, @in.GetSize());
 			NUnit.Framework.Assert.AreEqual(act.Length, @in.Available());
-			NUnit.Framework.Assert.IsTrue("mark supported", @in.MarkSupported());
+			NUnit.Framework.Assert.IsTrue(@in.MarkSupported(), "mark supported");
 			copy = new byte[act.Length];
 			NUnit.Framework.Assert.AreEqual(act.Length, @in.Read(copy));
 			NUnit.Framework.Assert.AreEqual(0, @in.Available());
 			NUnit.Framework.Assert.AreEqual(-1, @in.Read());
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, copy));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 			ByteArrayOutputStream tmp = new ByteArrayOutputStream();
 			ldr.CopyTo(tmp);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, tmp.ToByteArray(
-				)));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, tmp.ToByteArray()), "same content"
+				);
 		}
 
 		private sealed class _ObjectLoader_112 : ObjectLoader
@@ -192,11 +195,12 @@ namespace NGit
 		/// <exception cref="NGit.Errors.LargeObjectException"></exception>
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLimitedGetCachedBytes()
 		{
 			byte[] act = rng.NextBytes(512);
 			ObjectLoader ldr = new _SmallObject_185(Constants.OBJ_BLOB, act);
-			NUnit.Framework.Assert.IsTrue("is large", ldr.IsLarge());
+			NUnit.Framework.Assert.IsTrue(ldr.IsLarge(), "is large");
 			try
 			{
 				ldr.GetCachedBytes(10);
@@ -208,10 +212,10 @@ namespace NGit
 			// Expected result.
 			byte[] copy = ldr.GetCachedBytes(512);
 			NUnit.Framework.Assert.AreNotSame(act, copy);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, copy));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 			copy = ldr.GetCachedBytes(1024);
 			NUnit.Framework.Assert.AreNotSame(act, copy);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(act, copy));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 		}
 
 		private sealed class _SmallObject_185 : ObjectLoader.SmallObject
@@ -229,10 +233,11 @@ namespace NGit
 		/// <exception cref="NGit.Errors.LargeObjectException"></exception>
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLimitedGetCachedBytesExceedsJavaLimits()
 		{
 			ObjectLoader ldr = new _ObjectLoader_211();
-			NUnit.Framework.Assert.IsTrue("is large", ldr.IsLarge());
+			NUnit.Framework.Assert.IsTrue(ldr.IsLarge(), "is large");
 			try
 			{
 				ldr.GetCachedBytes(10);

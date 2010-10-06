@@ -54,6 +54,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public override void TestEmpty()
 		{
 			base.TestEmpty();
@@ -61,6 +62,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloneEmpty()
 		{
 			q = new FIFORevQueue(AbstractRevQueue.EMPTY_QUEUE);
@@ -68,6 +70,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddLargeBlocks()
 		{
 			AList<RevCommit> lst = new AList<RevCommit>();
@@ -84,6 +87,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnpopAtFront()
 		{
 			RevCommit a = Commit();

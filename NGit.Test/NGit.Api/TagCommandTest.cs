@@ -59,6 +59,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
 		/// <exception cref="NGit.Api.Errors.InvalidTagNameException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTaggingOnHead()
 		{
 			Git git = new Git(db);
@@ -74,6 +75,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
 		/// <exception cref="NGit.Api.Errors.InvalidTagNameException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTagging()
 		{
 			Git git = new Git(db);
@@ -90,6 +92,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyTagName()
 		{
 			Git git = new Git(db);
@@ -112,6 +115,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagName()
 		{
 			Git git = new Git(db);
@@ -134,6 +138,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
 		/// <exception cref="NGit.Api.Errors.InvalidTagNameException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFailureOnSignedTags()
 		{
 			Git git = new Git(db);

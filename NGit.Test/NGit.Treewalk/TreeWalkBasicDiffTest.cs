@@ -51,6 +51,7 @@ namespace NGit.Treewalk
 	public class TreeWalkBasicDiffTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMissingSubtree_DetectFileAdded_FileModified()
 		{
 			ObjectInserter inserter = db.NewObjectInserter();

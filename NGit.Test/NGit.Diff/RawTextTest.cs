@@ -45,19 +45,21 @@ using System.Text;
 using NGit;
 using NGit.Diff;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Diff
 {
-	public class RawTextTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RawTextTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			RawText r = new RawText(new byte[0]);
 			NUnit.Framework.Assert.AreEqual(0, r.Size());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEquals()
 		{
 			RawText a = new RawText(Constants.EncodeASCII("foo-a\nfoo-b\n"));
@@ -74,6 +76,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteLine1()
 		{
 			RawText a = new RawText(Constants.EncodeASCII("foo-a\nfoo-b\n"));
@@ -84,6 +87,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteLine2()
 		{
 			RawText a = new RawText(Constants.EncodeASCII("foo-a\nfoo-b"));
@@ -94,6 +98,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWriteLine3()
 		{
 			RawText a = new RawText(Constants.EncodeASCII("a\n\nb\n"));
@@ -104,6 +109,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestComparatorReduceCommonStartEnd()
 		{
 			RawTextComparator c = RawTextComparator.DEFAULT;

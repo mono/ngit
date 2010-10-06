@@ -43,13 +43,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit.Errors;
 using NGit.Nls;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Nls
 {
-	public class TestTranslationBundle : TestCase
+	[NUnit.Framework.TestFixture]
+	public class TestTranslationBundle
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestMissingPropertiesFile()
 		{
 			try
@@ -65,6 +66,7 @@ namespace NGit.Nls
 		}
 
 		// pass
+		[NUnit.Framework.Test]
 		public virtual void TestMissingString()
 		{
 			try
@@ -82,6 +84,7 @@ namespace NGit.Nls
 		}
 
 		// pass
+		[NUnit.Framework.Test]
 		public virtual void TestNonTranslatedBundle()
 		{
 			NonTranslatedBundle bundle = new NonTranslatedBundle();
@@ -96,6 +99,7 @@ namespace NGit.Nls
 			NUnit.Framework.Assert.AreEqual("Good morning {0}", bundle.goodMorning);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestGermanTranslation()
 		{
 			GermanTranslatedBundle bundle = new GermanTranslatedBundle();

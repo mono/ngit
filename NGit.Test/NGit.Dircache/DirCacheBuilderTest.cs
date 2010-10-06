@@ -51,6 +51,7 @@ namespace NGit.Dircache
 	public class DirCacheBuilderTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBuildEmpty()
 		{
 			{
@@ -68,6 +69,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBuildRejectsUnsetFileMode()
 		{
 			DirCache dc = DirCache.NewInCore();
@@ -86,6 +88,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBuildOneFile_FinishWriteCommit()
 		{
 			string path = "a-file-path";
@@ -132,6 +135,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBuildOneFile_Commit()
 		{
 			string path = "a-file-path";
@@ -177,6 +181,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindSingleFile()
 		{
 			string path = "a-file-path";
@@ -200,6 +205,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAdd_InGitSortOrder()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -227,6 +233,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAdd_ReverseGitSortOrder()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -254,6 +261,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBuilderClear()
 		{
 			DirCache dc = db.ReadDirCache();

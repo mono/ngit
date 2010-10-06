@@ -55,6 +55,7 @@ using NGit.Storage.Pack;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
 using NUnit.Framework;
+using R = NGit.Repository;
 using Sharpen;
 
 namespace NGit.Junit
@@ -62,7 +63,18 @@ namespace NGit.Junit
 	/// <summary>Wrapper to make creating test data easier.</summary>
 	/// <remarks>Wrapper to make creating test data easier.</remarks>
 	/// <?></?>
-	public class TestRepository<R> where R:Repository
+	public class TestRepository<T>: TestRepository
+	{
+		public TestRepository(R db) : base(db)
+		{
+		}
+
+		public TestRepository(R db, RevWalk rw) : base (db, rw)
+		{
+		}
+	}
+	
+	public class TestRepository
 	{
 		private static readonly PersonIdent author;
 
@@ -331,7 +343,7 @@ namespace NGit.Junit
 			NGit.CommitBuilder c;
 			c = new NGit.CommitBuilder();
 			c.TreeId = tree;
-			c.SetParentIds(parents);
+			c.SetParentIds((IList<RevCommit>)parents);
 			c.Author = new PersonIdent(author, Sharpen.Extensions.CreateDate(now));
 			c.Committer = new PersonIdent(committer, Sharpen.Extensions.CreateDate(now));
 			c.Message = string.Empty;
@@ -502,20 +514,20 @@ namespace NGit.Junit
 				rw.WritePackedRefs();
 				rw.WriteInfoRefs();
 				StringBuilder w = new StringBuilder();
-				foreach (PackFile p in fr.ObjectDatabase.GetPacks())
+				foreach (PackFile p in ((ObjectDirectory)fr.ObjectDatabase).GetPacks())
 				{
 					w.Append("P ");
 					w.Append(p.GetPackFile().GetName());
 					w.Append('\n');
 				}
-				WriteFile(new FilePath(new FilePath(fr.ObjectDatabase.GetDirectory(), "info"), "packs"
-					), Constants.EncodeASCII(w.ToString()));
+				WriteFile(new FilePath(new FilePath(((ObjectDirectory)fr.ObjectDatabase).GetDirectory
+					(), "info"), "packs"), Constants.EncodeASCII(w.ToString()));
 			}
 		}
 
 		private sealed class _RefWriter_481 : RefWriter
 		{
-			public _RefWriter_481(TestRepository<R> _enclosing, FileRepository fr, ICollection
+			public _RefWriter_481(TestRepository _enclosing, FileRepository fr, ICollection
 				<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -526,10 +538,10 @@ namespace NGit.Junit
 			protected override void WriteFile(string name, byte[] bin)
 			{
 				FilePath path = new FilePath(fr.Directory, name);
-				this._enclosing._enclosing.WriteFile(path, bin);
+				this._enclosing.WriteFile(path, bin);
 			}
 
-			private readonly TestRepository<R> _enclosing;
+			private readonly TestRepository _enclosing;
 
 			private readonly FileRepository fr;
 		}
@@ -756,9 +768,9 @@ namespace NGit.Junit
 		/// <summary>Helper to build a branch with one or more commits</summary>
 		public class BranchBuilder
 		{
-			private readonly string @ref;
+			internal readonly string @ref;
 
-			internal BranchBuilder(TestRepository<R> _enclosing, string @ref)
+			internal BranchBuilder(TestRepository _enclosing, string @ref)
 			{
 				this._enclosing = _enclosing;
 				this.@ref = @ref;
@@ -774,7 +786,7 @@ namespace NGit.Junit
 			/// 	</exception>
 			public virtual TestRepository.CommitBuilder Commit()
 			{
-				return new TestRepository.CommitBuilder(this, this);
+				return new TestRepository.CommitBuilder(_enclosing, this);
 			}
 
 			/// <summary>Forcefully update this branch to a particular commit.</summary>
@@ -802,10 +814,10 @@ namespace NGit.Junit
 			/// <exception cref="System.Exception">System.Exception</exception>
 			public virtual RevCommit Update(RevCommit to)
 			{
-				return this._enclosing._enclosing.Update(this.@ref, to);
+				return this._enclosing.Update(this.@ref, to);
 			}
 
-			private readonly TestRepository<R> _enclosing;
+			private readonly TestRepository _enclosing;
 		}
 
 		/// <summary>Helper to generate a commit.</summary>
@@ -824,14 +836,14 @@ namespace NGit.Junit
 
 			private RevCommit self;
 
-			public CommitBuilder(TestRepository<R> _enclosing)
+			public CommitBuilder(TestRepository _enclosing)
 			{
 				this._enclosing = _enclosing;
 				this.branch = null;
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			internal CommitBuilder(TestRepository<R> _enclosing, TestRepository.BranchBuilder
+			internal CommitBuilder(TestRepository _enclosing, TestRepository.BranchBuilder
 				 b)
 			{
 				this._enclosing = _enclosing;
@@ -844,7 +856,7 @@ namespace NGit.Junit
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			internal CommitBuilder(TestRepository<R> _enclosing, TestRepository.CommitBuilder
+			internal CommitBuilder(TestRepository _enclosing, TestRepository.CommitBuilder
 				 prior)
 			{
 				this._enclosing = _enclosing;
@@ -942,7 +954,7 @@ namespace NGit.Junit
 			{
 				if (this.self == null)
 				{
-					this._enclosing._enclosing.Tick(this.tick);
+					this._enclosing.Tick(this.tick);
 					NGit.CommitBuilder c;
 					c = new NGit.CommitBuilder();
 					c.SetParentIds(this.parents);
@@ -974,10 +986,10 @@ namespace NGit.Junit
 			/// <exception cref="System.Exception"></exception>
 			public virtual TestRepository.CommitBuilder Child()
 			{
-				return new TestRepository.CommitBuilder(this, this);
+				return new TestRepository.CommitBuilder(_enclosing, this);
 			}
 
-			private readonly TestRepository<R> _enclosing;
+			private readonly TestRepository _enclosing;
 		}
 	}
 }

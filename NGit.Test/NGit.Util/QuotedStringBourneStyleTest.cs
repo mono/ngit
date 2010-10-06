@@ -43,12 +43,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class QuotedStringBourneStyleTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class QuotedStringBourneStyleTest
 	{
 		private static void AssertQuote(string @in, string exp)
 		{
@@ -65,34 +65,40 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(exp, r);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuote_Empty()
 		{
 			NUnit.Framework.Assert.AreEqual("''", QuotedString.BOURNE.Quote(string.Empty));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_Empty1()
 		{
 			NUnit.Framework.Assert.AreEqual(string.Empty, QuotedString.BOURNE.Dequote(new byte
 				[0], 0, 0));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_Empty2()
 		{
 			NUnit.Framework.Assert.AreEqual(string.Empty, QuotedString.BOURNE.Dequote(new byte
 				[] { (byte)('\''), (byte)('\'') }, 0, 2));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_SoleSq()
 		{
 			NUnit.Framework.Assert.AreEqual(string.Empty, QuotedString.BOURNE.Dequote(new byte
 				[] { (byte)('\'') }, 0, 1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuote_BareA()
 		{
 			AssertQuote("a", "a");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_BareA()
 		{
 			string @in = "a";
@@ -100,6 +106,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(@in, QuotedString.BOURNE.Dequote(b, 0, b.Length));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_BareABCZ_OnlyBC()
 		{
 			string @in = "abcz";
@@ -108,11 +115,13 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual("bc", QuotedString.BOURNE.Dequote(b, p, p + 2));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_LoneBackslash()
 		{
 			AssertDequote("\\", "\\");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestQuote_NamedEscapes()
 		{
 			AssertQuote("'", "'\\''");
@@ -121,6 +130,7 @@ namespace NGit.Util
 			AssertQuote("a!b", "a'\\!'b");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestDequote_NamedEscapes()
 		{
 			AssertDequote("'", "'\\''");

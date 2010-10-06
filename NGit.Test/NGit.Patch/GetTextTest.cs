@@ -44,14 +44,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System.Collections.Generic;
 using System.Text;
 using NGit.Patch;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Patch
 {
-	public class GetTextTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class GetTextTest
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetText_BothISO88591()
 		{
 			Encoding cs = Sharpen.Extensions.GetEncoding("ISO-8859-1");
@@ -64,6 +65,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetText_NoBinary()
 		{
 			Encoding cs = Sharpen.Extensions.GetEncoding("ISO-8859-1");
@@ -76,6 +78,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetText_Convert()
 		{
 			Encoding csOld = Sharpen.Extensions.GetEncoding("ISO-8859-1");
@@ -95,6 +98,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetText_DiffCc()
 		{
 			Encoding csOld = Sharpen.Extensions.GetEncoding("ISO-8859-1");

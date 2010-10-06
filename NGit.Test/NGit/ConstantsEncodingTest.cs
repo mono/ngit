@@ -43,14 +43,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using NGit;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
 {
-	public class ConstantsEncodingTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class ConstantsEncodingTest
 	{
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEncodeASCII_SimpleASCII()
 		{
 			string src = "abc";
@@ -61,6 +62,7 @@ namespace NGit
 				Length, "UTF-8"));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEncodeASCII_FailOnNonASCII()
 		{
 			string src = "Ūnĭcōde̽";
@@ -75,6 +77,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEncodeASCII_Number13()
 		{
 			long src = 13;
@@ -84,6 +87,7 @@ namespace NGit
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEncode_SimpleASCII()
 		{
 			string src = "abc";
@@ -95,6 +99,7 @@ namespace NGit
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEncode_Unicode()
 		{
 			string src = "Ūnĭcōde̽";

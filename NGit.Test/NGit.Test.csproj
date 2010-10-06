@@ -186,6 +186,10 @@
     <Compile Include="NGit.Util.IO\TimeoutInputStreamTest.cs" />
     <Compile Include="NGit.Util.IO\TimeoutOutputStreamTest.cs" />
     <Compile Include="NGit.Util.IO\UnionInputStreamTest.cs" />
+    <Compile Include="NGit.Diff\AbstractDiffTestCase.cs" />
+    <Compile Include="NGit.Diff\HistogramDiffTest.cs" />
+    <Compile Include="NGit.Diff\PatienceDiffTest.cs" />
+    <Compile Include="NGit.Diff\DiffPerformanceTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

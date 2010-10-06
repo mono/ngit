@@ -76,6 +76,7 @@ namespace NGit.Transport
 			fw.Close();
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoConfig()
 		{
 			OpenSshConfig.Host h = osc.Lookup("repo.or.cz");
@@ -87,6 +88,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSeparatorParsing()
 		{
 			Config("Host\tfirst\n" + "\tHostName\tfirst.tld\n" + "\n" + "Host second\n" + " HostName\tsecond.tld\n"
@@ -105,6 +107,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestQuoteParsing()
 		{
 			Config("Host \"good\"\n" + " HostName=\"good.tld\"\n" + " Port=\"6007\"\n" + " User=\"gooduser\"\n"
@@ -126,6 +129,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_DoesNotMatch()
 		{
 			Config("Host orcz\n" + "\tHostName repo.or.cz\n");
@@ -138,6 +142,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_OptionsSet()
 		{
 			Config("Host orcz\n" + "\tHostName repo.or.cz\n" + "\tPort 2222\n" + "\tUser jex\n"
@@ -152,6 +157,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_OptionsKeywordCaseInsensitive()
 		{
 			Config("hOsT orcz\n" + "\thOsTnAmE repo.or.cz\n" + "\tPORT 2222\n" + "\tuser jex\n"
@@ -166,6 +172,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_OptionsInherit()
 		{
 			Config("Host orcz\n" + "\tHostName repo.or.cz\n" + "\n" + "Host *\n" + "\tHostName not.a.host.example.com\n"
@@ -181,6 +188,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_PreferredAuthenticationsDefault()
 		{
 			OpenSshConfig.Host h = osc.Lookup("orcz");
@@ -189,6 +197,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_PreferredAuthentications()
 		{
 			Config("Host orcz\n" + "\tPreferredAuthentications publickey\n");
@@ -198,6 +207,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_InheritPreferredAuthentications()
 		{
 			Config("Host orcz\n" + "\tHostName repo.or.cz\n" + "\n" + "Host *\n" + "\tPreferredAuthentications publickey, hostbased\n"
@@ -209,6 +219,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_BatchModeDefault()
 		{
 			OpenSshConfig.Host h = osc.Lookup("orcz");
@@ -217,6 +228,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_BatchModeYes()
 		{
 			Config("Host orcz\n" + "\tBatchMode yes\n");
@@ -226,6 +238,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAlias_InheritBatchMode()
 		{
 			Config("Host orcz\n" + "\tHostName repo.or.cz\n" + "\n" + "Host *\n" + "\tBatchMode yes\n"

@@ -84,6 +84,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_SmallObject()
 		{
 			int type = Constants.OBJ_BLOB;
@@ -92,24 +93,25 @@ namespace NGit.Storage.File
 			ObjectId id = ObjectId.ZeroId;
 			ObjectLoader ol = UnpackedObject.Open(new ByteArrayInputStream(gz), Path(id), id, 
 				wc);
-			NUnit.Framework.Assert.IsNotNull("created loader", ol);
+			NUnit.Framework.Assert.IsNotNull(ol, "created loader");
 			NUnit.Framework.Assert.AreEqual(type, ol.GetType());
 			NUnit.Framework.Assert.AreEqual(data.Length, ol.GetSize());
-			NUnit.Framework.Assert.IsFalse("is not large", ol.IsLarge());
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(data, ol.GetCachedBytes
-				()));
+			NUnit.Framework.Assert.IsFalse(ol.IsLarge(), "is not large");
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data, ol.GetCachedBytes()), "same content"
+				);
 			ObjectStream @in = ol.OpenStream();
-			NUnit.Framework.Assert.IsNotNull("have stream", @in);
+			NUnit.Framework.Assert.IsNotNull(@in, "have stream");
 			NUnit.Framework.Assert.AreEqual(type, @in.GetType());
 			NUnit.Framework.Assert.AreEqual(data.Length, @in.GetSize());
 			byte[] data2 = new byte[data.Length];
 			IOUtil.ReadFully(@in, data2, 0, data.Length);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(data2, data));
-			NUnit.Framework.Assert.AreEqual("stream at EOF", -1, @in.Read());
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data2, data), "same content");
+			NUnit.Framework.Assert.AreEqual(-1, @in.Read(), "stream at EOF");
 			@in.Close();
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_LargeObject()
 		{
 			int type = Constants.OBJ_BLOB;
@@ -128,10 +130,10 @@ namespace NGit.Storage.File
 					fs.Close();
 				}
 			}
-			NUnit.Framework.Assert.IsNotNull("created loader", ol);
+			NUnit.Framework.Assert.IsNotNull(ol, "created loader");
 			NUnit.Framework.Assert.AreEqual(type, ol.GetType());
 			NUnit.Framework.Assert.AreEqual(data.Length, ol.GetSize());
-			NUnit.Framework.Assert.IsTrue("is large", ol.IsLarge());
+			NUnit.Framework.Assert.IsTrue(ol.IsLarge(), "is large");
 			try
 			{
 				ol.GetCachedBytes();
@@ -143,17 +145,18 @@ namespace NGit.Storage.File
 					, id.Name), tooBig.Message);
 			}
 			ObjectStream @in = ol.OpenStream();
-			NUnit.Framework.Assert.IsNotNull("have stream", @in);
+			NUnit.Framework.Assert.IsNotNull(@in, "have stream");
 			NUnit.Framework.Assert.AreEqual(type, @in.GetType());
 			NUnit.Framework.Assert.AreEqual(data.Length, @in.GetSize());
 			byte[] data2 = new byte[data.Length];
 			IOUtil.ReadFully(@in, data2, 0, data.Length);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(data2, data));
-			NUnit.Framework.Assert.AreEqual("stream at EOF", -1, @in.Read());
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data2, data), "same content");
+			NUnit.Framework.Assert.AreEqual(-1, @in.Read(), "stream at EOF");
 			@in.Close();
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_NegativeSize()
 		{
 			ObjectId id = ObjectId.ZeroId;
@@ -172,6 +175,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_InvalidType()
 		{
 			ObjectId id = ObjectId.ZeroId;
@@ -190,6 +194,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_NoHeader()
 		{
 			ObjectId id = ObjectId.ZeroId;
@@ -208,6 +213,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_GarbageAfterSize()
 		{
 			ObjectId id = ObjectId.ZeroId;
@@ -226,6 +232,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_SmallObject_CorruptZLibStream()
 		{
 			ObjectId id = ObjectId.ZeroId;
@@ -248,6 +255,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_SmallObject_TruncatedZLibStream()
 		{
 			ObjectId id = ObjectId.ZeroId;
@@ -268,6 +276,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_SmallObject_TrailingGarbage()
 		{
 			ObjectId id = ObjectId.ZeroId;
@@ -288,6 +297,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_LargeObject_CorruptZLibStream()
 		{
 			int type = Constants.OBJ_BLOB;
@@ -331,6 +341,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_LargeObject_TruncatedZLibStream()
 		{
 			int type = Constants.OBJ_BLOB;
@@ -368,6 +379,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStandardFormat_LargeObject_TrailingGarbage()
 		{
 			int type = Constants.OBJ_BLOB;
@@ -405,6 +417,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPackFormat_SmallObject()
 		{
 			int type = Constants.OBJ_BLOB;
@@ -413,24 +426,25 @@ namespace NGit.Storage.File
 			ObjectId id = ObjectId.ZeroId;
 			ObjectLoader ol = UnpackedObject.Open(new ByteArrayInputStream(gz), Path(id), id, 
 				wc);
-			NUnit.Framework.Assert.IsNotNull("created loader", ol);
+			NUnit.Framework.Assert.IsNotNull(ol, "created loader");
 			NUnit.Framework.Assert.AreEqual(type, ol.GetType());
 			NUnit.Framework.Assert.AreEqual(data.Length, ol.GetSize());
-			NUnit.Framework.Assert.IsFalse("is not large", ol.IsLarge());
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(data, ol.GetCachedBytes
-				()));
+			NUnit.Framework.Assert.IsFalse(ol.IsLarge(), "is not large");
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data, ol.GetCachedBytes()), "same content"
+				);
 			ObjectStream @in = ol.OpenStream();
-			NUnit.Framework.Assert.IsNotNull("have stream", @in);
+			NUnit.Framework.Assert.IsNotNull(@in, "have stream");
 			NUnit.Framework.Assert.AreEqual(type, @in.GetType());
 			NUnit.Framework.Assert.AreEqual(data.Length, @in.GetSize());
 			byte[] data2 = new byte[data.Length];
 			IOUtil.ReadFully(@in, data2, 0, data.Length);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(data, ol.GetCachedBytes
-				()));
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data, ol.GetCachedBytes()), "same content"
+				);
 			@in.Close();
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPackFormat_LargeObject()
 		{
 			int type = Constants.OBJ_BLOB;
@@ -449,10 +463,10 @@ namespace NGit.Storage.File
 					fs.Close();
 				}
 			}
-			NUnit.Framework.Assert.IsNotNull("created loader", ol);
+			NUnit.Framework.Assert.IsNotNull(ol, "created loader");
 			NUnit.Framework.Assert.AreEqual(type, ol.GetType());
 			NUnit.Framework.Assert.AreEqual(data.Length, ol.GetSize());
-			NUnit.Framework.Assert.IsTrue("is large", ol.IsLarge());
+			NUnit.Framework.Assert.IsTrue(ol.IsLarge(), "is large");
 			try
 			{
 				ol.GetCachedBytes();
@@ -464,17 +478,18 @@ namespace NGit.Storage.File
 					, id.Name), tooBig.Message);
 			}
 			ObjectStream @in = ol.OpenStream();
-			NUnit.Framework.Assert.IsNotNull("have stream", @in);
+			NUnit.Framework.Assert.IsNotNull(@in, "have stream");
 			NUnit.Framework.Assert.AreEqual(type, @in.GetType());
 			NUnit.Framework.Assert.AreEqual(data.Length, @in.GetSize());
 			byte[] data2 = new byte[data.Length];
 			IOUtil.ReadFully(@in, data2, 0, data.Length);
-			NUnit.Framework.Assert.IsTrue("same content", Arrays.Equals(data2, data));
-			NUnit.Framework.Assert.AreEqual("stream at EOF", -1, @in.Read());
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data2, data), "same content");
+			NUnit.Framework.Assert.AreEqual(-1, @in.Read(), "stream at EOF");
 			@in.Close();
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPackFormat_DeltaNotAllowed()
 		{
 			ObjectId id = ObjectId.ZeroId;
@@ -574,7 +589,7 @@ namespace NGit.Storage.File
 
 		private FilePath Path(ObjectId id)
 		{
-			return repo.ObjectDatabase.FileFor(id);
+			return ((ObjectDirectory)repo.ObjectDatabase).FileFor(id);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

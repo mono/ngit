@@ -43,13 +43,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using NGit;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
 {
-	public class T0001_PersonIdent : TestCase
+	[NUnit.Framework.TestFixture]
+	public class T0001_PersonIdent
 	{
+		[NUnit.Framework.Test]
 		public virtual void Test001_NewIdent()
 		{
 			PersonIdent p = new PersonIdent("A U Thor", "author@example.com", Sharpen.Extensions.CreateDate
@@ -61,6 +62,7 @@ namespace NGit
 				p.ToExternalString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test002_NewIdent()
 		{
 			PersonIdent p = new PersonIdent("A U Thor", "author@example.com", Sharpen.Extensions.CreateDate

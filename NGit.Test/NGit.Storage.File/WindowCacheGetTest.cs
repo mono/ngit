@@ -83,6 +83,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCache_Defaults()
 		{
 			WindowCacheConfig cfg = new WindowCacheConfig();
@@ -95,6 +96,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCache_TooFewFiles()
 		{
 			WindowCacheConfig cfg = new WindowCacheConfig();
@@ -105,6 +107,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCache_TooSmallLimit()
 		{
 			WindowCacheConfig cfg = new WindowCacheConfig();

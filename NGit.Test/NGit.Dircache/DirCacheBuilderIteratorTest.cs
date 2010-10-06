@@ -52,6 +52,7 @@ namespace NGit.Dircache
 	public class DirCacheBuilderIteratorTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPathFilterGroup_DoesNotSkipTail()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -79,7 +80,7 @@ namespace NGit.Dircache
 			tw.Recursive = true;
 			tw.Filter = PathFilterGroup.CreateFromStrings(Collections.Singleton(paths[expIdx]
 				));
-			NUnit.Framework.Assert.IsTrue("found " + paths[expIdx], tw.Next());
+			NUnit.Framework.Assert.IsTrue(tw.Next(), "found " + paths[expIdx]);
 			DirCacheIterator c = tw.GetTree<DirCacheIterator>(0);
 			NUnit.Framework.Assert.IsNotNull(c);
 			NUnit.Framework.Assert.AreEqual(expIdx, c.ptr);
@@ -88,7 +89,7 @@ namespace NGit.Dircache
 			NUnit.Framework.Assert.AreEqual(mode.GetBits(), tw.GetRawMode(0));
 			NUnit.Framework.Assert.AreSame(mode, tw.GetFileMode(0));
 			b_1.Add(c.GetDirCacheEntry());
-			NUnit.Framework.Assert.IsFalse("no more entries", tw.Next());
+			NUnit.Framework.Assert.IsFalse(tw.Next(), "no more entries");
 			b_1.Finish();
 			NUnit.Framework.Assert.AreEqual(ents.Length, dc.GetEntryCount());
 			for (int i_2 = 0; i_2 < ents.Length; i_2++)

@@ -49,6 +49,7 @@ namespace NGit
 	public class TreeIteratorLeafOnlyTest : RepositoryTestCase
 	{
 		/// <summary>Empty tree</summary>
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			Tree tree = new Tree(db);
@@ -58,6 +59,7 @@ namespace NGit
 
 		/// <summary>one file</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimpleF1()
 		{
 			Tree tree = new Tree(db);
@@ -69,6 +71,7 @@ namespace NGit
 
 		/// <summary>two files</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimpleF2()
 		{
 			Tree tree = new Tree(db);
@@ -82,6 +85,7 @@ namespace NGit
 
 		/// <summary>Empty tree</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimpleT()
 		{
 			Tree tree = new Tree(db);
@@ -91,6 +95,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTricky()
 		{
 			Tree tree = new Tree(db);

@@ -51,6 +51,7 @@ namespace NGit.Api
 {
 	public class AddCommandTest : RepositoryTestCase
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestAddNothing()
 		{
 			Git git = new Git(db);
@@ -66,6 +67,7 @@ namespace NGit.Api
 
 		// expected
 		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddNonExistingSingleFile()
 		{
 			Git git = new Git(db);
@@ -75,6 +77,7 @@ namespace NGit.Api
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddExistingSingleFile()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
@@ -90,6 +93,7 @@ namespace NGit.Api
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddExistingSingleFileInSubDir()
 		{
 			new FilePath(db.WorkTree, "sub").Mkdir();
@@ -106,6 +110,7 @@ namespace NGit.Api
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddExistingSingleFileTwice()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
@@ -125,6 +130,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddExistingSingleFileTwiceWithCommit()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
@@ -145,6 +151,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddRemovedFile()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
@@ -163,6 +170,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddRemovedCommittedFile()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
@@ -182,6 +190,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddWithConflicts()
 		{
 			// prepare conflict
@@ -220,6 +229,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddTwoFiles()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
@@ -239,6 +249,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddFolder()
 		{
 			new FilePath(db.WorkTree, "sub").Mkdir();
@@ -259,6 +270,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddIgnoredFile()
 		{
 			new FilePath(db.WorkTree, "sub").Mkdir();
@@ -284,6 +296,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddWholeRepo()
 		{
 			new FilePath(db.WorkTree, "sub").Mkdir();
@@ -308,6 +321,7 @@ namespace NGit.Api
 		// file b exists not in workdir but in index -> unchanged
 		// file c exists in workdir but not in index -> added
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddWithoutParameterUpdate()
 		{
 			new FilePath(db.WorkTree, "sub").Mkdir();
@@ -351,6 +365,7 @@ namespace NGit.Api
 		// file b exists not in workdir but in index -> deleted
 		// file c exists in workdir but not in index -> unchanged
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddWithParameterUpdate()
 		{
 			new FilePath(db.WorkTree, "sub").Mkdir();

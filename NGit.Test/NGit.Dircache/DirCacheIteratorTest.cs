@@ -52,6 +52,7 @@ namespace NGit.Dircache
 	public class DirCacheIteratorTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyTree_NoTreeWalk()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -61,6 +62,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyTree_WithTreeWalk()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -72,6 +74,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoSubtree_NoTreeWalk()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -100,6 +103,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoSubtree_WithTreeWalk()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -136,6 +140,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSingleSubtree_NoRecursion()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -183,6 +188,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSingleSubtree_Recursive()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -221,6 +227,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoLevelSubtree_Recursive()
 		{
 			DirCache dc = db.ReadDirCache();
@@ -258,6 +265,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoLevelSubtree_FilterPath()
 		{
 			DirCache dc = db.ReadDirCache();

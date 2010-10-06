@@ -42,13 +42,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Diff;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Diff
 {
-	public class EditTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class EditTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestCreate()
 		{
 			Edit e = new Edit(1, 2, 3, 4);
@@ -58,6 +59,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(4, e.GetEndB());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCreateEmpty()
 		{
 			Edit e = new Edit(1, 3);
@@ -65,10 +67,11 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(1, e.GetEndA());
 			NUnit.Framework.Assert.AreEqual(3, e.GetBeginB());
 			NUnit.Framework.Assert.AreEqual(3, e.GetEndB());
-			NUnit.Framework.Assert.IsTrue("is empty", e.IsEmpty());
-			NUnit.Framework.Assert.AreSame(Edit.Type.EMPTY, e.GetType());
+			NUnit.Framework.Assert.IsTrue(e.IsEmpty(), "is empty");
+			NUnit.Framework.Assert.AreEqual(Edit.Type.EMPTY, e.GetType());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSwap()
 		{
 			Edit e = new Edit(1, 2, 3, 4);
@@ -79,49 +82,55 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(2, e.GetEndB());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestType_Insert()
 		{
 			Edit e = new Edit(1, 1, 1, 2);
-			NUnit.Framework.Assert.AreSame(Edit.Type.INSERT, e.GetType());
-			NUnit.Framework.Assert.IsFalse("not empty", e.IsEmpty());
+			NUnit.Framework.Assert.AreEqual(Edit.Type.INSERT, e.GetType());
+			NUnit.Framework.Assert.IsFalse(e.IsEmpty(), "not empty");
 			NUnit.Framework.Assert.AreEqual(0, e.GetLengthA());
 			NUnit.Framework.Assert.AreEqual(1, e.GetLengthB());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestType_Delete()
 		{
 			Edit e = new Edit(1, 2, 1, 1);
-			NUnit.Framework.Assert.AreSame(Edit.Type.DELETE, e.GetType());
-			NUnit.Framework.Assert.IsFalse("not empty", e.IsEmpty());
+			NUnit.Framework.Assert.AreEqual(Edit.Type.DELETE, e.GetType());
+			NUnit.Framework.Assert.IsFalse(e.IsEmpty(), "not empty");
 			NUnit.Framework.Assert.AreEqual(1, e.GetLengthA());
 			NUnit.Framework.Assert.AreEqual(0, e.GetLengthB());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestType_Replace()
 		{
 			Edit e = new Edit(1, 2, 1, 4);
-			NUnit.Framework.Assert.AreSame(Edit.Type.REPLACE, e.GetType());
-			NUnit.Framework.Assert.IsFalse("not empty", e.IsEmpty());
+			NUnit.Framework.Assert.AreEqual(Edit.Type.REPLACE, e.GetType());
+			NUnit.Framework.Assert.IsFalse(e.IsEmpty(), "not empty");
 			NUnit.Framework.Assert.AreEqual(1, e.GetLengthA());
 			NUnit.Framework.Assert.AreEqual(3, e.GetLengthB());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestType_Empty()
 		{
 			Edit e = new Edit(1, 1, 2, 2);
-			NUnit.Framework.Assert.AreSame(Edit.Type.EMPTY, e.GetType());
-			NUnit.Framework.Assert.AreSame(Edit.Type.EMPTY, new Edit(1, 2).GetType());
-			NUnit.Framework.Assert.IsTrue("is empty", e.IsEmpty());
+			NUnit.Framework.Assert.AreEqual(Edit.Type.EMPTY, e.GetType());
+			NUnit.Framework.Assert.AreEqual(Edit.Type.EMPTY, new Edit(1, 2).GetType());
+			NUnit.Framework.Assert.IsTrue(e.IsEmpty(), "is empty");
 			NUnit.Framework.Assert.AreEqual(0, e.GetLengthA());
 			NUnit.Framework.Assert.AreEqual(0, e.GetLengthB());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestToString()
 		{
 			Edit e = new Edit(1, 2, 1, 4);
 			NUnit.Framework.Assert.AreEqual("REPLACE(1-2,1-4)", e.ToString());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEquals1()
 		{
 			Edit e1 = new Edit(1, 2, 3, 4);
@@ -133,26 +142,31 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.IsFalse(e1.Equals(string.Empty));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNotEquals1()
 		{
 			NUnit.Framework.Assert.IsFalse(new Edit(1, 2, 3, 4).Equals(new Edit(0, 2, 3, 4)));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNotEquals2()
 		{
 			NUnit.Framework.Assert.IsFalse(new Edit(1, 2, 3, 4).Equals(new Edit(1, 0, 3, 4)));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNotEquals3()
 		{
 			NUnit.Framework.Assert.IsFalse(new Edit(1, 2, 3, 4).Equals(new Edit(1, 2, 0, 4)));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNotEquals4()
 		{
 			NUnit.Framework.Assert.IsFalse(new Edit(1, 2, 3, 4).Equals(new Edit(1, 2, 3, 0)));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestExtendA()
 		{
 			Edit e = new Edit(1, 2, 1, 1);
@@ -162,6 +176,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(1, 4, 1, 1), e);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestExtendB()
 		{
 			Edit e = new Edit(1, 2, 1, 1);
@@ -171,6 +186,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(1, 2, 1, 3), e);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestBeforeAfterCuts()
 		{
 			Edit whole = new Edit(1, 8, 2, 9);

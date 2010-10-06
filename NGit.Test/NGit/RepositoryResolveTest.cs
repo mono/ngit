@@ -50,6 +50,7 @@ namespace NGit
 	public class RepositoryResolveTest : SampleDataRepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectId_existing()
 		{
 			NUnit.Framework.Assert.AreEqual("49322bb17d3acc9146f98c97d078513228bbf3c0", db.Resolve
@@ -57,6 +58,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectId_nonexisting()
 		{
 			NUnit.Framework.Assert.AreEqual("49322bb17d3acc9146f98c97d078513228bbf3c1", db.Resolve
@@ -64,6 +66,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectId_objectid_implicit_firstparent()
 		{
 			NUnit.Framework.Assert.AreEqual("6e1475206e57110fcef4b92320436c1e9872a322", db.Resolve
@@ -75,6 +78,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectId_objectid_self()
 		{
 			NUnit.Framework.Assert.AreEqual("49322bb17d3acc9146f98c97d078513228bbf3c0", db.Resolve
@@ -86,6 +90,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectId_objectid_explicit_firstparent()
 		{
 			NUnit.Framework.Assert.AreEqual("6e1475206e57110fcef4b92320436c1e9872a322", db.Resolve
@@ -97,6 +102,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestObjectId_objectid_explicit_otherparents()
 		{
 			NUnit.Framework.Assert.AreEqual("6e1475206e57110fcef4b92320436c1e9872a322", db.Resolve
@@ -110,6 +116,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRef_refname()
 		{
 			NUnit.Framework.Assert.AreEqual("49322bb17d3acc9146f98c97d078513228bbf3c0", db.Resolve
@@ -121,6 +128,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDistance()
 		{
 			NUnit.Framework.Assert.AreEqual("49322bb17d3acc9146f98c97d078513228bbf3c0", db.Resolve
@@ -136,6 +144,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTree()
 		{
 			NUnit.Framework.Assert.AreEqual("6020a3b8d5d636e549ccbd0c53e2764684bb3125", db.Resolve
@@ -145,6 +154,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHEAD()
 		{
 			NUnit.Framework.Assert.AreEqual("6020a3b8d5d636e549ccbd0c53e2764684bb3125", db.Resolve
@@ -152,6 +162,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDerefCommit()
 		{
 			NUnit.Framework.Assert.AreEqual("49322bb17d3acc9146f98c97d078513228bbf3c0", db.Resolve
@@ -164,6 +175,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDerefTag()
 		{
 			NUnit.Framework.Assert.AreEqual("17768080a2318cd89bba4c8b87834401e2095703", db.Resolve
@@ -191,6 +203,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDerefBlob()
 		{
 			NUnit.Framework.Assert.AreEqual("fd608fbe625a2b456d9f15c2b1dc41f252057dd7", db.Resolve
@@ -204,6 +217,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDerefTree()
 		{
 			NUnit.Framework.Assert.AreEqual("032c063ce34486359e3ee3d4f9e5c225b9e1a4c2", db.Resolve
@@ -215,6 +229,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitDescribeOutput()
 		{
 			ObjectId exp = db.Resolve("b");
@@ -238,6 +253,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParseLookupPath()
 		{
 			ObjectId b2_txt = Id("10da5895682013006950e7da534b705252b03be6");
@@ -248,10 +264,10 @@ namespace NGit
 			AssertEquals(b_root, db.Resolve("b:"));
 			AssertEquals(master_txt, db.Resolve(":master.txt"));
 			AssertEquals(b3_b2_txt, db.Resolve("b~3:b/b2.txt"));
-			NUnit.Framework.Assert.IsNull("no FOO", db.Resolve("b:FOO"));
-			NUnit.Framework.Assert.IsNull("no b/FOO", db.Resolve("b:b/FOO"));
-			NUnit.Framework.Assert.IsNull("no b/FOO", db.Resolve(":b/FOO"));
-			NUnit.Framework.Assert.IsNull("no not-a-branch:", db.Resolve("not-a-branch:"));
+			NUnit.Framework.Assert.IsNull(db.Resolve("b:FOO"), "no FOO");
+			NUnit.Framework.Assert.IsNull(db.Resolve("b:b/FOO"), "no b/FOO");
+			NUnit.Framework.Assert.IsNull(db.Resolve(":b/FOO"), "no b/FOO");
+			NUnit.Framework.Assert.IsNull(db.Resolve("not-a-branch:"), "no not-a-branch:");
 		}
 
 		private static ObjectId Id(string name)

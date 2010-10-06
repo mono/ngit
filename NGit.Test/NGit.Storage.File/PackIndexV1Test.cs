@@ -67,6 +67,7 @@ namespace NGit.Storage.File
 		/// <remarks>Verify CRC32 - V1 should not index anything.</remarks>
 		/// <exception cref="NGit.Errors.MissingObjectException">NGit.Errors.MissingObjectException
 		/// 	</exception>
+		[NUnit.Framework.Test]
 		public override void TestCRC32()
 		{
 			NUnit.Framework.Assert.IsFalse(smallIdx.HasCRC32Support());

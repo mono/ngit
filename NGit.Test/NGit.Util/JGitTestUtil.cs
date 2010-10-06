@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.IO;
 using Sharpen;
 
 namespace NGit.Util
@@ -61,26 +62,9 @@ namespace NGit.Util
 			{
 				return null;
 			}
-			Uri url = Cl().GetResource(CLASSPATH_TO_RESOURCES + fileName);
-			if (url == null)
-			{
-				// If URL is null then try to load it as it was being
-				// loaded previously
-				return new FilePath("tst", fileName);
-			}
-			try
-			{
-				return new FilePath(url.ToURI());
-			}
-			catch (URISyntaxException)
-			{
-				return new FilePath(url.AbsolutePath);
-			}
-		}
-
-		private static ClassLoader Cl()
-		{
-			return typeof(NGit.Util.JGitTestUtil).GetClassLoader();
+			string path = Path.Combine (AppDomain.CurrentDomain.BaseDirectory, "resources");
+			path = Path.Combine (path, "global");
+			return new FilePath (Path.Combine (path, fileName));
 		}
 	}
 }

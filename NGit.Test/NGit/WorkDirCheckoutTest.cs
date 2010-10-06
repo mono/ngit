@@ -44,12 +44,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Errors;
 using Sharpen;
+using System.Collections.Generic;
 
 namespace NGit
 {
 	public class WorkDirCheckoutTest : RepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindingConflicts()
 		{
 			GitIndex index = new GitIndex(db);
@@ -61,8 +63,8 @@ namespace NGit
 			WriteTrashFile("foo", "troublesome little bugger");
 			WorkDirCheckout workDirCheckout = new WorkDirCheckout(db, trash, index, index);
 			workDirCheckout.PrescanOneTree();
-			AList<string> conflictingEntries = workDirCheckout.GetConflicts();
-			AList<string> removedEntries = workDirCheckout.GetRemoved();
+			IList<string> conflictingEntries = workDirCheckout.GetConflicts();
+			IList<string> removedEntries = workDirCheckout.GetRemoved();
 			NUnit.Framework.Assert.AreEqual("bar/baz/qux/foo", conflictingEntries[0]);
 			NUnit.Framework.Assert.AreEqual("foo", conflictingEntries[1]);
 			GitIndex index2 = new GitIndex(db);
@@ -80,6 +82,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCheckingOutWithConflicts()
 		{
 			GitIndex index = new GitIndex(db);

@@ -44,13 +44,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Diff;
 using NGit.Patch;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Patch
 {
-	public class FileHeaderTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class FileHeaderTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_Empty()
 		{
 			FileHeader fh = Data(string.Empty);
@@ -60,24 +61,28 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsFalse(fh.HasMetaDataChanges());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_NoLF()
 		{
 			FileHeader fh = Data("a/ b/");
 			NUnit.Framework.Assert.AreEqual(-1, fh.ParseGitFileName(0, fh.buf.Length));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_NoSecondLine()
 		{
 			FileHeader fh = Data("\n");
 			NUnit.Framework.Assert.AreEqual(-1, fh.ParseGitFileName(0, fh.buf.Length));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_EmptyHeader()
 		{
 			FileHeader fh = Data("\n\n");
 			NUnit.Framework.Assert.AreEqual(1, fh.ParseGitFileName(0, fh.buf.Length));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_Foo()
 		{
 			string name = "foo";
@@ -89,6 +94,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsFalse(fh.HasMetaDataChanges());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_FailFooBar()
 		{
 			FileHeader fh = Data("a/foo b/bar\n-");
@@ -98,6 +104,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsFalse(fh.HasMetaDataChanges());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_FooSpBar()
 		{
 			string name = "foo bar";
@@ -109,6 +116,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsFalse(fh.HasMetaDataChanges());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_DqFooTabBar()
 		{
 			string name = "foo\tbar";
@@ -121,6 +129,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsFalse(fh.HasMetaDataChanges());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_DqFooSpLfNulBar()
 		{
 			string name = "foo \n\x0bar";
@@ -133,6 +142,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsFalse(fh.HasMetaDataChanges());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_SrcFooC()
 		{
 			string name = "src/foo/bar/argh/code.c";
@@ -144,6 +154,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsFalse(fh.HasMetaDataChanges());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseGitFileName_SrcFooCNonStandardPrefix()
 		{
 			string name = "src/foo/bar/argh/code.c";
@@ -156,6 +167,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsFalse(fh.HasMetaDataChanges());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseUnicodeName_NewFile()
 		{
 			FileHeader fh = Data("diff --git \"a/\\303\\205ngstr\\303\\266m\" \"b/\\303\\205ngstr\\303\\266m\"\n"
@@ -165,8 +177,8 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual("/dev/null", fh.GetOldPath());
 			NUnit.Framework.Assert.AreSame(DiffEntry.DEV_NULL, fh.GetOldPath());
 			NUnit.Framework.Assert.AreEqual("\u00c5ngstr\u00f6m", fh.GetNewPath());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.ADD, fh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.ADD, fh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
 			NUnit.Framework.Assert.IsTrue(fh.HasMetaDataChanges());
 			NUnit.Framework.Assert.AreSame(FileMode.MISSING, fh.GetOldMode());
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, fh.GetNewMode());
@@ -175,6 +187,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(0, fh.GetScore());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseUnicodeName_DeleteFile()
 		{
 			FileHeader fh = Data("diff --git \"a/\\303\\205ngstr\\303\\266m\" \"b/\\303\\205ngstr\\303\\266m\"\n"
@@ -184,8 +197,8 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual("\u00c5ngstr\u00f6m", fh.GetOldPath());
 			NUnit.Framework.Assert.AreEqual("/dev/null", fh.GetNewPath());
 			NUnit.Framework.Assert.AreSame(DiffEntry.DEV_NULL, fh.GetNewPath());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.DELETE, fh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.DELETE, fh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
 			NUnit.Framework.Assert.IsTrue(fh.HasMetaDataChanges());
 			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, fh.GetOldMode());
 			NUnit.Framework.Assert.AreSame(FileMode.MISSING, fh.GetNewMode());
@@ -194,6 +207,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(0, fh.GetScore());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseModeChange()
 		{
 			FileHeader fh = Data("diff --git a/a b b/a b\n" + "old mode 100644\n" + "new mode 100755\n"
@@ -201,8 +215,8 @@ namespace NGit.Patch
 			AssertParse(fh);
 			NUnit.Framework.Assert.AreEqual("a b", fh.GetOldPath());
 			NUnit.Framework.Assert.AreEqual("a b", fh.GetNewPath());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.MODIFY, fh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.MODIFY, fh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
 			NUnit.Framework.Assert.IsTrue(fh.HasMetaDataChanges());
 			NUnit.Framework.Assert.IsNull(fh.GetOldId());
 			NUnit.Framework.Assert.IsNull(fh.GetNewId());
@@ -211,6 +225,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(0, fh.GetScore());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseRename100_NewStyle()
 		{
 			FileHeader fh = Data("diff --git a/a b/ c/\\303\\205ngstr\\303\\266m\n" + "similarity index 100%\n"
@@ -224,8 +239,8 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsTrue(ptr > 0);
 			NUnit.Framework.Assert.AreEqual("a", fh.GetOldPath());
 			NUnit.Framework.Assert.AreEqual(" c/\u00c5ngstr\u00f6m", fh.GetNewPath());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.RENAME, fh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.RENAME, fh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
 			NUnit.Framework.Assert.IsTrue(fh.HasMetaDataChanges());
 			NUnit.Framework.Assert.IsNull(fh.GetOldId());
 			NUnit.Framework.Assert.IsNull(fh.GetNewId());
@@ -234,6 +249,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(100, fh.GetScore());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseRename100_OldStyle()
 		{
 			FileHeader fh = Data("diff --git a/a b/ c/\\303\\205ngstr\\303\\266m\n" + "similarity index 100%\n"
@@ -247,8 +263,8 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsTrue(ptr > 0);
 			NUnit.Framework.Assert.AreEqual("a", fh.GetOldPath());
 			NUnit.Framework.Assert.AreEqual(" c/\u00c5ngstr\u00f6m", fh.GetNewPath());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.RENAME, fh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.RENAME, fh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
 			NUnit.Framework.Assert.IsTrue(fh.HasMetaDataChanges());
 			NUnit.Framework.Assert.IsNull(fh.GetOldId());
 			NUnit.Framework.Assert.IsNull(fh.GetNewId());
@@ -257,6 +273,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(100, fh.GetScore());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseCopy100()
 		{
 			FileHeader fh = Data("diff --git a/a b/ c/\\303\\205ngstr\\303\\266m\n" + "similarity index 100%\n"
@@ -270,8 +287,8 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsTrue(ptr > 0);
 			NUnit.Framework.Assert.AreEqual("a", fh.GetOldPath());
 			NUnit.Framework.Assert.AreEqual(" c/\u00c5ngstr\u00f6m", fh.GetNewPath());
-			NUnit.Framework.Assert.AreSame(DiffEntry.ChangeType.COPY, fh.GetChangeType());
-			NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.COPY, fh.GetChangeType());
+			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
 			NUnit.Framework.Assert.IsTrue(fh.HasMetaDataChanges());
 			NUnit.Framework.Assert.IsNull(fh.GetOldId());
 			NUnit.Framework.Assert.IsNull(fh.GetNewId());
@@ -280,6 +297,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreEqual(100, fh.GetScore());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseFullIndexLine_WithMode()
 		{
 			string oid = "78981922613b2afb6025042ff6bd878ac1994e85";
@@ -302,6 +320,7 @@ namespace NGit.Patch
 				());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseFullIndexLine_NoMode()
 		{
 			string oid = "78981922613b2afb6025042ff6bd878ac1994e85";
@@ -324,6 +343,7 @@ namespace NGit.Patch
 				());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseAbbrIndexLine_WithMode()
 		{
 			int a = 7;
@@ -350,6 +370,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsTrue(ObjectId.FromString(nid).StartsWith(fh.GetNewId()));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParseAbbrIndexLine_NoMode()
 		{
 			int a = 7;

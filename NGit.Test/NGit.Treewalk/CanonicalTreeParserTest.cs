@@ -45,12 +45,12 @@ using System.Text;
 using NGit;
 using NGit.Treewalk;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Treewalk
 {
-	public class CanonicalTreeParserTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class CanonicalTreeParserTest
 	{
 		private readonly CanonicalTreeParser ctp = new CanonicalTreeParser();
 
@@ -74,9 +74,9 @@ namespace NGit.Treewalk
 		private byte[] tree3;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			tree1 = Mktree(Entry(m644, "a", hash_a));
 			tree2 = Mktree(Entry(m644, "a", hash_a), Entry(m644, "foo", hash_foo));
 			tree3 = Mktree(Entry(m644, "a", hash_a), Entry(mt, "b_sometree", hash_sometree), 
@@ -113,6 +113,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyTree_AtEOF()
 		{
 			ctp.Reset(new byte[0]);
@@ -120,6 +121,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneEntry_Forward()
 		{
 			ctp.Reset(tree1);
@@ -134,6 +136,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoEntries_ForwardOneAtATime()
 		{
 			ctp.Reset(tree2);
@@ -153,6 +156,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneEntry_Seek1IsEOF()
 		{
 			ctp.Reset(tree1);
@@ -161,6 +165,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoEntries_Seek2IsEOF()
 		{
 			ctp.Reset(tree2);
@@ -169,6 +174,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestThreeEntries_Seek3IsEOF()
 		{
 			ctp.Reset(tree3);
@@ -177,6 +183,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestThreeEntries_Seek2()
 		{
 			ctp.Reset(tree3);
@@ -191,6 +198,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneEntry_Backwards()
 		{
 			ctp.Reset(tree1);
@@ -206,6 +214,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoEntries_BackwardsOneAtATime()
 		{
 			ctp.Reset(tree2);
@@ -224,6 +233,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoEntries_BackwardsTwo()
 		{
 			ctp.Reset(tree2);
@@ -244,6 +254,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestThreeEntries_BackwardsTwo()
 		{
 			ctp.Reset(tree3);
@@ -264,6 +275,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBackwards_ConfusingPathName()
 		{
 			string aVeryConfusingName = "confusing 644 entry 755 and others";
@@ -284,6 +296,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBackwords_Prebuilts1()
 		{
 			// What is interesting about this test is the ObjectId for the
@@ -315,6 +328,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBackwords_Prebuilts2()
 		{
 			// What is interesting about this test is the ObjectId for the
@@ -346,6 +360,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFreakingHugePathName()
 		{
 			int n = AbstractTreeIterator.DEFAULT_PATH_SIZE * 4;

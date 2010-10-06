@@ -44,7 +44,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System.Collections.Generic;
 using NGit.Diff;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Diff
@@ -58,9 +57,10 @@ namespace NGit.Diff
 	/// diffs between chunks of different length, measure the needed time and check
 	/// that time/(N*D) does not differ more than a certain factor.
 	/// </remarks>
-	public class DiffPerformanceTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class DiffPerformanceTest
 	{
-		private const long longTaskBoundary = 5000000000L;
+/*		private const long longTaskBoundary = 5000000000L;
 
 		private const int minCPUTimerTicks = 10;
 
@@ -139,6 +139,7 @@ namespace NGit.Diff
 			private readonly int whichPerf;
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test()
 		{
 			if (stopwatch != null)
@@ -161,9 +162,9 @@ namespace NGit.Diff
 				IComparer<DiffPerformanceTest.PerfData> c = GetComparator(1);
 				double factor = Sharpen.Collections.Max(perfData, c).Perf1() / Sharpen.Collections
 					.Min(perfData, c).Perf1();
-				NUnit.Framework.Assert.IsTrue("minimun and maximum of performance-index t/(N*D) differed too much. Measured factor of "
+				NUnit.Framework.Assert.IsTrue(factor < maxFactor, "minimun and maximum of performance-index t/(N*D) differed too much. Measured factor of "
 					 + factor + " (maxFactor=" + maxFactor + "). Perfdata=<" + perfData.ToString() +
-					 ">", factor < maxFactor);
+					 ">");
 			}
 		}
 
@@ -212,7 +213,7 @@ namespace NGit.Diff
 			ret.D = D;
 			return ret;
 		}
-
+		 */
 		internal class CharArray : Sequence
 		{
 			internal readonly char[] array;

@@ -51,24 +51,28 @@ namespace NGit.Revwalk
 	public class RevTagParseTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTagBlob()
 		{
 			TestOneType(Constants.OBJ_BLOB);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTagTree()
 		{
 			TestOneType(Constants.OBJ_TREE);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTagCommit()
 		{
 			TestOneType(Constants.OBJ_COMMIT);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTagTag()
 		{
 			TestOneType(Constants.OBJ_TAG);
@@ -96,6 +100,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParseAllFields()
 		{
 			ObjectId treeId = Id("9788669ad918b6fcce64af8882fc9a81cb6aba67");
@@ -138,6 +143,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParseOldStyleNoTagger()
 		{
 			ObjectId treeId = Id("9788669ad918b6fcce64af8882fc9a81cb6aba67");
@@ -194,6 +200,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_implicit_UTF8_encoded()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -217,6 +224,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_implicit_mixed_encoded()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -242,6 +250,7 @@ namespace NGit.Revwalk
 		/// <summary>Test parsing of a commit whose encoding is given and works.</summary>
 		/// <remarks>Test parsing of a commit whose encoding is given and works.</remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_explicit_encoded()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -272,6 +281,7 @@ namespace NGit.Revwalk
 		/// that way (and we can detect it), so we try other encodings.
 		/// </remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_explicit_bad_encoded()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -304,6 +314,7 @@ namespace NGit.Revwalk
 		/// UTF-8.
 		/// </remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_explicit_bad_encoded2()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -327,6 +338,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_NoMessage()
 		{
 			string msg = string.Empty;
@@ -336,6 +348,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_OnlyLFMessage()
 		{
 			RevTag c = Create("\n");
@@ -344,6 +357,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ShortLineOnlyNoLF()
 		{
 			string shortMsg = "This is a short message.";
@@ -353,6 +367,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ShortLineOnlyEndLF()
 		{
 			string shortMsg = "This is a short message.";
@@ -363,6 +378,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ShortLineOnlyEmbeddedLF()
 		{
 			string fullMsg = "This is a\nshort message.";
@@ -373,6 +389,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ShortLineOnlyEmbeddedAndEndingLF()
 		{
 			string fullMsg = "This is a\nshort message.\n";
@@ -383,6 +400,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_GitStyleMessage()
 		{
 			string shortMsg = "This fixes a bug.";
@@ -394,6 +412,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_PublicParseMethod()
 		{
 			ObjectInserter.Formatter fmt = new ObjectInserter.Formatter();

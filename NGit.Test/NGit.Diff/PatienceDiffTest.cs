@@ -55,6 +55,7 @@ namespace NGit.Diff
 			return pd;
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEdit_NoUniqueMiddleSideA()
 		{
 			EditList r = Diff(T("aRRSSz"), T("aSSRRz"));
@@ -62,6 +63,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(1, 5, 1, 5), r[0]);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEdit_NoUniqueMiddleSideB()
 		{
 			EditList r = Diff(T("aRSz"), T("aSSRRz"));
@@ -69,6 +71,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(1, 3, 1, 5), r[0]);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPerformanceTestDeltaLength()
 		{
 			string a = DiffTestDataGenerator.GenerateSequence(40000, 971, 3);

@@ -54,6 +54,7 @@ namespace NGit.Storage.File
 	public class RepositorySetupWorkDirTest : LocalDiskRepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIsBare_CreateRepositoryFromArbitraryGitDir()
 		{
 			FilePath gitDir = GetFile("workdir");
@@ -61,6 +62,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNotBare_CreateRepositoryFromDotGitGitDir()
 		{
 			FilePath gitDir = GetFile("workdir", Constants.DOT_GIT);
@@ -71,6 +73,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWorkdirIsParentDir_CreateRepositoryFromDotGitGitDir()
 		{
 			FilePath gitDir = GetFile("workdir", Constants.DOT_GIT);
@@ -80,6 +83,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNotBare_CreateRepositoryFromWorkDirOnly()
 		{
 			FilePath workdir = GetFile("workdir", "repo");
@@ -90,6 +94,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWorkdirIsDotGit_CreateRepositoryFromWorkDirOnly()
 		{
 			FilePath workdir = GetFile("workdir", "repo");
@@ -98,6 +103,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNotBare_CreateRepositoryFromGitDirOnlyWithWorktreeConfig(
 			)
 		{
@@ -111,6 +117,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBare_CreateRepositoryFromGitDirOnlyWithBareConfigTrue()
 		{
 			FilePath gitDir = GetFile("workdir", "repoWithConfig");
@@ -120,6 +127,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWorkdirIsParent_CreateRepositoryFromGitDirOnlyWithBareConfigFalse
 			()
 		{
@@ -130,6 +138,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNotBare_CreateRepositoryFromGitDirOnlyWithBareConfigFalse
 			()
 		{
@@ -142,12 +151,13 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExceptionThrown_BareRepoGetWorkDir()
 		{
 			FilePath gitDir = GetFile("workdir");
 			try
 			{
-				new FileRepository(gitDir).WorkTree;
+				string s = new FileRepository(gitDir).WorkTree;
 				NUnit.Framework.Assert.Fail("Expected NoWorkTreeException missing");
 			}
 			catch (NoWorkTreeException)
@@ -157,6 +167,7 @@ namespace NGit.Storage.File
 
 		// expected
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExceptionThrown_BareRepoGetIndex()
 		{
 			FilePath gitDir = GetFile("workdir");
@@ -172,6 +183,7 @@ namespace NGit.Storage.File
 
 		// expected
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExceptionThrown_BareRepoGetIndexFile()
 		{
 			FilePath gitDir = GetFile("workdir");
@@ -234,7 +246,7 @@ namespace NGit.Storage.File
 		{
 			FilePath exp = GetFile(expected).GetCanonicalFile();
 			FilePath act = repo.Directory.GetCanonicalFile();
-			NUnit.Framework.Assert.AreEqual("Wrong Git Directory", exp, act);
+			NUnit.Framework.Assert.AreEqual(exp, act, "Wrong Git Directory");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -242,7 +254,7 @@ namespace NGit.Storage.File
 		{
 			FilePath exp = GetFile(expected).GetCanonicalFile();
 			FilePath act = repo.WorkTree.GetCanonicalFile();
-			NUnit.Framework.Assert.AreEqual("Wrong working Directory", exp, act);
+			NUnit.Framework.Assert.AreEqual(exp, act, "Wrong working Directory");
 		}
 	}
 }

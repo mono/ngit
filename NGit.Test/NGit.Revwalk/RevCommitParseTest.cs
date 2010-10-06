@@ -52,6 +52,7 @@ namespace NGit.Revwalk
 	public class RevCommitParseTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_NoParents()
 		{
 			ObjectId treeId = Id("9788669ad918b6fcce64af8882fc9a81cb6aba67");
@@ -133,6 +134,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_WeirdHeaderOnlyCommit()
 		{
 			StringBuilder b = new StringBuilder();
@@ -148,6 +150,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_implicit_UTF8_encoded()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -173,6 +176,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_implicit_mixed_encoded()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -200,6 +204,7 @@ namespace NGit.Revwalk
 		/// <summary>Test parsing of a commit whose encoding is given and works.</summary>
 		/// <remarks>Test parsing of a commit whose encoding is given and works.</remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_explicit_encoded()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -209,7 +214,7 @@ namespace NGit.Revwalk
 				, "EUC-JP"));
 			b.Write(Sharpen.Runtime.GetBytesForString("committer C O. Miter <c@example.com> 1218123390 -0500\n"
 				, "EUC-JP"));
-			b.Write(Sharpen.Runtime.GetBytesForString("encoding euc_JP\n", "EUC-JP"));
+			b.Write(Sharpen.Runtime.GetBytesForString("encoding euc-JP\n", "EUC-JP"));
 			b.Write(Sharpen.Runtime.GetBytesForString("\n", "EUC-JP"));
 			b.Write(Sharpen.Runtime.GetBytesForString("\u304d\u308c\u3044\n", "EUC-JP"));
 			b.Write(Sharpen.Runtime.GetBytesForString("\n", "EUC-JP"));
@@ -218,7 +223,7 @@ namespace NGit.Revwalk
 			c = new RevCommit(Id("9473095c4cb2f12aefe1db8a355fe3fafba42f67"));
 			// bogus id
 			c.ParseCanonical(new RevWalk(db), b.ToByteArray());
-			NUnit.Framework.Assert.AreEqual("EUC-JP", c.Encoding.EncodingName);
+			NUnit.Framework.Assert.AreEqual("Japanese (EUC)", c.Encoding.EncodingName);
 			NUnit.Framework.Assert.AreEqual("F\u00f6r fattare", c.GetAuthorIdent().GetName());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044", c.GetShortMessage());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044\n\nHi\n", c.GetFullMessage());
@@ -232,6 +237,7 @@ namespace NGit.Revwalk
 		/// that way (and we can detect it), so we try other encodings.
 		/// </remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_explicit_bad_encoded()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -250,7 +256,7 @@ namespace NGit.Revwalk
 			c = new RevCommit(Id("9473095c4cb2f12aefe1db8a355fe3fafba42f67"));
 			// bogus id
 			c.ParseCanonical(new RevWalk(db), b.ToByteArray());
-			NUnit.Framework.Assert.AreEqual("EUC-JP", c.Encoding.EncodingName);
+			NUnit.Framework.Assert.AreEqual("Japanese (EUC)", c.Encoding.EncodingName);
 			NUnit.Framework.Assert.AreEqual("F\u00f6r fattare", c.GetAuthorIdent().GetName());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044", c.GetShortMessage());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044\n\nHi\n", c.GetFullMessage());
@@ -265,6 +271,7 @@ namespace NGit.Revwalk
 		/// actually be decoded in the stated encoding, but we override using UTF-8.
 		/// </remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_explicit_bad_encoded2()
 		{
 			ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -290,6 +297,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_NoMessage()
 		{
 			string msg = string.Empty;
@@ -299,6 +307,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_OnlyLFMessage()
 		{
 			RevCommit c = Create("\n");
@@ -307,6 +316,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ShortLineOnlyNoLF()
 		{
 			string shortMsg = "This is a short message.";
@@ -316,6 +326,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ShortLineOnlyEndLF()
 		{
 			string shortMsg = "This is a short message.";
@@ -326,6 +337,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ShortLineOnlyEmbeddedLF()
 		{
 			string fullMsg = "This is a\nshort message.";
@@ -336,6 +348,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_ShortLineOnlyEmbeddedAndEndingLF()
 		{
 			string fullMsg = "This is a\nshort message.\n";
@@ -346,6 +359,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_GitStyleMessage()
 		{
 			string shortMsg = "This fixes a bug.";
@@ -357,6 +371,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParse_PublicParseMethod()
 		{
 			ObjectInserter.Formatter fmt = new ObjectInserter.Formatter();

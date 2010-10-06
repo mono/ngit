@@ -73,6 +73,7 @@ namespace NGit.Storage.File
 			);
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadOneLine()
 		{
 			SetupReflog("logs/refs/heads/master", oneLine);
@@ -99,6 +100,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadTwoLine()
 		{
 			SetupReflog("logs/refs/heads/master", twoLine);
@@ -132,6 +134,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadWhileAppendIsInProgress()
 		{
 			SetupReflog("logs/refs/heads/master", twoLineWithAppendInProgress);
@@ -155,6 +158,7 @@ namespace NGit.Storage.File
 		// while similar to testReadTwoLine, we can assume that if we get the last entry
 		// right, everything else is too
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadRightLog()
 		{
 			SetupReflog("logs/refs/heads/a", aLine);
@@ -169,6 +173,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoLog()
 		{
 			NUnit.Framework.Assert.AreEqual(0, db.GetReflogReader("master").GetReverseEntries

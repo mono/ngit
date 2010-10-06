@@ -109,16 +109,11 @@ namespace NGit.Diff
 		/// should have buffering arranged by the caller, as many small
 		/// writes are performed to it.
 		/// </param>
-		internal DiffFormatter(OutputStream @out)
+		public DiffFormatter(OutputStream @out)
 		{
 			this.@out = @out;
 		}
 
-		public DiffFormatter(Stream @out)
-		{
-			this.@out = OutputStream.Wrap (@out);
-		}
-		
 		/// <returns>the stream we are outputting data to.</returns>
 		protected internal virtual OutputStream GetOutputStream()
 		{

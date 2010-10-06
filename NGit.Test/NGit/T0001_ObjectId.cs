@@ -42,13 +42,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
 {
-	public class T0001_ObjectId : TestCase
+	[NUnit.Framework.TestFixture]
+	public class T0001_ObjectId
 	{
+		[NUnit.Framework.Test]
 		public virtual void Test001_toString()
 		{
 			string x = "def4c620bc3713bb1bb26b808ec9312548e73946";
@@ -56,6 +57,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(x, oid.Name);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test002_toString()
 		{
 			string x = "ff00eedd003713bb1bb26b808ec9312548e73946";
@@ -63,44 +65,51 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(x, oid.Name);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test003_equals()
 		{
 			string x = "def4c620bc3713bb1bb26b808ec9312548e73946";
 			ObjectId a = ObjectId.FromString(x);
 			ObjectId b = ObjectId.FromString(x);
 			NUnit.Framework.Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
-			NUnit.Framework.Assert.IsTrue("a and b are same", a.Equals(b));
+			NUnit.Framework.Assert.IsTrue(a.Equals(b), "a and b are same");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test004_isId()
 		{
-			NUnit.Framework.Assert.IsTrue("valid id", ObjectId.IsId("def4c620bc3713bb1bb26b808ec9312548e73946"
-				));
+			NUnit.Framework.Assert.IsTrue(ObjectId.IsId("def4c620bc3713bb1bb26b808ec9312548e73946"
+				), "valid id");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test005_notIsId()
 		{
-			NUnit.Framework.Assert.IsFalse("bob is not an id", ObjectId.IsId("bob"));
+			NUnit.Framework.Assert.IsFalse(ObjectId.IsId("bob"), "bob is not an id");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test006_notIsId()
 		{
-			NUnit.Framework.Assert.IsFalse("39 digits is not an id", ObjectId.IsId("def4c620bc3713bb1bb26b808ec9312548e7394"
-				));
+			NUnit.Framework.Assert.IsFalse(ObjectId.IsId("def4c620bc3713bb1bb26b808ec9312548e7394"
+				), "39 digits is not an id");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test007_isId()
 		{
-			NUnit.Framework.Assert.IsTrue("uppercase is accepted", ObjectId.IsId("Def4c620bc3713bb1bb26b808ec9312548e73946"
-				));
+			NUnit.Framework.Assert.IsTrue(ObjectId.IsId("Def4c620bc3713bb1bb26b808ec9312548e73946"
+				), "uppercase is accepted");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test008_notIsId()
 		{
-			NUnit.Framework.Assert.IsFalse("g is not a valid hex digit", ObjectId.IsId("gef4c620bc3713bb1bb26b808ec9312548e73946"
-				));
+			NUnit.Framework.Assert.IsFalse(ObjectId.IsId("gef4c620bc3713bb1bb26b808ec9312548e73946"
+				), "g is not a valid hex digit");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test009_toString()
 		{
 			string x = "ff00eedd003713bb1bb26b808ec9312548e73946";
@@ -108,12 +117,14 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(x, ObjectId.ToString(oid));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test010_toString()
 		{
 			string x = "0000000000000000000000000000000000000000";
 			NUnit.Framework.Assert.AreEqual(x, ObjectId.ToString(null));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test011_toString()
 		{
 			string x = "0123456789ABCDEFabcdef1234567890abcdefAB";

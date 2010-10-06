@@ -43,14 +43,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System.IO;
 using NGit.Util.IO;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util.IO
 {
-	public class UnionInputStreamTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class UnionInputStreamTest
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyStream()
 		{
 			UnionInputStream u = new UnionInputStream();
@@ -63,6 +64,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadSingleBytes()
 		{
 			UnionInputStream u = new UnionInputStream();
@@ -91,6 +93,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadByteBlocks()
 		{
 			UnionInputStream u = new UnionInputStream();
@@ -106,6 +109,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestArrayConstructor()
 		{
 			UnionInputStream u = new UnionInputStream(new ByteArrayInputStream(new byte[] { 1
@@ -119,6 +123,7 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.AreEqual(-1, u.Read(r, 0, 5));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestMarkSupported()
 		{
 			UnionInputStream u = new UnionInputStream();
@@ -128,6 +133,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSkip()
 		{
 			UnionInputStream u = new UnionInputStream();
@@ -158,6 +164,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAutoCloseDuringRead()
 		{
 			UnionInputStream u = new UnionInputStream();
@@ -208,6 +215,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloseDuringClose()
 		{
 			UnionInputStream u = new UnionInputStream();
@@ -251,6 +259,7 @@ namespace NGit.Util.IO
 			private readonly bool[] closed;
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestExceptionDuringClose()
 		{
 			UnionInputStream u = new UnionInputStream();

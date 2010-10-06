@@ -54,6 +54,7 @@ namespace NGit.Revwalk
 			();
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_ALL()
 		{
 			RevCommit a = Commit();
@@ -68,6 +69,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_Negate_ALL()
 		{
 			RevCommit a = Commit();
@@ -79,6 +81,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_NOT_ALL()
 		{
 			RevCommit a = Commit();
@@ -90,6 +93,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_NONE()
 		{
 			RevCommit a = Commit();
@@ -101,6 +105,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_NOT_NONE()
 		{
 			RevCommit a = Commit();
@@ -115,6 +120,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_ALL_And_NONE()
 		{
 			RevCommit a = Commit();
@@ -126,6 +132,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_NONE_And_ALL()
 		{
 			RevCommit a = Commit();
@@ -137,6 +144,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_ALL_Or_NONE()
 		{
 			RevCommit a = Commit();
@@ -151,6 +159,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_NONE_Or_ALL()
 		{
 			RevCommit a = Commit();
@@ -165,6 +174,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_MY_ALL_And_NONE()
 		{
 			RevCommit a = Commit();
@@ -176,6 +186,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_NONE_And_MY_ALL()
 		{
 			RevCommit a = Commit();
@@ -187,6 +198,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_MY_ALL_Or_NONE()
 		{
 			RevCommit a = Commit();
@@ -201,6 +213,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_NONE_Or_MY_ALL()
 		{
 			RevCommit a = Commit();
@@ -215,6 +228,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFilter_NO_MERGES()
 		{
 			RevCommit a = Commit();
@@ -234,6 +248,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCommitTimeRevFilter()
 		{
 			RevCommit a = Commit();

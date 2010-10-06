@@ -57,6 +57,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoCommits()
 		{
 			NUnit.Framework.Assert.IsNull(objw.Next());
@@ -64,6 +65,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoCommitsEmptyTree()
 		{
 			RevCommit a = Commit();
@@ -77,6 +79,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneCommitOneTreeTwoBlob()
 		{
 			RevBlob f0 = Blob("0");
@@ -93,6 +96,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoCommitTwoTreeTwoBlob()
 		{
 			RevBlob f0 = Blob("0");
@@ -115,6 +119,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoCommitDeepTree1()
 		{
 			RevBlob f0 = Blob("0");
@@ -139,6 +144,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoCommitDeepTree2()
 		{
 			RevBlob f1 = Blob("1");
@@ -162,6 +168,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCull()
 		{
 			RevBlob f1 = Blob("1");
@@ -192,6 +199,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyTreeCorruption()
 		{
 			ObjectId bId = ObjectId.FromString("abbbfafe3129f85747aba7bfac992af77134c607");

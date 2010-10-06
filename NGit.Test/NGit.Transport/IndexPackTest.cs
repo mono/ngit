@@ -64,6 +64,7 @@ namespace NGit.Transport
 		/// <summary>Test indexing one of the test packs in the egit repo.</summary>
 		/// <remarks>Test indexing one of the test packs in the egit repo. It has deltas.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void Test1()
 		{
 			FilePath packFile = JGitTestUtil.GetTestResourceFile("pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f.pack"
@@ -104,6 +105,7 @@ namespace NGit.Transport
 		/// test with in the repository.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void Test2()
 		{
 			FilePath packFile = JGitTestUtil.GetTestResourceFile("pack-df2982f284bbabb6bdb59ee3fcc6eb0983e20371.pack"
@@ -148,6 +150,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTinyThinPack()
 		{
 			TestRepository d = new TestRepository(db);

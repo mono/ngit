@@ -48,6 +48,7 @@ namespace NGit.Revwalk
 {
 	public class RevFlagSetTest : RevWalkTestCase
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			RevFlagSet set = new RevFlagSet();
@@ -57,6 +58,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsFalse(set.Iterator().HasNext());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAddOne()
 		{
 			string flagName = "flag";
@@ -74,6 +76,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsFalse(i.HasNext());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestAddTwo()
 		{
 			RevFlag flag1 = rw.NewFlag("flag_1");
@@ -86,6 +89,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual(2, set.Count);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestContainsAll()
 		{
 			RevFlag flag1 = rw.NewFlag("flag_1");
@@ -101,6 +105,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsFalse(set1.ContainsAll(set2));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEquals()
 		{
 			RevFlag flag1 = rw.NewFlag("flag_1");
@@ -113,6 +118,7 @@ namespace NGit.Revwalk
 				flag2 })).Equals(set));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRemove()
 		{
 			RevFlag flag1 = rw.NewFlag("flag_1");
@@ -126,6 +132,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsFalse(set.Contains(flag1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestContains()
 		{
 			RevFlag flag1 = rw.NewFlag("flag_1");

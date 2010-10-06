@@ -148,6 +148,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test1()
 		{
 			// TODO --full-history
@@ -155,6 +156,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test2()
 		{
 			// TODO --full-history
@@ -164,6 +166,7 @@ namespace NGit.Revwalk
 		// TODO fix broken test
 		// check(i, h, e, c, b, a);
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test3()
 		{
 			// TODO --full-history
@@ -174,6 +177,7 @@ namespace NGit.Revwalk
 		// TODO fix broken test
 		// check(i, h, e, c, b, a);
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test4()
 		{
 			// TODO --full-history
@@ -184,6 +188,7 @@ namespace NGit.Revwalk
 		// TODO fix broken test
 		// check(i, h, e, c, b, a);
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test5()
 		{
 			// TODO --simplify-merges
@@ -193,6 +198,7 @@ namespace NGit.Revwalk
 		// TODO fix broken test
 		// check(i, e, c, b, a);
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test6()
 		{
 			Filter(pF);
@@ -200,6 +206,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void Test7()
 		{
 			rw.Sort(RevSort.TOPO);

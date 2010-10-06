@@ -43,15 +43,16 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Diff;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Diff
 {
-	public class RawTextIgnoreTrailingWhitespaceTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RawTextIgnoreTrailingWhitespaceTest
 	{
 		private readonly RawTextComparator cmp = RawTextComparator.WS_IGNORE_TRAILING;
 
+		[NUnit.Framework.Test]
 		public virtual void TestEqualsWithoutWhitespace()
 		{
 			RawText a = new RawText(cmp, Constants.EncodeASCII("foo-a\nfoo-b\nfoo\n"));
@@ -69,6 +70,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.IsFalse(cmp.Equals(b, 2, a, 2));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEqualsWithWhitespace()
 		{
 			RawText a = new RawText(cmp, Constants.EncodeASCII("foo-a\n         \n a b c\na      \n    b\n"

@@ -85,6 +85,7 @@ namespace NGit.Transport
 		/// wildcard, no tracking ref in repo configuration.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindRemoteRefUpdatesNoWildcardNoTracking()
 		{
 			transport = NGit.Transport.Transport.Open(db, remoteConfig);
@@ -108,6 +109,7 @@ namespace NGit.Transport
 		/// (destination should be set up for the same name as source).
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindRemoteRefUpdatesNoWildcardNoDestination()
 		{
 			transport = NGit.Transport.Transport.Open(db, remoteConfig);
@@ -125,6 +127,7 @@ namespace NGit.Transport
 		/// <summary>Test RefSpec to RemoteRefUpdate conversion with wildcard RefSpec.</summary>
 		/// <remarks>Test RefSpec to RemoteRefUpdate conversion with wildcard RefSpec.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindRemoteRefUpdatesWildcardNoTracking()
 		{
 			transport = NGit.Transport.Transport.Open(db, remoteConfig);
@@ -159,6 +162,7 @@ namespace NGit.Transport
 		/// handling.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindRemoteRefUpdatesTwoRefSpecs()
 		{
 			transport = NGit.Transport.Transport.Open(db, remoteConfig);
@@ -189,6 +193,7 @@ namespace NGit.Transport
 		/// <summary>Test RefSpec to RemoteRefUpdate conversion for tracking ref search.</summary>
 		/// <remarks>Test RefSpec to RemoteRefUpdate conversion for tracking ref search.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFindRemoteRefUpdatesTrackingRef()
 		{
 			remoteConfig.AddFetchRefSpec(new RefSpec("refs/heads/*:refs/remotes/test/*"));

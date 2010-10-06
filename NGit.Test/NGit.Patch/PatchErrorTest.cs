@@ -42,14 +42,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Patch;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Patch
 {
-	public class PatchErrorTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class PatchErrorTest
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestError_DisconnectedHunk()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -62,7 +63,7 @@ namespace NGit.Patch
 			}
 			NUnit.Framework.Assert.AreEqual(1, p.GetErrors().Count);
 			FormatError e = p.GetErrors()[0];
-			NUnit.Framework.Assert.AreSame(FormatError.Severity.ERROR, e.GetSeverity());
+			NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 			NUnit.Framework.Assert.AreEqual("Hunk disconnected from file", e.GetMessage());
 			NUnit.Framework.Assert.AreEqual(18, e.GetOffset());
 			NUnit.Framework.Assert.IsTrue(e.GetLineText().StartsWith("@@ -109,4 +109,11 @@ assert"
@@ -70,13 +71,14 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestError_TruncatedOld()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
 			NUnit.Framework.Assert.AreEqual(1, p.GetFiles().Count);
 			NUnit.Framework.Assert.AreEqual(1, p.GetErrors().Count);
 			FormatError e = p.GetErrors()[0];
-			NUnit.Framework.Assert.AreSame(FormatError.Severity.ERROR, e.GetSeverity());
+			NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 			NUnit.Framework.Assert.AreEqual("Truncated hunk, at least 1 old lines is missing"
 				, e.GetMessage());
 			NUnit.Framework.Assert.AreEqual(313, e.GetOffset());
@@ -85,13 +87,14 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestError_TruncatedNew()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
 			NUnit.Framework.Assert.AreEqual(1, p.GetFiles().Count);
 			NUnit.Framework.Assert.AreEqual(1, p.GetErrors().Count);
 			FormatError e = p.GetErrors()[0];
-			NUnit.Framework.Assert.AreSame(FormatError.Severity.ERROR, e.GetSeverity());
+			NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 			NUnit.Framework.Assert.AreEqual("Truncated hunk, at least 1 new lines is missing"
 				, e.GetMessage());
 			NUnit.Framework.Assert.AreEqual(313, e.GetOffset());
@@ -100,13 +103,14 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestError_BodyTooLong()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
 			NUnit.Framework.Assert.AreEqual(1, p.GetFiles().Count);
 			NUnit.Framework.Assert.AreEqual(1, p.GetErrors().Count);
 			FormatError e = p.GetErrors()[0];
-			NUnit.Framework.Assert.AreSame(FormatError.Severity.WARNING, e.GetSeverity());
+			NUnit.Framework.Assert.AreEqual(FormatError.Severity.WARNING, e.GetSeverity());
 			NUnit.Framework.Assert.AreEqual("Hunk header 4:11 does not match body line count of 4:12"
 				, e.GetMessage());
 			NUnit.Framework.Assert.AreEqual(349, e.GetOffset());
@@ -115,6 +119,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestError_GarbageBetweenFiles()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -133,13 +138,14 @@ namespace NGit.Patch
 			}
 			NUnit.Framework.Assert.AreEqual(1, p.GetErrors().Count);
 			FormatError e = p.GetErrors()[0];
-			NUnit.Framework.Assert.AreSame(FormatError.Severity.WARNING, e.GetSeverity());
+			NUnit.Framework.Assert.AreEqual(FormatError.Severity.WARNING, e.GetSeverity());
 			NUnit.Framework.Assert.AreEqual("Unexpected hunk trailer", e.GetMessage());
 			NUnit.Framework.Assert.AreEqual(926, e.GetOffset());
 			NUnit.Framework.Assert.AreEqual("I AM NOT HERE\n", e.GetLineText());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestError_GitBinaryNoForwardHunk()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile();
@@ -148,8 +154,8 @@ namespace NGit.Patch
 				FileHeader fh = p.GetFiles()[0];
 				NUnit.Framework.Assert.AreEqual("org.spearce.egit.ui/icons/toolbar/fetchd.png", fh
 					.GetNewPath());
-				NUnit.Framework.Assert.AreSame(FileHeader.PatchType.GIT_BINARY, fh.GetPatchType()
-					);
+				NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.GIT_BINARY, fh.GetPatchType(
+					));
 				NUnit.Framework.Assert.IsTrue(fh.GetHunks().IsEmpty());
 				NUnit.Framework.Assert.IsNull(fh.GetForwardBinaryHunk());
 			}
@@ -157,13 +163,13 @@ namespace NGit.Patch
 				FileHeader fh = p.GetFiles()[1];
 				NUnit.Framework.Assert.AreEqual("org.spearce.egit.ui/icons/toolbar/fetche.png", fh
 					.GetNewPath());
-				NUnit.Framework.Assert.AreSame(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
+				NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, fh.GetPatchType());
 				NUnit.Framework.Assert.IsTrue(fh.GetHunks().IsEmpty());
 				NUnit.Framework.Assert.IsNull(fh.GetForwardBinaryHunk());
 			}
 			NUnit.Framework.Assert.AreEqual(1, p.GetErrors().Count);
 			FormatError e = p.GetErrors()[0];
-			NUnit.Framework.Assert.AreSame(FormatError.Severity.ERROR, e.GetSeverity());
+			NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 			NUnit.Framework.Assert.AreEqual("Missing forward-image in GIT binary patch", e.GetMessage
 				());
 			NUnit.Framework.Assert.AreEqual(297, e.GetOffset());

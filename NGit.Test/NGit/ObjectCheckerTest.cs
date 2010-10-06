@@ -44,22 +44,23 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System.Text;
 using NGit;
 using NGit.Errors;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
 {
-	public class ObjectCheckerTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class ObjectCheckerTest
 	{
 		private ObjectChecker checker;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			checker = new ObjectChecker();
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidType()
 		{
 			try
@@ -76,6 +77,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCheckBlob()
 		{
 			// Any blob should pass...
@@ -86,6 +88,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidCommitNoParent()
 		{
 			StringBuilder b = new StringBuilder();
@@ -100,6 +103,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidCommitBlankAuthor()
 		{
 			StringBuilder b = new StringBuilder();
@@ -114,6 +118,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidCommit1Parent()
 		{
 			StringBuilder b = new StringBuilder();
@@ -131,6 +136,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidCommit2Parent()
 		{
 			StringBuilder b = new StringBuilder();
@@ -151,6 +157,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidCommit128Parent()
 		{
 			StringBuilder b = new StringBuilder();
@@ -171,6 +178,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidCommitNormalTime()
 		{
 			StringBuilder b = new StringBuilder();
@@ -185,6 +193,7 @@ namespace NGit
 			checker.Check(Constants.OBJ_COMMIT, data);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitNoTree1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -203,6 +212,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitNoTree2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -221,6 +231,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitNoTree3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -239,6 +250,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitNoTree4()
 		{
 			StringBuilder b = new StringBuilder();
@@ -257,6 +269,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidTree1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -275,6 +288,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidTree2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -293,6 +307,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidTree3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -311,6 +326,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidTree4()
 		{
 			StringBuilder b = new StringBuilder();
@@ -329,6 +345,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidParent1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -349,6 +366,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidParent2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -370,6 +388,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidParent3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -391,6 +410,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidParent4()
 		{
 			StringBuilder b = new StringBuilder();
@@ -412,6 +432,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidParent5()
 		{
 			StringBuilder b = new StringBuilder();
@@ -435,6 +456,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitNoAuthor()
 		{
 			StringBuilder b = new StringBuilder();
@@ -456,6 +478,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitNoCommitter1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -477,6 +500,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitNoCommitter2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -499,6 +523,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidAuthor1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -520,6 +545,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidAuthor2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -541,6 +567,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidAuthor3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -562,6 +589,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidAuthor4()
 		{
 			StringBuilder b = new StringBuilder();
@@ -583,6 +611,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidAuthor5()
 		{
 			StringBuilder b = new StringBuilder();
@@ -604,6 +633,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidAuthor6()
 		{
 			StringBuilder b = new StringBuilder();
@@ -625,6 +655,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidAuthor7()
 		{
 			StringBuilder b = new StringBuilder();
@@ -646,6 +677,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidCommitInvalidCommitter()
 		{
 			StringBuilder b = new StringBuilder();
@@ -669,6 +701,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTag()
 		{
 			StringBuilder b = new StringBuilder();
@@ -683,6 +716,7 @@ namespace NGit
 			checker.Check(Constants.OBJ_TAG, data);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoObject1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -698,6 +732,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoObject2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -716,6 +751,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoObject3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -734,6 +770,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoObject4()
 		{
 			StringBuilder b = new StringBuilder();
@@ -752,6 +789,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoObject5()
 		{
 			StringBuilder b = new StringBuilder();
@@ -770,6 +808,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoObject6()
 		{
 			StringBuilder b = new StringBuilder();
@@ -787,6 +826,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoType1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -805,6 +845,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoType2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -824,6 +865,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoType3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -843,6 +885,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoType4()
 		{
 			StringBuilder b = new StringBuilder();
@@ -862,6 +905,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoTagHeader1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -881,6 +925,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoTagHeader2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -901,6 +946,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagNoTagHeader3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -922,6 +968,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTagHasNoTaggerHeader()
 		{
 			StringBuilder b = new StringBuilder();
@@ -933,6 +980,7 @@ namespace NGit
 			checker.CheckTag(Constants.EncodeASCII(b.ToString()));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagInvalidTaggerHeader1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -954,6 +1002,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagInvalidTaggerHeader3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -976,6 +1025,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidEmptyTree()
 		{
 			checker.CheckTree(new byte[0]);
@@ -983,6 +1033,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTree1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -992,6 +1043,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTree2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1001,6 +1053,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTree3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1010,6 +1063,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTree4()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1019,6 +1073,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTree5()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1028,6 +1083,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTree6()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1037,6 +1093,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTreeSorting1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1047,6 +1104,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTreeSorting2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1057,6 +1115,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTreeSorting3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1067,6 +1126,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTreeSorting4()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1077,6 +1137,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTreeSorting5()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1088,6 +1149,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTreeSorting6()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1098,6 +1160,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTreeSorting7()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1108,6 +1171,7 @@ namespace NGit
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestValidTreeSorting8()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1118,6 +1182,7 @@ namespace NGit
 			checker.CheckTree(data);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeModeStartsWithZero1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1134,6 +1199,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeModeStartsWithZero2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1150,6 +1216,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeModeStartsWithZero3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1166,6 +1233,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeModeNotOctal1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1182,6 +1250,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeModeNotOctal2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1198,6 +1267,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeModeNotSupportedMode1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1214,6 +1284,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeModeNotSupportedMode2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1230,6 +1301,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeModeMissingName()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1246,6 +1318,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeNameContainsSlash()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1262,6 +1335,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeNameIsEmpty()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1278,6 +1352,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeNameIsDot()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1294,6 +1369,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeNameIsDotDot()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1310,6 +1386,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeTruncatedInName()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1326,6 +1403,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeTruncatedInObjectId()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1342,6 +1420,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeBadSorting1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1359,6 +1438,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeBadSorting2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1376,6 +1456,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeBadSorting3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1393,6 +1474,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeDuplicateNames1()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1410,6 +1492,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeDuplicateNames2()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1427,6 +1510,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeDuplicateNames3()
 		{
 			StringBuilder b = new StringBuilder();
@@ -1444,6 +1528,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInvalidTreeDuplicateNames4()
 		{
 			StringBuilder b = new StringBuilder();

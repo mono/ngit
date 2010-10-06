@@ -75,6 +75,7 @@ namespace NGit.Transport
 		/// <summary>Test for fast-forward remote update.</summary>
 		/// <remarks>Test for fast-forward remote update.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateFastForward()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"
@@ -93,6 +94,7 @@ namespace NGit.Transport
 		/// to local repository.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateNonFastForwardUnknownObject()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"
@@ -112,6 +114,7 @@ namespace NGit.Transport
 		/// local repository, but it is not an ancestor of new object.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateNonFastForward()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "ac7e7e44c1885efb472ad54a78327d66bfc4ecef"
@@ -125,6 +128,7 @@ namespace NGit.Transport
 		/// <summary>Test for non fast-forward remote update, when force update flag is set.</summary>
 		/// <remarks>Test for non fast-forward remote update, when force update flag is set.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateNonFastForwardForced()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "ac7e7e44c1885efb472ad54a78327d66bfc4ecef"
@@ -137,6 +141,7 @@ namespace NGit.Transport
 		/// <summary>Test for remote ref creation.</summary>
 		/// <remarks>Test for remote ref creation.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateCreateRef()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "ac7e7e44c1885efb472ad54a78327d66bfc4ecef"
@@ -147,6 +152,7 @@ namespace NGit.Transport
 		/// <summary>Test for remote ref deletion.</summary>
 		/// <remarks>Test for remote ref deletion.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateDelete()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, null, "refs/heads/master", false, null
@@ -165,6 +171,7 @@ namespace NGit.Transport
 		/// repo.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateDeleteNonExisting()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, null, "refs/heads/master", false, null
@@ -175,6 +182,7 @@ namespace NGit.Transport
 		/// <summary>Test for remote ref update, when it is already up to date.</summary>
 		/// <remarks>Test for remote ref update, when it is already up to date.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateUpToDate()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"
@@ -187,6 +195,7 @@ namespace NGit.Transport
 		/// <summary>Test for remote ref update with expected remote object.</summary>
 		/// <remarks>Test for remote ref update with expected remote object.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateExpectedRemote()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"
@@ -206,6 +215,7 @@ namespace NGit.Transport
 		/// is not that expected one.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateUnexpectedRemote()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"
@@ -228,6 +238,7 @@ namespace NGit.Transport
 		/// lower priority) - shouldn't change behavior.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateUnexpectedRemoteVsForce()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"
@@ -242,6 +253,7 @@ namespace NGit.Transport
 		/// <summary>Test for remote ref update, when connection rejects update.</summary>
 		/// <remarks>Test for remote ref update, when connection rejects update.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRejectedByConnection()
 		{
 			connectionUpdateStatus = RemoteRefUpdate.Status.REJECTED_OTHER_REASON;
@@ -262,6 +274,7 @@ namespace NGit.Transport
 		/// each other.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateMixedCases()
 		{
 			RemoteRefUpdate rruOk = new RemoteRefUpdate(db, null, "refs/heads/master", false, 
@@ -283,6 +296,7 @@ namespace NGit.Transport
 		/// <summary>Test for local tracking ref update.</summary>
 		/// <remarks>Test for local tracking ref update.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrackingRefUpdateEnabled()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"
@@ -301,6 +315,7 @@ namespace NGit.Transport
 		/// <summary>Test for local tracking ref update disabled.</summary>
 		/// <remarks>Test for local tracking ref update disabled.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrackingRefUpdateDisabled()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"
@@ -316,6 +331,7 @@ namespace NGit.Transport
 		/// <summary>Test for local tracking ref update when remote update has failed.</summary>
 		/// <remarks>Test for local tracking ref update when remote update has failed.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrackingRefUpdateOnReject()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "ac7e7e44c1885efb472ad54a78327d66bfc4ecef"
@@ -330,6 +346,7 @@ namespace NGit.Transport
 		/// <summary>Test for push operation result - that contains expected elements.</summary>
 		/// <remarks>Test for push operation result - that contains expected elements.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPushResult()
 		{
 			RemoteRefUpdate rru = new RemoteRefUpdate(db, "2c349335b7f797072cf729c4f3bb0914ecb6dec9"

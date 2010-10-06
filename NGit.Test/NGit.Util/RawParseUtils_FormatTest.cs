@@ -42,14 +42,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class RawParseUtils_FormatTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RawParseUtils_FormatTest
 	{
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFormatBase10()
 		{
 			byte[] b = new byte[64];

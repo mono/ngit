@@ -57,6 +57,7 @@ namespace NGit.Dircache
 		private readonly FilePath index;
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadIndex_LsFiles()
 		{
 			IDictionary<string, DirCacheCGitCompatabilityTest.CGitIndexRecord> ls = ReadLsFiles
@@ -76,6 +77,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTreeWalk_LsFiles()
 		{
 			Repository db = CreateBareRepository();
@@ -104,6 +106,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnsupportedOptionalExtension()
 		{
 			DirCache dc = new DirCache(PathOf("gitgit.index.ZZZZ"), FS.DETECTED);
@@ -113,6 +116,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnsupportedRequiredExtension()
 		{
 			DirCache dc = new DirCache(PathOf("gitgit.index.aaaa"), FS.DETECTED);
@@ -129,6 +133,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCorruptChecksumAtFooter()
 		{
 			DirCache dc = new DirCache(PathOf("gitgit.index.badchecksum"), FS.DETECTED);
@@ -155,6 +160,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadIndex_DirCacheTree()
 		{
 			IDictionary<string, DirCacheCGitCompatabilityTest.CGitIndexRecord> cList = ReadLsFiles
@@ -195,6 +201,7 @@ namespace NGit.Dircache
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadWriteV3()
 		{
 			FilePath file = PathOf("gitgit.index.v3");

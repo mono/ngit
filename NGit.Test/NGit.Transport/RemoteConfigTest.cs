@@ -44,19 +44,19 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System.Collections.Generic;
 using NGit;
 using NGit.Transport;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Transport
 {
-	public class RemoteConfigTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RemoteConfigTest
 	{
 		private Config config;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			config = new Config();
 		}
 
@@ -78,6 +78,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimple()
 		{
 			ReadConfig("[remote \"spearce\"]\n" + "url = http://www.spearce.org/egit.git\n" +
@@ -91,7 +92,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsNotNull(rc.PushRefSpecs);
 			NUnit.Framework.Assert.IsNotNull(rc.TagOpt);
 			NUnit.Framework.Assert.AreEqual(0, rc.Timeout);
-			NUnit.Framework.Assert.AreSame(TagOpt.AUTO_FOLLOW, rc.TagOpt);
+			NUnit.Framework.Assert.AreEqual(TagOpt.AUTO_FOLLOW, rc.TagOpt);
 			NUnit.Framework.Assert.AreEqual(1, allURIs.Count);
 			AssertEquals("http://www.spearce.org/egit.git", allURIs[0]);
 			NUnit.Framework.Assert.AreEqual(1, rc.FetchRefSpecs.Count);
@@ -104,24 +105,27 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimpleNoTags()
 		{
 			ReadConfig("[remote \"spearce\"]\n" + "url = http://www.spearce.org/egit.git\n" +
 				 "fetch = +refs/heads/*:refs/remotes/spearce/*\n" + "tagopt = --no-tags\n");
 			RemoteConfig rc = new RemoteConfig(config, "spearce");
-			NUnit.Framework.Assert.AreSame(TagOpt.NO_TAGS, rc.TagOpt);
+			NUnit.Framework.Assert.AreEqual(TagOpt.NO_TAGS, rc.TagOpt);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimpleAlwaysTags()
 		{
 			ReadConfig("[remote \"spearce\"]\n" + "url = http://www.spearce.org/egit.git\n" +
 				 "fetch = +refs/heads/*:refs/remotes/spearce/*\n" + "tagopt = --tags\n");
 			RemoteConfig rc = new RemoteConfig(config, "spearce");
-			NUnit.Framework.Assert.AreSame(TagOpt.FETCH_TAGS, rc.TagOpt);
+			NUnit.Framework.Assert.AreEqual(TagOpt.FETCH_TAGS, rc.TagOpt);
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMirror()
 		{
 			ReadConfig("[remote \"spearce\"]\n" + "url = http://www.spearce.org/egit.git\n" +
@@ -150,6 +154,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBackup()
 		{
 			ReadConfig("[remote \"backup\"]\n" + "url = http://www.spearce.org/egit.git\n" + 
@@ -180,6 +185,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUploadPack()
 		{
 			ReadConfig("[remote \"example\"]\n" + "url = user@example.com:egit.git\n" + "fetch = +refs/heads/*:refs/remotes/example/*\n"
@@ -206,6 +212,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnknown()
 		{
 			ReadConfig(string.Empty);
@@ -218,6 +225,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddURI()
 		{
 			ReadConfig(string.Empty);
@@ -232,6 +240,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveFirstURI()
 		{
 			ReadConfig(string.Empty);
@@ -253,6 +262,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveMiddleURI()
 		{
 			ReadConfig(string.Empty);
@@ -274,6 +284,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveLastURI()
 		{
 			ReadConfig(string.Empty);
@@ -295,6 +306,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveOnlyURI()
 		{
 			ReadConfig(string.Empty);
@@ -308,6 +320,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateOrigin()
 		{
 			RemoteConfig rc = new RemoteConfig(config, "origin");
@@ -319,6 +332,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSaveAddURI()
 		{
 			ReadConfig("[remote \"spearce\"]\n" + "url = http://www.spearce.org/egit.git\n" +
@@ -332,6 +346,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSaveRemoveLastURI()
 		{
 			ReadConfig("[remote \"spearce\"]\n" + "url = http://www.spearce.org/egit.git\n" +
@@ -346,6 +361,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSaveRemoveFirstURI()
 		{
 			ReadConfig("[remote \"spearce\"]\n" + "url = http://www.spearce.org/egit.git\n" +
@@ -360,6 +376,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSaveNoTags()
 		{
 			RemoteConfig rc = new RemoteConfig(config, "origin");
@@ -372,6 +389,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSaveAllTags()
 		{
 			RemoteConfig rc = new RemoteConfig(config, "origin");
@@ -384,6 +402,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimpleTimeout()
 		{
 			ReadConfig("[remote \"spearce\"]\n" + "url = http://www.spearce.org/egit.git\n" +
@@ -393,6 +412,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSaveTimeout()
 		{
 			RemoteConfig rc = new RemoteConfig(config, "origin");

@@ -42,13 +42,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class StringUtilsTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class StringUtilsTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestToLowerCaseChar()
 		{
 			NUnit.Framework.Assert.AreEqual('a', StringUtils.ToLowerCase('A'));
@@ -60,29 +61,34 @@ namespace NGit.Util
 				((char)unchecked((int)(0xffff))));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestToLowerCaseString()
 		{
 			NUnit.Framework.Assert.AreEqual("\n abcdefghijklmnopqrstuvwxyz\n", StringUtils.ToLowerCase
 				("\n ABCDEFGHIJKLMNOPQRSTUVWXYZ\n"));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEqualsIgnoreCase1()
 		{
 			string a = "FOO";
 			NUnit.Framework.Assert.IsTrue(StringUtils.EqualsIgnoreCase(a, a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEqualsIgnoreCase2()
 		{
 			NUnit.Framework.Assert.IsFalse(StringUtils.EqualsIgnoreCase("a", string.Empty));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEqualsIgnoreCase3()
 		{
 			NUnit.Framework.Assert.IsFalse(StringUtils.EqualsIgnoreCase("a", "b"));
 			NUnit.Framework.Assert.IsFalse(StringUtils.EqualsIgnoreCase("ac", "ab"));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEqualsIgnoreCase4()
 		{
 			NUnit.Framework.Assert.IsTrue(StringUtils.EqualsIgnoreCase("a", "a"));

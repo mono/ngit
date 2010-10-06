@@ -44,13 +44,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using NGit;
 using NGit.Dircache;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Dircache
 {
-	public class DirCacheEntryTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class DirCacheEntryTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestIsValidPath()
 		{
 			NUnit.Framework.Assert.IsTrue(IsValidPath("a"));
@@ -70,6 +71,7 @@ namespace NGit.Dircache
 			return DirCacheEntry.IsValidPath(Constants.Encode(path));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCreate_ByStringPath()
 		{
 			NUnit.Framework.Assert.AreEqual("a", new DirCacheEntry("a").GetPathString());
@@ -85,6 +87,7 @@ namespace NGit.Dircache
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestCreate_ByStringPathAndStage()
 		{
 			DirCacheEntry e;
@@ -129,6 +132,7 @@ namespace NGit.Dircache
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSetFileMode()
 		{
 			DirCacheEntry e = new DirCacheEntry("a");

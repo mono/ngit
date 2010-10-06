@@ -45,12 +45,12 @@ using System.Collections.Generic;
 using System.Threading;
 using NGit.Util;
 using NGit.Util.IO;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util.IO
 {
-	public class TimeoutInputStreamTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class TimeoutInputStreamTest
 	{
 		private const int timeout = 250;
 
@@ -65,9 +65,9 @@ namespace NGit.Util.IO
 		private long start;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			@out = new PipedOutputStream();
 			@in = new PipedInputStream(@out);
 			timer = new InterruptTimer();
@@ -76,17 +76,18 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		protected virtual void TearDown()
 		{
 			timer.Terminate();
 			foreach (Sharpen.Thread t in Active())
 			{
 				NUnit.Framework.Assert.IsFalse(t is InterruptTimer.AlarmThread);
 			}
-			base.TearDown();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeout_readByte_Success1()
 		{
 			@out.Write('a');
@@ -94,6 +95,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeout_readByte_Success2()
 		{
 			byte[] exp = new byte[] { (byte)('a'), (byte)('b'), (byte)('c') };
@@ -106,6 +108,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeout_readByte_Timeout()
 		{
 			BeginRead();
@@ -122,6 +125,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeout_readBuffer_Success1()
 		{
 			byte[] exp = new byte[] { (byte)('a'), (byte)('b'), (byte)('c') };
@@ -132,6 +136,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeout_readBuffer_Success2()
 		{
 			byte[] exp = new byte[] { (byte)('a'), (byte)('b'), (byte)('c') };
@@ -144,6 +149,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeout_readBuffer_Timeout()
 		{
 			BeginRead();
@@ -160,6 +166,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeout_skip_Success()
 		{
 			byte[] exp = new byte[] { (byte)('a'), (byte)('b'), (byte)('c') };
@@ -169,6 +176,7 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTimeout_skip_Timeout()
 		{
 			BeginRead();
@@ -198,7 +206,7 @@ namespace NGit.Util.IO
 			// 50 ms of the expected timeout.
 			//
 			long wait = Now() - start;
-			NUnit.Framework.Assert.IsTrue("waited only " + wait + " ms", timeout - wait < 50);
+			NUnit.Framework.Assert.IsTrue(timeout - wait < 50, "waited only " + wait + " ms");
 		}
 
 		private static IList<Sharpen.Thread> Active()

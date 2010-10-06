@@ -61,6 +61,7 @@ namespace NGit.Treewalk
 		private static readonly FileMode EXECUTABLE_FILE = FileMode.EXECUTABLE_FILE;
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoDF_NoGap()
 		{
 			DirCache tree0 = db.ReadDirCache();
@@ -90,6 +91,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDF_NoGap()
 		{
 			DirCache tree0 = db.ReadDirCache();
@@ -123,6 +125,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDF_GapByOne()
 		{
 			DirCache tree0 = db.ReadDirCache();
@@ -157,6 +160,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDF_SkipsSeenSubtree()
 		{
 			DirCache tree0 = db.ReadDirCache();
@@ -191,6 +195,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDF_DetectConflict()
 		{
 			DirCache tree0 = db.ReadDirCache();
@@ -244,7 +249,7 @@ namespace NGit.Treewalk
 		private static void AssertModes(string path, FileMode mode0, FileMode mode1, TreeWalk
 			 tw)
 		{
-			NUnit.Framework.Assert.IsTrue("has " + path, tw.Next());
+			NUnit.Framework.Assert.IsTrue(tw.Next(), "has " + path);
 			NUnit.Framework.Assert.AreEqual(path, tw.PathString);
 			NUnit.Framework.Assert.AreEqual(mode0, tw.GetFileMode(0));
 			NUnit.Framework.Assert.AreEqual(mode1, tw.GetFileMode(1));

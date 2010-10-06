@@ -42,13 +42,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class RawParseUtils_LineMapTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RawParseUtils_LineMapTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			IntList map = RawParseUtils.LineMap(new byte[] {  }, 0, 0);
@@ -58,6 +59,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.AreEqual(0, map.Get(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestOneBlankLine()
 		{
 			IntList map = RawParseUtils.LineMap(new byte[] { (byte)('\n') }, 0, 1);
@@ -68,6 +70,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoLineFooBar()
 		{
 			byte[] buf = Sharpen.Runtime.GetBytesForString("foo\nbar\n", "ISO-8859-1");
@@ -80,6 +83,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoLineNoLF()
 		{
 			byte[] buf = Sharpen.Runtime.GetBytesForString("foo\nbar", "ISO-8859-1");
@@ -92,6 +96,7 @@ namespace NGit.Util
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFourLineBlanks()
 		{
 			byte[] buf = Sharpen.Runtime.GetBytesForString("foo\n\n\nbar\n", "ISO-8859-1");

@@ -43,14 +43,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit.Diff;
 using NGit.Patch;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Patch
 {
-	public class EditListTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class EditListTest
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHunkHeader()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile("testGetText_BothISO88591.patch");
@@ -65,6 +66,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFileHeader()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile("testGetText_BothISO88591.patch");
@@ -76,6 +78,7 @@ namespace NGit.Patch
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTypes()
 		{
 			NGit.Patch.Patch p = ParseTestPatchFile("testEditList_Types.patch");

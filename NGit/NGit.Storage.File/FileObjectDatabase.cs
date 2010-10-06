@@ -315,7 +315,8 @@ namespace NGit.Storage.File
 		{
 			internal readonly FileRepository repository;
 
-			internal AlternateRepository(FileRepository r) : base((ObjectDirectory) r.ObjectDatabase)
+			internal AlternateRepository(FileRepository r) : base(((ObjectDirectory)r.ObjectDatabase
+				))
 			{
 				repository = r;
 			}

@@ -42,12 +42,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
 {
-	public class SymbolicRefTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class SymbolicRefTest
 	{
 		private static readonly ObjectId ID_A = ObjectId.FromString("41eb0d88f833b558bddeb269b7ab77399cdf98ed"
 			);
@@ -59,32 +59,34 @@ namespace NGit
 
 		private static readonly string name = "refs/remotes/origin/HEAD";
 
+		[NUnit.Framework.Test]
 		public virtual void TestConstructor()
 		{
 			Ref t;
 			SymbolicRef r;
 			t = new ObjectIdRef.Unpeeled(RefStorage.NEW, targetName, null);
 			r = new SymbolicRef(name, t);
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, r.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, r.GetStorage());
 			NUnit.Framework.Assert.AreSame(name, r.GetName());
-			NUnit.Framework.Assert.IsNull("no id on new ref", r.GetObjectId());
-			NUnit.Framework.Assert.IsFalse("not peeled", r.IsPeeled());
-			NUnit.Framework.Assert.IsNull("no peel id", r.GetPeeledObjectId());
-			NUnit.Framework.Assert.AreSame("leaf is t", t, r.GetLeaf());
-			NUnit.Framework.Assert.AreSame("target is t", t, r.GetTarget());
-			NUnit.Framework.Assert.IsTrue("is symbolic", r.IsSymbolic());
+			NUnit.Framework.Assert.IsNull(r.GetObjectId(), "no id on new ref");
+			NUnit.Framework.Assert.IsFalse(r.IsPeeled(), "not peeled");
+			NUnit.Framework.Assert.IsNull(r.GetPeeledObjectId(), "no peel id");
+			NUnit.Framework.Assert.AreSame(t, r.GetLeaf(), "leaf is t");
+			NUnit.Framework.Assert.AreSame(t, r.GetTarget(), "target is t");
+			NUnit.Framework.Assert.IsTrue(r.IsSymbolic(), "is symbolic");
 			t = new ObjectIdRef.Unpeeled(RefStorage.PACKED, targetName, ID_A);
 			r = new SymbolicRef(name, t);
-			NUnit.Framework.Assert.AreSame(RefStorage.LOOSE, r.GetStorage());
+			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, r.GetStorage());
 			NUnit.Framework.Assert.AreSame(name, r.GetName());
 			NUnit.Framework.Assert.AreSame(ID_A, r.GetObjectId());
-			NUnit.Framework.Assert.IsFalse("not peeled", r.IsPeeled());
-			NUnit.Framework.Assert.IsNull("no peel id", r.GetPeeledObjectId());
-			NUnit.Framework.Assert.AreSame("leaf is t", t, r.GetLeaf());
-			NUnit.Framework.Assert.AreSame("target is t", t, r.GetTarget());
-			NUnit.Framework.Assert.IsTrue("is symbolic", r.IsSymbolic());
+			NUnit.Framework.Assert.IsFalse(r.IsPeeled(), "not peeled");
+			NUnit.Framework.Assert.IsNull(r.GetPeeledObjectId(), "no peel id");
+			NUnit.Framework.Assert.AreSame(t, r.GetLeaf(), "leaf is t");
+			NUnit.Framework.Assert.AreSame(t, r.GetTarget(), "target is t");
+			NUnit.Framework.Assert.IsTrue(r.IsSymbolic(), "is symbolic");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestLeaf()
 		{
 			Ref a;
@@ -113,6 +115,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreSame(ID_B, b.GetPeeledObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestToString()
 		{
 			Ref a;

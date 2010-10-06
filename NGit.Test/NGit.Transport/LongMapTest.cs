@@ -42,22 +42,23 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Transport;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Transport
 {
-	public class LongMapTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class LongMapTest
 	{
 		private LongMap<long> map;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			map = new LongMap<long>();
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyMap()
 		{
 			NUnit.Framework.Assert.IsFalse(map.ContainsKey(0));
@@ -68,6 +69,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsNull(map.Remove(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInsertMinValue()
 		{
 			long min = Sharpen.Extensions.ValueOf(long.MinValue);
@@ -77,6 +79,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(map.ContainsKey(int.MinValue));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestReplaceMaxValue()
 		{
 			long min = Sharpen.Extensions.ValueOf(long.MaxValue);
@@ -87,6 +90,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreSame(one, map.Get(long.MaxValue));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveOne()
 		{
 			long start = 1;
@@ -96,6 +100,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(map.ContainsKey(start));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveCollision1()
 		{
 			// This test relies upon the fact that we always >>> 1 the value
@@ -111,6 +116,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsTrue(map.ContainsKey(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveCollision2()
 		{
 			// This test relies upon the fact that we always >>> 1 the value
@@ -126,6 +132,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(map.ContainsKey(1));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSmallMap()
 		{
 			long start = 12;
@@ -140,6 +147,7 @@ namespace NGit.Transport
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestLargeMap()
 		{
 			long start = int.MaxValue;

@@ -79,6 +79,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAbbreviateOnEmptyRepository()
 		{
 			ObjectId id = Id("9d5b926ed164e8ee88d3b8b1e525d699adda01ba");
@@ -101,6 +102,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAbbreviateLooseBlob()
 		{
 			ObjectId id = test.Blob("test");
@@ -117,6 +119,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAbbreviatePackedBlob()
 		{
 			RevBlob id = test.Blob("test");
@@ -135,6 +138,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAbbreviateIsActuallyUnique()
 		{
 			// This test is far more difficult. We have to manually craft
@@ -151,7 +155,8 @@ namespace NGit.Storage.File
 				objects.AddItem(new PackedObjectInfo(ObjectId.FromRaw(idBuf)));
 			}
 			string packName = "pack-" + id.Name;
-			FilePath packDir = new FilePath(db.ObjectDatabase.GetDirectory(), "pack");
+			FilePath packDir = new FilePath(((ObjectDirectory)db.ObjectDatabase).GetDirectory
+				(), "pack");
 			FilePath idxFile = new FilePath(packDir, packName + ".idx");
 			FilePath packFile = new FilePath(packDir, packName + ".pack");
 			packDir.Mkdir();
@@ -173,7 +178,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(objects.Count, matches.Count);
 			foreach (PackedObjectInfo info in objects)
 			{
-				NUnit.Framework.Assert.IsTrue("contains " + info.Name, matches.Contains(info));
+				NUnit.Framework.Assert.IsTrue(matches.Contains(info), "contains " + info.Name);
 			}
 			try
 			{
@@ -188,7 +193,7 @@ namespace NGit.Storage.File
 				NUnit.Framework.Assert.AreEqual(objects.Count, matches.Count);
 				foreach (PackedObjectInfo info_1 in objects)
 				{
-					NUnit.Framework.Assert.IsTrue("contains " + info_1.Name, matches.Contains(info_1)
+					NUnit.Framework.Assert.IsTrue(matches.Contains(info_1), "contains " + info_1.Name
 						);
 				}
 			}

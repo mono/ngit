@@ -44,13 +44,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using NGit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class RawParseUtils_ParsePersonIdentTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RawParseUtils_ParsePersonIdentTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestParsePersonIdent_legalCases()
 		{
 			DateTime when = Sharpen.Extensions.CreateDate(1234567890000l);
@@ -71,6 +72,7 @@ namespace NGit.Util
 				("A U Thor", "author@example.com", when, tz));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParsePersonIdent_fuzzyCases()
 		{
 			DateTime when = Sharpen.Extensions.CreateDate(1234567890000l);
@@ -81,6 +83,7 @@ namespace NGit.Util
 				PersonIdent("A U Thor", "author@example.com", when, tz));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParsePersonIdent_incompleteCases()
 		{
 			DateTime when = Sharpen.Extensions.CreateDate(1234567890000l);
@@ -106,6 +109,7 @@ namespace NGit.Util
 				, 0, 0));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestParsePersonIdent_malformedCases()
 		{
 			AssertPersonIdent("Me me@example.com> 1234567890 -0700", null);

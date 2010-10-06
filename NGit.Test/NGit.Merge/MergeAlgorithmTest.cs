@@ -44,12 +44,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Diff;
 using NGit.Merge;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Merge
 {
-	public class MergeAlgorithmTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class MergeAlgorithmTest
 	{
 		internal MergeFormatter fmt = new MergeFormatter();
 
@@ -129,6 +129,7 @@ namespace NGit.Merge
 		/// first one, but the second texts modification covers one more line.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoConflictingModifications()
 		{
 			NUnit.Framework.Assert.AreEqual(A + XXX_0 + B + XXX_1 + Z + XXX_2 + Z + D + E + F
@@ -142,6 +143,7 @@ namespace NGit.Merge
 		/// last chunk. This should be reported as one conflicting region.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOneAgainstTwoConflictingModifications()
 		{
 			NUnit.Framework.Assert.AreEqual(A + Z + XXX_0 + Z + XXX_1 + C + XXX_2 + Z + E + F
@@ -154,6 +156,7 @@ namespace NGit.Merge
 		/// merge result the second text.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoAgainstOneModification()
 		{
 			NUnit.Framework.Assert.AreEqual(replace_BD_by_ZZ.ToString(), Merge(@base, @base, 
@@ -166,6 +169,7 @@ namespace NGit.Merge
 		/// non-conflict merge result.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoNonConflictingModifications()
 		{
 			NUnit.Framework.Assert.AreEqual(Y + B + Z + D + E + F + G + H + I + J, Merge(@base
@@ -178,6 +182,7 @@ namespace NGit.Merge
 		/// and combine conflicting regions to get to the expected merge result.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTwoComplicatedModifications()
 		{
 			NUnit.Framework.Assert.AreEqual(A + XXX_0 + Z + Z + Z + Z + F + Z + H + XXX_1 + B
@@ -188,6 +193,7 @@ namespace NGit.Merge
 		/// <summary>Test a conflicting region at the very start of the text.</summary>
 		/// <remarks>Test a conflicting region at the very start of the text.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestConflictAtStart()
 		{
 			NUnit.Framework.Assert.AreEqual(XXX_0 + Z + XXX_1 + Y + XXX_2 + B + C + D + E + F
@@ -197,6 +203,7 @@ namespace NGit.Merge
 		/// <summary>Test a conflicting region at the very end of the text.</summary>
 		/// <remarks>Test a conflicting region at the very end of the text.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestConflictAtEnd()
 		{
 			NUnit.Framework.Assert.AreEqual(A + B + C + D + E + F + G + H + I + XXX_0 + Z + XXX_1
@@ -212,6 +219,7 @@ namespace NGit.Merge
 		/// first one, but the second texts modification covers one more line.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSameModification()
 		{
 			NUnit.Framework.Assert.AreEqual(replace_C_by_Z, Merge(@base, replace_C_by_Z, replace_C_by_Z
@@ -221,7 +229,7 @@ namespace NGit.Merge
 		/// <exception cref="System.IO.IOException"></exception>
 		private string Merge(string commonBase, string ours, string theirs)
 		{
-			MergeResult r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, new RawText(Constants
+			MergeResult<RawText> r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, new RawText(Constants
 				.Encode(commonBase)), new RawText(Constants.Encode(ours)), new RawText(Constants
 				.Encode(theirs)));
 			ByteArrayOutputStream bo = new ByteArrayOutputStream(50);

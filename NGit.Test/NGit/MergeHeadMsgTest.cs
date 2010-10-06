@@ -53,6 +53,7 @@ namespace NGit
 		private static readonly string sampleId = "1c6db447abdbb291b25f07be38ea0b1bf94947c5";
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadWriteMergeHeads()
 		{
 			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads(), null);
@@ -77,7 +78,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads().Count, 2);
 			AssertEquals(db.ReadMergeHeads()[0], ObjectId.ZeroId);
 			AssertEquals(db.ReadMergeHeads()[1], ObjectId.FromString(sampleId));
-			db.WriteMergeHeads(Collections.EMPTY_LIST);
+			db.WriteMergeHeads(Collections.EmptyList<ObjectId> ());
 			NUnit.Framework.Assert.AreEqual(Read(new FilePath(db.Directory, "MERGE_HEAD")), string.Empty
 				);
 			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads(), null);
@@ -96,6 +97,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestReadWriteMergeMsg()
 		{
 			NUnit.Framework.Assert.AreEqual(db.ReadMergeCommitMsg(), null);

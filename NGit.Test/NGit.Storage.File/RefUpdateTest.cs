@@ -98,6 +98,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoCacheObjectIdSubclass()
 		{
 			string newRef = "refs/heads/abc";
@@ -136,6 +137,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNewNamespaceConflictWithLoosePrefixNameExists()
 		{
 			string newRef = "refs/heads/z";
@@ -174,6 +176,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNewNamespaceConflictWithPackedPrefixNameExists()
 		{
 			string newRef = "refs/heads/master/x";
@@ -196,6 +199,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNewNamespaceConflictWithLoosePrefixOfExisting()
 		{
 			string newRef = "refs/heads/z/a";
@@ -235,6 +239,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNewNamespaceConflictWithPackedPrefixOfExisting()
 		{
 			string newRef = "refs/heads/prefix";
@@ -258,6 +263,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Delete a ref that is pointed to by HEAD</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteHEADreferencedRef()
 		{
 			ObjectId pid = db.Resolve("refs/heads/master^");
@@ -278,6 +284,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLooseDelete()
 		{
 			string newRef = "refs/heads/abc";
@@ -291,6 +298,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteHead()
 		{
 			RefUpdate @ref = UpdateRef(Constants.HEAD);
@@ -306,6 +314,7 @@ namespace NGit.Storage.File
 		/// and the reflog dir too
 		/// </summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteLooseAndItsDirectory()
 		{
 			ObjectId pid = db.Resolve("refs/heads/c^");
@@ -333,6 +342,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteNotFound()
 		{
 			RefUpdate @ref = UpdateRef("refs/heads/xyz");
@@ -340,6 +350,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteFastForward()
 		{
 			RefUpdate @ref = UpdateRef("refs/heads/a");
@@ -347,6 +358,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteForce()
 		{
 			RefUpdate @ref = db.UpdateRef("refs/heads/b");
@@ -356,6 +368,7 @@ namespace NGit.Storage.File
 			Delete(@ref, RefUpdate.Result.FORCED);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRefKeySameAsName()
 		{
 			IDictionary<string, Ref> allRefs = db.GetAllRefs();
@@ -367,6 +380,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Try modify a ref forward, fast forward</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRefForward()
 		{
 			ObjectId ppid = db.Resolve("refs/heads/master^");
@@ -388,6 +402,7 @@ namespace NGit.Storage.File
 		/// <summary>Update the HEAD ref.</summary>
 		/// <remarks>Update the HEAD ref. Only it should be changed, not what it points to.</remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRefDetached()
 		{
 			ObjectId pid = db.Resolve("refs/heads/master");
@@ -400,7 +415,7 @@ namespace NGit.Storage.File
 			AssertEquals(ppid, db.Resolve("HEAD"));
 			Ref @ref = db.GetRef("HEAD");
 			NUnit.Framework.Assert.AreEqual("HEAD", @ref.GetName());
-			NUnit.Framework.Assert.IsTrue("is detached", !@ref.IsSymbolic());
+			NUnit.Framework.Assert.IsTrue(!@ref.IsSymbolic(), "is detached");
 			// the branch HEAD referred to is left untouched
 			AssertEquals(pid, db.Resolve("refs/heads/master"));
 			ReflogReader reflogReader = new ReflogReader(db, "HEAD");
@@ -415,6 +430,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Update the HEAD ref when the referenced branch is unborn</summary>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRefDetachedUnbornHead()
 		{
 			ObjectId ppid = db.Resolve("refs/heads/master^");
@@ -427,7 +443,7 @@ namespace NGit.Storage.File
 			AssertEquals(ppid, db.Resolve("HEAD"));
 			Ref @ref = db.GetRef("HEAD");
 			NUnit.Framework.Assert.AreEqual("HEAD", @ref.GetName());
-			NUnit.Framework.Assert.IsTrue("is detached", !@ref.IsSymbolic());
+			NUnit.Framework.Assert.IsTrue(!@ref.IsSymbolic(), "is detached");
 			// the branch HEAD referred to is left untouched
 			NUnit.Framework.Assert.IsNull(db.Resolve("refs/heads/unborn"));
 			ReflogReader reflogReader = new ReflogReader(db, "HEAD");
@@ -446,6 +462,7 @@ namespace NGit.Storage.File
 		/// cannot be resolved after delete.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteLoosePacked()
 		{
 			ObjectId pid = db.Resolve("refs/heads/c^");
@@ -465,6 +482,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Try modify a ref to same</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRefNoChange()
 		{
 			ObjectId pid = db.Resolve("refs/heads/master");
@@ -489,6 +507,7 @@ namespace NGit.Storage.File
 		/// ref was packed due to implementation issues.
 		/// </remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRefsCacheAfterUpdate()
 		{
 			// Do not use the defalt repo for this case.
@@ -512,7 +531,7 @@ namespace NGit.Storage.File
 			Ref head = allRefs.Get("HEAD");
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", master.GetName());
 			NUnit.Framework.Assert.AreEqual("HEAD", head.GetName());
-			NUnit.Framework.Assert.IsTrue("is symbolic reference", head.IsSymbolic());
+			NUnit.Framework.Assert.IsTrue(head.IsSymbolic(), "is symbolic reference");
 			NUnit.Framework.Assert.AreSame(master, head.GetTarget());
 		}
 
@@ -529,6 +548,7 @@ namespace NGit.Storage.File
 		/// update of symref.
 		/// </remarks>
 		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRefsCacheAfterUpdateLooseOnly()
 		{
 			// Do not use the defalt repo for this case.
@@ -545,12 +565,13 @@ namespace NGit.Storage.File
 			Ref newref = allRefs.Get("refs/heads/newref");
 			NUnit.Framework.Assert.AreEqual("refs/heads/newref", newref.GetName());
 			NUnit.Framework.Assert.AreEqual("HEAD", head.GetName());
-			NUnit.Framework.Assert.IsTrue("is symbolic reference", head.IsSymbolic());
+			NUnit.Framework.Assert.IsTrue(head.IsSymbolic(), "is symbolic reference");
 			NUnit.Framework.Assert.AreSame(newref, head.GetTarget());
 		}
 
 		/// <summary>Try modify a ref, but get wrong expected old value</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRefLockFailureWrongOldValue()
 		{
 			ObjectId pid = db.Resolve("refs/heads/master");
@@ -564,6 +585,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Try modify a ref forward, fast forward, checking old value first</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRefForwardWithCheck1()
 		{
 			ObjectId ppid = db.Resolve("refs/heads/master^");
@@ -585,6 +607,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Try modify a ref forward, fast forward, checking old commit first</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRefForwardWithCheck2()
 		{
 			ObjectId ppid = db.Resolve("refs/heads/master^");
@@ -607,6 +630,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Try modify a ref that is locked</summary>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpdateRefLockFailureLocked()
 		{
 			ObjectId opid = db.Resolve("refs/heads/master");
@@ -636,6 +660,7 @@ namespace NGit.Storage.File
 		/// <summary>Try to delete a ref.</summary>
 		/// <remarks>Try to delete a ref. Delete requires force.</remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteLoosePackedRejected()
 		{
 			ObjectId pid = db.Resolve("refs/heads/c^");
@@ -648,10 +673,11 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchNoPreviousLog()
 		{
-			NUnit.Framework.Assert.IsFalse("precondition, no log on old branchg", new FilePath
-				(db.Directory, "logs/refs/heads/b").Exists());
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, "logs/refs/heads/b").Exists
+				(), "precondition, no log on old branchg");
 			ObjectId rb = db.Resolve("refs/heads/b");
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
 			NUnit.Framework.Assert.IsFalse(rb.Equals(oldHead));
@@ -672,15 +698,16 @@ namespace NGit.Storage.File
 
 		// unchanged
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchHasPreviousLog()
 		{
 			ObjectId rb = db.Resolve("refs/heads/b");
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsFalse("precondition for this test, branch b != HEAD", rb
-				.Equals(oldHead));
+			NUnit.Framework.Assert.IsFalse(rb.Equals(oldHead), "precondition for this test, branch b != HEAD"
+				);
 			WriteReflog(db, rb, rb, "Just a message", "refs/heads/b");
-			NUnit.Framework.Assert.IsTrue("log on old branch", new FilePath(db.Directory, "logs/refs/heads/b"
-				).Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/b").Exists
+				(), "log on old branch");
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
@@ -699,16 +726,17 @@ namespace NGit.Storage.File
 
 		// unchanged
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameCurrentBranch()
 		{
 			ObjectId rb = db.Resolve("refs/heads/b");
 			WriteSymref(Constants.HEAD, "refs/heads/b");
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue("internal test condition, b == HEAD", rb.Equals(oldHead
-				));
+			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead), "internal test condition, b == HEAD"
+				);
 			WriteReflog(db, rb, rb, "Just a message", "refs/heads/b");
-			NUnit.Framework.Assert.IsTrue("log on old branch", new FilePath(db.Directory, "logs/refs/heads/b"
-				).Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/b").Exists
+				(), "log on old branch");
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
@@ -728,6 +756,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchAlsoInPack()
 		{
 			ObjectId rb = db.Resolve("refs/heads/b");
@@ -738,13 +767,13 @@ namespace NGit.Storage.File
 			updateRef.SetNewObjectId(rb2);
 			updateRef.SetForceUpdate(true);
 			RefUpdate.Result update = updateRef.Update();
-			NUnit.Framework.Assert.AreEqual("internal check new ref is loose", RefUpdate.Result
-				.FORCED, update);
+			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, update, "internal check new ref is loose"
+				);
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, db.GetRef("refs/heads/b").GetStorage
 				());
 			WriteReflog(db, rb, rb, "Just a message", "refs/heads/b");
-			NUnit.Framework.Assert.IsTrue("log on old branch", new FilePath(db.Directory, "logs/refs/heads/b"
-				).Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/b").Exists
+				(), "log on old branch");
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
@@ -781,8 +810,8 @@ namespace NGit.Storage.File
 				();
 			IList<ReflogReader.Entry> oldHeadLog = oldHeadId != null ? db.GetReflogReader(Constants
 				.HEAD).GetReverseEntries() : null;
-			NUnit.Framework.Assert.IsTrue("internal check, we have a log", new FilePath(db.Directory
-				, "logs/" + fromName).Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/" + fromName).Exists
+				(), "internal check, we have a log");
 			// "someone" has branch X locked
 			LockFile lockFile = new LockFile(new FilePath(db.Directory, toLock), db.FileSystem
 				);
@@ -824,11 +853,12 @@ namespace NGit.Storage.File
 
 		private void AssertExists(bool positive, string toName)
 		{
-			NUnit.Framework.Assert.AreEqual(toName + (positive ? " " : " does not ") + "exist"
-				, positive, new FilePath(db.Directory, toName).Exists());
+			NUnit.Framework.Assert.AreEqual(positive, new FilePath(db.Directory, toName).Exists
+				(), toName + (positive ? " " : " does not ") + "exist");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchCannotLockAFileHEADisFromLockHEAD()
 		{
 			TryRenameWhenLocked("HEAD", "refs/heads/b", "refs/heads/new/name", "refs/heads/b"
@@ -836,6 +866,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchCannotLockAFileHEADisFromLockFrom()
 		{
 			TryRenameWhenLocked("refs/heads/b", "refs/heads/b", "refs/heads/new/name", "refs/heads/b"
@@ -843,6 +874,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchCannotLockAFileHEADisFromLockTo()
 		{
 			TryRenameWhenLocked("refs/heads/new/name", "refs/heads/b", "refs/heads/new/name", 
@@ -850,6 +882,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchCannotLockAFileHEADisToLockFrom()
 		{
 			TryRenameWhenLocked("refs/heads/b", "refs/heads/b", "refs/heads/new/name", "refs/heads/new/name"
@@ -857,6 +890,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchCannotLockAFileHEADisToLockTo()
 		{
 			TryRenameWhenLocked("refs/heads/new/name", "refs/heads/b", "refs/heads/new/name", 
@@ -864,6 +898,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchCannotLockAFileHEADisOtherLockFrom()
 		{
 			TryRenameWhenLocked("refs/heads/b", "refs/heads/b", "refs/heads/new/name", "refs/heads/a"
@@ -871,6 +906,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameBranchCannotLockAFileHEADisOtherLockTo()
 		{
 			TryRenameWhenLocked("refs/heads/new/name", "refs/heads/b", "refs/heads/new/name", 
@@ -878,6 +914,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameRefNameColission1avoided()
 		{
 			// setup
@@ -892,8 +929,8 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead));
 			// assumption for this test
 			WriteReflog(db, rb, rb, "Just a message", "refs/heads/a");
-			NUnit.Framework.Assert.IsTrue("internal check, we have a log", new FilePath(db.Directory
-				, "logs/refs/heads/a").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/a").Exists
+				(), "internal check, we have a log");
 			// Now this is our test
 			RefRename renameRef = db.RenameRef("refs/heads/a", "refs/heads/a/b");
 			RefUpdate.Result result = renameRef.Rename();
@@ -914,6 +951,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameRefNameColission2avoided()
 		{
 			// setup
@@ -928,8 +966,8 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead));
 			// assumption for this test
 			WriteReflog(db, rb, rb, "Just a message", "refs/heads/prefix/a");
-			NUnit.Framework.Assert.IsTrue("internal check, we have a log", new FilePath(db.Directory
-				, "logs/refs/heads/prefix/a").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/prefix/a"
+				).Exists(), "internal check, we have a log");
 			// Now this is our test
 			RefRename renameRef = db.RenameRef("refs/heads/prefix/a", "refs/heads/prefix");
 			RefUpdate.Result result = renameRef.Rename();

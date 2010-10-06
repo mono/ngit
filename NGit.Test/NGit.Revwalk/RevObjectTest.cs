@@ -50,6 +50,7 @@ namespace NGit.Revwalk
 	public class RevObjectTest : RevWalkTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestId()
 		{
 			RevCommit a = Commit();
@@ -57,6 +58,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEquals()
 		{
 			RevCommit a1 = Commit();
@@ -81,6 +83,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRevObjectTypes()
 		{
 			NUnit.Framework.Assert.AreEqual(Constants.OBJ_TREE, Tree().Type);
@@ -90,6 +93,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHasRevFlag()
 		{
 			RevCommit a = Commit();
@@ -99,6 +103,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHasAnyFlag()
 		{
 			RevCommit a = Commit();
@@ -113,6 +118,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHasAllFlag()
 		{
 			RevCommit a = Commit();
@@ -129,6 +135,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddRevFlag()
 		{
 			RevCommit a = Commit();
@@ -142,6 +149,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestAddRevFlagSet()
 		{
 			RevCommit a = Commit();
@@ -156,6 +164,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveRevFlag()
 		{
 			RevCommit a = Commit();
@@ -169,6 +178,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRemoveRevFlagSet()
 		{
 			RevCommit a = Commit();

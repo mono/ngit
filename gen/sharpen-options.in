@@ -1,6 +1,7 @@
 -pascalCase+
 -nativeTypeSystem
 -organizeUsings
+-junitConversion
 
 -cp @NUNIT_JAR@
 -cp @BIN_PATH@

@@ -43,13 +43,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class RawParseUtils_MatchTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RawParseUtils_MatchTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestMatch_Equal()
 		{
 			byte[] src = Constants.EncodeASCII(" differ\n");
@@ -57,6 +58,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.IsTrue(RawParseUtils.Match(dst, 3, src) == 3 + src.Length);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestMatch_NotEqual()
 		{
 			byte[] src = Constants.EncodeASCII(" differ\n");
@@ -64,6 +66,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.IsTrue(RawParseUtils.Match(dst, 2, src) < 0);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestMatch_Prefix()
 		{
 			byte[] src = Constants.EncodeASCII("author ");
@@ -72,6 +75,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.IsTrue(RawParseUtils.Match(dst, 1, src) < 0);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestMatch_TooSmall()
 		{
 			byte[] src = Constants.EncodeASCII("author ");

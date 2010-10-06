@@ -50,6 +50,7 @@ namespace NGit
 	public class ReflogConfigTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestlogAllRefUpdates()
 		{
 			long commitTime = 1154236443000L;
@@ -67,8 +68,8 @@ namespace NGit
 			Commit(t, "A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(
 				committer, commitTime, tz));
 			commitTime += 100;
-			NUnit.Framework.Assert.IsTrue("Reflog for HEAD still contain no entry", db.GetReflogReader
-				(Constants.HEAD).GetReverseEntries().Count == 0);
+			NUnit.Framework.Assert.IsTrue(db.GetReflogReader(Constants.HEAD).GetReverseEntries
+				().Count == 0, "Reflog for HEAD still contain no entry");
 			// set the logAllRefUpdates parameter to true and check it
 			((FileBasedConfig)db.GetConfig()).SetBoolean("core", null, "logallrefupdates", true
 				);
@@ -79,8 +80,8 @@ namespace NGit
 			Commit(t, "A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(
 				committer, commitTime, tz));
 			commitTime += 100;
-			NUnit.Framework.Assert.IsTrue("Reflog for HEAD should contain one entry", db.GetReflogReader
-				(Constants.HEAD).GetReverseEntries().Count == 1);
+			NUnit.Framework.Assert.IsTrue(db.GetReflogReader(Constants.HEAD).GetReverseEntries
+				().Count == 1, "Reflog for HEAD should contain one entry");
 			// set the logAllRefUpdates parameter to false and check it
 			((FileBasedConfig)db.GetConfig()).SetBoolean("core", null, "logallrefupdates", false
 				);
@@ -91,8 +92,8 @@ namespace NGit
 				);
 			Commit(t, "A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(
 				committer, commitTime, tz));
-			NUnit.Framework.Assert.IsTrue("Reflog for HEAD should contain two entries", db.GetReflogReader
-				(Constants.HEAD).GetReverseEntries().Count == 2);
+			NUnit.Framework.Assert.IsTrue(db.GetReflogReader(Constants.HEAD).GetReverseEntries
+				().Count == 2, "Reflog for HEAD should contain two entries");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

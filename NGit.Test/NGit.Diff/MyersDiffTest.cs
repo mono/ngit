@@ -50,9 +50,10 @@ namespace NGit.Diff
 	{
 		protected internal override DiffAlgorithm Algorithm()
 		{
-			return MyersDiff.INSTANCE;
+			return MyersDiff<Sequence>.INSTANCE;
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPerformanceTestDeltaLength()
 		{
 			string a = DiffTestDataGenerator.GenerateSequence(40000, 971, 3);

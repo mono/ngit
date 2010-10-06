@@ -44,13 +44,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using NGit;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
 {
-	public class RawParseUtils_HexParseTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class RawParseUtils_HexParseTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestInt4_1()
 		{
 			NUnit.Framework.Assert.AreEqual(0, RawParseUtils.ParseHexInt4(unchecked((byte)'0'
@@ -115,6 +116,7 @@ namespace NGit.Util
 		}
 
 		// pass
+		[NUnit.Framework.Test]
 		public virtual void TestInt16()
 		{
 			NUnit.Framework.Assert.AreEqual(unchecked((int)(0x0000)), Parse16("0000"));
@@ -158,6 +160,7 @@ namespace NGit.Util
 			return RawParseUtils.ParseHexInt16(Constants.EncodeASCII(str), 0);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestInt32()
 		{
 			NUnit.Framework.Assert.AreEqual(unchecked((int)(0x00000000)), Parse32("00000000")

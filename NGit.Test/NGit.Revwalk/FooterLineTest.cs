@@ -51,6 +51,7 @@ namespace NGit.Revwalk
 {
 	public class FooterLineTest : RepositoryTestCase
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestNoFooters_EmptyBody()
 		{
 			RevCommit commit = Parse(string.Empty);
@@ -59,6 +60,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual(0, footers.Count);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoFooters_NewlineOnlyBody1()
 		{
 			RevCommit commit = Parse("\n");
@@ -67,6 +69,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual(0, footers.Count);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoFooters_NewlineOnlyBody5()
 		{
 			RevCommit commit = Parse("\n\n\n\n\n");
@@ -75,6 +78,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual(0, footers.Count);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoFooters_OneLineBodyNoLF()
 		{
 			RevCommit commit = Parse("this is a commit");
@@ -83,6 +87,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual(0, footers.Count);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoFooters_OneLineBodyWithLF()
 		{
 			RevCommit commit = Parse("this is a commit\n");
@@ -91,6 +96,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual(0, footers.Count);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoFooters_ShortBodyNoLF()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit");
@@ -99,6 +105,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual(0, footers.Count);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoFooters_ShortBodyWithLF()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n");
@@ -107,6 +114,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual(0, footers.Count);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSignedOffBy_OneUserNoLF()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "\n" + "Signed-off-by: A. U. Thor <a@example.com>"
@@ -121,6 +129,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual("a@example.com", f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSignedOffBy_OneUserWithLF()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "\n" + "Signed-off-by: A. U. Thor <a@example.com>\n"
@@ -135,6 +144,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual("a@example.com", f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSignedOffBy_IgnoreWhitespace()
 		{
 			// We only ignore leading whitespace on the value, trailing
@@ -152,6 +162,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual("a@example.com", f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyValueNoLF()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "\n" + "Signed-off-by:");
@@ -165,6 +176,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsNull(f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyValueWithLF()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "\n" + "Signed-off-by:\n"
@@ -179,6 +191,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsNull(f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestShortKey()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "\n" + "K:V\n");
@@ -192,6 +205,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsNull(f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNonDelimtedEmail()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "\n" + "Acked-by: re@example.com\n"
@@ -206,6 +220,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual("re@example.com", f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNotEmail()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "\n" + "Acked-by: Main Tain Er\n"
@@ -220,6 +235,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsNull(f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSignedOffBy_ManyUsers()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "Not-A-Footer-Line: this line must not be read as a footer\n"
@@ -250,6 +266,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual("mte@example.com", f.GetEmailAddress());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestSignedOffBy_SkipNonFooter()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "Not-A-Footer-Line: this line must not be read as a footer\n"
@@ -275,6 +292,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual("Main Tain Er <mte@example.com>", f.GetValue());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFilterFootersIgnoreCase()
 		{
 			RevCommit commit = Parse("subject\n\nbody of commit\n" + "Not-A-Footer-Line: this line must not be read as a footer\n"
@@ -289,6 +307,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual("Main Tain Er <mte@example.com>", footers[1]);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestMatchesBugId()
 		{
 			RevCommit commit = Parse("this is a commit subject for test\n" + "\n" + "Simple-Bug-Id: 42\n"
@@ -302,10 +321,10 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual("Simple-Bug-Id", line.GetKey());
 			NUnit.Framework.Assert.AreEqual("42", line.GetValue());
 			FooterKey bugid = new FooterKey("Simple-Bug-Id");
-			NUnit.Framework.Assert.IsTrue("matches Simple-Bug-Id", line.Matches(bugid));
-			NUnit.Framework.Assert.IsFalse("not Signed-off-by", line.Matches(FooterKey.SIGNED_OFF_BY
-				));
-			NUnit.Framework.Assert.IsFalse("not CC", line.Matches(FooterKey.CC));
+			NUnit.Framework.Assert.IsTrue(line.Matches(bugid), "matches Simple-Bug-Id");
+			NUnit.Framework.Assert.IsFalse(line.Matches(FooterKey.SIGNED_OFF_BY), "not Signed-off-by"
+				);
+			NUnit.Framework.Assert.IsFalse(line.Matches(FooterKey.CC), "not CC");
 		}
 
 		private RevCommit Parse(string msg)

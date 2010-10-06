@@ -55,6 +55,7 @@ namespace NGit.Diff
 			return hd;
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEdit_NoUniqueMiddleSide_FlipBlocks()
 		{
 			EditList r = Diff(T("aRRSSz"), T("aSSRRz"));
@@ -65,6 +66,7 @@ namespace NGit.Diff
 		}
 
 		// INSERT "RR
+		[NUnit.Framework.Test]
 		public virtual void TestEdit_NoUniqueMiddleSide_Insert2()
 		{
 			EditList r = Diff(T("aRSz"), T("aRRSSz"));
@@ -72,6 +74,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(2, 2, 2, 4), r[0]);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEdit_NoUniqueMiddleSide_FlipAndExpand()
 		{
 			EditList r = Diff(T("aRSz"), T("aSSRRz"));
@@ -82,6 +85,7 @@ namespace NGit.Diff
 		}
 
 		// INSERT "SRR"
+		[NUnit.Framework.Test]
 		public virtual void TestExceedsChainLenght_DuringScanOfA()
 		{
 			HistogramDiff hd = new HistogramDiff();
@@ -110,6 +114,7 @@ namespace NGit.Diff
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestExceedsChainLenght_DuringScanOfB()
 		{
 			HistogramDiff hd = new HistogramDiff();
@@ -120,6 +125,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(0, 4, 0, 4), r[0]);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFallbackToMyersDiff()
 		{
 			HistogramDiff hd = new HistogramDiff();
@@ -135,14 +141,15 @@ namespace NGit.Diff
 			r = hd.Diff(cmp, ac, bc);
 			NUnit.Framework.Assert.AreEqual(70, r.Count);
 			// Results go up when we add a fallback for the high collision regions.
-			hd.SetFallbackAlgorithm(MyersDiff.INSTANCE);
+			hd.SetFallbackAlgorithm(MyersDiff<Sequence>.INSTANCE);
 			r = hd.Diff(cmp, ac, bc);
 			NUnit.Framework.Assert.AreEqual(73, r.Count);
 			// But they still differ from Myers due to the way we did early steps.
-			EditList myersResult = MyersDiff.INSTANCE.Diff(cmp, ac, bc);
-			NUnit.Framework.Assert.IsFalse("Not same as Myers", myersResult.Equals(r));
+			EditList myersResult = MyersDiff<Sequence>.INSTANCE.Diff(cmp, ac, bc);
+			NUnit.Framework.Assert.IsFalse(myersResult.Equals(r), "Not same as Myers");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPerformanceTestDeltaLength()
 		{
 			HistogramDiff hd = new HistogramDiff();

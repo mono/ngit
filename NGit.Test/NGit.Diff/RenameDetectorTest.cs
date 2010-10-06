@@ -73,6 +73,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExactRename_OneRename()
 		{
 			ObjectId foo = Blob("foo");
@@ -86,6 +87,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExactRename_DifferentObjects()
 		{
 			ObjectId foo = Blob("foo");
@@ -104,6 +106,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExactRename_OneRenameOneModify()
 		{
 			ObjectId foo = Blob("foo");
@@ -122,6 +125,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExactRename_ManyRenames()
 		{
 			ObjectId foo = Blob("foo");
@@ -141,6 +145,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExactRename_MultipleIdenticalDeletes()
 		{
 			ObjectId foo = Blob("foo");
@@ -161,6 +166,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExactRename_PathBreaksTie()
 		{
 			ObjectId foo = Blob("foo");
@@ -183,6 +189,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestExactRename_OneDeleteManyAdds()
 		{
 			ObjectId foo = Blob("foo");
@@ -202,6 +209,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInexactRename_OnePair()
 		{
 			ObjectId aId = Blob("foo\nbar\nbaz\nblarg\n");
@@ -216,6 +224,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInexactRename_OneRenameTwoUnrelatedFiles()
 		{
 			ObjectId aId = Blob("foo\nbar\nbaz\nblarg\n");
@@ -238,6 +247,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInexactRename_LastByteDifferent()
 		{
 			ObjectId aId = Blob("foo\nbar\na");
@@ -252,6 +262,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInexactRename_NewlinesOnly()
 		{
 			ObjectId aId = Blob("\n\n\n");
@@ -266,6 +277,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInexactRename_SameContentMultipleTimes()
 		{
 			ObjectId aId = Blob("a\na\na\na\n");
@@ -280,6 +292,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInexactRenames_OnePair2()
 		{
 			ObjectId aId = Blob("ab\nab\nab\nac\nad\nae\n");
@@ -295,6 +308,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoRenames_SingleByteFiles()
 		{
 			ObjectId aId = Blob("a");
@@ -310,6 +324,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoRenames_EmptyFile1()
 		{
 			ObjectId aId = Blob(string.Empty);
@@ -321,6 +336,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoRenames_EmptyFile2()
 		{
 			ObjectId aId = Blob(string.Empty);
@@ -336,6 +352,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoRenames_SymlinkAndFile()
 		{
 			ObjectId aId = Blob("src/dest");
@@ -351,6 +368,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoRenames_GitlinkAndFile()
 		{
 			ObjectId aId = Blob("src/dest");
@@ -366,6 +384,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNoRenames_SymlinkAndFileSamePath()
 		{
 			ObjectId aId = Blob("src/dest");
@@ -382,6 +401,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBreakModify_BreakAll()
 		{
 			ObjectId aId = Blob("foo");
@@ -400,6 +420,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBreakModify_BreakNone()
 		{
 			ObjectId aId = Blob("foo");
@@ -418,6 +439,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBreakModify_BreakBelowScore()
 		{
 			ObjectId aId = Blob("foo");
@@ -437,6 +459,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBreakModify_DontBreakAboveScore()
 		{
 			ObjectId aId = Blob("blah\nblah\nfoo");
@@ -456,6 +479,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestBreakModify_RejoinIfUnpaired()
 		{
 			ObjectId aId = Blob("foo");
@@ -480,6 +504,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSetRenameScore_IllegalArgs()
 		{
 			try
@@ -503,6 +528,7 @@ namespace NGit.Diff
 
 		// pass
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRenameLimit()
 		{
 			ObjectId aId = Blob("foo\nbar\nbaz\nblarg\n");

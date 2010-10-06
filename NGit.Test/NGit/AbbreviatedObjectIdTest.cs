@@ -42,13 +42,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
 {
-	public class AbbreviatedObjectIdTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class AbbreviatedObjectIdTest
 	{
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty_FromByteArray()
 		{
 			AbbreviatedObjectId i;
@@ -59,6 +60,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(string.Empty, i.Name);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty_FromString()
 		{
 			AbbreviatedObjectId i = AbbreviatedObjectId.FromString(string.Empty);
@@ -68,6 +70,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(string.Empty, i.Name);
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFull_FromByteArray()
 		{
 			string s = "7b6e8067ec96acef9a4184b43210d583b6d2f99a";
@@ -83,6 +86,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(f.GetHashCode(), i.GetHashCode());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestFull_FromString()
 		{
 			string s = "7b6e8067ec96acef9a4184b43210d583b6d2f99a";
@@ -97,6 +101,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(f.GetHashCode(), i.GetHashCode());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test1_FromString()
 		{
 			string s = "7";
@@ -108,6 +113,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test2_FromString()
 		{
 			string s = "7b";
@@ -119,6 +125,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test3_FromString()
 		{
 			string s = "7b6";
@@ -130,6 +137,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test4_FromString()
 		{
 			string s = "7b6e";
@@ -141,6 +149,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test5_FromString()
 		{
 			string s = "7b6e8";
@@ -152,6 +161,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test6_FromString()
 		{
 			string s = "7b6e80";
@@ -163,6 +173,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test7_FromString()
 		{
 			string s = "7b6e806";
@@ -174,6 +185,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test8_FromString()
 		{
 			string s = "7b6e8067";
@@ -185,6 +197,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test9_FromString()
 		{
 			string s = "7b6e8067e";
@@ -196,6 +209,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void Test17_FromString()
 		{
 			string s = "7b6e8067ec96acef9";
@@ -207,6 +221,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(i.ToObjectId());
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEquals_Short()
 		{
 			string s = "7b6e8067";
@@ -218,6 +233,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(b.Equals(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEquals_Full()
 		{
 			string s = "7b6e8067ec96acef9a4184b43210d583b6d2f99a";
@@ -229,6 +245,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(b.Equals(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNotEquals_SameLength()
 		{
 			string sa = "7b6e8067";
@@ -239,6 +256,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsFalse(b.Equals(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNotEquals_DiffLength()
 		{
 			string sa = "7b6e8067abcd";
@@ -249,6 +267,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsFalse(b.Equals(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPrefixCompare_Full()
 		{
 			string s1 = "7b6e8067ec96acef9a4184b43210d583b6d2f99a";
@@ -266,6 +285,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsFalse(i3.StartsWith(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPrefixCompare_1()
 		{
 			string sa = "7";
@@ -284,6 +304,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsFalse(i3.StartsWith(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPrefixCompare_7()
 		{
 			string sa = "7b6e806";
@@ -302,6 +323,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsFalse(i3.StartsWith(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPrefixCompare_8()
 		{
 			string sa = "7b6e8067";
@@ -320,6 +342,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsFalse(i3.StartsWith(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPrefixCompare_9()
 		{
 			string sa = "7b6e8067e";
@@ -338,6 +361,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsFalse(i3.StartsWith(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestPrefixCompare_17()
 		{
 			string sa = "7b6e8067ec96acef9";
@@ -356,6 +380,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsFalse(i3.StartsWith(a));
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestIsId()
 		{
 			// These are all too short.

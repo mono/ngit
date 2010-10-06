@@ -75,6 +75,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyIfRootIsFile()
 		{
 			FilePath r = new FilePath(trash, paths[0]);
@@ -86,6 +87,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyIfRootDoesNotExist()
 		{
 			FilePath r = new FilePath(trash, "not-existing-file");
@@ -97,6 +99,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyIfRootIsEmpty()
 		{
 			FilePath r = new FilePath(trash, "not-existing-file");
@@ -110,6 +113,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimpleIterate()
 		{
 			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, WorkingTreeOptions
@@ -154,6 +158,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestComputeFileObjectId()
 		{
 			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, WorkingTreeOptions

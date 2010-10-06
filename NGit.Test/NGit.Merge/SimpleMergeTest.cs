@@ -52,6 +52,7 @@ namespace NGit.Merge
 	public class SimpleMergeTest : SampleDataRepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestOurs()
 		{
 			Merger ourMerger = MergeStrategy.OURS.NewMerger(db);
@@ -61,6 +62,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTheirs()
 		{
 			Merger ourMerger = MergeStrategy.THEIRS.NewMerger(db);
@@ -70,6 +72,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay()
 		{
 			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
@@ -81,6 +84,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_disjointhistories()
 		{
 			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
@@ -93,6 +97,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_ok()
 		{
 			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
@@ -104,6 +109,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_conflict()
 		{
 			Merger ourMerger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger
@@ -113,6 +119,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_validSubtreeSort()
 		{
 			DirCache treeB = db.ReadDirCache();
@@ -157,6 +164,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_concurrentSubtreeChange()
 		{
 			DirCache treeB = db.ReadDirCache();
@@ -197,6 +205,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_conflictSubtreeChange()
 		{
 			DirCache treeB = db.ReadDirCache();
@@ -227,6 +236,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_leftDFconflict1()
 		{
 			DirCache treeB = db.ReadDirCache();
@@ -256,6 +266,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_rightDFconflict1()
 		{
 			DirCache treeB = db.ReadDirCache();
@@ -285,6 +296,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_leftDFconflict2()
 		{
 			DirCache treeB = db.ReadDirCache();
@@ -312,6 +324,7 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestTrivialTwoWay_rightDFconflict2()
 		{
 			DirCache treeB = db.ReadDirCache();

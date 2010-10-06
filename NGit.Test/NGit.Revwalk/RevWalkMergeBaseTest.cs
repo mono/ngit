@@ -52,6 +52,7 @@ namespace NGit.Revwalk
 	public class RevWalkMergeBaseTest : RevWalkTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestNone()
 		{
 			RevCommit c1 = Commit(Commit(Commit()));
@@ -63,6 +64,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDisallowTreeFilter()
 		{
 			RevCommit c1 = Commit();
@@ -83,6 +85,7 @@ namespace NGit.Revwalk
 
 		// expected result
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSimple()
 		{
 			RevCommit a = Commit();
@@ -97,6 +100,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMultipleHeads_SameBase1()
 		{
 			RevCommit a = Commit();
@@ -113,6 +117,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMultipleHeads_SameBase2()
 		{
 			RevCommit a = Commit();
@@ -130,6 +135,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCrissCross()
 		{
 			// See http://marc.info/?l=git&m=111463358500362&w=2 for a nice

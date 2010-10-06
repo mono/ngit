@@ -42,31 +42,34 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
 {
-	public class ValidRefNameTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class ValidRefNameTest
 	{
 		private static void AssertValid(bool exp, string name)
 		{
-			NUnit.Framework.Assert.AreEqual("\"" + name + "\"", exp, Repository.IsValidRefName
-				(name));
+			NUnit.Framework.Assert.AreEqual(exp, Repository.IsValidRefName(name), "\"" + name
+				 + "\"");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestEmptyString()
 		{
 			AssertValid(false, string.Empty);
 			AssertValid(false, "/");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestMustHaveTwoComponents()
 		{
 			AssertValid(false, "master");
 			AssertValid(true, "heads/master");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestValidHead()
 		{
 			AssertValid(true, "refs/heads/master");
@@ -75,26 +78,31 @@ namespace NGit
 			AssertValid(true, "refs/heads/FoO");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestValidTag()
 		{
 			AssertValid(true, "refs/tags/v1.0");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoLockSuffix()
 		{
 			AssertValid(false, "refs/heads/master.lock");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoDirectorySuffix()
 		{
 			AssertValid(false, "refs/heads/master/");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoSpace()
 		{
 			AssertValid(false, "refs/heads/i haz space");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoAsciiControlCharacters()
 		{
 			for (char c = '\0'; c < ' '; c++)
@@ -103,6 +111,7 @@ namespace NGit
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoBareDot()
 		{
 			AssertValid(false, "refs/heads/.");
@@ -111,6 +120,7 @@ namespace NGit
 			AssertValid(false, "refs/heads/../master");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoLeadingOrTrailingDot()
 		{
 			AssertValid(false, ".");
@@ -119,12 +129,14 @@ namespace NGit
 			AssertValid(false, "refs/heads/bar.");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestContainsDot()
 		{
 			AssertValid(true, "refs/heads/m.a.s.t.e.r");
 			AssertValid(false, "refs/heads/master..pu");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestNoMagicRefCharacters()
 		{
 			AssertValid(false, "refs/heads/master^");
@@ -138,6 +150,7 @@ namespace NGit
 			AssertValid(false, ":refs/heads/master");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestShellGlob()
 		{
 			AssertValid(false, "refs/heads/master?");
@@ -151,6 +164,7 @@ namespace NGit
 			AssertValid(false, "*refs/heads/master");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestValidSpecialCharacters()
 		{
 			AssertValid(true, "refs/heads/!");
@@ -182,11 +196,13 @@ namespace NGit
 			AssertValid(false, "refs/heads/\\");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestUnicodeNames()
 		{
 			AssertValid(true, "refs/heads/\u00e5ngstr\u00f6m");
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestRefLogQueryIsValidRef()
 		{
 			AssertValid(false, "refs/heads/master@{1}");

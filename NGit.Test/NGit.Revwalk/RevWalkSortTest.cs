@@ -49,6 +49,7 @@ namespace NGit.Revwalk
 	public class RevWalkSortTest : RevWalkTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSort_Default()
 		{
 			RevCommit a = Commit();
@@ -64,6 +65,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSort_COMMIT_TIME_DESC()
 		{
 			RevCommit a = Commit();
@@ -80,6 +82,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSort_REVERSE()
 		{
 			RevCommit a = Commit();
@@ -96,6 +99,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSort_COMMIT_TIME_DESC_OutOfOrder1()
 		{
 			// Despite being out of order time-wise, a strand-of-pearls must
@@ -117,6 +121,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSort_COMMIT_TIME_DESC_OutOfOrder2()
 		{
 			// c1 is back dated before its parent.
@@ -137,6 +142,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSort_TOPO()
 		{
 			// c1 is back dated before its parent.
@@ -157,6 +163,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSort_TOPO_REVERSE()
 		{
 			// c1 is back dated before its parent.

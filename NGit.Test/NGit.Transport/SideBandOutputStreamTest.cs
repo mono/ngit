@@ -49,7 +49,8 @@ using Sharpen;
 
 namespace NGit.Transport
 {
-	public class SideBandOutputStreamTest : TestCase
+	[NUnit.Framework.TestFixture]
+	public class SideBandOutputStreamTest
 	{
 		private ByteArrayOutputStream rawOut;
 
@@ -57,13 +58,14 @@ namespace NGit.Transport
 		//
 		// perl -e 'printf "%4.4x%s\n", 4+length($ARGV[0]),$ARGV[0]'
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			rawOut = new ByteArrayOutputStream();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite_CH_DATA()
 		{
 			SideBandOutputStream @out;
@@ -75,6 +77,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite_CH_PROGRESS()
 		{
 			SideBandOutputStream @out;
@@ -86,6 +89,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite_CH_ERROR()
 		{
 			SideBandOutputStream @out;
@@ -97,6 +101,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite_Small()
 		{
 			SideBandOutputStream @out;
@@ -110,6 +115,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite_SmallBlocks1()
 		{
 			SideBandOutputStream @out;
@@ -122,6 +128,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite_SmallBlocks2()
 		{
 			SideBandOutputStream @out;
@@ -132,6 +139,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite_SmallBlocks3()
 		{
 			SideBandOutputStream @out;
@@ -143,6 +151,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestWrite_Large()
 		{
 			int buflen = SideBandOutputStream.MAX_BUF - SideBandOutputStream.HDR_SIZE;
@@ -171,6 +180,7 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFlush()
 		{
 			int[] flushCnt = new int[1];
@@ -202,6 +212,7 @@ namespace NGit.Transport
 			private readonly int[] flushCnt;
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestConstructor_RejectsBadChannel()
 		{
 			try
@@ -235,6 +246,7 @@ namespace NGit.Transport
 			}
 		}
 
+		[NUnit.Framework.Test]
 		public virtual void TestConstructor_RejectsBadBufferSize()
 		{
 			try

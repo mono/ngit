@@ -60,6 +60,7 @@ namespace NGit.Revwalk
 		protected internal abstract T Create();
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			NUnit.Framework.Assert.IsNull(q.Next());
@@ -68,6 +69,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestClear()
 		{
 			RevCommit a = ParseBody(Commit());
@@ -79,6 +81,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestHasFlags()
 		{
 			RevCommit a = ParseBody(Commit());

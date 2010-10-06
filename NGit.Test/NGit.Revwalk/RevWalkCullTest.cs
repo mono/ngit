@@ -49,6 +49,7 @@ namespace NGit.Revwalk
 	public class RevWalkCullTest : RevWalkTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestProperlyCullAllAncestors1()
 		{
 			// Credit goes to Junio C Hamano <gitster@pobox.com> for this
@@ -66,6 +67,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestProperlyCullAllAncestors2()
 		{
 			// Despite clock skew on c1 being very old it should not
@@ -84,6 +86,7 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestProperlyCullAllAncestors_LongHistory()
 		{
 			RevCommit a = Commit();

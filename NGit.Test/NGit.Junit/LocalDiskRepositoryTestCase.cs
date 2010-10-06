@@ -76,7 +76,8 @@ namespace NGit.Junit
 	/// a test, or tests may fail altogether if there is insufficient file
 	/// descriptors or address space for the test process.
 	/// </remarks>
-	public abstract class LocalDiskRepositoryTestCase : TestCase
+	[NUnit.Framework.TestFixture]
+	public abstract class LocalDiskRepositoryTestCase
 	{
 		private static Sharpen.Thread shutdownHook;
 
@@ -100,9 +101,9 @@ namespace NGit.Junit
 		private MockSystemReader mockSystemReader;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		protected virtual void SetUp()
 		{
-			base.SetUp();
 			lock (this)
 			{
 				if (shutdownHook == null)
@@ -179,7 +180,8 @@ namespace NGit.Junit
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		protected virtual void TearDown()
 		{
 			RepositoryCache.Clear();
 			foreach (Repository r in toClose)
@@ -196,7 +198,6 @@ namespace NGit.Junit
 				System.GC.Collect();
 			}
 			RecursiveDelete(TestName(), trash, false, true);
-			base.TearDown();
 		}
 
 		/// <summary>
@@ -226,7 +227,7 @@ namespace NGit.Junit
 		private static bool RecursiveDelete(string testName, FilePath dir, bool silent, bool
 			 failOnError)
 		{
-			if (!!(silent && failOnError).Exists())
+			if (!dir.Exists())
 			{
 				return silent;
 			}
