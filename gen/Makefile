@@ -172,9 +172,9 @@ import: validate-convert
 
 update-source:
 	$(NGIT_GIT) checkout merged
-	cp -r ../NGit/* $(NGIT_DIR)/NGit
-	cp -r ../NGit.Test/* $(NGIT_DIR)/NGit.Test
-	cp -r ../NSch/* $(NGIT_DIR)/NSch
+	cd ../NGit && find . -type f -name '*.cs' -exec cp {} $(prefix)/generated/NGit/{} \;
+	cd ../NGit.Test && find . -type f -name '*.cs' -exec cp {} $(prefix)/generated/NGit.Test/{} \;
+	cd ../NSch && find . -type f -name '*.cs' \! -path '*Sharpen*' -exec cp {} $(prefix)/generated/NSch/{} \;
 	
 update-patch: update-source validate-convert
 

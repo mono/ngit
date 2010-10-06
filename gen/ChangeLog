@@ -1,5 +1,11 @@
 2010-10-06  Lluis Sanchez Gual  <lluis@novell.com>
 
+	* cs.patch: Updated.
+
+	* Makefile: Copy only cs files when updating the patch.
+
+2010-10-06  Lluis Sanchez Gual  <lluis@novell.com>
+
 	* cs.patch:
 	* Makefile:
 	* sharpen.sh:
