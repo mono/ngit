@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGit", "NGit\NGit.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NGit.Test", "NGit.Test\NGit.Test.csproj", "{E1FA8F29-5BAB-4FB7-8362-B8CE67ECF7C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{7C21E1D7-6E5E-40E0-BF3B-60DD6906729B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSch", "NSch\NSch.csproj", "{A19E6F3F-A25B-4B01-8922-CF0CC35C781D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharpen", "Sharpen\Sharpen.csproj", "{72944A6C-45FF-4EF8-B349-8C9CABF519D4}"
@@ -21,10 +19,6 @@ Global
 		{72944A6C-45FF-4EF8-B349-8C9CABF519D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72944A6C-45FF-4EF8-B349-8C9CABF519D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72944A6C-45FF-4EF8-B349-8C9CABF519D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C21E1D7-6E5E-40E0-BF3B-60DD6906729B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C21E1D7-6E5E-40E0-BF3B-60DD6906729B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C21E1D7-6E5E-40E0-BF3B-60DD6906729B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C21E1D7-6E5E-40E0-BF3B-60DD6906729B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A19E6F3F-A25B-4B01-8922-CF0CC35C781D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A19E6F3F-A25B-4B01-8922-CF0CC35C781D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A19E6F3F-A25B-4B01-8922-CF0CC35C781D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +33,6 @@ Global
 		{E3BFF8B4-189C-496A-A817-7E8B31E22B91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Tester\Tester.csproj
+		StartupItem = NGit\NGit.csproj
 	EndGlobalSection
 EndGlobal
