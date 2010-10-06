@@ -5,6 +5,7 @@ PROJECT=$2
 SOURCES=$3
 OPTIONS=`pwd`/$4
 OUTDIR=`pwd`/$5
+HEADER=$6
 TEMPDIR=build
 
 rm -rf $DIRECTORY/$TEMPDIR
@@ -19,7 +20,7 @@ java \
 		org.eclipse.core.launcher.Main \
 		-data $TEMPDIR \
 		-application sharpen.core.application \
-		$PROJECT/$SOURCES @$OPTIONS
+		$PROJECT/$SOURCES @$OPTIONS -header $prefix/$HEADER
 
 popd
 mkdir -p $OUTDIR

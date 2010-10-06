@@ -1,0 +1,9 @@
+2010-10-06  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* cs.patch:
+	* Makefile:
+	* sharpen.sh:
+	* jsch.header:
+	* jgit.header:
+	* jzlib.header: Included headers from original code.
+

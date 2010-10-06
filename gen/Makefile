@@ -81,12 +81,16 @@ fetch: $(JGIT_SOURCE) $(JZLIB_SOURCE) $(JSCH_SOURCE)
 	@echo -e "$(SB)Building jgit.junit$(EB)"
 	find $(JGIT_DIR)/org.eclipse.jgit.junit/src -name *.java > resp
 	javac @resp -d $(BIN_PATH) -cp $(BIN_PATH):$(NUNIT_JAR)
+	@echo -e "$(SB)Generating code for jzlib$(EB)"
+	$(SHARPEN) $(JGIT_DIR)/jzlib jzlib src sharpen-options $(NGIT_DIR)/NSch jzlib.header
+	@echo -e "$(SB)Generating code for jsch$(EB)"
+	$(SHARPEN) $(JGIT_DIR)/jsch jsch src sharpen-options $(NGIT_DIR)/NSch jsch.header
 	@echo -e "$(SB)Generating code for jgit (previous revision)$(EB)"
-	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit org.eclipse.jgit src sharpen-options $(NGIT_DIR)/NGit
+	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit org.eclipse.jgit src sharpen-options $(NGIT_DIR)/NGit jgit.header
 	@echo -e "$(SB)Generating code for jgit.nunit (previous revision)$(EB)"
-	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit.junit org.eclipse.jgit.junit src sharpen-options $(NGIT_DIR)/NGit.Test
+	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit.junit org.eclipse.jgit.junit src sharpen-options $(NGIT_DIR)/NGit.Test jgit.header
 	@echo -e "$(SB)Generating code for jgit.test (previous revision)$(EB)"
-	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit.test org.eclipse.jgit.test tst sharpen-options $(NGIT_DIR)/NGit.Test
+	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit.test org.eclipse.jgit.test tst sharpen-options $(NGIT_DIR)/NGit.Test jgit.header
 	# Convert the generated code into git repos
 	git init $(NGIT_DIR)
 	$(NGIT_GIT) add . && git commit -a -m "Initial commit"
@@ -104,7 +108,7 @@ merge:
 	@echo -e "$(SB)Applying java patch$(EB)"
 	$(JGIT_GIT) branch -D merged 2> /dev/null || true
 	$(JGIT_GIT) checkout -b merged `cat ../lastrev`
-	patch -s -d $(JGIT_DIR) -p1 < $(JAVA_PATCH)
+	patch -d $(JGIT_DIR) -p1 < $(JAVA_PATCH)
 	$(JGIT_GIT) commit -a -m "Merge"
 	@echo -e "$(SB)Merging new changes$(EB)"
 	@echo -e "$(SB)In case of merge conflict, cd to the $(JGIT_DIR) directory, resolve the conflics and use 'git rebase --continue' to finish$(EB)"
@@ -129,15 +133,15 @@ convert: validate-pull
 	$(NGIT_GIT) branch -D last 2> /dev/null || true
 	$(NGIT_GIT) checkout -b last
 	@echo -e "$(SB)Generating code for jzlib$(EB)"
-	$(SHARPEN) $(JGIT_DIR)/jzlib jzlib src sharpen-options $(NGIT_DIR)/NSch
+	$(SHARPEN) $(JGIT_DIR)/jzlib jzlib src sharpen-options $(NGIT_DIR)/NSch jzlib.header
 	@echo -e "$(SB)Generating code for jsch$(EB)"
-	$(SHARPEN) $(JGIT_DIR)/jsch jsch src sharpen-options $(NGIT_DIR)/NSch
+	$(SHARPEN) $(JGIT_DIR)/jsch jsch src sharpen-options $(NGIT_DIR)/NSch jsch.header
 	@echo -e "$(SB)Generating code for jgit$(EB)"
-	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit org.eclipse.jgit src sharpen-options $(NGIT_DIR)/NGit
+	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit org.eclipse.jgit src sharpen-options $(NGIT_DIR)/NGit jgit.header
 	@echo -e "$(SB)Generating code for jgit.jnunit$(EB)"
-	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit.junit org.eclipse.jgit.junit src sharpen-options $(NGIT_DIR)/NGit.Test
+	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit.junit org.eclipse.jgit.junit src sharpen-options $(NGIT_DIR)/NGit.Test jgit.header
 	@echo -e "$(SB)Generating code for jgit.test$(EB)"
-	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit.test org.eclipse.jgit.test tst sharpen-options $(NGIT_DIR)/NGit.Test
+	$(SHARPEN) $(JGIT_DIR)/org.eclipse.jgit.test org.eclipse.jgit.test tst sharpen-options $(NGIT_DIR)/NGit.Test jgit.header
 	$(NGIT_GIT) add .
 	$(NGIT_GIT) commit -a -m "New code" || true
 	@echo -e "$(SB)Applying old patch$(EB)"

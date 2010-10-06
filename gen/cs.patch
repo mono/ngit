@@ -2507,30 +2507,6 @@ index 60caca1..a868a30 100644
  			packet = new Packet(buf);
  		}
  	}
-diff --git a/NSch/NSch/Cipher.cs.rej b/NSch/NSch/Cipher.cs.rej
-index d30fb02..1428848 100644
---- a/NSch/NSch/Cipher.cs.rej
-+++ b/NSch/NSch/Cipher.cs.rej
-@@ -1,5 +1,5 @@
----- /home/lluis/eclipse-workspace/jsch/build/jsch.net/src/NSch/Cipher.cs	2010-09-21 17:49:27.525233217 +0200
--+++ ./NSch/Cipher.cs	2010-09-21 17:49:35.399427672 +0200
-+--- /home/lluis/eclipse-workspace/jsch/build/jsch.net/src/NSch/Cipher.cs	2010-09-27 22:18:50.844374233 +0200
-++++ ./NSch/Cipher.cs	2010-09-27 22:24:00.039376269 +0200
- @@ -8,25 +8,25 @@
-  
-  		internal static int DECRYPT_MODE = 1;
-diff --git a/NSch/NSch/Compression.cs.rej b/NSch/NSch/Compression.cs.rej
-index 1fe838e..1d5d97a 100644
---- a/NSch/NSch/Compression.cs.rej
-+++ b/NSch/NSch/Compression.cs.rej
-@@ -1,5 +1,5 @@
----- /home/lluis/eclipse-workspace/jsch/build/jsch.net/src/NSch/Compression.cs	2010-09-21 17:49:27.534233201 +0200
--+++ ./NSch/Compression.cs	2010-09-21 17:49:35.399427672 +0200
-+--- /home/lluis/eclipse-workspace/jsch/build/jsch.net/src/NSch/Compression.cs	2010-09-27 22:18:50.857374952 +0200
-++++ ./NSch/Compression.cs	2010-09-27 22:24:00.039376269 +0200
- @@ -9,15 +9,15 @@
-  
-  		public const int DEFLATER = 1;
 diff --git a/NSch/NSch/DHG1.cs b/NSch/NSch/DHG1.cs
 index 2728fe4..eaca38f 100644
 --- a/NSch/NSch/DHG1.cs
@@ -2623,18 +2599,6 @@ index b075a1d..72972e2 100644
  							}
  							sig.SetPubKey(f, p, q, g);
  							sig.Update(H);
-diff --git a/NSch/NSch/HostKeyRepository.cs.rej b/NSch/NSch/HostKeyRepository.cs.rej
-index cf401c7..b92ce4c 100644
---- a/NSch/NSch/HostKeyRepository.cs.rej
-+++ b/NSch/NSch/HostKeyRepository.cs.rej
-@@ -1,5 +1,5 @@
----- /home/lluis/eclipse-workspace/jsch/build/jsch.net/src/NSch/HostKeyRepository.cs	2010-09-21 17:49:27.907420963 +0200
--+++ ./NSch/HostKeyRepository.cs	2010-09-21 17:49:35.400422726 +0200
-+--- /home/lluis/eclipse-workspace/jsch/build/jsch.net/src/NSch/HostKeyRepository.cs	2010-09-27 22:18:51.221374138 +0200
-++++ ./NSch/HostKeyRepository.cs	2010-09-27 22:24:00.040376243 +0200
- @@ -5,37 +5,37 @@
-  {
-  	public class HostKeyRepository
 diff --git a/NSch/NSch/IdentityFile.cs b/NSch/NSch/IdentityFile.cs
 index df14e77..c7e3d10 100644
 --- a/NSch/NSch/IdentityFile.cs
@@ -2795,31 +2759,6 @@ index 65e7f80..ce6acb1 100644
  				{
  					string key = (string)(e.Current);
  					config.Put(key, (string)(newconf[key]));
-diff --git a/NSch/NSch/Session.cs.orig b/NSch/NSch/Session.cs.orig
-index 65e7f80..0a3bff9 100644
---- a/NSch/NSch/Session.cs.orig
-+++ b/NSch/NSch/Session.cs.orig
-@@ -1658,7 +1658,7 @@ loop_break: ;
- 								tmp.Start();
- 								break;
- 							}
--							goto case SSH_MSG_CHANNEL_SUCCESS;
-+							goto SSH_MSG_CHANNEL_SUCCESS;
- 						}
- 
- 						case SSH_MSG_CHANNEL_SUCCESS:
-diff --git a/NSch/NSch/Session.cs.rej b/NSch/NSch/Session.cs.rej
-index d241a69..0201c16 100644
---- a/NSch/NSch/Session.cs.rej
-+++ b/NSch/NSch/Session.cs.rej
-@@ -1,5 +1,5 @@
----- /home/lluis/eclipse-workspace/jsch/build/jsch.net/src/NSch/Session.cs	2010-09-21 17:49:28.875264562 +0200
--+++ ./NSch/Session.cs	2010-09-21 17:50:20.740364564 +0200
-+--- /home/lluis/eclipse-workspace/jsch/build/jsch.net/src/NSch/Session.cs	2010-09-27 23:09:57.112489785 +0200
-++++ ./NSch/Session.cs	2010-09-27 23:10:26.398566492 +0200
- @@ -1,7 +1,6 @@
-  using System;
-  using System.Collections;
 diff --git a/NSch/NSch/SftpException.cs b/NSch/NSch/SftpException.cs
 index 495c79c..c67af23 100644
 --- a/NSch/NSch/SftpException.cs
