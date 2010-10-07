@@ -63,12 +63,12 @@ namespace NGit.Transport
 	{
 		private const long serialVersionUID = 1L;
 
-		private static readonly Sharpen.Pattern FULL_URI = Sharpen.Pattern.Compile("^(?:([a-z][a-z0-9+-]+)://"
-			 + "(?:([^/]+?)(?::([^/]+?))?@)?" + "(?:([^/]+?))?(?::(\\d+))?)?" + "((?:[A-Za-z]:)?"
-			 + "(?:\\.\\.)?" + "/.+)$");
+		private static readonly Sharpen.Pattern FULL_URI = Sharpen.Pattern.Compile("^" + 
+			"(?:" + "([a-z][a-z0-9+-]+)://" + "(?:([^/]+?)(?::([^/]+?))?@)?" + "(?:([^/]+?))?(?::(\\d+))?"
+			 + ")?" + "(" + "(?:[A-Za-z]:)?" + "(?:\\.\\.)?" + "/.+" + ")$");
 
-		private static readonly Sharpen.Pattern SCP_URI = Sharpen.Pattern.Compile("^(?:([^@]+?)@)?([^:]+?):(.+)$"
-			);
+		private static readonly Sharpen.Pattern SCP_URI = Sharpen.Pattern.Compile("^" + "(?:([^@]+?)@)?"
+			 + "([^:]+?)" + ":" + "(.+)" + "$");
 
 		private string scheme;
 
@@ -91,12 +91,22 @@ namespace NGit.Transport
 		/// <exception cref="Sharpen.URISyntaxException">Sharpen.URISyntaxException</exception>
 		public URIish(string s)
 		{
+			//
+			//
 			// optional http://
 			// optional user:password@
 			// optional example.com:1337
+			//
 			// optional drive-letter:
 			// optionally a relative path
+			//
 			// /anything
+			//
+			//
+			//
+			//
+			//
+			//
 			s = s.Replace('\\', '/');
 			Matcher matcher = FULL_URI.Matcher(s);
 			if (matcher.Matches())

@@ -55,6 +55,9 @@ namespace NGit
 		/// <summary>The "core" section</summary>
 		public static readonly string CONFIG_CORE_SECTION = "core";
 
+		/// <summary>The "branch" section</summary>
+		public static readonly string CONFIG_BRANCH_SECTION = "branch";
+
 		/// <summary>The "autocrlf" key</summary>
 		public static readonly string CONFIG_KEY_AUTOCRLF = "autocrlf";
 
@@ -72,5 +75,14 @@ namespace NGit
 
 		/// <summary>The "worktree" key</summary>
 		public static readonly string CONFIG_KEY_WORKTREE = "worktree";
+
+		/// <summary>The "remote" key</summary>
+		public static readonly string CONFIG_KEY_REMOTE = "remote";
+
+		/// <summary>The "merge" key</summary>
+		public static readonly string CONFIG_KEY_MERGE = "merge";
+
+		/// <summary>The "rebase" key</summary>
+		public static readonly string CONFIG_KEY_REBASE = "rebase";
 	}
 }

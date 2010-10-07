@@ -70,7 +70,7 @@ fetch: $(JGIT_SOURCE) $(JZLIB_SOURCE) $(JSCH_SOURCE)
 	@echo -e "$(SB)Pulling git sources$(EB)"
 	$(JGIT_GIT) reset --hard
 	$(JGIT_GIT) checkout master
-	#$(JGIT_GIT) pull origin
+	$(JGIT_GIT) pull origin
 	@echo -e "$(SB)Applying previous java patch$(EB)"
 	$(JGIT_GIT) checkout `cat ../lastrev`
 	rm -rf $(NGIT_DIR)
