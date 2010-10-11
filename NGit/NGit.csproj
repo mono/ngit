@@ -441,6 +441,21 @@
     <Compile Include="NGit.Storage.File\DeltaBaseCache.cs" />
     <Compile Include="NGit.Api.Errors\InvalidRemoteException.cs" />
     <Compile Include="NGit.Api\PushCommand.cs" />
+    <Compile Include="NGit.Api\PullCommand.cs" />
+    <Compile Include="NGit.Api\PullResult.cs" />
+    <Compile Include="NGit.Api\CreateBranchCommand.cs" />
+    <Compile Include="NGit.Api\DeleteBranchCommand.cs" />
+    <Compile Include="NGit.Api\ListBranchCommand.cs" />
+    <Compile Include="NGit.Api\RenameBranchCommand.cs" />
+    <Compile Include="NGit.Transport\HttpAuthMethod.cs" />
+    <Compile Include="NGit.Api.Errors\DetachedHeadException.cs" />
+    <Compile Include="NGit.Api.Errors\CanceledException.cs" />
+    <Compile Include="NGit.Api.Errors\CannotDeleteCurrentBranchException.cs" />
+    <Compile Include="NGit.Api.Errors\InvalidConfigurationException.cs" />
+    <Compile Include="NGit.Api.Errors\InvalidRefNameException.cs" />
+    <Compile Include="NGit.Api.Errors\NotMergedException.cs" />
+    <Compile Include="NGit.Api.Errors\RefAlreadyExistsException.cs" />
+    <Compile Include="NGit.Api.Errors\RefNotFoundException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

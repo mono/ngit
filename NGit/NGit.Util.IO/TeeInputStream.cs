@@ -118,7 +118,7 @@ namespace NGit.Util.IO
 			int n = src.Read(b, off, len);
 			if (0 < n)
 			{
-				dst.Write(b, off, len);
+				dst.Write(b, off, n);
 			}
 			return n;
 		}

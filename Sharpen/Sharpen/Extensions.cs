@@ -198,6 +198,12 @@ namespace Sharpen
 			return old;
 		}
 
+		public static void PutAll<T, U> (this IDictionary<T, U> d, IDictionary<T, U> values)
+		{
+			foreach (KeyValuePair<T,U> val in values)
+				d[val.Key] = val.Value;
+		}
+
 		public static object Put (this Hashtable d, object key, object value)
 		{
 			object old;
@@ -657,6 +663,11 @@ namespace Sharpen
 		}
 		
 		public static Uri ToURI (this Uri uri)
+		{
+			return uri;
+		}
+		
+		public static Uri ToURL (this Uri uri)
 		{
 			return uri;
 		}

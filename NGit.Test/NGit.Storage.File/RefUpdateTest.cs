@@ -103,8 +103,8 @@ namespace NGit.Storage.File
 		{
 			string newRef = "refs/heads/abc";
 			RefUpdate ru = UpdateRef(newRef);
-			RevCommit newid = new _RevCommit_106(ru.GetNewObjectId());
-			// empty
+			RefUpdateTest.SubclassedId newid = new RefUpdateTest.SubclassedId(ru.GetNewObjectId
+				());
 			ru.SetNewObjectId(newid);
 			RefUpdate.Result update = ru.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NEW, update);
@@ -129,30 +129,17 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(0, reverseEntries2.Count);
 		}
 
-		private sealed class _RevCommit_106 : RevCommit
-		{
-			public _RevCommit_106(AnyObjectId baseArg1) : base(baseArg1)
-			{
-			}
-		}
-
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestNewNamespaceConflictWithLoosePrefixNameExists()
 		{
 			string newRef = "refs/heads/z";
 			RefUpdate ru = UpdateRef(newRef);
-			RevCommit newid = new _RevCommit_134(ru.GetNewObjectId());
-			// empty
-			ru.SetNewObjectId(newid);
 			RefUpdate.Result update = ru.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NEW, update);
 			// end setup
 			string newRef2 = "refs/heads/z/a";
 			RefUpdate ru2 = UpdateRef(newRef2);
-			RevCommit newid2 = new _RevCommit_143(ru2.GetNewObjectId());
-			// empty
-			ru.SetNewObjectId(newid2);
 			RefUpdate.Result update2 = ru2.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.LOCK_FAILURE, update2);
 			NUnit.Framework.Assert.AreEqual(1, db.GetReflogReader("refs/heads/z").GetReverseEntries
@@ -161,41 +148,17 @@ namespace NGit.Storage.File
 				.Count);
 		}
 
-		private sealed class _RevCommit_134 : RevCommit
-		{
-			public _RevCommit_134(AnyObjectId baseArg1) : base(baseArg1)
-			{
-			}
-		}
-
-		private sealed class _RevCommit_143 : RevCommit
-		{
-			public _RevCommit_143(AnyObjectId baseArg1) : base(baseArg1)
-			{
-			}
-		}
-
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestNewNamespaceConflictWithPackedPrefixNameExists()
 		{
 			string newRef = "refs/heads/master/x";
 			RefUpdate ru = UpdateRef(newRef);
-			RevCommit newid = new _RevCommit_157(ru.GetNewObjectId());
-			// empty
-			ru.SetNewObjectId(newid);
 			RefUpdate.Result update = ru.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.LOCK_FAILURE, update);
 			NUnit.Framework.Assert.IsNull(db.GetReflogReader("refs/heads/master/x"));
 			NUnit.Framework.Assert.AreEqual(0, db.GetReflogReader("HEAD").GetReverseEntries()
 				.Count);
-		}
-
-		private sealed class _RevCommit_157 : RevCommit
-		{
-			public _RevCommit_157(AnyObjectId baseArg1) : base(baseArg1)
-			{
-			}
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -204,17 +167,11 @@ namespace NGit.Storage.File
 		{
 			string newRef = "refs/heads/z/a";
 			RefUpdate ru = UpdateRef(newRef);
-			RevCommit newid = new _RevCommit_171(ru.GetNewObjectId());
-			// empty
-			ru.SetNewObjectId(newid);
 			RefUpdate.Result update = ru.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NEW, update);
 			// end setup
 			string newRef2 = "refs/heads/z";
 			RefUpdate ru2 = UpdateRef(newRef2);
-			RevCommit newid2 = new _RevCommit_180(ru2.GetNewObjectId());
-			// empty
-			ru.SetNewObjectId(newid2);
 			RefUpdate.Result update2 = ru2.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.LOCK_FAILURE, update2);
 			NUnit.Framework.Assert.AreEqual(1, db.GetReflogReader("refs/heads/z/a").GetReverseEntries
@@ -224,41 +181,17 @@ namespace NGit.Storage.File
 				.Count);
 		}
 
-		private sealed class _RevCommit_171 : RevCommit
-		{
-			public _RevCommit_171(AnyObjectId baseArg1) : base(baseArg1)
-			{
-			}
-		}
-
-		private sealed class _RevCommit_180 : RevCommit
-		{
-			public _RevCommit_180(AnyObjectId baseArg1) : base(baseArg1)
-			{
-			}
-		}
-
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestNewNamespaceConflictWithPackedPrefixOfExisting()
 		{
 			string newRef = "refs/heads/prefix";
 			RefUpdate ru = UpdateRef(newRef);
-			RevCommit newid = new _RevCommit_195(ru.GetNewObjectId());
-			// empty
-			ru.SetNewObjectId(newid);
 			RefUpdate.Result update = ru.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.LOCK_FAILURE, update);
 			NUnit.Framework.Assert.IsNull(db.GetReflogReader("refs/heads/prefix"));
 			NUnit.Framework.Assert.AreEqual(0, db.GetReflogReader("HEAD").GetReverseEntries()
 				.Count);
-		}
-
-		private sealed class _RevCommit_195 : RevCommit
-		{
-			public _RevCommit_195(AnyObjectId baseArg1) : base(baseArg1)
-			{
-			}
 		}
 
 		/// <summary>Delete a ref that is pointed to by HEAD</summary>
@@ -994,6 +927,14 @@ namespace NGit.Storage.File
 			RefDirectoryUpdate update = ((RefDirectoryUpdate)refs.NewUpdate(refName, true));
 			update.SetNewObjectId(newId);
 			refs.Log(update, msg, true);
+		}
+
+		[System.Serializable]
+		internal class SubclassedId : ObjectId
+		{
+			internal SubclassedId(AnyObjectId src) : base(src)
+			{
+			}
 		}
 	}
 }

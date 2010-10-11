@@ -292,6 +292,11 @@ namespace Sharpen
 			FileAttributes fileAttributes = File.GetAttributes (this.path) | FileAttributes.ReadOnly;
 			File.SetAttributes (path, fileAttributes);
 		}
+		
+		public Uri ToURI ()
+		{
+			return new Uri (path);
+		}
 
 		public override string ToString ()
 		{

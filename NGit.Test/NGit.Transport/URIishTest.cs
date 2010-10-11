@@ -431,7 +431,7 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestGetValidSlashHumanishName()
 		{
-			string humanishName = new URIish(GIT_SCHEME + "abc/").GetHumanishName();
+			string humanishName = new URIish(GIT_SCHEME + "host/abc/").GetHumanishName();
 			NUnit.Framework.Assert.AreEqual("abc", humanishName);
 		}
 
@@ -486,7 +486,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestGetValidDotGitSlashHumanishName()
 		{
-			string humanishName = new URIish(GIT_SCHEME + "abc.git/").GetHumanishName();
+			string humanishName = new URIish(GIT_SCHEME + "host.xy/abc.git/").GetHumanishName
+				();
 			NUnit.Framework.Assert.AreEqual("abc", humanishName);
 		}
 
@@ -524,6 +525,78 @@ namespace NGit.Transport
 		{
 			string humanishName = new URIish("/a/b/c.git/").GetHumanishName();
 			NUnit.Framework.Assert.AreEqual("c", humanishName);
+		}
+
+		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestUserPasswordAndPort()
+		{
+			string str = "http://user:secret@host.xy:80/some/path";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("http", u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/path", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("host.xy", u.GetHost());
+			NUnit.Framework.Assert.AreEqual(80, u.GetPort());
+			NUnit.Framework.Assert.AreEqual("user", u.GetUser());
+			NUnit.Framework.Assert.AreEqual("secret", u.GetPass());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+			str = "http://user:secret@pass@host.xy:80/some/path";
+			u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("http", u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/path", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("host.xy", u.GetHost());
+			NUnit.Framework.Assert.AreEqual(80, u.GetPort());
+			NUnit.Framework.Assert.AreEqual("user", u.GetUser());
+			NUnit.Framework.Assert.AreEqual("secret@pass", u.GetPass());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.ArgumentException"></exception>
+		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFileProtocol()
+		{
+			// as defined by git docu
+			URIish u = new URIish("file:///a/b.txt");
+			NUnit.Framework.Assert.AreEqual("file", u.GetScheme());
+			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.IsNull(u.GetHost());
+			NUnit.Framework.Assert.IsNull(u.GetPass());
+			NUnit.Framework.Assert.AreEqual("/a/b.txt", u.GetPath());
+			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
+			NUnit.Framework.Assert.IsNull(u.GetUser());
+			NUnit.Framework.Assert.AreEqual("b.txt", u.GetHumanishName());
+			FilePath tmp = FilePath.CreateTempFile("jgitUnitTest", ".tmp");
+			u = new URIish(tmp.ToURI().ToString());
+			NUnit.Framework.Assert.AreEqual("file", u.GetScheme());
+			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.IsNull(u.GetHost());
+			NUnit.Framework.Assert.IsNull(u.GetPass());
+			NUnit.Framework.Assert.IsTrue(u.GetPath().Contains("jgitUnitTest"));
+			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
+			NUnit.Framework.Assert.IsNull(u.GetUser());
+			NUnit.Framework.Assert.IsTrue(u.GetHumanishName().StartsWith("jgitUnitTest"));
+			u = new URIish("file:/a/b.txt");
+			NUnit.Framework.Assert.AreEqual("file", u.GetScheme());
+			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.IsNull(u.GetHost());
+			NUnit.Framework.Assert.IsNull(u.GetPass());
+			NUnit.Framework.Assert.AreEqual("/a/b.txt", u.GetPath());
+			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
+			NUnit.Framework.Assert.IsNull(u.GetUser());
+			NUnit.Framework.Assert.AreEqual("b.txt", u.GetHumanishName());
+		}
+
+		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestMissingPort()
+		{
+			string incorrectSshUrl = "ssh://some-host:/path/to/repository.git";
+			URIish u = new URIish(incorrectSshUrl);
+			NUnit.Framework.Assert.IsFalse(TransportGitSsh.CanHandle(u));
 		}
 	}
 }

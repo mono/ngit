@@ -42,56 +42,20 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
+using NGit.Api.Errors;
 using Sharpen;
 
-namespace NGit
+namespace NGit.Api.Errors
 {
-	/// <summary>
-	/// Constants for use with the Configuration classes: section names,
-	/// configuration keys
-	/// </summary>
-	public class ConfigConstants
+	/// <summary>Thrown when branch deletion fails due to unmerged data</summary>
+	[System.Serializable]
+	public class NotMergedException : GitAPIException
 	{
-		/// <summary>The "core" section</summary>
-		public static readonly string CONFIG_CORE_SECTION = "core";
+		private const long serialVersionUID = 1L;
 
-		/// <summary>The "branch" section</summary>
-		public static readonly string CONFIG_BRANCH_SECTION = "branch";
-
-		/// <summary>The "remote" section</summary>
-		public static readonly string CONFIG_REMOTE_SECTION = "remote";
-
-		/// <summary>The "autocrlf" key</summary>
-		public static readonly string CONFIG_KEY_AUTOCRLF = "autocrlf";
-
-		/// <summary>The "bare" key</summary>
-		public static readonly string CONFIG_KEY_BARE = "bare";
-
-		/// <summary>The "filemode" key</summary>
-		public static readonly string CONFIG_KEY_FILEMODE = "filemode";
-
-		/// <summary>The "logallrefupdates" key</summary>
-		public static readonly string CONFIG_KEY_LOGALLREFUPDATES = "logallrefupdates";
-
-		/// <summary>The "repositoryformatversion" key</summary>
-		public static readonly string CONFIG_KEY_REPO_FORMAT_VERSION = "repositoryformatversion";
-
-		/// <summary>The "worktree" key</summary>
-		public static readonly string CONFIG_KEY_WORKTREE = "worktree";
-
-		/// <summary>The "remote" key</summary>
-		public static readonly string CONFIG_KEY_REMOTE = "remote";
-
-		/// <summary>The "merge" key</summary>
-		public static readonly string CONFIG_KEY_MERGE = "merge";
-
-		/// <summary>The "rebase" key</summary>
-		public static readonly string CONFIG_KEY_REBASE = "rebase";
-
-		/// <summary>The "url" key</summary>
-		public static readonly string CONFIG_KEY_URL = "url";
-
-		/// <summary>The "autosetupmerge" key</summary>
-		public static readonly string CONFIG_KEY_AUTOSETUPMERGE = "autosetupmerge";
+		/// <summary>The default constructor with a default message</summary>
+		public NotMergedException() : base(JGitText.Get().notMergedExceptionMessage)
+		{
+		}
 	}
 }

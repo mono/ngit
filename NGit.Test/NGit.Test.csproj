@@ -190,6 +190,11 @@
     <Compile Include="NGit.Diff\HistogramDiffTest.cs" />
     <Compile Include="NGit.Diff\PatienceDiffTest.cs" />
     <Compile Include="NGit.Diff\DiffPerformanceTest.cs" />
+    <Compile Include="NGit.Api\BranchCommandTest.cs" />
+    <Compile Include="NGit.Api\FetchCommandTest.cs" />
+    <Compile Include="NGit.Api\PullCommandTest.cs" />
+    <Compile Include="NGit.Api\PushCommandTest.cs" />
+    <Compile Include="NGit.Revplot\PlotCommitListTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

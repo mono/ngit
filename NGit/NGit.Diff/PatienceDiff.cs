@@ -210,6 +210,10 @@ namespace NGit.Diff
 					}
 
 					case Edit.Type.EMPTY:
+					{
+						break;
+					}
+
 					default:
 					{
 						throw new InvalidOperationException();

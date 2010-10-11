@@ -96,6 +96,8 @@ namespace NGit
 
 		public string atLeastTwoFiltersNeeded;
 
+		public string authenticationNotSupported;
+
 		public string badBase64InputCharacterAt;
 
 		public string badEntryDelimiter;
@@ -120,6 +122,8 @@ namespace NGit
 
 		public string blobNotFoundForPath;
 
+		public string branchNameInvalid;
+
 		public string cannotBeCombined;
 
 		public string cannotCombineTreeFilterWithRevFilter;
@@ -137,6 +141,8 @@ namespace NGit
 		public string cannotCreateDirectory;
 
 		public string cannotCreateHEAD;
+
+		public string cannotDeleteCheckedOutBranch;
 
 		public string cannotDeleteFile;
 
@@ -169,6 +175,8 @@ namespace NGit
 		public string cannotOpenService;
 
 		public string cannotParseGitURIish;
+
+		public string cannotPullOnARepoWithState;
 
 		public string cannotRead;
 
@@ -292,13 +300,21 @@ namespace NGit
 
 		public string countingObjects;
 
+		public string createBranchFailedUnknownReason;
+
+		public string createBranchUnexpectedResult;
+
 		public string creatingDeltasIsNotImplemented;
 
 		public string daemonAlreadyRunning;
 
+		public string deleteBranchUnexpectedResult;
+
 		public string deletingNotSupported;
 
 		public string destinationIsNotAWildcard;
+
+		public string detachedHeadDetected;
 
 		public string dirCacheDoesNotHaveABackingFile;
 
@@ -363,6 +379,8 @@ namespace NGit
 		public string exceptionCaughtDuringExecutionOfMergeCommand;
 
 		public string exceptionCaughtDuringExecutionOfPushCommand;
+
+		public string exceptionCaughtDuringExecutionOfPullCommand;
 
 		public string exceptionCaughtDuringExecutionOfTagCommand;
 
@@ -540,6 +558,8 @@ namespace NGit
 
 		public string missingAccesskey;
 
+		public string missingConfigurationForKey;
+
 		public string missingDeltaBase;
 
 		public string missingForwardImageInGITBinaryPatch;
@@ -592,6 +612,8 @@ namespace NGit
 
 		public string notASCIIString;
 
+		public string notAuthorized;
+
 		public string notAValidPack;
 
 		public string notFound;
@@ -601,6 +623,8 @@ namespace NGit
 		public string nothingToFetch;
 
 		public string nothingToPush;
+
+		public string notMergedExceptionMessage;
 
 		public string objectAtHasBadZlibStream;
 
@@ -623,6 +647,8 @@ namespace NGit
 		public string openFilesMustBeAtLeast1;
 
 		public string openingConnection;
+
+		public string operationCanceled;
 
 		public string outputHasAlreadyBeenStarted;
 
@@ -664,6 +690,8 @@ namespace NGit
 
 		public string propertyIsAlreadyNonNull;
 
+		public string pullTaskName;
+
 		public string pushCancelled;
 
 		public string pushIsNotSupportedForBundleTransport;
@@ -678,6 +706,10 @@ namespace NGit
 
 		public string receivingObjects;
 
+		public string refAlreadExists;
+
+		public string refNotResolved;
+
 		public string refUpdateReturnCodeWas;
 
 		public string reflogsNotYetSupportedByRevisionParser;
@@ -691,6 +723,12 @@ namespace NGit
 		public string remoteHungUpUnexpectedly;
 
 		public string remoteNameCantBeNull;
+
+		public string renameBranchFailedBecauseTag;
+
+		public string renameBranchFailedUnknownReason;
+
+		public string renameBranchUnexpectedResult;
 
 		public string renamesAlreadyFound;
 
@@ -863,6 +901,8 @@ namespace NGit
 		public string unsupportedPackVersion;
 
 		public string updatingRefFailed;
+
+		public string uriNotFound;
 
 		public string userConfigFileInvalid;
 

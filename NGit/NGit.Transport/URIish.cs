@@ -61,14 +61,103 @@ namespace NGit.Transport
 	[System.Serializable]
 	public class URIish
 	{
+		/// <summary>
+		/// Part of a pattern which matches the scheme part (git, http, ...) of an
+		/// URI.
+		/// </summary>
+		/// <remarks>
+		/// Part of a pattern which matches the scheme part (git, http, ...) of an
+		/// URI. Defines one capturing group containing the scheme without the
+		/// trailing colon and slashes
+		/// </remarks>
+		private static readonly string SCHEME_P = "([a-z][a-z0-9+-]+)://";
+
+		/// <summary>Part of a pattern which matches the optional user/password part (e.g.</summary>
+		/// <remarks>
+		/// Part of a pattern which matches the optional user/password part (e.g.
+		/// root:pwd@ in git://root:pwd@host.xyz/a.git) of URIs. Defines two
+		/// capturing groups: the first containing the user and the second containing
+		/// the password
+		/// </remarks>
+		private static readonly string OPT_USER_PWD_P = "(?:([^/:@]+)(?::([^/]+))?@)?";
+
+		/// <summary>Part of a pattern which matches the host part of URIs.</summary>
+		/// <remarks>
+		/// Part of a pattern which matches the host part of URIs. Defines one
+		/// capturing group containing the host name.
+		/// </remarks>
+		private static readonly string HOST_P = "([^/:]+)";
+
+		/// <summary>Part of a pattern which matches the optional port part of URIs.</summary>
+		/// <remarks>
+		/// Part of a pattern which matches the optional port part of URIs. Defines
+		/// one capturing group containing the port without the preceding colon.
+		/// </remarks>
+		private static readonly string OPT_PORT_P = "(?::(\\d+))?";
+
+		/// <summary>Part of a pattern which matches the ~username part (e.g.</summary>
+		/// <remarks>
+		/// Part of a pattern which matches the ~username part (e.g. /~root in
+		/// git://host.xyz/~root/a.git) of URIs. Defines no capturing group.
+		/// </remarks>
+		private static readonly string USER_HOME_P = "(?:/~(?:[^/]+))";
+
+		/// <summary>Part of a pattern which matches the optional drive letter in paths (e.g.
+		/// 	</summary>
+		/// <remarks>
+		/// Part of a pattern which matches the optional drive letter in paths (e.g.
+		/// D: in file:///D:/a.txt). Defines no capturing group.
+		/// </remarks>
+		private static readonly string OPT_DRIVE_LETTER_P = "(?:[A-Za-z]:)?";
+
+		/// <summary>Part of a pattern which matches a relative path.</summary>
+		/// <remarks>
+		/// Part of a pattern which matches a relative path. Relative paths don't
+		/// start with slash or drive letters. Defines no capturing group.
+		/// </remarks>
+		private static readonly string RELATIVE_PATH_P = "(?:(?:[^/]+/)*[^/]+/?)";
+
+		/// <summary>Part of a pattern which matches a relative or absolute path.</summary>
+		/// <remarks>
+		/// Part of a pattern which matches a relative or absolute path. Defines no
+		/// capturing group.
+		/// </remarks>
+		private static readonly string PATH_P = "(" + OPT_DRIVE_LETTER_P + "/?" + RELATIVE_PATH_P
+			 + ")";
+
 		private const long serialVersionUID = 1L;
 
+		/// <summary>
+		/// A pattern matching standard URI: </br>
+		/// <code>scheme "://" user_password? hostname? portnumber? path</code>
+		/// </summary>
 		private static readonly Sharpen.Pattern FULL_URI = Sharpen.Pattern.Compile("^" + 
-			"(?:" + "([a-z][a-z0-9+-]+)://" + "(?:([^/]+?)(?::([^/]+?))?@)?" + "(?:([^/]+?))?(?::(\\d+))?"
-			 + ")?" + "(" + "(?:[A-Za-z]:)?" + "(?:\\.\\.)?" + "/.+" + ")$");
+			SCHEME_P + "(?:" + OPT_USER_PWD_P + HOST_P + OPT_PORT_P + "(" + (USER_HOME_P + "?"
+			) + "/)" + ")?" + "(.+)?" + "$");
 
-		private static readonly Sharpen.Pattern SCP_URI = Sharpen.Pattern.Compile("^" + "(?:([^@]+?)@)?"
-			 + "([^:]+?)" + ":" + "(.+)" + "$");
+		/// <summary>A pattern matching the reference to a local file.</summary>
+		/// <remarks>
+		/// A pattern matching the reference to a local file. This may be an absolute
+		/// path (maybe even containing windows drive-letters) or a relative path.
+		/// </remarks>
+		private static readonly Sharpen.Pattern LOCAL_FILE = Sharpen.Pattern.Compile("^" 
+			+ "(/?" + PATH_P + ")" + "$");
+
+		/// <summary>
+		/// A pattern matching a URI for the scheme 'file' which has only ':/' as
+		/// separator between scheme and path.
+		/// </summary>
+		/// <remarks>
+		/// A pattern matching a URI for the scheme 'file' which has only ':/' as
+		/// separator between scheme and path. Standard file URIs have '://' as
+		/// separator, but java.io.File.toURI() constructs those URIs.
+		/// </remarks>
+		private static readonly Sharpen.Pattern SINGLE_SLASH_FILE_URI = Sharpen.Pattern.Compile
+			("^" + "(file):(/(?!/)" + PATH_P + ")$");
+
+		/// <summary>A pattern matching a SCP URI's of the form user@host:path/to/repo.git</summary>
+		private static readonly Sharpen.Pattern SCP_URI = Sharpen.Pattern.Compile("^" + OPT_USER_PWD_P
+			 + HOST_P + ":(" + ("(?:" + USER_HOME_P + "/)?") + RELATIVE_PATH_P + ")$");
 
 		private string scheme;
 
@@ -93,14 +182,21 @@ namespace NGit.Transport
 		{
 			//
 			//
-			// optional http://
-			// optional user:password@
-			// optional example.com:1337
+			// start a group containing hostname and all options only
+			// availabe when a hostname is there
 			//
-			// optional drive-letter:
-			// optionally a relative path
 			//
-			// /anything
+			//
+			// open a catpuring group the the user-home-dir part
+			//
+			//
+			// close the optional group containing hostname
+			//
+			//
+			//
+			//
+			//
+			//
 			//
 			//
 			//
@@ -108,43 +204,83 @@ namespace NGit.Transport
 			//
 			//
 			s = s.Replace('\\', '/');
-			Matcher matcher = FULL_URI.Matcher(s);
+			Matcher matcher = SINGLE_SLASH_FILE_URI.Matcher(s);
 			if (matcher.Matches())
 			{
 				scheme = matcher.Group(1);
-				user = matcher.Group(2);
-				pass = matcher.Group(3);
-				host = matcher.Group(4);
-				if (matcher.Group(5) != null)
-				{
-					port = System.Convert.ToInt32(matcher.Group(5));
-				}
-				path = matcher.Group(6);
-				if (path.Length >= 3 && path[0] == '/' && path[2] == ':' && (path[1] >= 'A' && path
-					[1] <= 'Z' || path[1] >= 'a' && path[1] <= 'z'))
-				{
-					path = Sharpen.Runtime.Substring(path, 1);
-				}
-				else
-				{
-					if (scheme != null && path.Length >= 2 && path[0] == '/' && path[1] == '~')
-					{
-						path = Sharpen.Runtime.Substring(path, 1);
-					}
-				}
+				path = CleanLeadingSlashes(matcher.Group(2), scheme);
 			}
 			else
 			{
-				matcher = SCP_URI.Matcher(s);
+				matcher = FULL_URI.Matcher(s);
 				if (matcher.Matches())
 				{
-					user = matcher.Group(1);
-					host = matcher.Group(2);
-					path = matcher.Group(3);
+					scheme = matcher.Group(1);
+					user = matcher.Group(2);
+					pass = matcher.Group(3);
+					host = matcher.Group(4);
+					if (matcher.Group(5) != null)
+					{
+						port = System.Convert.ToInt32(matcher.Group(5));
+					}
+					path = CleanLeadingSlashes(N2e(matcher.Group(6)) + N2e(matcher.Group(7)), scheme);
 				}
 				else
 				{
-					throw new URISyntaxException(s, JGitText.Get().cannotParseGitURIish);
+					matcher = SCP_URI.Matcher(s);
+					if (matcher.Matches())
+					{
+						user = matcher.Group(1);
+						pass = matcher.Group(2);
+						host = matcher.Group(3);
+						path = matcher.Group(4);
+					}
+					else
+					{
+						matcher = LOCAL_FILE.Matcher(s);
+						if (matcher.Matches())
+						{
+							path = matcher.Group(1);
+						}
+						else
+						{
+							throw new URISyntaxException(s, JGitText.Get().cannotParseGitURIish);
+						}
+					}
+				}
+			}
+		}
+
+		private string N2e(string s)
+		{
+			if (s == null)
+			{
+				return string.Empty;
+			}
+			else
+			{
+				return s;
+			}
+		}
+
+		// takes care to cut of a leading slash if a windows drive letter or a
+		// user-home-dir specifications are
+		private string CleanLeadingSlashes(string p, string s)
+		{
+			if (p.Length >= 3 && p[0] == '/' && p[2] == ':' && (p[1] >= 'A' && p[1] <= 'Z' ||
+				 p[1] >= 'a' && p[1] <= 'z'))
+			{
+				return Sharpen.Runtime.Substring(p, 1);
+			}
+			else
+			{
+				if (s != null && p.Length >= 2 && p[0] == '/' && p[1] == '~')
+				{
+					return Sharpen.Runtime.Substring(p, 1);
+				}
+				else
+				{
+					return p;
 				}
 			}
 		}

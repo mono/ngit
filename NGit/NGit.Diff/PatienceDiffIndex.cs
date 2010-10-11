@@ -292,7 +292,7 @@ SCAN_break: ;
 		{
 			int ptr = region.beginA;
 			int end = region.endA;
-			int pLast = pBegin - 1;
+			int pLast = pBegin;
 			while (ptr < end)
 			{
 				int tIdx = Hash(a, ptr);
@@ -325,19 +325,8 @@ SCAN_break: ;
 						// fact that pCommon is sorted by B, and its likely that
 						// matches in A appear in the same order as they do in B.
 						//
-						for (int pIdx = pLast + 1; ; pIdx++)
+						for (int pIdx = pLast; ; )
 						{
-							if (pIdx == pEnd)
-							{
-								pIdx = pBegin;
-							}
-							else
-							{
-								if (pIdx == pLast)
-								{
-									break;
-								}
-							}
 							long priorRec = pCommon[pIdx];
 							int priorB = BOf(priorRec);
 							if (bs < priorB)
@@ -349,6 +338,15 @@ SCAN_break: ;
 								ptr += AOfRaw(priorRec) - priorB;
 								pLast = pIdx;
 								goto SCAN_continue;
+							}
+							pIdx++;
+							if (pIdx == pEnd)
+							{
+								pIdx = pBegin;
+							}
+							if (pIdx == pLast)
+							{
+								break;
 							}
 						}
 					}

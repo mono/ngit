@@ -41,57 +41,75 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit;
+using System.Text;
+using NGit.Api;
+using NGit.Transport;
 using Sharpen;
 
-namespace NGit
+namespace NGit.Api
 {
 	/// <summary>
-	/// Constants for use with the Configuration classes: section names,
-	/// configuration keys
+	/// Encapsulates the result of a
+	/// <see cref="PullCommand">PullCommand</see>
 	/// </summary>
-	public class ConfigConstants
+	public class PullResult
 	{
-		/// <summary>The "core" section</summary>
-		public static readonly string CONFIG_CORE_SECTION = "core";
+		private readonly FetchResult fetchResult;
 
-		/// <summary>The "branch" section</summary>
-		public static readonly string CONFIG_BRANCH_SECTION = "branch";
+		private readonly MergeCommandResult mergeResult;
 
-		/// <summary>The "remote" section</summary>
-		public static readonly string CONFIG_REMOTE_SECTION = "remote";
+		private readonly string fetchedFrom;
 
-		/// <summary>The "autocrlf" key</summary>
-		public static readonly string CONFIG_KEY_AUTOCRLF = "autocrlf";
+		internal PullResult(FetchResult fetchResult, string fetchedFrom, MergeCommandResult
+			 mergeResult)
+		{
+			this.fetchResult = fetchResult;
+			this.fetchedFrom = fetchedFrom;
+			this.mergeResult = mergeResult;
+		}
 
-		/// <summary>The "bare" key</summary>
-		public static readonly string CONFIG_KEY_BARE = "bare";
+		/// <returns>the fetch result, or <code>null</code></returns>
+		public virtual FetchResult GetFetchResult()
+		{
+			return this.fetchResult;
+		}
 
-		/// <summary>The "filemode" key</summary>
-		public static readonly string CONFIG_KEY_FILEMODE = "filemode";
+		/// <returns>the merge result, or <code>null</code></returns>
+		public virtual MergeCommandResult GetMergeResult()
+		{
+			return this.mergeResult;
+		}
 
-		/// <summary>The "logallrefupdates" key</summary>
-		public static readonly string CONFIG_KEY_LOGALLREFUPDATES = "logallrefupdates";
+		/// <returns>
+		/// the name of the remote configuration from which fetch was tried,
+		/// or <code>null</code>
+		/// </returns>
+		public virtual string GetFetchedFrom()
+		{
+			return this.fetchedFrom;
+		}
 
-		/// <summary>The "repositoryformatversion" key</summary>
-		public static readonly string CONFIG_KEY_REPO_FORMAT_VERSION = "repositoryformatversion";
-
-		/// <summary>The "worktree" key</summary>
-		public static readonly string CONFIG_KEY_WORKTREE = "worktree";
-
-		/// <summary>The "remote" key</summary>
-		public static readonly string CONFIG_KEY_REMOTE = "remote";
-
-		/// <summary>The "merge" key</summary>
-		public static readonly string CONFIG_KEY_MERGE = "merge";
-
-		/// <summary>The "rebase" key</summary>
-		public static readonly string CONFIG_KEY_REBASE = "rebase";
-
-		/// <summary>The "url" key</summary>
-		public static readonly string CONFIG_KEY_URL = "url";
-
-		/// <summary>The "autosetupmerge" key</summary>
-		public static readonly string CONFIG_KEY_AUTOSETUPMERGE = "autosetupmerge";
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			if (fetchResult != null)
+			{
+				sb.Append(fetchResult.ToString());
+			}
+			else
+			{
+				sb.Append("No fetch result");
+			}
+			sb.Append("\n");
+			if (mergeResult != null)
+			{
+				sb.Append(mergeResult.ToString());
+			}
+			else
+			{
+				sb.Append("No merge result");
+			}
+			return sb.ToString();
+		}
 	}
 }

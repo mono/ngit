@@ -19,6 +19,7 @@
 -methodMapping org.eclipse.jgit.util.Base64.decode DecodeBytes
 -methodMapping org.eclipse.jgit.lib.ObjectLoader.GetType GetLoaderType
 -methodMapping junit.framework.TestCase.getName Sharpen.Extensions.GetTestName
+-methodMapping org.eclipse.jgit.transport.HttpAuthMethod.Digest.LHEX Lhex
 -fieldMapping org.eclipse.jgit.revwalk.RewriteGenerator.REWRITE RewriteOp
 -fieldMapping org.eclipse.jgit.transport.TransportBundle.V2_BUNDLE_SIGNATURE NGit.Transport.TransportBundleConstants.V2_BUNDLE_SIGNATURE
 -typeMapping org.eclipse.jgit.util.IO NGit.Util.IOUtil

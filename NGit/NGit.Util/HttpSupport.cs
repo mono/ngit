@@ -54,6 +54,13 @@ namespace NGit.Util
 	{
 		/// <summary>
 		/// The
+		/// <code>GET</code>
+		/// HTTP method.
+		/// </summary>
+		public static readonly string METHOD_GET = "GET";
+
+		/// <summary>
+		/// The
 		/// <code>POST</code>
 		/// HTTP method.
 		/// </summary>
@@ -200,6 +207,20 @@ namespace NGit.Util
 		/// MIME type.
 		/// </summary>
 		public static readonly string TEXT_PLAIN = "text/plain";
+
+		/// <summary>
+		/// The
+		/// <code>Authorization</code>
+		/// header.
+		/// </summary>
+		public static readonly string HDR_AUTHORIZATION = "Authorization";
+
+		/// <summary>
+		/// The
+		/// <code>WWW-Authenticate</code>
+		/// header.
+		/// </summary>
+		public static readonly string HDR_WWW_AUTHENTICATE = "WWW-Authenticate";
 
 		/// <summary>URL encode a value string into an output buffer.</summary>
 		/// <remarks>URL encode a value string into an output buffer.</remarks>

@@ -30,9 +30,10 @@ namespace Sharpen
 {
 	public class HttpURLConnection
 	{
-		public const int HTTP_OK = 0;
-		public const int HTTP_NOT_FOUND = 1;
-		public const int HTTP_FORBIDDEN = 2;
+		public const int HTTP_OK = 200;
+		public const int HTTP_NOT_FOUND = 404;
+		public const int HTTP_FORBIDDEN = 403;
+		public const int HTTP_UNAUTHORIZED = 401;
 		
 		HttpWebRequest request;
 		HttpWebResponse reqResponse;
@@ -63,6 +64,11 @@ namespace Sharpen
 		public void SetRequestMethod (string method)
 		{
 			request.Method = method;
+		}
+		
+		public string GetRequestMethod ()
+		{
+			return request.Method;
 		}
 		
 		public void SetInstanceFollowRedirects (bool redirects)

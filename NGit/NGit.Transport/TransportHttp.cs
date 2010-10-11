@@ -80,6 +80,8 @@ namespace NGit.Transport
 
 		private static readonly string userAgent = ComputeUserAgent();
 
+		//$NON-NLS-1$
+		//$NON-NLS-1$
 		internal static bool CanHandle(URIish uri)
 		{
 			if (!uri.IsRemote())
@@ -90,6 +92,7 @@ namespace NGit.Transport
 			return "http".Equals(s) || "https".Equals(s) || "ftp".Equals(s);
 		}
 
+		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		private static string ComputeUserAgent()
 		{
 			string version;
@@ -106,10 +109,10 @@ namespace NGit.Transport
 			return "JGit/" + version;
 		}
 
-		private sealed class _SectionParser_141 : Config.SectionParser<TransportHttp.HttpConfig
+		private sealed class _SectionParser_142 : Config.SectionParser<TransportHttp.HttpConfig
 			>
 		{
-			public _SectionParser_141()
+			public _SectionParser_142()
 			{
 			}
 
@@ -121,7 +124,7 @@ namespace NGit.Transport
 		}
 
 		private static readonly Config.SectionParser<TransportHttp.HttpConfig> HTTP_KEY = 
-			new _SectionParser_141();
+			new _SectionParser_142();
 
 		private class HttpConfig
 		{
@@ -131,6 +134,7 @@ namespace NGit.Transport
 			{
 				postBuffer = rc.GetInt("http", "postbuffer", 1 * 1024 * 1024);
 			}
+			//$NON-NLS-1$  //$NON-NLS-2$
 		}
 
 		private readonly Uri baseUrl;
@@ -143,6 +147,8 @@ namespace NGit.Transport
 
 		private bool useSmartHttp = true;
 
+		private HttpAuthMethod authMethod = HttpAuthMethod.NONE;
+
 		/// <exception cref="System.NotSupportedException"></exception>
 		protected internal TransportHttp(Repository local, URIish uri) : base(local, uri)
 		{
@@ -151,13 +157,16 @@ namespace NGit.Transport
 				string uriString = uri.ToString();
 				if (!uriString.EndsWith("/"))
 				{
+					//$NON-NLS-1$
 					uriString += "/";
 				}
+				//$NON-NLS-1$
 				baseUrl = new Uri(uriString);
 				objectsUrl = new Uri(baseUrl, "objects/");
 			}
 			catch (UriFormatException e)
 			{
+				//$NON-NLS-1$
 				throw new NotSupportedException(MessageFormat.Format(JGitText.Get().invalidURL, uri
 					), e);
 			}
@@ -378,7 +387,9 @@ namespace NGit.Transport
 				if (useSmartHttp)
 				{
 					b.Append(b.IndexOf("?") < 0 ? '?' : '&');
+					//$NON-NLS-1$
 					b.Append("service=");
+					//$NON-NLS-1$
 					b.Append(service);
 				}
 				u = new Uri(b.ToString());
@@ -390,40 +401,66 @@ namespace NGit.Transport
 			}
 			try
 			{
-				HttpURLConnection conn = HttpOpen(u);
-				if (useSmartHttp)
+				int authAttempts = 1;
+				for (; ; )
 				{
-					string expType = "application/x-" + service + "-advertisement";
-					conn.SetRequestProperty(HttpSupport.HDR_ACCEPT, expType + ", */*");
-				}
-				else
-				{
-					conn.SetRequestProperty(HttpSupport.HDR_ACCEPT, "*/*");
-				}
-				int status = HttpSupport.Response(conn);
-				switch (status)
-				{
-					case HttpURLConnection.HTTP_OK:
+					HttpURLConnection conn = HttpOpen(u);
+					if (useSmartHttp)
 					{
-						return conn;
+						string exp = "application/x-" + service + "-advertisement";
+						//$NON-NLS-1$ //$NON-NLS-2$
+						conn.SetRequestProperty(HttpSupport.HDR_ACCEPT, exp + ", */*");
 					}
-
-					case HttpURLConnection.HTTP_NOT_FOUND:
+					else
 					{
-						throw new NoRemoteRepositoryException(uri, MessageFormat.Format(JGitText.Get().URLNotFound
-							, u));
+						//$NON-NLS-1$
+						conn.SetRequestProperty(HttpSupport.HDR_ACCEPT, "*/*");
 					}
-
-					case HttpURLConnection.HTTP_FORBIDDEN:
+					//$NON-NLS-1$
+					int status = HttpSupport.Response(conn);
+					switch (status)
 					{
-						throw new TransportException(uri, MessageFormat.Format(JGitText.Get().serviceNotPermitted
-							, service));
-					}
+						case HttpURLConnection.HTTP_OK:
+						{
+							return conn;
+						}
 
-					default:
-					{
-						string err = status + " " + conn.GetResponseMessage();
-						throw new TransportException(uri, err);
+						case HttpURLConnection.HTTP_NOT_FOUND:
+						{
+							throw new NoRemoteRepositoryException(uri, MessageFormat.Format(JGitText.Get().uriNotFound
+								, u));
+						}
+
+						case HttpURLConnection.HTTP_UNAUTHORIZED:
+						{
+							authMethod = HttpAuthMethod.ScanResponse(conn);
+							if (authMethod == HttpAuthMethod.NONE)
+							{
+								throw new TransportException(uri, MessageFormat.Format(JGitText.Get().authenticationNotSupported
+									, uri));
+							}
+							if (1 < authAttempts || uri.GetUser() == null)
+							{
+								throw new TransportException(uri, JGitText.Get().notAuthorized);
+							}
+							authMethod.Authorize(uri);
+							authAttempts++;
+							continue;
+							goto case HttpURLConnection.HTTP_FORBIDDEN;
+						}
+
+						case HttpURLConnection.HTTP_FORBIDDEN:
+						{
+							throw new TransportException(uri, MessageFormat.Format(JGitText.Get().serviceNotPermitted
+								, service));
+						}
+
+						default:
+						{
+							string err = status + " " + conn.GetResponseMessage();
+							//$NON-NLS-1$
+							throw new TransportException(uri, err);
+						}
 					}
 				}
 			}
@@ -445,8 +482,15 @@ namespace NGit.Transport
 		/// <exception cref="System.IO.IOException"></exception>
 		internal HttpURLConnection HttpOpen(Uri u)
 		{
+			return HttpOpen(HttpSupport.METHOD_GET, u);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		internal HttpURLConnection HttpOpen(string method, Uri u)
+		{
 			Proxy proxy = HttpSupport.ProxyFor(proxySelector, u);
 			HttpURLConnection conn = (HttpURLConnection)u.OpenConnection(proxy);
+			conn.SetRequestMethod(method);
 			conn.SetUseCaches(false);
 			conn.SetRequestProperty(HttpSupport.HDR_ACCEPT_ENCODING, HttpSupport.ENCODING_GZIP
 				);
@@ -455,6 +499,7 @@ namespace NGit.Transport
 			conn.SetRequestProperty(HttpSupport.HDR_USER_AGENT, userAgent);
 			conn.SetConnectTimeout(GetTimeout() * 1000);
 			conn.SetReadTimeout(GetTimeout() * 1000);
+			authMethod.ConfigureRequest(conn);
 			return conn;
 		}
 
@@ -480,6 +525,7 @@ namespace NGit.Transport
 		private bool IsSmartHttp(HttpURLConnection c, string service)
 		{
 			string expType = "application/x-" + service + "-advertisement";
+			//$NON-NLS-1$ //$NON-NLS-2$
 			string actType = c.GetContentType();
 			return expType.Equals(actType);
 		}
@@ -502,6 +548,7 @@ namespace NGit.Transport
 			PacketLineIn pckIn = new PacketLineIn(new UnionInputStream(new ByteArrayInputStream
 				(magic), @in));
 			string exp = "# service=" + service;
+			//$NON-NLS-1$
 			string act = pckIn.ReadString();
 			if (!exp.Equals(act))
 			{
@@ -575,6 +622,7 @@ namespace NGit.Transport
 							}
 							if (!s.StartsWith("P pack-") || !s.EndsWith(".pack"))
 							{
+								//$NON-NLS-1$ //$NON-NLS-2$
 								throw this.InvalidAdvertisement(s);
 							}
 							packs.AddItem(Sharpen.Runtime.Substring(s, 2));
@@ -620,6 +668,8 @@ namespace NGit.Transport
 				}
 			}
 
+			//$NON-NLS-1$
+			//$NON-NLS-1$
 			/// <exception cref="System.IO.IOException"></exception>
 			/// <exception cref="NGit.Errors.PackProtocolException"></exception>
 			internal virtual IDictionary<string, Ref> ReadAdvertisedImpl(BufferedReader br)
@@ -643,6 +693,7 @@ namespace NGit.Transport
 					id = ObjectId.FromString(Sharpen.Runtime.Substring(line, 0, tab));
 					if (name.EndsWith("^{}"))
 					{
+						//$NON-NLS-1$
 						name = Sharpen.Runtime.Substring(name, 0, name.Length - 3);
 						Ref prior = avail.Get(name);
 						if (prior == null)
@@ -653,6 +704,7 @@ namespace NGit.Transport
 						{
 							throw this.DuplicateAdvertisement(name + "^{}");
 						}
+						//$NON-NLS-1$
 						avail.Put(name, new ObjectIdRef.PeeledTag(RefStorage.NETWORK, name, prior.GetObjectId
 							(), id));
 					}
@@ -789,7 +841,9 @@ namespace NGit.Transport
 				this._enclosing = _enclosing;
 				this.serviceName = serviceName;
 				this.requestType = "application/x-" + serviceName + "-request";
+				//$NON-NLS-1$ //$NON-NLS-2$
 				this.responseType = "application/x-" + serviceName + "-result";
+				//$NON-NLS-1$ //$NON-NLS-2$
 				this.execute = new TransportHttp.Service.HttpExecuteStream(this);
 				this.@in = new UnionInputStream(this.execute);
 				this.@out = new TransportHttp.Service.HttpOutputStream(this);
@@ -798,9 +852,8 @@ namespace NGit.Transport
 			/// <exception cref="System.IO.IOException"></exception>
 			internal virtual void OpenStream()
 			{
-				this.conn = this._enclosing.HttpOpen(new Uri(this._enclosing.baseUrl, this.serviceName
-					));
-				this.conn.SetRequestMethod(HttpSupport.METHOD_POST);
+				this.conn = this._enclosing.HttpOpen(HttpSupport.METHOD_POST, new Uri(this._enclosing
+					.baseUrl, this.serviceName));
 				this.conn.SetInstanceFollowRedirects(false);
 				this.conn.SetDoOutput(true);
 				this.conn.SetRequestProperty(HttpSupport.HDR_CONTENT_TYPE, this.requestType);
@@ -863,6 +916,7 @@ namespace NGit.Transport
 					throw new TransportException(this._enclosing.uri, status + " " + this.conn.GetResponseMessage
 						());
 				}
+				//$NON-NLS-1$
 				string contentType = this.conn.GetContentType();
 				if (!this.responseType.Equals(contentType))
 				{

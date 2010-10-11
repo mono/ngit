@@ -1,3 +1,23 @@
+diff --git a/NGit.Test/NGit.Api/BranchCommandTest.cs b/NGit.Test/NGit.Api/BranchCommandTest.cs
+index 52630a6..766e99d 100644
+--- a/NGit.Test/NGit.Api/BranchCommandTest.cs
++++ b/NGit.Test/NGit.Api/BranchCommandTest.cs
+@@ -449,13 +449,13 @@ namespace NGit.Api
+ 		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
+ 		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
+ 		public virtual Ref CreateBranch(Git actGit, string name, bool force, string startPoint
+-			, CreateBranchCommand.SetupUpstreamMode mode)
++			, CreateBranchCommand.SetupUpstreamMode? mode)
+ 		{
+ 			CreateBranchCommand cmd = actGit.BranchCreate();
+ 			cmd.SetName(name);
+ 			cmd.SetForce(force);
+ 			cmd.SetStartPoint(startPoint);
+-			cmd.SetUpstreamMode(mode);
++			cmd.SetUpstreamMode(mode != null ? mode.Value : CreateBranchCommand.SetupUpstreamMode.NOT_SET);
+ 			return cmd.Call();
+ 		}
+ 	}
 diff --git a/NGit.Test/NGit.Diff/DiffPerformanceTest.cs b/NGit.Test/NGit.Diff/DiffPerformanceTest.cs
 index 53fc820..b531afa 100644
 --- a/NGit.Test/NGit.Diff/DiffPerformanceTest.cs
@@ -373,6 +393,22 @@ index dccc75c..a1f4d84 100644
  			NUnit.Framework.Assert.AreEqual("F\u00f6r fattare", c.GetAuthorIdent().GetName());
  			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044", c.GetShortMessage());
  			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044\n\nHi\n", c.GetFullMessage());
+diff --git a/NGit.Test/NGit.Storage.File/RefUpdateTest.cs b/NGit.Test/NGit.Storage.File/RefUpdateTest.cs
+index 482d715..ebd1ebd 100644
+--- a/NGit.Test/NGit.Storage.File/RefUpdateTest.cs
++++ b/NGit.Test/NGit.Storage.File/RefUpdateTest.cs
+@@ -930,9 +930,9 @@ namespace NGit.Storage.File
+ 		}
+ 
+ 		[System.Serializable]
+-		private class SubclassedId : ObjectId
++		internal class SubclassedId : ObjectId
+ 		{
+-			protected SubclassedId(AnyObjectId src) : base(src)
++			internal SubclassedId(AnyObjectId src) : base(src)
+ 			{
+ 			}
+ 		}
 diff --git a/NGit.Test/NGit.Storage.File/RepositorySetupWorkDirTest.cs b/NGit.Test/NGit.Storage.File/RepositorySetupWorkDirTest.cs
 index 8fc88e3..de824d0 100644
 --- a/NGit.Test/NGit.Storage.File/RepositorySetupWorkDirTest.cs
@@ -582,6 +618,20 @@ index 1dbb183..4915d13 100644
  			NUnit.Framework.Assert.AreEqual("bar/baz/qux/foo", conflictingEntries[0]);
  			NUnit.Framework.Assert.AreEqual("foo", conflictingEntries[1]);
  			GitIndex index2 = new GitIndex(db);
+diff --git a/NGit/NGit.Api/CreateBranchCommand.cs b/NGit/NGit.Api/CreateBranchCommand.cs
+index c9660e7..952155c 100644
+--- a/NGit/NGit.Api/CreateBranchCommand.cs
++++ b/NGit/NGit.Api/CreateBranchCommand.cs
+@@ -76,7 +76,8 @@ namespace NGit.Api
+ 		{
+ 			TRACK,
+ 			NOTRACK,
+-			SET_UPSTREAM
++			SET_UPSTREAM,
++			NOT_SET
+ 		}
+ 
+ 		/// <param name="repo"></param>
 diff --git a/NGit/NGit.Api/MergeCommand.cs b/NGit/NGit.Api/MergeCommand.cs
 index 6c6002e..24bbc97 100644
 --- a/NGit/NGit.Api/MergeCommand.cs
@@ -820,7 +870,7 @@ index b2d1191..23e993b 100644
  
  			private readonly MyersDiff<S> _enclosing;
 diff --git a/NGit/NGit.Diff/PatienceDiff.cs b/NGit/NGit.Diff/PatienceDiff.cs
-index 7f94d1e..7c36a80 100644
+index 2a249b2..5f5f3ae 100644
 --- a/NGit/NGit.Diff/PatienceDiff.cs
 +++ b/NGit/NGit.Diff/PatienceDiff.cs
 @@ -128,7 +128,7 @@ namespace NGit.Diff
@@ -1649,6 +1699,28 @@ index 14f5150..ee19789 100644
  
  		private bool startedOperation;
  
+diff --git a/NGit/NGit.Transport/HttpAuthMethod.cs b/NGit/NGit.Transport/HttpAuthMethod.cs
+index 72bd9f8..c0fc0dd 100644
+--- a/NGit/NGit.Transport/HttpAuthMethod.cs
++++ b/NGit/NGit.Transport/HttpAuthMethod.cs
+@@ -309,7 +309,7 @@ namespace NGit.Transport
+ 					int eq = auth.IndexOf('=', next);
+ 					if (eq < 0 || eq + 1 == auth.Length)
+ 					{
+-						return Sharpen.Collections.EmptyMap();
++						return Sharpen.Collections.EmptyMap<string, string>();
+ 					}
+ 					string name = Sharpen.Runtime.Substring(auth, next, eq);
+ 					string value;
+@@ -318,7 +318,7 @@ namespace NGit.Transport
+ 						int dq = auth.IndexOf('"', eq + 2);
+ 						if (dq < 0)
+ 						{
+-							return Sharpen.Collections.EmptyMap();
++							return Sharpen.Collections.EmptyMap<string, string>();
+ 						}
+ 						value = Sharpen.Runtime.Substring(auth, eq + 2, dq);
+ 						next = dq + 1;
 diff --git a/NGit/NGit.Transport/IndexPack.cs b/NGit/NGit.Transport/IndexPack.cs
 index 6b577d9..aa36af2 100644
 --- a/NGit/NGit.Transport/IndexPack.cs
@@ -2035,10 +2107,10 @@ index 2417967..f6fc2af 100644
  				this._enclosing = _enclosing;
  				try
 diff --git a/NGit/NGit.Transport/TransportHttp.cs b/NGit/NGit.Transport/TransportHttp.cs
-index 5fb10d0..071d91a 100644
+index 4b0893b..9b84c39 100644
 --- a/NGit/NGit.Transport/TransportHttp.cs
 +++ b/NGit/NGit.Transport/TransportHttp.cs
-@@ -554,7 +554,7 @@ namespace NGit.Transport
+@@ -601,7 +601,7 @@ namespace NGit.Transport
  			/// <exception cref="System.IO.IOException"></exception>
  			internal override WalkRemoteObjectDatabase OpenAlternate(string location)
  			{
@@ -2047,7 +2119,7 @@ index 5fb10d0..071d91a 100644
  			}
  
  			/// <exception cref="System.IO.IOException"></exception>
-@@ -699,7 +699,7 @@ namespace NGit.Transport
+@@ -751,7 +751,7 @@ namespace NGit.Transport
  		{
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SmartHttpFetchConnection(TransportHttp _enclosing, InputStream advertisement
@@ -2056,7 +2128,7 @@ index 5fb10d0..071d91a 100644
  			{
  				this._enclosing = _enclosing;
  				this.statelessRPC = true;
-@@ -712,7 +712,7 @@ namespace NGit.Transport
+@@ -764,7 +764,7 @@ namespace NGit.Transport
  			protected internal override void DoFetch(ProgressMonitor monitor, ICollection<Ref
  				> want, ICollection<ObjectId> have)
  			{
@@ -2065,7 +2137,7 @@ index 5fb10d0..071d91a 100644
  					);
  				this.Init(svc.@in, svc.@out);
  				base.DoFetch(monitor, want, have);
-@@ -725,7 +725,7 @@ namespace NGit.Transport
+@@ -777,7 +777,7 @@ namespace NGit.Transport
  		{
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SmartHttpPushConnection(TransportHttp _enclosing, InputStream advertisement
@@ -2074,7 +2146,7 @@ index 5fb10d0..071d91a 100644
  			{
  				this._enclosing = _enclosing;
  				this.statelessRPC = true;
-@@ -738,7 +738,7 @@ namespace NGit.Transport
+@@ -790,7 +790,7 @@ namespace NGit.Transport
  			protected internal override void DoPush(ProgressMonitor monitor, IDictionary<string
  				, RemoteRefUpdate> refUpdates)
  			{
@@ -2083,7 +2155,7 @@ index 5fb10d0..071d91a 100644
  					);
  				this.Init(svc.@in, svc.@out);
  				base.DoPush(monitor, refUpdates);
-@@ -876,7 +876,7 @@ namespace NGit.Transport
+@@ -930,7 +930,7 @@ namespace NGit.Transport
  
  			internal class HttpOutputStream : TemporaryBuffer
  			{

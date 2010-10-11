@@ -177,6 +177,60 @@ namespace NGit.Api
 
 		/// <summary>
 		/// Returns a command object to execute a
+		/// <code>Pull</code>
+		/// command
+		/// </summary>
+		/// <returns>
+		/// a
+		/// <see cref="PullCommand">PullCommand</see>
+		/// </returns>
+		public virtual PullCommand Pull()
+		{
+			return new PullCommand(repo);
+		}
+
+		/// <summary>Returns a command object used to create branches</summary>
+		/// <returns>
+		/// a
+		/// <see cref="CreateBranchCommand">CreateBranchCommand</see>
+		/// </returns>
+		public virtual CreateBranchCommand BranchCreate()
+		{
+			return new CreateBranchCommand(repo);
+		}
+
+		/// <summary>Returns a command object used to delete branches</summary>
+		/// <returns>
+		/// a
+		/// <see cref="DeleteBranchCommand">DeleteBranchCommand</see>
+		/// </returns>
+		public virtual DeleteBranchCommand BranchDelete()
+		{
+			return new DeleteBranchCommand(repo);
+		}
+
+		/// <summary>Returns a command object used to list branches</summary>
+		/// <returns>
+		/// a
+		/// <see cref="ListBranchCommand">ListBranchCommand</see>
+		/// </returns>
+		public virtual ListBranchCommand BranchList()
+		{
+			return new ListBranchCommand(repo);
+		}
+
+		/// <summary>Returns a command object used to rename branches</summary>
+		/// <returns>
+		/// a
+		/// <see cref="RenameBranchCommand">RenameBranchCommand</see>
+		/// </returns>
+		public virtual RenameBranchCommand BranchRename()
+		{
+			return new RenameBranchCommand(repo);
+		}
+
+		/// <summary>
+		/// Returns a command object to execute a
 		/// <code>Add</code>
 		/// command
 		/// </summary>
