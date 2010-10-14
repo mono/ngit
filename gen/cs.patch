@@ -1,8 +1,8 @@
 diff --git a/NGit.Test/NGit.Api/BranchCommandTest.cs b/NGit.Test/NGit.Api/BranchCommandTest.cs
-index 52630a6..766e99d 100644
+index 374e8cf..f17272e 100644
 --- a/NGit.Test/NGit.Api/BranchCommandTest.cs
 +++ b/NGit.Test/NGit.Api/BranchCommandTest.cs
-@@ -449,13 +449,13 @@ namespace NGit.Api
+@@ -463,13 +463,13 @@ namespace NGit.Api
  		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
  		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
  		public virtual Ref CreateBranch(Git actGit, string name, bool force, string startPoint
@@ -619,7 +619,7 @@ index 1dbb183..4915d13 100644
  			NUnit.Framework.Assert.AreEqual("foo", conflictingEntries[1]);
  			GitIndex index2 = new GitIndex(db);
 diff --git a/NGit/NGit.Api/CreateBranchCommand.cs b/NGit/NGit.Api/CreateBranchCommand.cs
-index c9660e7..952155c 100644
+index 005294a..e981e9f 100644
 --- a/NGit/NGit.Api/CreateBranchCommand.cs
 +++ b/NGit/NGit.Api/CreateBranchCommand.cs
 @@ -76,7 +76,8 @@ namespace NGit.Api
@@ -633,10 +633,10 @@ index c9660e7..952155c 100644
  
  		/// <param name="repo"></param>
 diff --git a/NGit/NGit.Api/MergeCommand.cs b/NGit/NGit.Api/MergeCommand.cs
-index 6c6002e..24bbc97 100644
+index 59d2f9a..f376d9c 100644
 --- a/NGit/NGit.Api/MergeCommand.cs
 +++ b/NGit/NGit.Api/MergeCommand.cs
-@@ -160,7 +160,7 @@ namespace NGit.Api
+@@ -157,7 +157,7 @@ namespace NGit.Api
  						repo.WriteMergeHeads(Arrays.AsList(@ref.GetObjectId()));
  						ThreeWayMerger merger = (ThreeWayMerger)mergeStrategy.NewMerger(repo);
  						bool noProblems;
@@ -728,18 +728,9 @@ index 5d9eb00..423e742 100644
  	}
  }
 diff --git a/NGit/NGit.Diff/DiffFormatter.cs b/NGit/NGit.Diff/DiffFormatter.cs
-index 92f47c0..68b1794 100644
+index b0fc30b..58ad140 100644
 --- a/NGit/NGit.Diff/DiffFormatter.cs
 +++ b/NGit/NGit.Diff/DiffFormatter.cs
-@@ -84,7 +84,7 @@ namespace NGit.Diff
- 
- 		private int abbreviationLength = 7;
- 
--		private DiffAlgorithm diffAlgorithm = MyersDiff.INSTANCE;
-+		private DiffAlgorithm diffAlgorithm = MyersDiff<Sequence>.INSTANCE;
- 
- 		private RawTextComparator comparator = RawTextComparator.DEFAULT;
- 
 @@ -511,7 +511,7 @@ namespace NGit.Diff
  					return Sharpen.Collections.SingletonList(ent);
  				}
@@ -750,7 +741,7 @@ index 92f47c0..68b1794 100644
  
  		private static bool IsRename(DiffEntry ent)
 diff --git a/NGit/NGit.Diff/HistogramDiff.cs b/NGit/NGit.Diff/HistogramDiff.cs
-index 6e2dade..a672402 100644
+index e6599f5..340f4bb 100644
 --- a/NGit/NGit.Diff/HistogramDiff.cs
 +++ b/NGit/NGit.Diff/HistogramDiff.cs
 @@ -101,7 +101,7 @@ namespace NGit.Diff
@@ -762,16 +753,7 @@ index 6e2dade..a672402 100644
  
  		/// <summary>Maximum number of positions to consider for a given element hash.</summary>
  		/// <remarks>
-@@ -136,7 +136,7 @@ namespace NGit.Diff
- 			maxChainLength = maxLen;
- 		}
- 
--		public override EditList DiffNonCommon<S, _T1>(SequenceComparator<_T1> cmp, S a, 
-+		public override EditList DiffNonCommon<S>(SequenceComparator<S> cmp, S a, 
- 			S b)
- 		{
- 			HistogramDiff.State<S> s = new HistogramDiff.State<S>(this, new HashedSequencePair
-@@ -149,9 +149,9 @@ namespace NGit.Diff
+@@ -146,9 +146,9 @@ namespace NGit.Diff
  		{
  			private readonly HashedSequenceComparator<S> cmp;
  
@@ -783,44 +765,48 @@ index 6e2dade..a672402 100644
  
  			/// <summary>Result edits we have determined that must be made to convert a to b.</summary>
  			/// <remarks>Result edits we have determined that must be made to convert a to b.</remarks>
-@@ -192,10 +192,10 @@ namespace NGit.Diff
- 					if (this._enclosing.fallback != null)
- 					{
- 						SubsequenceComparator<HashedSequence<S>> cs = this.Subcmp();
--						Subsequence<HashedSequence<S>> @as = Subsequence.A(this.a, r);
--						Subsequence<HashedSequence<S>> bs = Subsequence.B(this.b, r);
-+						Subsequence<HashedSequence<S>> @as = Subsequence<S>.A(this.a, r);
-+						Subsequence<HashedSequence<S>> bs = Subsequence<S>.B(this.b, r);
- 						EditList res = this._enclosing.fallback.DiffNonCommon(cs, @as, bs);
--						Sharpen.Collections.AddAll(this.edits, Subsequence.ToBase(res, @as, bs));
-+						Sharpen.Collections.AddAll(this.edits, Subsequence<S>.ToBase(res, @as, bs));
- 					}
- 					else
- 					{
+@@ -197,10 +197,10 @@ namespace NGit.Diff
+ 						if (this._enclosing.fallback != null)
+ 						{
+ 							SubsequenceComparator<HashedSequence<S>> cs = this.Subcmp();
+-							Subsequence<HashedSequence<S>> @as = Subsequence.A(this.a, r);
+-							Subsequence<HashedSequence<S>> bs = Subsequence.B(this.b, r);
++							Subsequence<HashedSequence<S>> @as = Subsequence<S>.A(this.a, r);
++							Subsequence<HashedSequence<S>> bs = Subsequence<S>.B(this.b, r);
+ 							EditList res = this._enclosing.fallback.DiffNonCommon(cs, @as, bs);
+-							Sharpen.Collections.AddAll(this.edits, Subsequence.ToBase(res, @as, bs));
++							Sharpen.Collections.AddAll(this.edits, Subsequence<S>.ToBase(res, @as, bs));
+ 						}
+ 						else
+ 						{
+diff --git a/NGit/NGit.Diff/LowLevelDiffAlgorithm.cs b/NGit/NGit.Diff/LowLevelDiffAlgorithm.cs
+index 0515c5f..70c54dd 100644
+--- a/NGit/NGit.Diff/LowLevelDiffAlgorithm.cs
++++ b/NGit/NGit.Diff/LowLevelDiffAlgorithm.cs
+@@ -50,7 +50,7 @@ namespace NGit.Diff
+ 	/// <remarks>Compares two sequences primarily based upon hash codes.</remarks>
+ 	public abstract class LowLevelDiffAlgorithm : DiffAlgorithm
+ 	{
+-		public override EditList DiffNonCommon<S, _T1>(SequenceComparator<_T1> cmp, S a, 
++		public override EditList DiffNonCommon<S>(SequenceComparator<S> cmp, S a, 
+ 			S b)
+ 		{
+ 			HashedSequencePair<S> p = new HashedSequencePair<S>(cmp, a, b);
 diff --git a/NGit/NGit.Diff/MyersDiff.cs b/NGit/NGit.Diff/MyersDiff.cs
-index b2d1191..23e993b 100644
+index 98fc61f..1c55935 100644
 --- a/NGit/NGit.Diff/MyersDiff.cs
 +++ b/NGit/NGit.Diff/MyersDiff.cs
-@@ -101,7 +101,7 @@ namespace NGit.Diff
- 			{
- 			}
- 
--			public override EditList DiffNonCommon<S, _T1>(SequenceComparator<_T1> cmp, S a, 
-+			public override EditList DiffNonCommon<S>(SequenceComparator<S> cmp, S a, 
- 				S b)
- 			{
- 				return new NGit.Diff.MyersDiff<S>(cmp, a, b).edits;
-@@ -132,7 +132,7 @@ namespace NGit.Diff
- 
- 		private MyersDiff(SequenceComparator<S> cmp, S a, S b)
+@@ -134,7 +134,7 @@ namespace NGit.Diff
+ 		private MyersDiff(EditList edits, HashedSequenceComparator<S> cmp, HashedSequence
+ 			<S> a, HashedSequence<S> b, Edit region)
  		{
 -			middle = new MyersDiff.MiddleEdit(this);
 +			middle = new MyersDiff<S>.MiddleEdit(this);
- 			HashedSequencePair<S> pair;
- 			pair = new HashedSequencePair<S>(cmp, a, b);
- 			this.cmp = pair.GetComparator();
-@@ -141,7 +141,7 @@ namespace NGit.Diff
- 			CalculateEdits();
+ 			this.edits = edits;
+ 			this.cmp = cmp;
+ 			this.a = a;
+@@ -142,7 +142,7 @@ namespace NGit.Diff
+ 			CalculateEdits(region);
  		}
  
 -		internal MyersDiff.MiddleEdit middle;
@@ -828,7 +814,7 @@ index b2d1191..23e993b 100644
  
  		// TODO: use ThreadLocal for future multi-threaded operations
  		/// <summary>Entrypoint into the algorithm this class is all about.</summary>
-@@ -245,9 +245,9 @@ namespace NGit.Diff
+@@ -246,9 +246,9 @@ namespace NGit.Diff
  				}
  			}
  
@@ -840,7 +826,7 @@ index b2d1191..23e993b 100644
  
  			protected internal int beginA;
  
-@@ -457,7 +457,7 @@ namespace NGit.Diff
+@@ -458,7 +458,7 @@ namespace NGit.Diff
  				private readonly MiddleEdit _enclosing;
  			}
  
@@ -849,7 +835,7 @@ index b2d1191..23e993b 100644
  			{
  				internal sealed override int Snake(int k, int x)
  				{
-@@ -529,7 +529,7 @@ namespace NGit.Diff
+@@ -530,7 +530,7 @@ namespace NGit.Diff
  				private readonly MiddleEdit _enclosing;
  			}
  
@@ -858,7 +844,7 @@ index b2d1191..23e993b 100644
  			{
  				internal sealed override int Snake(int k, int x)
  				{
-@@ -604,8 +604,8 @@ namespace NGit.Diff
+@@ -605,8 +605,8 @@ namespace NGit.Diff
  			public MiddleEdit(MyersDiff<S> _enclosing)
  			{
  				this._enclosing = _enclosing;
@@ -1141,7 +1127,7 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index 876a368..2c99082 100644
+index d34e03c..07c2117 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
 @@ -503,7 +503,7 @@ namespace NGit.Merge

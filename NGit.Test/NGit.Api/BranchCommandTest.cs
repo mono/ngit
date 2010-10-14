@@ -303,6 +303,13 @@ namespace NGit.Api
 			// the pull configuration should be gone after deletion
 			NUnit.Framework.Assert.IsNull(localGit.GetRepository().GetConfig().GetString("branch"
 				, "newFromRemote", "remote"));
+			CreateBranch(localGit, "newFromRemote", false, remote.GetName(), null);
+			NUnit.Framework.Assert.AreEqual("origin", localGit.GetRepository().GetConfig().GetString
+				("branch", "newFromRemote", "remote"));
+			localGit.BranchDelete().SetBranchNames("refs/heads/newFromRemote").Call();
+			// the pull configuration should be gone after deletion
+			NUnit.Framework.Assert.IsNull(localGit.GetRepository().GetConfig().GetString("branch"
+				, "newFromRemote", "remote"));
 			// use --no-track
 			CreateBranch(localGit, "newFromRemote", false, remote.GetName(), CreateBranchCommand.SetupUpstreamMode
 				.NOTRACK);
@@ -326,7 +333,7 @@ namespace NGit.Api
 				.TRACK);
 			NUnit.Framework.Assert.AreEqual(".", localGit.GetRepository().GetConfig().GetString
 				("branch", "newFromMaster", "remote"));
-			localGit.BranchDelete().SetBranchNames("newFromMaster").Call();
+			localGit.BranchDelete().SetBranchNames("refs/heads/newFromMaster").Call();
 			// the pull configuration should be gone after deletion
 			NUnit.Framework.Assert.IsNull(localGit.GetRepository().GetConfig().GetString("branch"
 				, "newFromRemote", "remote"));
@@ -444,8 +451,15 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCreationImplicitStart()
+		{
+			git.BranchCreate().SetName("topic").Call();
+		}
+
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.RefAlreadyExistsException"></exception>
-		/// <exception cref="NGit.Errors.AmbiguousObjectException"></exception>
 		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
 		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
 		public virtual Ref CreateBranch(Git actGit, string name, bool force, string startPoint

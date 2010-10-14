@@ -448,7 +448,7 @@ index e0b5389..c4f8f21 100644
 +	public abstract String name();
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index ecec033..2c8759c 100644
+index a8ab433..bb01eb9 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 @@ -98,7 +98,7 @@
