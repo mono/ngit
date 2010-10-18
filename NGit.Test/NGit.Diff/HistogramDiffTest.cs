@@ -86,7 +86,7 @@ namespace NGit.Diff
 
 		// INSERT "SRR"
 		[NUnit.Framework.Test]
-		public virtual void TestExceedsChainLenght_DuringScanOfA()
+		public virtual void TestExceedsChainLength_DuringScanOfA()
 		{
 			HistogramDiff hd = new HistogramDiff();
 			hd.SetFallbackAlgorithm(null);
@@ -115,7 +115,7 @@ namespace NGit.Diff
 		}
 
 		[NUnit.Framework.Test]
-		public virtual void TestExceedsChainLenght_DuringScanOfB()
+		public virtual void TestExceedsChainLength_DuringScanOfB()
 		{
 			HistogramDiff hd = new HistogramDiff();
 			hd.SetFallbackAlgorithm(null);

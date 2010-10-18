@@ -41,53 +41,28 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit;
-using NGit.Diff;
+using System;
+using NGit.Api.Errors;
 using Sharpen;
 
-namespace NGit.Diff
+namespace NGit.Api.Errors
 {
-	[NUnit.Framework.TestFixture]
-	public class RawTextIgnoreAllWhitespaceTest
+	/// <summary>The commit to be cherry-pick'ed did not have exactly one parent</summary>
+	[System.Serializable]
+	public class MultipleParentsNotAllowedException : GitAPIException
 	{
-		private readonly RawTextComparator cmp = RawTextComparator.WS_IGNORE_ALL;
+		private const long serialVersionUID = 1L;
 
-		[NUnit.Framework.Test]
-		public virtual void TestEqualsWithoutWhitespace()
+		/// <param name="message"></param>
+		/// <param name="cause"></param>
+		public MultipleParentsNotAllowedException(string message, Exception cause) : base
+			(message, cause)
 		{
-			RawText a = new RawText(Constants.EncodeASCII("foo-a\nfoo-b\nfoo\n"));
-			RawText b = new RawText(Constants.EncodeASCII("foo-b\nfoo-c\nf\n"));
-			NUnit.Framework.Assert.AreEqual(3, a.Size());
-			NUnit.Framework.Assert.AreEqual(3, b.Size());
-			// foo-a != foo-b
-			NUnit.Framework.Assert.IsFalse(cmp.Equals(a, 0, b, 0));
-			NUnit.Framework.Assert.IsFalse(cmp.Equals(b, 0, a, 0));
-			// foo-b == foo-b
-			NUnit.Framework.Assert.IsTrue(cmp.Equals(a, 1, b, 0));
-			NUnit.Framework.Assert.IsTrue(cmp.Equals(b, 0, a, 1));
-			// foo != f
-			NUnit.Framework.Assert.IsFalse(cmp.Equals(a, 2, b, 2));
-			NUnit.Framework.Assert.IsFalse(cmp.Equals(b, 2, a, 2));
 		}
 
-		[NUnit.Framework.Test]
-		public virtual void TestEqualsWithWhitespace()
+		/// <param name="message"></param>
+		public MultipleParentsNotAllowedException(string message) : base(message)
 		{
-			RawText a = new RawText(Constants.EncodeASCII("foo-a\n         \n a b c\na      \n"
-				));
-			RawText b = new RawText(Constants.EncodeASCII("foo-a        b\n\nab  c\na\n"));
-			// "foo-a" != "foo-a        b"
-			NUnit.Framework.Assert.IsFalse(cmp.Equals(a, 0, b, 0));
-			NUnit.Framework.Assert.IsFalse(cmp.Equals(b, 0, a, 0));
-			// "         " == ""
-			NUnit.Framework.Assert.IsTrue(cmp.Equals(a, 1, b, 1));
-			NUnit.Framework.Assert.IsTrue(cmp.Equals(b, 1, a, 1));
-			// " a b c" == "ab  c"
-			NUnit.Framework.Assert.IsTrue(cmp.Equals(a, 2, b, 2));
-			NUnit.Framework.Assert.IsTrue(cmp.Equals(b, 2, a, 2));
-			// "a      " == "a"
-			NUnit.Framework.Assert.IsTrue(cmp.Equals(a, 3, b, 3));
-			NUnit.Framework.Assert.IsTrue(cmp.Equals(b, 3, a, 3));
 		}
 	}
 }

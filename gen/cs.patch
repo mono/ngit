@@ -54,7 +54,7 @@ index 813e9dd..5989194 100644
  			NUnit.Framework.Assert.IsTrue(l.Equals(new EditList()));
  			NUnit.Framework.Assert.IsFalse(l.Equals(string.Empty));
 diff --git a/NGit.Test/NGit.Diff/HistogramDiffTest.cs b/NGit.Test/NGit.Diff/HistogramDiffTest.cs
-index 39fb60b..f41740c 100644
+index 4a0bebb..a8ca519 100644
 --- a/NGit.Test/NGit.Diff/HistogramDiffTest.cs
 +++ b/NGit.Test/NGit.Diff/HistogramDiffTest.cs
 @@ -141,11 +141,11 @@ namespace NGit.Diff
@@ -855,60 +855,6 @@ index 98fc61f..1c55935 100644
  			}
  
  			private readonly MyersDiff<S> _enclosing;
-diff --git a/NGit/NGit.Diff/PatienceDiff.cs b/NGit/NGit.Diff/PatienceDiff.cs
-index 2a249b2..5f5f3ae 100644
---- a/NGit/NGit.Diff/PatienceDiff.cs
-+++ b/NGit/NGit.Diff/PatienceDiff.cs
-@@ -128,7 +128,7 @@ namespace NGit.Diff
- 			fallback = alg;
- 		}
- 
--		public override EditList DiffNonCommon<S, _T1>(SequenceComparator<_T1> cmp, S a, 
-+		public override EditList DiffNonCommon<S>(SequenceComparator<S> cmp, S a, 
- 			S b)
- 		{
- 			PatienceDiff.State<S> s = new PatienceDiff.State<S>(this, new HashedSequencePair<
-@@ -141,9 +141,9 @@ namespace NGit.Diff
- 		{
- 			private readonly HashedSequenceComparator<S> cmp;
- 
--			private readonly HashedSequence<S> a;
-+			internal readonly HashedSequence<S> a;
- 
--			private readonly HashedSequence<S> b;
-+			internal readonly HashedSequence<S> b;
- 
- 			/// <summary>Result edits we have determined that must be made to convert a to b.</summary>
- 			/// <remarks>Result edits we have determined that must be made to convert a to b.</remarks>
-@@ -180,10 +180,10 @@ namespace NGit.Diff
- 						pCommon = null;
- 						p = null;
- 						SubsequenceComparator<HashedSequence<S>> cs = this.Subcmp();
--						Subsequence<HashedSequence<S>> @as = Subsequence.A(this.a, r);
--						Subsequence<HashedSequence<S>> bs = Subsequence.B(this.b, r);
-+						Subsequence<HashedSequence<S>> @as = Subsequence<S>.A(this.a, r);
-+						Subsequence<HashedSequence<S>> bs = Subsequence<S>.B(this.b, r);
- 						EditList res = this._enclosing.fallback.DiffNonCommon(cs, @as, bs);
--						Sharpen.Collections.AddAll(this.edits, Subsequence.ToBase(res, @as, bs));
-+						Sharpen.Collections.AddAll(this.edits, Subsequence<S>.ToBase(res, @as, bs));
- 					}
- 					else
- 					{
-diff --git a/NGit/NGit.Dircache/DirCacheCheckout.cs b/NGit/NGit.Dircache/DirCacheCheckout.cs
-index 7df47ba..7d679b3 100644
---- a/NGit/NGit.Dircache/DirCacheCheckout.cs
-+++ b/NGit/NGit.Dircache/DirCacheCheckout.cs
-@@ -280,8 +280,8 @@ namespace NGit.Dircache
- 					{
- 						// ... and the working dir contained a file or folder ->
- 						// add it to the removed set and remove it from conflicts set
--						Remove(i.GetEntryPathString());
--						conflicts.Remove(i.GetEntryPathString());
-+						Remove(f.GetEntryPathString());
-+						conflicts.Remove(f.GetEntryPathString());
- 					}
- 				}
- 				else
 diff --git a/NGit/NGit.Dircache/DirCacheEntry.cs b/NGit/NGit.Dircache/DirCacheEntry.cs
 index 3009464..c473055 100644
 --- a/NGit/NGit.Dircache/DirCacheEntry.cs

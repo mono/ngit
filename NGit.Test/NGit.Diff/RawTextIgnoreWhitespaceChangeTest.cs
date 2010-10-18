@@ -55,8 +55,8 @@ namespace NGit.Diff
 		[NUnit.Framework.Test]
 		public virtual void TestEqualsWithoutWhitespace()
 		{
-			RawText a = new RawText(cmp, Constants.EncodeASCII("foo-a\nfoo-b\nfoo\n"));
-			RawText b = new RawText(cmp, Constants.EncodeASCII("foo-b\nfoo-c\nf\n"));
+			RawText a = new RawText(Constants.EncodeASCII("foo-a\nfoo-b\nfoo\n"));
+			RawText b = new RawText(Constants.EncodeASCII("foo-b\nfoo-c\nf\n"));
 			NUnit.Framework.Assert.AreEqual(3, a.Size());
 			NUnit.Framework.Assert.AreEqual(3, b.Size());
 			// foo-a != foo-b
@@ -73,9 +73,9 @@ namespace NGit.Diff
 		[NUnit.Framework.Test]
 		public virtual void TestEqualsWithWhitespace()
 		{
-			RawText a = new RawText(cmp, Constants.EncodeASCII("foo-a\n         \n a b c\na      \n  foo\na  b  c\n"
+			RawText a = new RawText(Constants.EncodeASCII("foo-a\n         \n a b c\na      \n  foo\na  b  c\n"
 				));
-			RawText b = new RawText(cmp, Constants.EncodeASCII("foo-a        b\n\nab  c\na\nfoo\na b     c  \n"
+			RawText b = new RawText(Constants.EncodeASCII("foo-a        b\n\nab  c\na\nfoo\na b     c  \n"
 				));
 			// "foo-a" != "foo-a        b"
 			NUnit.Framework.Assert.IsFalse(cmp.Equals(a, 0, b, 0));

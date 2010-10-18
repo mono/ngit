@@ -455,6 +455,8 @@
     <Compile Include="NGit.Api.Errors\RefAlreadyExistsException.cs" />
     <Compile Include="NGit.Api.Errors\RefNotFoundException.cs" />
     <Compile Include="NGit.Diff\LowLevelDiffAlgorithm.cs" />
+    <Compile Include="NGit.Api\CherryPickCommand.cs" />
+    <Compile Include="NGit.Api.Errors\MultipleParentsNotAllowedException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
