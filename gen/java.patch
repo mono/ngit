@@ -513,10 +513,10 @@ index a95303b..c67652f 100644
  	static final int SORT_COMMIT_TIME_DESC = 1 << 0;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
-index 8bd3751..42dc11f 100644
+index 4e9f5e9..0ba5ba8 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
-@@ -56,7 +56,7 @@
+@@ -57,7 +57,7 @@
  import org.eclipse.jgit.storage.pack.ObjectToPack;
  import org.eclipse.jgit.storage.pack.PackWriter;
  
@@ -616,10 +616,10 @@ index 19f5748..53a30b3 100644
  	private boolean thinPack;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-index f5cdac9..f8d591a 100644
+index 716416a..77127c6 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-@@ -702,11 +702,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
+@@ -697,11 +697,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
  			if (n < 0)
  				break;
  			if (origRemaining != 0) {
@@ -635,7 +635,7 @@ index f5cdac9..f8d591a 100644
  			} else
  				tailDigest.update(buf, 0, n);
  
-@@ -974,7 +974,6 @@ private void inflate(final Source src, final long inflatedSize,
+@@ -969,7 +969,6 @@ private void inflate(final Source src, final long inflatedSize,
  			long cnt = 0;
  			int p = fill(src, 24);
  			inf.setInput(buf, p, bAvail);

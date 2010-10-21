@@ -1413,10 +1413,10 @@ index 54058ce..9bb6bbd 100644
  		private readonly FS fs;
  
 diff --git a/NGit/NGit.Storage.File/ObjectDirectory.cs b/NGit/NGit.Storage.File/ObjectDirectory.cs
-index eaf8c9f..e0a9fd8 100644
+index c5b8c92..5e68022 100644
 --- a/NGit/NGit.Storage.File/ObjectDirectory.cs
 +++ b/NGit/NGit.Storage.File/ObjectDirectory.cs
-@@ -783,9 +783,9 @@ SEARCH_break: ;
+@@ -786,9 +786,9 @@ SEARCH_break: ;
  			string[] nameList = packDirectory.List();
  			if (nameList == null)
  			{
@@ -1428,7 +1428,7 @@ index eaf8c9f..e0a9fd8 100644
  			foreach (string name in nameList)
  			{
  				if (name.StartsWith("pack-"))
-@@ -875,7 +875,7 @@ SEARCH_break: ;
+@@ -878,7 +878,7 @@ SEARCH_break: ;
  		{
  			/// <summary>Last wall-clock time the directory was read.</summary>
  			/// <remarks>Last wall-clock time the directory was read.</remarks>
@@ -1654,10 +1654,10 @@ index 72bd9f8..c0fc0dd 100644
  						value = Sharpen.Runtime.Substring(auth, eq + 2, dq);
  						next = dq + 1;
 diff --git a/NGit/NGit.Transport/IndexPack.cs b/NGit/NGit.Transport/IndexPack.cs
-index 6b577d9..aa36af2 100644
+index e6e3a6f..a8c6fda 100644
 --- a/NGit/NGit.Transport/IndexPack.cs
 +++ b/NGit/NGit.Transport/IndexPack.cs
-@@ -1162,7 +1162,9 @@ namespace NGit.Transport
+@@ -1154,7 +1154,9 @@ namespace NGit.Transport
  				inf.SetInput(buf, p, bAvail);
  				for (; ; )
  				{
@@ -1668,7 +1668,7 @@ index 6b577d9..aa36af2 100644
  					if (r == 0)
  					{
  						if (inf.IsFinished)
-@@ -1181,8 +1183,9 @@ namespace NGit.Transport
+@@ -1173,8 +1175,9 @@ namespace NGit.Transport
  						}
  						else
  						{
