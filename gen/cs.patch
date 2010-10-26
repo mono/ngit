@@ -1478,10 +1478,10 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index f4e95c6..c6f3ecf 100644
+index 8363cd5..d7a8532 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
-@@ -303,7 +303,7 @@ namespace NGit.Storage.File
+@@ -322,7 +322,7 @@ namespace NGit.Storage.File
  
  		private RefList<Ref> Upcast<_T0>(RefList<_T0> loose) where _T0:Ref
  		{
@@ -1490,7 +1490,7 @@ index f4e95c6..c6f3ecf 100644
  		}
  
  		private class LooseScanner
-@@ -1043,7 +1043,7 @@ namespace NGit.Storage.File
+@@ -1062,7 +1062,7 @@ namespace NGit.Storage.File
  			if (IsSymRef(buf, n))
  			{
  				// trim trailing whitespace
@@ -1499,7 +1499,7 @@ index f4e95c6..c6f3ecf 100644
  				{
  					n--;
  				}
-@@ -1068,7 +1068,7 @@ namespace NGit.Storage.File
+@@ -1087,7 +1087,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{
@@ -1632,7 +1632,7 @@ index 14f5150..ee19789 100644
  		private bool startedOperation;
  
 diff --git a/NGit/NGit.Transport/HttpAuthMethod.cs b/NGit/NGit.Transport/HttpAuthMethod.cs
-index 72bd9f8..c0fc0dd 100644
+index 580f92b..7b8279d 100644
 --- a/NGit/NGit.Transport/HttpAuthMethod.cs
 +++ b/NGit/NGit.Transport/HttpAuthMethod.cs
 @@ -309,7 +309,7 @@ namespace NGit.Transport

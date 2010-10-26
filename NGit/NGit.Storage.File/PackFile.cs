@@ -76,7 +76,8 @@ namespace NGit.Storage.File
 
 		/// <summary>Sorts PackFiles to be most recently created to least recently created.</summary>
 		/// <remarks>Sorts PackFiles to be most recently created to least recently created.</remarks>
-		public static IComparer<NGit.Storage.File.PackFile> SORT = new _IComparer_90();
+		public static readonly IComparer<NGit.Storage.File.PackFile> SORT = new _IComparer_90
+			();
 
 		private readonly FilePath idxFile;
 
