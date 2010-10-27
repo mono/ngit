@@ -266,7 +266,15 @@ namespace NGit.Dircache
 		{
 			if (m != null)
 			{
-				Update(m.GetEntryPathString(), m.GetEntryObjectId(), m.GetEntryFileMode());
+				if (i == null || f == null || !m.IdEqual(i) || f.IsModified(i.GetDirCacheEntry(), 
+					true, Config_filemode(), repo.FileSystem))
+				{
+					Update(m.GetEntryPathString(), m.GetEntryObjectId(), m.GetEntryFileMode());
+				}
+				else
+				{
+					Keep(i.GetDirCacheEntry());
+				}
 			}
 			else
 			{
