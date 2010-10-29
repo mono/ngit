@@ -544,7 +544,6 @@ namespace NGit.Dircache
 					case unchecked((int)(0xFDF)):
 					{
 						// 7 8 9
-						dce = i.GetDirCacheEntry();
 						if (hId.Equals(mId))
 						{
 							if (IsModified(name))

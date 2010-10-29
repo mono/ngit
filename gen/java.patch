@@ -110,10 +110,10 @@ index 8c4bc22..0000000
 -	}
 -}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-index 2099352..dad224a 100644
+index 045fecd..159a4cf 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-@@ -254,7 +254,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
+@@ -255,7 +255,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
  			}
  		}
  		int currentConflict = -1;

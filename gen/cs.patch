@@ -646,7 +646,7 @@ index 59d2f9a..f376d9c 100644
  						if (merger is ResolveMerger)
  						{
 diff --git a/NGit/NGit.Api/MergeCommandResult.cs b/NGit/NGit.Api/MergeCommandResult.cs
-index 32553fb..870be8e 100644
+index 01c00a4..9f02842 100644
 --- a/NGit/NGit.Api/MergeCommandResult.cs
 +++ b/NGit/NGit.Api/MergeCommandResult.cs
 @@ -90,7 +90,7 @@ namespace NGit.Api
@@ -667,6 +667,15 @@ index 32553fb..870be8e 100644
  		{
  			this.newHead = newHead;
  			this.mergedCommits = mergedCommits;
+@@ -126,7 +126,7 @@ namespace NGit.Api
+ 			this.description = description;
+ 			if (lowLevelResults != null)
+ 			{
+-				foreach (KeyValuePair<string, NGit.Merge.MergeResult<object>> result in lowLevelResults
++				foreach (KeyValuePair<string, NGit.Merge.MergeResult<Sequence>> result in lowLevelResults
+ 					.EntrySet())
+ 				{
+ 					AddConflict(result.Key, result.Value);
 diff --git a/NGit/NGit.Api/PushCommand.cs b/NGit/NGit.Api/PushCommand.cs
 index 52bba89..cac2d54 100644
 --- a/NGit/NGit.Api/PushCommand.cs
@@ -979,6 +988,19 @@ index 7e27a0b..f70b645 100644
  			}
  			else
  			{
+diff --git a/NGit/NGit.Ignore/IgnoreRule.cs b/NGit/NGit.Ignore/IgnoreRule.cs
+index 963fda9..1857bb1 100644
+--- a/NGit/NGit.Ignore/IgnoreRule.cs
++++ b/NGit/NGit.Ignore/IgnoreRule.cs
+@@ -125,7 +125,7 @@ namespace NGit.Ignore
+ 			{
+ 				try
+ 				{
+-					matcher = new FileNameMatcher(pattern, char.ValueOf('/'));
++					matcher = new FileNameMatcher(pattern, '/');
+ 				}
+ 				catch (InvalidPatternException e)
+ 				{
 diff --git a/NGit/NGit.Merge/MergeAlgorithm.cs b/NGit/NGit.Merge/MergeAlgorithm.cs
 index ed1a9f2..71dd0c7 100644
 --- a/NGit/NGit.Merge/MergeAlgorithm.cs
@@ -1144,7 +1166,7 @@ index 130f172..3d13754 100644
  
  		/// <returns>number of ancestor revisions mentioned in this diff.</returns>
 diff --git a/NGit/NGit.Patch/FileHeader.cs b/NGit/NGit.Patch/FileHeader.cs
-index 2eda4eb..43d7ca8 100644
+index 19a5a10..8a5004b 100644
 --- a/NGit/NGit.Patch/FileHeader.cs
 +++ b/NGit/NGit.Patch/FileHeader.cs
 @@ -348,7 +348,7 @@ namespace NGit.Patch

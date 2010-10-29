@@ -179,3 +179,9 @@ update-source:
 update-patch: update-source validate-convert
 
 
+commit:
+	git show master:gen/lastrev > prevrev
+	echo "Updated from JGit" > msg
+	$(JGIT_GIT) log "--format=format:----------------------------------------------------%nJGit commit %H%n%B" `cat $(prefix)/prevrev`..`cat $(prefix)/lastrev` >> $(prefix)/msg
+	git commit -a -F msg
+

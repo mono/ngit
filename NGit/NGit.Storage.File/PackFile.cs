@@ -718,7 +718,7 @@ namespace NGit.Storage.File
 					, packCnt, idx.GetObjectCount(), GetPackFile()));
 			}
 			fd.Seek(length - 20);
-			fd.Read(buf, 0, 20);
+			fd.ReadFully(buf, 0, 20);
 			if (!Arrays.Equals(buf, packChecksum))
 			{
 				throw new PackMismatchException(MessageFormat.Format(JGitText.Get().packObjectCountMismatch

@@ -180,10 +180,7 @@ namespace NGit.Api
 				}
 				FetchCommand fetch = new FetchCommand(repo);
 				fetch.SetRemote(remote);
-				if (monitor != null)
-				{
-					fetch.SetProgressMonitor(monitor);
-				}
+				fetch.SetProgressMonitor(monitor);
 				fetch.SetTimeout(this.timeout);
 				fetchRes = fetch.Call();
 			}
