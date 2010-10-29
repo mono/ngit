@@ -107,6 +107,8 @@ namespace NGit.Merge
 
 		internal string replace_BDE_by_ZZY = A + Z + C + Z + Y + F + G + H + I + J;
 
+		internal string delete_C = A + B + D + E + F + G + H + I + J;
+
 		// the texts which are used in this merge-tests are constructed by
 		// concatenating fixed chunks of text defined by the String constants
 		// A..Y. The common base text is always the text A+B+C+D+E+F+G+H+I+J.
@@ -224,6 +226,19 @@ namespace NGit.Merge
 		{
 			NUnit.Framework.Assert.AreEqual(replace_C_by_Z, Merge(@base, replace_C_by_Z, replace_C_by_Z
 				));
+		}
+
+		/// <summary>Check that a deleted vs.</summary>
+		/// <remarks>
+		/// Check that a deleted vs. a modified line shows up as conflict (see Bug
+		/// 328551)
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDeleteVsModify()
+		{
+			NUnit.Framework.Assert.AreEqual(A + B + XXX_0 + XXX_1 + Z + XXX_2 + D + E + F + G
+				 + H + I + J, Merge(@base, delete_C, replace_C_by_Z));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

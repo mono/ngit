@@ -1016,6 +1016,15 @@ namespace NGit.Storage.File
 			{
 				return packed.Get(name);
 			}
+			// check whether the found new ref is the an additional ref. These refs
+			// should not go into looseRefs
+			for (int i = 0; i < additionalRefsNames.Length; i++)
+			{
+				if (name.Equals(additionalRefsNames[i]))
+				{
+					return n_1;
+				}
+			}
 			if (looseRefs.CompareAndSet(curList, curList.Add(idx, n_1)))
 			{
 				modCnt.IncrementAndGet();

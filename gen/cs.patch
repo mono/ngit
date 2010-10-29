@@ -278,10 +278,10 @@ index b854b38..af98a99 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-index 6e722f6..4ec5340 100644
+index b9f17f0..38acb02 100644
 --- a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
 +++ b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-@@ -229,7 +229,7 @@ namespace NGit.Merge
+@@ -244,7 +244,7 @@ namespace NGit.Merge
  		/// <exception cref="System.IO.IOException"></exception>
  		private string Merge(string commonBase, string ours, string theirs)
  		{
@@ -793,7 +793,7 @@ index 0515c5f..70c54dd 100644
  		{
  			HashedSequencePair<S> p = new HashedSequencePair<S>(cmp, a, b);
 diff --git a/NGit/NGit.Diff/MyersDiff.cs b/NGit/NGit.Diff/MyersDiff.cs
-index 98fc61f..1c55935 100644
+index a986d08..3d96d78 100644
 --- a/NGit/NGit.Diff/MyersDiff.cs
 +++ b/NGit/NGit.Diff/MyersDiff.cs
 @@ -134,7 +134,7 @@ namespace NGit.Diff
@@ -980,7 +980,7 @@ index 7e27a0b..f70b645 100644
  			else
  			{
 diff --git a/NGit/NGit.Merge/MergeAlgorithm.cs b/NGit/NGit.Merge/MergeAlgorithm.cs
-index f0add76..859b13e 100644
+index ed1a9f2..71dd0c7 100644
 --- a/NGit/NGit.Merge/MergeAlgorithm.cs
 +++ b/NGit/NGit.Merge/MergeAlgorithm.cs
 @@ -92,10 +92,10 @@ namespace NGit.Merge
@@ -1478,7 +1478,7 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index 8363cd5..d7a8532 100644
+index c994589..6a64649 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
 @@ -322,7 +322,7 @@ namespace NGit.Storage.File
@@ -1490,7 +1490,7 @@ index 8363cd5..d7a8532 100644
  		}
  
  		private class LooseScanner
-@@ -1062,7 +1062,7 @@ namespace NGit.Storage.File
+@@ -1071,7 +1071,7 @@ namespace NGit.Storage.File
  			if (IsSymRef(buf, n))
  			{
  				// trim trailing whitespace
@@ -1499,7 +1499,7 @@ index 8363cd5..d7a8532 100644
  				{
  					n--;
  				}
-@@ -1087,7 +1087,7 @@ namespace NGit.Storage.File
+@@ -1096,7 +1096,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{
@@ -1597,7 +1597,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 8f9289c..c48ad3b 100644
+index 98e60d5..88988a0 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1609,7 +1609,7 @@ index 8f9289c..c48ad3b 100644
  			 + 1];
  
  		private readonly ObjectIdSubclassMap<ObjectToPack> objectsMap = new ObjectIdSubclassMap
-@@ -1225,7 +1225,7 @@ namespace NGit.Storage.Pack
+@@ -1218,7 +1218,7 @@ namespace NGit.Storage.Pack
  			}
  			else
  			{

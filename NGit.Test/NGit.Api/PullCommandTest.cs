@@ -117,6 +117,38 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPullLocalConflict()
+		{
+			target.BranchCreate().SetName("basedOnMaster").SetStartPoint("refs/heads/master")
+				.SetUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).Call();
+			target.GetRepository().UpdateRef(Constants.HEAD).Link("refs/heads/basedOnMaster");
+			PullResult res = target.Pull().Call();
+			// nothing to update since we don't have different data yet
+			NUnit.Framework.Assert.IsNull(res.GetFetchResult());
+			NUnit.Framework.Assert.IsTrue(res.GetMergeResult().GetMergeStatus().Equals(MergeStatus
+				.ALREADY_UP_TO_DATE));
+			AssertFileContentsEqual(targetFile, "Hello world");
+			// change the file in master
+			target.GetRepository().UpdateRef(Constants.HEAD).Link("refs/heads/master");
+			WriteToFile(targetFile, "Master change");
+			target.Add().AddFilepattern("SomeFile.txt").Call();
+			target.Commit().SetMessage("Source change in master").Call();
+			// change the file in slave
+			target.GetRepository().UpdateRef(Constants.HEAD).Link("refs/heads/basedOnMaster");
+			WriteToFile(targetFile, "Slave change");
+			target.Add().AddFilepattern("SomeFile.txt").Call();
+			target.Commit().SetMessage("Source change in based on master").Call();
+			res = target.Pull().Call();
+			string sourceChangeString = "Master change\n>>>>>>> branch 'refs/heads/master' of local repository";
+			NUnit.Framework.Assert.IsNull(res.GetFetchResult());
+			NUnit.Framework.Assert.AreEqual(res.GetMergeResult().GetMergeStatus(), MergeStatus
+				.CONFLICTING);
+			string result = "<<<<<<< HEAD\nSlave change\n=======\n" + sourceChangeString + "\n";
+			AssertFileContentsEqual(targetFile, result);
+		}
+
+		/// <exception cref="System.Exception"></exception>
 		protected override void SetUp()
 		{
 			base.SetUp();

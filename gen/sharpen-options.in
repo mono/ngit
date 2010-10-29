@@ -178,6 +178,8 @@
 -methodMapping java.net.InetAddress.getAddress GetAddressBytes
 -methodMapping java.math.BigInteger.toByteArray GetBytes
 -methodMapping java.util.Vector.remove RemoveElement
+-methodMapping java.util.concurrent.Semaphore.Semaphore Sharpen.Extensions.CreateSemaphore
+-methodMapping java.util.concurrent.Semaphore.acquire WaitOne
 -fieldMapping java.util.Locale.US InvariantCulture
 -fieldMapping java.util.Locale.GERMAN Sharpen.Extensions.GetGermanCulture()
 -fieldMapping java.util.Locale.ENGLISH Sharpen.Extensions.GetEnglishCulture()
@@ -216,6 +218,7 @@
 -typeMapping java.net.ServerSocket System.Net.Sockets.Socket
 -typeMapping java.math.BigInteger Mono.Math.BigInteger
 -typeMapping java.util.Properties Sharpen.Properties
+-typeMapping java.util.concurrent.Semaphore System.Threading.Semaphore
 -propertyMapping java.nio.charset.Charset.name EncodingName
 -propertyMapping java.lang.Class.getSimpleName Name
 -propertyMapping java.nio.charset.Charset.defaultCharset Default
