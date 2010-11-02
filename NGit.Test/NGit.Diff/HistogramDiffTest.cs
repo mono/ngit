@@ -86,20 +86,33 @@ namespace NGit.Diff
 
 		// INSERT "SRR"
 		[NUnit.Framework.Test]
+		public virtual void TestEdit_LcsContainsUnique()
+		{
+			EditList r = Diff(T("nqnjrnjsnm"), T("AnqnjrnjsnjTnmZ"));
+			NUnit.Framework.Assert.AreEqual(new Edit(0, 0, 0, 1), r[0]);
+			// INSERT "A";
+			NUnit.Framework.Assert.AreEqual(new Edit(9, 9, 10, 13), r[1]);
+			// INSERT "jTn";
+			NUnit.Framework.Assert.AreEqual(new Edit(10, 10, 14, 15), r[2]);
+			// INSERT "Z";
+			NUnit.Framework.Assert.AreEqual(3, r.Count);
+		}
+
+		[NUnit.Framework.Test]
 		public virtual void TestExceedsChainLength_DuringScanOfA()
 		{
 			HistogramDiff hd = new HistogramDiff();
 			hd.SetFallbackAlgorithm(null);
 			hd.SetMaxChainLength(3);
-			SequenceComparator<RawText> cmp = new _SequenceComparator_82();
+			SequenceComparator<RawText> cmp = new _SequenceComparator_88();
 			EditList r = hd.Diff(cmp, T("RabS"), T("QabT"));
 			NUnit.Framework.Assert.AreEqual(1, r.Count);
 			NUnit.Framework.Assert.AreEqual(new Edit(0, 4, 0, 4), r[0]);
 		}
 
-		private sealed class _SequenceComparator_82 : SequenceComparator<RawText>
+		private sealed class _SequenceComparator_88 : SequenceComparator<RawText>
 		{
-			public _SequenceComparator_82()
+			public _SequenceComparator_88()
 			{
 			}
 
@@ -129,43 +142,19 @@ namespace NGit.Diff
 		public virtual void TestFallbackToMyersDiff()
 		{
 			HistogramDiff hd = new HistogramDiff();
-			hd.SetMaxChainLength(64);
-			string a = DiffTestDataGenerator.GenerateSequence(40000, 971, 3);
-			string b = DiffTestDataGenerator.GenerateSequence(40000, 1621, 5);
-			DiffPerformanceTest.CharCmp cmp = new DiffPerformanceTest.CharCmp();
-			DiffPerformanceTest.CharArray ac = new DiffPerformanceTest.CharArray(a);
-			DiffPerformanceTest.CharArray bc = new DiffPerformanceTest.CharArray(b);
+			hd.SetMaxChainLength(4);
+			RawTextComparator cmp = RawTextComparator.DEFAULT;
+			RawText ac = T("bbbbb");
+			RawText bc = T("AbCbDbEFbZ");
 			EditList r;
 			// Without fallback our results are limited due to collisions.
 			hd.SetFallbackAlgorithm(null);
 			r = hd.Diff(cmp, ac, bc);
-			NUnit.Framework.Assert.AreEqual(70, r.Count);
+			NUnit.Framework.Assert.AreEqual(1, r.Count);
 			// Results go up when we add a fallback for the high collision regions.
 			hd.SetFallbackAlgorithm(MyersDiff<Sequence>.INSTANCE);
 			r = hd.Diff(cmp, ac, bc);
-			NUnit.Framework.Assert.AreEqual(73, r.Count);
-			// But they still differ from Myers due to the way we did early steps.
-			EditList myersResult = MyersDiff<Sequence>.INSTANCE.Diff(cmp, ac, bc);
-			NUnit.Framework.Assert.IsFalse(myersResult.Equals(r), "Not same as Myers");
-		}
-
-		[NUnit.Framework.Test]
-		public virtual void TestPerformanceTestDeltaLength()
-		{
-			HistogramDiff hd = new HistogramDiff();
-			hd.SetFallbackAlgorithm(null);
-			string a = DiffTestDataGenerator.GenerateSequence(40000, 971, 3);
-			string b = DiffTestDataGenerator.GenerateSequence(40000, 1621, 5);
-			DiffPerformanceTest.CharCmp cmp = new DiffPerformanceTest.CharCmp();
-			DiffPerformanceTest.CharArray ac = new DiffPerformanceTest.CharArray(a);
-			DiffPerformanceTest.CharArray bc = new DiffPerformanceTest.CharArray(b);
-			EditList r;
-			hd.SetMaxChainLength(64);
-			r = hd.Diff(cmp, ac, bc);
-			NUnit.Framework.Assert.AreEqual(70, r.Count);
-			hd.SetMaxChainLength(176);
-			r = hd.Diff(cmp, ac, bc);
-			NUnit.Framework.Assert.AreEqual(72, r.Count);
+			NUnit.Framework.Assert.AreEqual(5, r.Count);
 		}
 	}
 }

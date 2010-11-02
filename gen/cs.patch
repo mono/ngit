@@ -54,25 +54,20 @@ index 813e9dd..5989194 100644
  			NUnit.Framework.Assert.IsTrue(l.Equals(new EditList()));
  			NUnit.Framework.Assert.IsFalse(l.Equals(string.Empty));
 diff --git a/NGit.Test/NGit.Diff/HistogramDiffTest.cs b/NGit.Test/NGit.Diff/HistogramDiffTest.cs
-index 4a0bebb..a8ca519 100644
+index b9b5273..3c7b2d7 100644
 --- a/NGit.Test/NGit.Diff/HistogramDiffTest.cs
 +++ b/NGit.Test/NGit.Diff/HistogramDiffTest.cs
-@@ -141,11 +141,11 @@ namespace NGit.Diff
+@@ -152,7 +152,7 @@ namespace NGit.Diff
  			r = hd.Diff(cmp, ac, bc);
- 			NUnit.Framework.Assert.AreEqual(70, r.Count);
+ 			NUnit.Framework.Assert.AreEqual(1, r.Count);
  			// Results go up when we add a fallback for the high collision regions.
 -			hd.SetFallbackAlgorithm(MyersDiff.INSTANCE);
 +			hd.SetFallbackAlgorithm(MyersDiff<Sequence>.INSTANCE);
  			r = hd.Diff(cmp, ac, bc);
- 			NUnit.Framework.Assert.AreEqual(73, r.Count);
- 			// But they still differ from Myers due to the way we did early steps.
--			EditList myersResult = MyersDiff.INSTANCE.Diff(cmp, ac, bc);
-+			EditList myersResult = MyersDiff<Sequence>.INSTANCE.Diff(cmp, ac, bc);
- 			NUnit.Framework.Assert.IsFalse(myersResult.Equals(r), "Not same as Myers");
+ 			NUnit.Framework.Assert.AreEqual(5, r.Count);
  		}
- 
 diff --git a/NGit.Test/NGit.Diff/MyersDiffTest.cs b/NGit.Test/NGit.Diff/MyersDiffTest.cs
-index f3bf8b0..63ebbe4 100644
+index 9815204..53d3e54 100644
 --- a/NGit.Test/NGit.Diff/MyersDiffTest.cs
 +++ b/NGit.Test/NGit.Diff/MyersDiffTest.cs
 @@ -50,7 +50,7 @@ namespace NGit.Diff
@@ -82,8 +77,8 @@ index f3bf8b0..63ebbe4 100644
 -			return MyersDiff.INSTANCE;
 +			return MyersDiff<Sequence>.INSTANCE;
  		}
- 
- 		[NUnit.Framework.Test]
+ 	}
+ }
 diff --git a/NGit.Test/NGit.Dircache/DirCacheFindTest.cs b/NGit.Test/NGit.Dircache/DirCacheFindTest.cs
 index 289b1ab..f965895 100644
 --- a/NGit.Test/NGit.Dircache/DirCacheFindTest.cs
@@ -699,7 +694,7 @@ index 52bba89..cac2d54 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Diff/DiffAlgorithm.cs b/NGit/NGit.Diff/DiffAlgorithm.cs
-index 5d9eb00..423e742 100644
+index 2363bf5..27875ea 100644
 --- a/NGit/NGit.Diff/DiffAlgorithm.cs
 +++ b/NGit/NGit.Diff/DiffAlgorithm.cs
 @@ -92,8 +92,8 @@ namespace NGit.Diff
@@ -719,14 +714,14 @@ index 5d9eb00..423e742 100644
  					SubsequenceComparator<S> cs = new SubsequenceComparator<S>(cmp);
 -					Subsequence<S> @as = Subsequence.A(a, region);
 -					Subsequence<S> bs = Subsequence.B(b, region);
--					return Subsequence.ToBase(DiffNonCommon(cs, @as, bs), @as, bs);
+-					EditList e = Subsequence.ToBase(DiffNonCommon(cs, @as, bs), @as, bs);
 +					Subsequence<S> @as = Subsequence<S>.A(a, region);
 +					Subsequence<S> bs = Subsequence<S>.B(b, region);
-+					return Subsequence<S>.ToBase(DiffNonCommon(cs, @as, bs), @as, bs);
- 				}
- 
- 				case Edit.Type.EMPTY:
-@@ -163,7 +163,7 @@ namespace NGit.Diff
++					EditList e = Subsequence<S>.ToBase(DiffNonCommon(cs, @as, bs), @as, bs);
+ 					// The last insertion may need to be shifted later if it
+ 					// inserts elements that were previously reduced out as
+ 					// common at the end.
+@@ -179,7 +179,7 @@ namespace NGit.Diff
  		/// .
  		/// </param>
  		/// <returns>a modifiable edit list comparing the two sequences.</returns>

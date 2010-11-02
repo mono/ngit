@@ -204,6 +204,15 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(4, 5, 3, 4), r[1]);
 		}
 
+		[NUnit.Framework.Test]
+		public virtual void TestEdit_InsertNearCommonTail()
+		{
+			EditList r = Diff(T("aq}nb"), T("aCq}nD}nb"));
+			NUnit.Framework.Assert.AreEqual(new Edit(1, 1, 1, 2), r[0]);
+			NUnit.Framework.Assert.AreEqual(new Edit(3, 3, 4, 7), r[1]);
+			NUnit.Framework.Assert.AreEqual(2, r.Count);
+		}
+
 		public virtual EditList Diff(RawText a, RawText b)
 		{
 			return Algorithm().Diff(RawTextComparator.DEFAULT, a, b);
