@@ -18,28 +18,6 @@ index 374e8cf..f17272e 100644
  			return cmd.Call();
  		}
  	}
-diff --git a/NGit.Test/NGit.Diff/DiffPerformanceTest.cs b/NGit.Test/NGit.Diff/DiffPerformanceTest.cs
-index 53fc820..b531afa 100644
---- a/NGit.Test/NGit.Diff/DiffPerformanceTest.cs
-+++ b/NGit.Test/NGit.Diff/DiffPerformanceTest.cs
-@@ -60,7 +60,7 @@ namespace NGit.Diff
- 	[NUnit.Framework.TestFixture]
- 	public class DiffPerformanceTest
- 	{
--		private const long longTaskBoundary = 5000000000L;
-+/*		private const long longTaskBoundary = 5000000000L;
- 
- 		private const int minCPUTimerTicks = 10;
- 
-@@ -213,7 +213,7 @@ namespace NGit.Diff
- 			ret.D = D;
- 			return ret;
- 		}
--
-+		 */
- 		internal class CharArray : Sequence
- 		{
- 			internal readonly char[] array;
 diff --git a/NGit.Test/NGit.Diff/EditListTest.cs b/NGit.Test/NGit.Diff/EditListTest.cs
 index 813e9dd..5989194 100644
 --- a/NGit.Test/NGit.Diff/EditListTest.cs
@@ -273,18 +251,18 @@ index b854b38..af98a99 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-index b9f17f0..38acb02 100644
+index fee0e80..a77be4c 100644
 --- a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
 +++ b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-@@ -244,7 +244,7 @@ namespace NGit.Merge
+@@ -196,7 +196,7 @@ namespace NGit.Merge
  		/// <exception cref="System.IO.IOException"></exception>
  		private string Merge(string commonBase, string ours, string theirs)
  		{
--			MergeResult r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, new RawText(Constants
-+			MergeResult<RawText> r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, new RawText(Constants
- 				.Encode(commonBase)), new RawText(Constants.Encode(ours)), new RawText(Constants
- 				.Encode(theirs)));
+-			MergeResult r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, RT(commonBase), RT
++			MergeResult<RawText> r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, RT(commonBase), RT
+ 				(ours), RT(theirs));
  			ByteArrayOutputStream bo = new ByteArrayOutputStream(50);
+ 			fmt.FormatMerge(bo, r, "B", "O", "T", Constants.CHARACTER_ENCODING);
 diff --git a/NGit.Test/NGit.Nls/TestNLS.cs b/NGit.Test/NGit.Nls/TestNLS.cs
 index 2140d47..9a6f133 100644
 --- a/NGit.Test/NGit.Nls/TestNLS.cs
@@ -997,7 +975,7 @@ index 963fda9..1857bb1 100644
  				catch (InvalidPatternException e)
  				{
 diff --git a/NGit/NGit.Merge/MergeAlgorithm.cs b/NGit/NGit.Merge/MergeAlgorithm.cs
-index ed1a9f2..71dd0c7 100644
+index ae6282b..a2f5f29 100644
 --- a/NGit/NGit.Merge/MergeAlgorithm.cs
 +++ b/NGit/NGit.Merge/MergeAlgorithm.cs
 @@ -92,10 +92,10 @@ namespace NGit.Merge
@@ -1090,10 +1068,10 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index d34e03c..07c2117 100644
+index de40880..c9563bb 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
-@@ -503,7 +503,7 @@ namespace NGit.Merge
+@@ -527,7 +527,7 @@ namespace NGit.Merge
  				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
  				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
  				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);

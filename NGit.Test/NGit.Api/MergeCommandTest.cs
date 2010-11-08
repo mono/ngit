@@ -297,6 +297,90 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestSingleDeletion()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			WriteTrashFile("b", "1\nb\n3\n");
+			WriteTrashFile("d", "1\nd\n3\n");
+			WriteTrashFile("c/c/c", "1\nc\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("b").AddFilepattern("c/c/c").AddFilepattern
+				("d").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "b").Delete());
+			git.Add().AddFilepattern("b").SetUpdate(true).Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
+			CheckoutBranch("refs/heads/master");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "b").Exists());
+			WriteTrashFile("a", "1\na\n3(main)\n");
+			WriteTrashFile("c/c/c", "1\nc(main)\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("c/c/c").Call();
+			RevCommit thirdCommit = git.Commit().SetMessage("main").Call();
+			// We are merging a deletion into our branch
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual("1\na\n3(main)\n", Read(new FilePath(db.WorkTree, 
+				"a")));
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
+			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
+				"c/c/c")));
+			// Do the opposite, be on a branch where we have deleted a file and
+			// merge in a old commit where this file was not deleted
+			CheckoutBranch("refs/heads/side");
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
+			result = git.Merge().Include(thirdCommit.Id).SetStrategy(MergeStrategy.RESOLVE).Call
+				();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual("1\na\n3(main)\n", Read(new FilePath(db.WorkTree, 
+				"a")));
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
+			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
+				"c/c/c")));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDeletionAndConflict()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			WriteTrashFile("b", "1\nb\n3\n");
+			WriteTrashFile("d", "1\nd\n3\n");
+			WriteTrashFile("c/c/c", "1\nc\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("b").AddFilepattern("c/c/c").AddFilepattern
+				("d").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "b").Delete());
+			WriteTrashFile("a", "1\na\n3(side)\n");
+			git.Add().AddFilepattern("b").SetUpdate(true).Call();
+			git.Add().AddFilepattern("a").SetUpdate(true).Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
+			CheckoutBranch("refs/heads/master");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "b").Exists());
+			WriteTrashFile("a", "1\na\n3(main)\n");
+			WriteTrashFile("c/c/c", "1\nc(main)\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("c/c/c").Call();
+			git.Commit().SetMessage("main").Call();
+			// We are merging a deletion into our branch
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, result.GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual("1\na\n<<<<<<< HEAD\n3(main)\n=======\n3(side)\n>>>>>>> 54ffed45d62d252715fc20e41da92d44c48fb0ff\n"
+				, Read(new FilePath(db.WorkTree, "a")));
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
+			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
+				"c/c/c")));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMergeFailingWithDirtyWorkingTree()
 		{
 			Git git = new Git(db);

@@ -111,6 +111,7 @@ namespace NGit.Api
 			}
 		}
 
+		// expected
 		// try to work with Commands after command has been invoked. Should throw
 		// exceptions
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
@@ -134,6 +135,7 @@ namespace NGit.Api
 			catch (InvalidOperationException)
 			{
 			}
+			// expected
 			LogCommand logCmd = git.Log();
 			logCmd.Call();
 			try
@@ -147,6 +149,7 @@ namespace NGit.Api
 			}
 		}
 
+		// expected
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
@@ -211,6 +214,45 @@ namespace NGit.Api
 			tw = TreeWalk.ForPath(db, "a.txt", commit.Tree);
 			NUnit.Framework.Assert.AreEqual("db00fd65b218578127ea51f3dffac701f12f486a", tw.GetObjectId
 				(0).GetName());
+		}
+
+		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
+		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
+		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
+		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCommitRange()
+		{
+			// do 4 commits and set the range to the second and fourth one
+			Git git = new Git(db);
+			git.Commit().SetMessage("first commit").Call();
+			RevCommit second = git.Commit().SetMessage("second commit").SetCommitter(committer
+				).Call();
+			git.Commit().SetMessage("third commit").SetAuthor(author).Call();
+			RevCommit last = git.Commit().SetMessage("fourth commit").SetAuthor(author).SetCommitter
+				(committer).Call();
+			Iterable<RevCommit> commits = git.Log().AddRange(second.Id, last.Id).Call();
+			// check that we have the third and fourth commit
+			PersonIdent defaultCommitter = new PersonIdent(db);
+			PersonIdent[] expectedAuthors = new PersonIdent[] { author, author };
+			PersonIdent[] expectedCommitters = new PersonIdent[] { defaultCommitter, committer
+				 };
+			string[] expectedMessages = new string[] { "third commit", "fourth commit" };
+			int l = expectedAuthors.Length - 1;
+			foreach (RevCommit c in commits)
+			{
+				NUnit.Framework.Assert.AreEqual(expectedAuthors[l].GetName(), c.GetAuthorIdent().
+					GetName());
+				NUnit.Framework.Assert.AreEqual(expectedCommitters[l].GetName(), c.GetCommitterIdent
+					().GetName());
+				NUnit.Framework.Assert.AreEqual(c.GetFullMessage(), expectedMessages[l]);
+				l--;
+			}
+			NUnit.Framework.Assert.AreEqual(l, -1);
 		}
 	}
 }

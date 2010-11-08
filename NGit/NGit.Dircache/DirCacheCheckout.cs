@@ -426,7 +426,7 @@ namespace NGit.Dircache
 				if (walk.IsDirectoryFileConflict())
 				{
 					// TODO: check whether it is always correct to report a conflict here
-					Conflict(name, null, h, m);
+					Conflict(name, null, null, null);
 				}
 				// file only exists in working tree -> ignore it
 				return;

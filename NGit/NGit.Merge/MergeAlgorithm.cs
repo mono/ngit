@@ -107,7 +107,7 @@ namespace NGit.Merge
 			// (or both)
 			while (theirsEdit != END_EDIT || oursEdit != END_EDIT)
 			{
-				if (oursEdit.GetEndA() <= theirsEdit.GetBeginA())
+				if (oursEdit.GetEndA() < theirsEdit.GetBeginA())
 				{
 					// something was changed in ours not overlapping with any change
 					// from theirs. First add the common part in front of the edit
@@ -124,7 +124,7 @@ namespace NGit.Merge
 				}
 				else
 				{
-					if (theirsEdit.GetEndA() <= oursEdit.GetBeginA())
+					if (theirsEdit.GetEndA() < oursEdit.GetBeginA())
 					{
 						// something was changed in theirs not overlapping with any
 						// from ours. First add the common part in front of the edit
@@ -192,14 +192,14 @@ namespace NGit.Merge
 						Edit nextTheirsEdit = NextEdit(baseToTheirs);
 						for (; ; )
 						{
-							if (oursEdit.GetEndA() > nextTheirsEdit.GetBeginA())
+							if (oursEdit.GetEndA() >= nextTheirsEdit.GetBeginA())
 							{
 								theirsEdit = nextTheirsEdit;
 								nextTheirsEdit = NextEdit(baseToTheirs);
 							}
 							else
 							{
-								if (theirsEdit.GetEndA() > nextOursEdit.GetBeginA())
+								if (theirsEdit.GetEndA() >= nextOursEdit.GetBeginA())
 								{
 									oursEdit = nextOursEdit;
 									nextOursEdit = NextEdit(baseToOurs);
