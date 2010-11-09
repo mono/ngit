@@ -792,7 +792,7 @@ namespace NGit.Dircache
 			}
 		}
 
-		private bool filemode;
+		private bool? filemode;
 
 		private bool Config_filemode()
 		{
@@ -804,7 +804,7 @@ namespace NGit.Dircache
 				filemode = Sharpen.Extensions.ValueOf(config.GetBoolean("core", null, "filemode", 
 					true));
 			}
-			return filemode;
+			return filemode.Value;
 		}
 
 		/// <summary>

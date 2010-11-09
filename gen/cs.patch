@@ -837,6 +837,28 @@ index a986d08..3d96d78 100644
  			}
  
  			private readonly MyersDiff<S> _enclosing;
+diff --git a/NGit/NGit.Dircache/DirCacheCheckout.cs b/NGit/NGit.Dircache/DirCacheCheckout.cs
+index f931dff..18945df 100644
+--- a/NGit/NGit.Dircache/DirCacheCheckout.cs
++++ b/NGit/NGit.Dircache/DirCacheCheckout.cs
+@@ -792,7 +792,7 @@ namespace NGit.Dircache
+ 			}
+ 		}
+ 
+-		private bool filemode;
++		private bool? filemode;
+ 
+ 		private bool Config_filemode()
+ 		{
+@@ -804,7 +804,7 @@ namespace NGit.Dircache
+ 				filemode = Sharpen.Extensions.ValueOf(config.GetBoolean("core", null, "filemode", 
+ 					true));
+ 			}
+-			return filemode;
++			return filemode.Value;
+ 		}
+ 
+ 		/// <summary>
 diff --git a/NGit/NGit.Dircache/DirCacheEntry.cs b/NGit/NGit.Dircache/DirCacheEntry.cs
 index 3009464..c473055 100644
 --- a/NGit/NGit.Dircache/DirCacheEntry.cs
@@ -1626,6 +1648,28 @@ index 14f5150..ee19789 100644
  
  		private bool startedOperation;
  
+diff --git a/NGit/NGit.Transport/BasePackFetchConnection.cs b/NGit/NGit.Transport/BasePackFetchConnection.cs
+index c347aaa..1c9c1d0 100644
+--- a/NGit/NGit.Transport/BasePackFetchConnection.cs
++++ b/NGit/NGit.Transport/BasePackFetchConnection.cs
+@@ -665,7 +665,7 @@ SEND_HAVES_break: ;
+ 						// A solitary ACK at this point means the remote won't
+ 						// speak anymore, but is going to send us a pack now.
+ 						//
+-						goto READ_RESULT_break;
++						goto READ_RESULT_break2;
+ 					}
+ 
+ 					case PacketLineIn.AckNackResult.ACK_CONTINUE:
+@@ -684,7 +684,7 @@ SEND_HAVES_break: ;
+ 				}
+ READ_RESULT_continue: ;
+ 			}
+-READ_RESULT_break: ;
++READ_RESULT_break2: ;
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
 diff --git a/NGit/NGit.Transport/HttpAuthMethod.cs b/NGit/NGit.Transport/HttpAuthMethod.cs
 index 580f92b..7b8279d 100644
 --- a/NGit/NGit.Transport/HttpAuthMethod.cs
