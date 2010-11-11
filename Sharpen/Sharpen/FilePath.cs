@@ -178,6 +178,8 @@ namespace Sharpen
 
 		public long LastModified ()
 		{
+			if (!Exists ())
+				return 0;
 			return File.GetLastWriteTimeUtc (path).ToMillisecondsSinceEpoch ();
 		}
 

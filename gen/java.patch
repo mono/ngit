@@ -164,6 +164,21 @@ index 70f80ae..a6806c3 100644
  	/** The cache instance this editor updates during {@link #finish()}. */
  	protected DirCache cache;
  
+diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/dircache/DirCacheCheckout.java b/org.eclipse.jgit/src/org/eclipse/jgit/dircache/DirCacheCheckout.java
+index 5b71dc0..05f11c6 100644
+--- a/org.eclipse.jgit/src/org/eclipse/jgit/dircache/DirCacheCheckout.java
++++ b/org.eclipse.jgit/src/org/eclipse/jgit/dircache/DirCacheCheckout.java
+@@ -274,8 +274,8 @@ void processEntry(CanonicalTreeParser m, DirCacheBuildIterator i,
+ 			WorkingTreeIterator f) {
+ 		if (m != null) {
+ 			if (i == null || f == null || !m.idEqual(i)
+-					|| f.isModified(i.getDirCacheEntry(), true,
+-							config_filemode(), repo.getFS())) {
++					|| (i.getDirCacheEntry() != null && f.isModified(i.getDirCacheEntry(), true,
++							config_filemode(), repo.getFS()))) {
+ 				update(m.getEntryPathString(), m.getEntryObjectId(),
+ 						m.getEntryFileMode());
+ 			} else
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/IndexTreeWalker.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/IndexTreeWalker.java
 index 0889236..6d864db 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/IndexTreeWalker.java
@@ -837,6 +852,22 @@ index 8f53a0d..77c01c8 100644
  		final File file;
  
  		private final FileMode mode;
+diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
+index b292c3c..cc9c0f9 100644
+--- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
++++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
+@@ -606,8 +606,10 @@ public boolean isModified(DirCacheEntry entry, boolean forceContentCheck,
+ 		// only. Otherwise we compare the timestamp at millisecond precision.
+ 		long cacheLastModified = entry.getLastModified();
+ 		long fileLastModified = getEntryLastModified();
+-		if (cacheLastModified % 1000 == 0)
++		if (cacheLastModified % 1000 == 0 || fileLastModified % 1000 == 0) {
++			cacheLastModified = cacheLastModified - cacheLastModified % 1000;
+ 			fileLastModified = fileLastModified - fileLastModified % 1000;
++		}
+ 
+ 		if (fileLastModified != cacheLastModified) {
+ 			// The file is dirty by timestamps
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
 index 50421fe..ac7ca48 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
