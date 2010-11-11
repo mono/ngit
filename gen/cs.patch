@@ -606,7 +606,7 @@ index 005294a..e981e9f 100644
  
  		/// <param name="repo"></param>
 diff --git a/NGit/NGit.Api/MergeCommand.cs b/NGit/NGit.Api/MergeCommand.cs
-index 59d2f9a..f376d9c 100644
+index a546406..e83e983 100644
 --- a/NGit/NGit.Api/MergeCommand.cs
 +++ b/NGit/NGit.Api/MergeCommand.cs
 @@ -157,7 +157,7 @@ namespace NGit.Api
@@ -1671,7 +1671,7 @@ index c347aaa..1c9c1d0 100644
  
  		/// <exception cref="System.IO.IOException"></exception>
 diff --git a/NGit/NGit.Transport/HttpAuthMethod.cs b/NGit/NGit.Transport/HttpAuthMethod.cs
-index 580f92b..7b8279d 100644
+index 0ef3472..deb2ce0 100644
 --- a/NGit/NGit.Transport/HttpAuthMethod.cs
 +++ b/NGit/NGit.Transport/HttpAuthMethod.cs
 @@ -309,7 +309,7 @@ namespace NGit.Transport
@@ -1823,18 +1823,18 @@ index c547732..85ba51f 100644
  		internal URIish uri;
  
 diff --git a/NGit/NGit.Transport/PacketLineIn.cs b/NGit/NGit.Transport/PacketLineIn.cs
-index c422f2e..d0cbe7d 100644
+index 33eec5f..12628c2 100644
 --- a/NGit/NGit.Transport/PacketLineIn.cs
 +++ b/NGit/NGit.Transport/PacketLineIn.cs
-@@ -51,7 +51,7 @@ using Sharpen;
+@@ -52,7 +52,7 @@ using Sharpen;
  
  namespace NGit.Transport
  {
 -	internal class PacketLineIn
 +	public class PacketLineIn
  	{
- 		internal static readonly string END = Sharpen.Extensions.CreateString(string.Empty
- 			);
+ 		internal static readonly string END = new StringBuilder(0).ToString();
+ 
 diff --git a/NGit/NGit.Transport/PostReceiveHook.cs b/NGit/NGit.Transport/PostReceiveHook.cs
 index af35c2c..e92be9c 100644
 --- a/NGit/NGit.Transport/PostReceiveHook.cs
@@ -2562,10 +2562,10 @@ index f1ec18e..e576e09 100644
  			{
  				return this.@ref.ToString();
 diff --git a/NGit/NGit.Util/StringUtils.cs b/NGit/NGit.Util/StringUtils.cs
-index f00a267..1c0d051 100644
+index 9f738c9..e8183e0 100644
 --- a/NGit/NGit.Util/StringUtils.cs
 +++ b/NGit/NGit.Util/StringUtils.cs
-@@ -57,7 +57,7 @@ namespace NGit.Util
+@@ -58,7 +58,7 @@ namespace NGit.Util
  		static StringUtils()
  		{
  			LC = new char['Z' + 1];
@@ -2575,10 +2575,10 @@ index f00a267..1c0d051 100644
  				LC[c] = c;
  			}
 diff --git a/NGit/NGit/AnyObjectId.cs b/NGit/NGit/AnyObjectId.cs
-index 10d634b..3b44b26 100644
+index cd2daec..0004081 100644
 --- a/NGit/NGit/AnyObjectId.cs
 +++ b/NGit/NGit/AnyObjectId.cs
-@@ -465,7 +465,7 @@ namespace NGit
+@@ -549,7 +549,7 @@ namespace NGit
  		}
  
  		/// <returns>string form of the SHA-1, in lower case hexadecimal.</returns>
@@ -2828,7 +2828,7 @@ index 8913cf3..718a906 100644
  			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
-index 5c2ec5f..29140d6 100644
+index df2ad17..3cd310c 100644
 --- a/NGit/NGit/Repository.cs
 +++ b/NGit/NGit/Repository.cs
 @@ -302,7 +302,6 @@ namespace NGit
@@ -2869,7 +2869,7 @@ index 5c2ec5f..29140d6 100644
  				if (target == null)
  				{
 diff --git a/NGit/NGit/Tree.cs b/NGit/NGit/Tree.cs
-index e24b224..9e726d3 100644
+index 55f1884..0602f92 100644
 --- a/NGit/NGit/Tree.cs
 +++ b/NGit/NGit/Tree.cs
 @@ -351,7 +351,7 @@ namespace NGit

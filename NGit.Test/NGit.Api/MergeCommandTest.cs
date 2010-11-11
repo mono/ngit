@@ -236,7 +236,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(2, newHead.ParentCount);
 			AssertEquals(thirdCommit, newHead.GetParent(0));
 			AssertEquals(secondCommit, newHead.GetParent(1));
-			NUnit.Framework.Assert.AreEqual("merging 3fa334456d236a92db020289fe0bf481d91777b4 into HEAD"
+			NUnit.Framework.Assert.AreEqual("Merge commit '3fa334456d236a92db020289fe0bf481d91777b4' into HEAD"
 				, newHead.GetFullMessage());
 			// @TODO fix me
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
@@ -290,7 +290,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(2, newHead.ParentCount);
 			AssertEquals(thirdCommit, newHead.GetParent(0));
 			AssertEquals(secondCommit, newHead.GetParent(1));
-			NUnit.Framework.Assert.AreEqual("merging 064d54d98a4cdb0fed1802a21c656bfda67fe879 into HEAD"
+			NUnit.Framework.Assert.AreEqual("Merge commit '064d54d98a4cdb0fed1802a21c656bfda67fe879' into HEAD"
 				, newHead.GetFullMessage());
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
 		}

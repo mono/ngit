@@ -41,7 +41,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.IO;
 using NGit;
+using NGit.Api;
+using NGit.Dircache;
 using NGit.Treewalk;
 using Sharpen;
 
@@ -227,6 +230,40 @@ namespace NGit
 			finally
 			{
 				oi.Release();
+			}
+		}
+
+		/// <summary>A file is removed from the index but stays in the working directory.</summary>
+		/// <remarks>
+		/// A file is removed from the index but stays in the working directory. It
+		/// is checked if IndexDiff detects this file as removed and untracked.
+		/// </remarks>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRemovedUntracked()
+		{
+			Git git = new Git(db);
+			string path = "file";
+			WriteTrashFile(path, "content");
+			git.Add().AddFilepattern(path).Call();
+			git.Commit().SetMessage("commit").Call();
+			RemoveFromIndex(path);
+			FileTreeIterator iterator = new FileTreeIterator(db);
+			IndexDiff diff = new IndexDiff(db, Constants.HEAD, iterator);
+			diff.Diff();
+			NUnit.Framework.Assert.IsTrue(diff.GetRemoved().Contains(path));
+			NUnit.Framework.Assert.IsTrue(diff.GetUntracked().Contains(path));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void RemoveFromIndex(string path)
+		{
+			DirCache dirc = db.LockDirCache();
+			DirCacheEditor edit = dirc.Editor();
+			edit.Add(new DirCacheEditor.DeletePath(path));
+			if (!edit.Commit())
+			{
+				throw new IOException("could not commit");
 			}
 		}
 	}

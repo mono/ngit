@@ -204,13 +204,28 @@ namespace NGit.Transport
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
-		public virtual void TestScpStyleWithoutUser()
+		public virtual void TestScpStyleWithoutUserRelativePath()
 		{
 			string str = "example.com:some/p ath";
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
 			NUnit.Framework.Assert.AreEqual("some/p ath", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
+			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestScpStyleWithoutUserAbsolutePath()
+		{
+			string str = "example.com:/some/p ath";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.IsNull(u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.AreEqual(str, u.ToString());
