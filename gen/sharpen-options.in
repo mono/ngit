@@ -227,9 +227,7 @@
 -propertyMapping java.util.Locale.setDefault System.Threading.Thread.CurrentThread.CurrentCulture
 -propertyMapping java.net.URL.getProtocol Scheme
 -propertyMapping java.net.URL.getPort Port
--propertyMapping java.net.URL.getHost Host
 -propertyMapping java.net.URL.getPath AbsolutePath
--propertyMapping java.net.URL.getUserInfo UserInfo
 -propertyMapping java.util.TimeZone.getDefault System.TimeZoneInfo.Local
 -propertyMapping java.util.zip.Deflater.finished IsFinished
 -propertyMapping java.util.zip.Deflater.needsInput IsNeedingInput
