@@ -71,21 +71,21 @@ namespace NGit.Storage.File
 		public override void TestCRC32()
 		{
 			NUnit.Framework.Assert.IsTrue(smallIdx.HasCRC32Support());
-			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x00000000C2B64258l)), smallIdx.
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x00000000C2B64258L)), smallIdx.
 				FindCRC32(ObjectId.FromString("4b825dc642cb6eb9a060e54bf8d69288fbee4904")));
-			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x0000000072AD57C2l)), smallIdx.
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x0000000072AD57C2L)), smallIdx.
 				FindCRC32(ObjectId.FromString("540a36d136cf413e4b064c2b0e0a4db60f77feab")));
-			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x00000000FF10A479l)), smallIdx.
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x00000000FF10A479L)), smallIdx.
 				FindCRC32(ObjectId.FromString("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259")));
-			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x0000000034B27DDCl)), smallIdx.
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x0000000034B27DDCL)), smallIdx.
 				FindCRC32(ObjectId.FromString("6ff87c4664981e4397625791c8ea3bbb5f2279a3")));
-			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x000000004743F1E4l)), smallIdx.
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x000000004743F1E4L)), smallIdx.
 				FindCRC32(ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7")));
-			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x00000000640B358Bl)), smallIdx.
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x00000000640B358BL)), smallIdx.
 				FindCRC32(ObjectId.FromString("902d5476fa249b7abc9d84c611577a81381f0327")));
-			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x000000002A17CB5El)), smallIdx.
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x000000002A17CB5EL)), smallIdx.
 				FindCRC32(ObjectId.FromString("aabf2ffaec9b497f0950352b3e582d73035c2035")));
-			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x000000000B3B5BA6l)), smallIdx.
+			NUnit.Framework.Assert.AreEqual(unchecked((long)(0x000000000B3B5BA6L)), smallIdx.
 				FindCRC32(ObjectId.FromString("c59759f143fb1fe21c197981df75a7ee00290799")));
 		}
 	}

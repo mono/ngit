@@ -459,6 +459,11 @@
     <Compile Include="NGit.Api.Errors\MultipleParentsNotAllowedException.cs" />
     <Compile Include="NGit\TreeFormatter.cs" />
     <Compile Include="NGit.Merge\MergeMessageFormatter.cs" />
+    <Compile Include="NGit.Transport\CredentialItem.cs" />
+    <Compile Include="NGit.Transport\CredentialsProvider.cs" />
+    <Compile Include="NGit.Transport\CredentialsProviderUserInfo.cs" />
+    <Compile Include="NGit.Transport\UsernamePasswordCredentialsProvider.cs" />
+    <Compile Include="NGit.Errors\UnsupportedCredentialItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

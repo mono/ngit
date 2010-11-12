@@ -1671,10 +1671,10 @@ index c347aaa..1c9c1d0 100644
  
  		/// <exception cref="System.IO.IOException"></exception>
 diff --git a/NGit/NGit.Transport/HttpAuthMethod.cs b/NGit/NGit.Transport/HttpAuthMethod.cs
-index 0ef3472..deb2ce0 100644
+index 98885de..a854707 100644
 --- a/NGit/NGit.Transport/HttpAuthMethod.cs
 +++ b/NGit/NGit.Transport/HttpAuthMethod.cs
-@@ -309,7 +309,7 @@ namespace NGit.Transport
+@@ -346,7 +346,7 @@ namespace NGit.Transport
  					int eq = auth.IndexOf('=', next);
  					if (eq < 0 || eq + 1 == auth.Length)
  					{
@@ -1683,7 +1683,7 @@ index 0ef3472..deb2ce0 100644
  					}
  					string name = Sharpen.Runtime.Substring(auth, next, eq);
  					string value;
-@@ -318,7 +318,7 @@ namespace NGit.Transport
+@@ -355,7 +355,7 @@ namespace NGit.Transport
  						int dq = auth.IndexOf('"', eq + 2);
  						if (dq < 0)
  						{
@@ -1693,21 +1693,24 @@ index 0ef3472..deb2ce0 100644
  						value = Sharpen.Runtime.Substring(auth, eq + 2, dq);
  						next = dq + 1;
 diff --git a/NGit/NGit.Transport/IndexPack.cs b/NGit/NGit.Transport/IndexPack.cs
-index e6e3a6f..a8c6fda 100644
+index e6e3a6f..8481d25 100644
 --- a/NGit/NGit.Transport/IndexPack.cs
 +++ b/NGit/NGit.Transport/IndexPack.cs
-@@ -1154,7 +1154,9 @@ namespace NGit.Transport
+@@ -1154,7 +1154,12 @@ namespace NGit.Transport
  				inf.SetInput(buf, p, bAvail);
  				for (; ; )
  				{
 -					int r = inf.Inflate(dst, off, dst.Length - off);
 +					// The +1 is a workaround to a bug in SharpZipLib: RemainingInput won't be properly updated if the inflate
 +					// length is 0.
-+					int r = inf.Inflate(dst, off, dst.Length - off + 1);
++					int rl = dst.Length - off;
++					if (rl == 0)
++						rl++;
++					int r = inf.Inflate(dst, off, rl);
  					if (r == 0)
  					{
  						if (inf.IsFinished)
-@@ -1173,8 +1175,9 @@ namespace NGit.Transport
+@@ -1173,8 +1178,9 @@ namespace NGit.Transport
  						}
  						else
  						{
@@ -1929,7 +1932,7 @@ index e300fdd..2f8430e 100644
  		/// <summary>
  		/// Filters a
 diff --git a/NGit/NGit.Transport/Transport.cs b/NGit/NGit.Transport/Transport.cs
-index 581d2f6..98ff714 100644
+index 84af77e..acd9dd5 100644
 --- a/NGit/NGit.Transport/Transport.cs
 +++ b/NGit/NGit.Transport/Transport.cs
 @@ -383,12 +383,12 @@ namespace NGit.Transport
@@ -2078,10 +2081,10 @@ index 2417967..f6fc2af 100644
  				this._enclosing = _enclosing;
  				try
 diff --git a/NGit/NGit.Transport/TransportHttp.cs b/NGit/NGit.Transport/TransportHttp.cs
-index 4b0893b..9b84c39 100644
+index 3ff5089..8b693f4 100644
 --- a/NGit/NGit.Transport/TransportHttp.cs
 +++ b/NGit/NGit.Transport/TransportHttp.cs
-@@ -601,7 +601,7 @@ namespace NGit.Transport
+@@ -600,7 +600,7 @@ namespace NGit.Transport
  			/// <exception cref="System.IO.IOException"></exception>
  			internal override WalkRemoteObjectDatabase OpenAlternate(string location)
  			{
@@ -2090,7 +2093,7 @@ index 4b0893b..9b84c39 100644
  			}
  
  			/// <exception cref="System.IO.IOException"></exception>
-@@ -751,7 +751,7 @@ namespace NGit.Transport
+@@ -750,7 +750,7 @@ namespace NGit.Transport
  		{
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SmartHttpFetchConnection(TransportHttp _enclosing, InputStream advertisement
@@ -2099,7 +2102,7 @@ index 4b0893b..9b84c39 100644
  			{
  				this._enclosing = _enclosing;
  				this.statelessRPC = true;
-@@ -764,7 +764,7 @@ namespace NGit.Transport
+@@ -763,7 +763,7 @@ namespace NGit.Transport
  			protected internal override void DoFetch(ProgressMonitor monitor, ICollection<Ref
  				> want, ICollection<ObjectId> have)
  			{
@@ -2108,7 +2111,7 @@ index 4b0893b..9b84c39 100644
  					);
  				this.Init(svc.@in, svc.@out);
  				base.DoFetch(monitor, want, have);
-@@ -777,7 +777,7 @@ namespace NGit.Transport
+@@ -776,7 +776,7 @@ namespace NGit.Transport
  		{
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SmartHttpPushConnection(TransportHttp _enclosing, InputStream advertisement
@@ -2117,7 +2120,7 @@ index 4b0893b..9b84c39 100644
  			{
  				this._enclosing = _enclosing;
  				this.statelessRPC = true;
-@@ -790,7 +790,7 @@ namespace NGit.Transport
+@@ -789,7 +789,7 @@ namespace NGit.Transport
  			protected internal override void DoPush(ProgressMonitor monitor, IDictionary<string
  				, RemoteRefUpdate> refUpdates)
  			{
@@ -2126,7 +2129,7 @@ index 4b0893b..9b84c39 100644
  					);
  				this.Init(svc.@in, svc.@out);
  				base.DoPush(monitor, refUpdates);
-@@ -930,7 +930,7 @@ namespace NGit.Transport
+@@ -929,7 +929,7 @@ namespace NGit.Transport
  
  			internal class HttpOutputStream : TemporaryBuffer
  			{
