@@ -131,7 +131,7 @@ namespace NGit.Api
 			if (!state.CanCommit())
 			{
 				throw new WrongRepositoryStateException(MessageFormat.Format(JGitText.Get().cannotCommitOnARepoWithState
-					, state.Name()));
+					, state.ToString()));
 			}
 			ProcessOptions(state);
 			try

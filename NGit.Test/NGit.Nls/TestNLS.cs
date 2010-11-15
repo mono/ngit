@@ -118,8 +118,8 @@ namespace NGit.Nls
 		{
 			CyclicBarrier barrier = new CyclicBarrier(2);
 			// wait for the other thread to set its locale
-			_T1972088541 t1 = new _T1972088541(this, NLS.ROOT_LOCALE, barrier);
-			_T1972088541 t2 = new _T1972088541(this, Sharpen.Extensions.GetGermanCulture(), barrier);
+			_T617805061 t1 = new _T617805061(this, NLS.ROOT_LOCALE, barrier);
+			_T617805061 t2 = new _T617805061(this, Sharpen.Extensions.GetGermanCulture(), barrier);
 			t1.Start();
 			t2.Start();
 			t1.Join();
@@ -131,7 +131,7 @@ namespace NGit.Nls
 				EffectiveLocale());
 		}
 
-		internal class _T1972088541 : Sharpen.Thread
+		internal class _T617805061 : Sharpen.Thread
 		{
 			internal CultureInfo locale;
 
@@ -141,7 +141,7 @@ namespace NGit.Nls
 			
 			CyclicBarrier barrier;
 
-			internal _T1972088541(TestNLS _enclosing, CultureInfo locale, CyclicBarrier barrier)
+			internal _T617805061(TestNLS _enclosing, CultureInfo locale, CyclicBarrier barrier)
 			{
 				this._enclosing = _enclosing;
 				this.locale = locale;

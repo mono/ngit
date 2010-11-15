@@ -46,7 +46,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
-	public class LIFORevQueueTest : RevQueueTestCase<LIFORevQueue>
+	internal class LIFORevQueueTest : RevQueueTestCase<LIFORevQueue>
 	{
 		protected internal override LIFORevQueue Create()
 		{

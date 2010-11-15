@@ -43,7 +43,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System.Collections.Generic;
 using NGit;
+using NGit.Api;
 using NGit.Dircache;
+using NGit.Revwalk;
 using Sharpen;
 
 namespace NGit
@@ -96,6 +98,78 @@ namespace NGit
 		public override IList<string> GetConflicts()
 		{
 			return dco.GetConflicts();
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestResetHard()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("f", "f()");
+			WriteTrashFile("D/g", "g()");
+			git.Add().AddFilepattern(".").Call();
+			git.Commit().SetMessage("inital").Call();
+			AssertIndex(Mkmap("f", "f()", "D/g", "g()"));
+			git.BranchCreate().SetName("topic").Call();
+			WriteTrashFile("f", "f()\nmaster");
+			WriteTrashFile("D/g", "g()\ng2()");
+			WriteTrashFile("E/h", "h()");
+			git.Add().AddFilepattern(".").Call();
+			RevCommit master = git.Commit().SetMessage("master-1").Call();
+			AssertIndex(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()"));
+			CheckoutBranch("refs/heads/topic");
+			AssertIndex(Mkmap("f", "f()", "D/g", "g()"));
+			WriteTrashFile("f", "f()\nside");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "D/g").Delete());
+			WriteTrashFile("G/i", "i()");
+			git.Add().AddFilepattern(".").Call();
+			git.Add().AddFilepattern(".").SetUpdate(true).Call();
+			RevCommit topic = git.Commit().SetMessage("topic-1").Call();
+			AssertIndex(Mkmap("f", "f()\nside", "G/i", "i()"));
+			ResetHard(master);
+			AssertIndex(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()"));
+			ResetHard(topic);
+			AssertIndex(Mkmap("f", "f()\nside", "G/i", "i()"));
+			AssertWorkDir(Mkmap("f", "f()\nside", "G/i", "i()"));
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, git.Merge().Include(master
+				).Call().GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual("[E/h, mode:100644][G/i, mode:100644][f, mode:100644, stage:1][f, mode:100644, stage:2][f, mode:100644, stage:3]"
+				, IndexState(0));
+			ResetHard(master);
+			AssertIndex(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()"));
+			AssertWorkDir(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()"));
+		}
+
+		/// <exception cref="NGit.Errors.NoWorkTreeException"></exception>
+		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private DirCacheCheckout ResetHard(RevCommit commit)
+		{
+			DirCacheCheckout dc;
+			dc = new DirCacheCheckout(db, null, db.LockDirCache(), commit.Tree);
+			dc.SetFailOnConflict(true);
+			NUnit.Framework.Assert.IsTrue(dc.Checkout());
+			return dc;
+		}
+
+		/// <exception cref="System.InvalidOperationException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private void CheckoutBranch(string branchName)
+		{
+			RevWalk walk = new RevWalk(db);
+			RevCommit head = walk.ParseCommit(db.Resolve(Constants.HEAD));
+			RevCommit branch = walk.ParseCommit(db.Resolve(branchName));
+			DirCacheCheckout dco = new DirCacheCheckout(db, head.Tree, db.LockDirCache(), branch
+				.Tree);
+			dco.SetFailOnConflict(true);
+			NUnit.Framework.Assert.IsTrue(dco.Checkout());
+			walk.Release();
+			// update the HEAD
+			RefUpdate refUpdate = db.UpdateRef(Constants.HEAD);
+			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, refUpdate.Link(branchName
+				));
 		}
 	}
 }

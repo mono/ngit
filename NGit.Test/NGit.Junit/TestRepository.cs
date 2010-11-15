@@ -152,6 +152,18 @@ namespace NGit.Junit
 			now += secDelta * 1000L;
 		}
 
+		/// <summary>
+		/// Set the author and committer using
+		/// <see cref="TestRepository{R}.GetClock()">TestRepository&lt;R&gt;.GetClock()</see>
+		/// .
+		/// </summary>
+		/// <param name="c">the commit builder to store.</param>
+		public virtual void SetAuthorAndCommitter(NGit.CommitBuilder c)
+		{
+			c.Author = new PersonIdent(author, Sharpen.Extensions.CreateDate(now));
+			c.Committer = new PersonIdent(committer, Sharpen.Extensions.CreateDate(now));
+		}
+
 		/// <summary>Create a new blob object in the repository.</summary>
 		/// <remarks>Create a new blob object in the repository.</remarks>
 		/// <param name="content">file content, will be UTF-8 encoded.</param>
@@ -510,7 +522,7 @@ namespace NGit.Junit
 			if (db is FileRepository)
 			{
 				FileRepository fr = (FileRepository)db;
-				RefWriter rw = new _RefWriter_481(this, fr, fr.GetAllRefs().Values);
+				RefWriter rw = new _RefWriter_492(this, fr, fr.GetAllRefs().Values);
 				rw.WritePackedRefs();
 				rw.WriteInfoRefs();
 				StringBuilder w = new StringBuilder();
@@ -525,9 +537,9 @@ namespace NGit.Junit
 			}
 		}
 
-		private sealed class _RefWriter_481 : RefWriter
+		private sealed class _RefWriter_492 : RefWriter
 		{
-			public _RefWriter_481(TestRepository _enclosing, FileRepository fr, ICollection
+			public _RefWriter_492(TestRepository _enclosing, FileRepository fr, ICollection
 				<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -907,14 +919,14 @@ namespace NGit.Junit
 			public virtual TestRepository.CommitBuilder Add(string path, RevBlob id)
 			{
 				DirCacheEditor e = this.tree.Editor();
-				e.Add(new _PathEdit_781(id, path));
+				e.Add(new _PathEdit_792(id, path));
 				e.Finish();
 				return this;
 			}
 
-			private sealed class _PathEdit_781 : DirCacheEditor.PathEdit
+			private sealed class _PathEdit_792 : DirCacheEditor.PathEdit
 			{
-				public _PathEdit_781(RevBlob id, string baseArg1) : base(baseArg1)
+				public _PathEdit_792(RevBlob id, string baseArg1) : base(baseArg1)
 				{
 					this.id = id;
 				}
@@ -958,10 +970,7 @@ namespace NGit.Junit
 					NGit.CommitBuilder c;
 					c = new NGit.CommitBuilder();
 					c.SetParentIds(this.parents);
-					c.Author = new PersonIdent(TestRepository.author, Sharpen.Extensions.CreateDate(this
-						._enclosing.now));
-					c.Committer = new PersonIdent(TestRepository.committer, Sharpen.Extensions.CreateDate
-						(this._enclosing.now));
+					this._enclosing.SetAuthorAndCommitter(c);
 					c.Message = this.message;
 					ObjectId commitId;
 					try

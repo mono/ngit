@@ -46,7 +46,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
-	public abstract class RevQueueTestCase<T> : RevWalkTestCase where T:AbstractRevQueue
+	internal abstract class RevQueueTestCase<T> : RevWalkTestCase where T:AbstractRevQueue
 	{
 		protected internal T q;
 

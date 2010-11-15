@@ -50,6 +50,7 @@ namespace NGit.Diff
 	[NUnit.Framework.TestFixture]
 	public class SimilarityIndexTest
 	{
+		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestIndexingSmallObject()
 		{
@@ -70,6 +71,7 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestIndexingLargeObject()
 		{
@@ -84,6 +86,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(2, si.Size());
 		}
 
+		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCommonScore_SameFiles()
 		{
@@ -100,6 +103,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(100, dst.Score(src, 100));
 		}
 
+		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCommonScore_EmptyFiles()
 		{
@@ -109,6 +113,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(0, dst.Common(src));
 		}
 
+		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCommonScore_TotallyDifferentFiles()
 		{
@@ -118,6 +123,7 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(0, dst.Common(src));
 		}
 
+		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCommonScore_SimiliarBy75()
 		{
@@ -129,9 +135,10 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(75, dst.Score(src, 100));
 		}
 
+		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		private static SimilarityIndex Hash(string text)
 		{
-			SimilarityIndex src = new _SimilarityIndex_124();
+			SimilarityIndex src = new _SimilarityIndex_127();
 			byte[] raw = Constants.Encode(text);
 			src.SetFileSize(raw.Length);
 			src.Hash(raw, 0, raw.Length);
@@ -139,12 +146,13 @@ namespace NGit.Diff
 			return src;
 		}
 
-		private sealed class _SimilarityIndex_124 : SimilarityIndex
+		private sealed class _SimilarityIndex_127 : SimilarityIndex
 		{
-			public _SimilarityIndex_124()
+			public _SimilarityIndex_127()
 			{
 			}
 
+			/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 			internal override void Hash(byte[] raw, int ptr, int end)
 			{
 				while (ptr < end)
@@ -165,6 +173,7 @@ namespace NGit.Diff
 			}
 		}
 
+		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		private static int KeyFor(string line)
 		{
 			SimilarityIndex si = Hash(line);

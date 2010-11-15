@@ -46,7 +46,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
-	public class DateRevQueueTest : RevQueueTestCase<DateRevQueue>
+	internal class DateRevQueueTest : RevQueueTestCase<DateRevQueue>
 	{
 		protected internal override DateRevQueue Create()
 		{

@@ -48,7 +48,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
-	public abstract class AbstractRevQueue : Generator
+	internal abstract class AbstractRevQueue : Generator
 	{
 		internal static readonly AbstractRevQueue EMPTY_QUEUE = new AbstractRevQueue.AlwaysEmptyQueue
 			();

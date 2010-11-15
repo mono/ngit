@@ -179,7 +179,7 @@ namespace NGit.Transport
 
 		private readonly RevFlagSet SAVE;
 
-		private int multiAck = BasePackFetchConnection.MultiAck.OFF;
+		private int multiAck = (int)BasePackFetchConnection.MultiAck.OFF;
 
 		/// <summary>Create a new pack upload for an open repository.</summary>
 		/// <remarks>Create a new pack upload for an open repository.</remarks>
@@ -372,17 +372,17 @@ namespace NGit.Transport
 			}
 			if (options.Contains(OPTION_MULTI_ACK_DETAILED))
 			{
-				multiAck = BasePackFetchConnection.MultiAck.DETAILED;
+				multiAck = (int)BasePackFetchConnection.MultiAck.DETAILED;
 			}
 			else
 			{
 				if (options.Contains(OPTION_MULTI_ACK))
 				{
-					multiAck = BasePackFetchConnection.MultiAck.CONTINUE;
+					multiAck = (int)BasePackFetchConnection.MultiAck.CONTINUE;
 				}
 				else
 				{
-					multiAck = BasePackFetchConnection.MultiAck.OFF;
+					multiAck = (int)BasePackFetchConnection.MultiAck.OFF;
 				}
 			}
 			if (Negotiate())
@@ -537,7 +537,7 @@ namespace NGit.Transport
 				if (line == PacketLineIn.END)
 				{
 					last = ProcessHaveLines(peerHas, last);
-					if (commonBase.IsEmpty() || multiAck != BasePackFetchConnection.MultiAck.OFF)
+					if (commonBase.IsEmpty() || multiAck != (int)BasePackFetchConnection.MultiAck.OFF)
 					{
 						pckOut.WriteString("NAK\n");
 					}
@@ -564,7 +564,7 @@ namespace NGit.Transport
 							}
 							else
 							{
-								if (multiAck != BasePackFetchConnection.MultiAck.OFF)
+								if (multiAck != (int)BasePackFetchConnection.MultiAck.OFF)
 								{
 									pckOut.WriteString("ACK " + last.Name + "\n");
 								}
@@ -619,7 +619,7 @@ namespace NGit.Transport
 						((RevCommit)obj).Carry(PEER_HAS);
 					}
 					AddCommonBase(obj);
-					switch (multiAck)
+					switch ((BasePackFetchConnection.MultiAck)multiAck)
 					{
 						case BasePackFetchConnection.MultiAck.OFF:
 						{
@@ -659,7 +659,7 @@ namespace NGit.Transport
 				{
 					if (OkToGiveUp())
 					{
-						switch (multiAck)
+						switch ((BasePackFetchConnection.MultiAck)multiAck)
 						{
 							case BasePackFetchConnection.MultiAck.OFF:
 							{

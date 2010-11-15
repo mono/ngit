@@ -46,7 +46,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
-	public abstract class BlockRevQueue : AbstractRevQueue
+	internal abstract class BlockRevQueue : AbstractRevQueue
 	{
 		internal BlockRevQueue.BlockFreeList free;
 

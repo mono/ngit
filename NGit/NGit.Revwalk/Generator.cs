@@ -57,7 +57,7 @@ namespace NGit.Revwalk
 	/// </remarks>
 	/// <seealso cref="PendingGenerator">PendingGenerator</seealso>
 	/// <seealso cref="StartGenerator">StartGenerator</seealso>
-	public abstract class Generator
+	internal abstract class Generator
 	{
 		/// <summary>Commits are sorted by commit date and time, descending.</summary>
 		/// <remarks>Commits are sorted by commit date and time, descending.</remarks>
