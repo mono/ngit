@@ -790,12 +790,12 @@ namespace NGit.Transport
 				}
 				if (origRemaining != 0)
 				{
-					int origCnt = (int)Math.Min(n, origRemaining);
-					origDigest.Update(buf, 0, origCnt);
-					origRemaining -= origCnt;
+					int origCnt2 = (int)Math.Min(n, origRemaining);
+					origDigest.Update(buf, 0, origCnt2);
+					origRemaining -= origCnt2;
 					if (origRemaining == 0)
 					{
-						tailDigest.Update(buf, origCnt, n - origCnt);
+						tailDigest.Update(buf, origCnt2, n - origCnt2);
 					}
 				}
 				else

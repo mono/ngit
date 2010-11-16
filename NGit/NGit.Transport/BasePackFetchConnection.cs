@@ -132,11 +132,13 @@ namespace NGit.Transport
 
 		internal static readonly string OPTION_NO_PROGRESS = "no-progress";
 
-		internal enum MultiAck
+		internal class MultiAck
 		{
-			OFF,
-			CONTINUE,
-			DETAILED
+			public const int OFF = 0;
+
+			public const int CONTINUE = 1;
+
+			public const int DETAILED = 2;
 		}
 
 		private readonly RevWalk walk;
@@ -166,8 +168,7 @@ namespace NGit.Transport
 		/// <remarks>Marks a commit listed in the advertised refs.</remarks>
 		internal readonly RevFlag ADVERTISED;
 
-		private BasePackFetchConnection.MultiAck multiAck = BasePackFetchConnection.MultiAck
-			.OFF;
+		private int multiAck = BasePackFetchConnection.MultiAck.OFF;
 
 		private bool thinPack;
 
@@ -214,10 +215,10 @@ namespace NGit.Transport
 
 		private class FetchConfig
 		{
-			private sealed class _SectionParser_207 : Config.SectionParser<BasePackFetchConnection.FetchConfig
+			private sealed class _SectionParser_211 : Config.SectionParser<BasePackFetchConnection.FetchConfig
 				>
 			{
-				public _SectionParser_207()
+				public _SectionParser_211()
 				{
 				}
 
@@ -228,7 +229,7 @@ namespace NGit.Transport
 			}
 
 			internal static readonly Config.SectionParser<BasePackFetchConnection.FetchConfig
-				> KEY = new _SectionParser_207();
+				> KEY = new _SectionParser_211();
 
 			internal readonly bool allowOfsDelta;
 
@@ -692,12 +693,12 @@ READ_RESULT_break2: ;
 			walk.ResetRetain(REACHABLE, ADVERTISED);
 			walk.MarkStart(reachableCommits);
 			walk.Sort(RevSort.COMMIT_TIME_DESC);
-			walk.SetRevFilter(new _RevFilter_582(this));
+			walk.SetRevFilter(new _RevFilter_586(this));
 		}
 
-		private sealed class _RevFilter_582 : RevFilter
+		private sealed class _RevFilter_586 : RevFilter
 		{
-			public _RevFilter_582(BasePackFetchConnection _enclosing)
+			public _RevFilter_586(BasePackFetchConnection _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}

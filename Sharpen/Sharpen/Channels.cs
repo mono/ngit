@@ -1,5 +1,5 @@
 // 
-// BitSet.cs
+// Channels.cs
 //  
 // Author:
 //       Lluis Sanchez Gual <lluis@novell.com>
@@ -24,37 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 using System;
-using System.Collections.Generic;
 
 namespace Sharpen
 {
-	public class BitSet
+	internal static class Channels
 	{
-		List<bool> bits;
-		
-		public BitSet ()
+		public static OutputStream NewOutputStream (FileChannel c)
 		{
-			bits = new List<bool> ();
-		}
-		
-		public BitSet (int size)
-		{
-			bits = new List<bool> (size);
-		}
-		
-		public void Set (int index)
-		{
-			while (index >= bits.Count)
-				bits.Add (false);
-			bits [index] = true;
-		}
-		
-		public bool Get (int index)
-		{
-			if (index >= bits.Count)
-				return false;
-			else
-				return bits [index];
+			return c.Stream;
 		}
 	}
 }

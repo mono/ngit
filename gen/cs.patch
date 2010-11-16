@@ -264,17 +264,17 @@ index fee0e80..a77be4c 100644
  			ByteArrayOutputStream bo = new ByteArrayOutputStream(50);
  			fmt.FormatMerge(bo, r, "B", "O", "T", Constants.CHARACTER_ENCODING);
 diff --git a/NGit.Test/NGit.Nls/TestNLS.cs b/NGit.Test/NGit.Nls/TestNLS.cs
-index 56064a4..e982272 100644
+index 2140d47..9a6f133 100644
 --- a/NGit.Test/NGit.Nls/TestNLS.cs
 +++ b/NGit.Test/NGit.Nls/TestNLS.cs
 @@ -118,8 +118,8 @@ namespace NGit.Nls
  		{
  			CyclicBarrier barrier = new CyclicBarrier(2);
  			// wait for the other thread to set its locale
--			_T617805061 t1 = new _T617805061(this, NLS.ROOT_LOCALE);
--			_T617805061 t2 = new _T617805061(this, Sharpen.Extensions.GetGermanCulture());
-+			_T617805061 t1 = new _T617805061(this, NLS.ROOT_LOCALE, barrier);
-+			_T617805061 t2 = new _T617805061(this, Sharpen.Extensions.GetGermanCulture(), barrier);
+-			_T1972088541 t1 = new _T1972088541(this, NLS.ROOT_LOCALE);
+-			_T1972088541 t2 = new _T1972088541(this, Sharpen.Extensions.GetGermanCulture());
++			_T1972088541 t1 = new _T1972088541(this, NLS.ROOT_LOCALE, barrier);
++			_T1972088541 t2 = new _T1972088541(this, Sharpen.Extensions.GetGermanCulture(), barrier);
  			t1.Start();
  			t2.Start();
  			t1.Join();
@@ -285,8 +285,8 @@ index 56064a4..e982272 100644
 +			
 +			CyclicBarrier barrier;
  
--			internal _T617805061(TestNLS _enclosing, CultureInfo locale)
-+			internal _T617805061(TestNLS _enclosing, CultureInfo locale, CyclicBarrier barrier)
+-			internal _T1972088541(TestNLS _enclosing, CultureInfo locale)
++			internal _T1972088541(TestNLS _enclosing, CultureInfo locale, CyclicBarrier barrier)
  			{
  				this._enclosing = _enclosing;
  				this.locale = locale;
@@ -889,19 +889,6 @@ index a986d08..3d96d78 100644
  			}
  
  			private readonly MyersDiff<S> _enclosing;
-diff --git a/NGit/NGit.Dircache/BaseDirCacheEditor.cs b/NGit/NGit.Dircache/BaseDirCacheEditor.cs
-index cb04451..c596c20 100644
---- a/NGit/NGit.Dircache/BaseDirCacheEditor.cs
-+++ b/NGit/NGit.Dircache/BaseDirCacheEditor.cs
-@@ -55,7 +55,7 @@ namespace NGit.Dircache
- 	/// The different update strategies extend this class to provide their own unique
- 	/// services to applications.
- 	/// </summary>
--	internal abstract class BaseDirCacheEditor
-+	public abstract class BaseDirCacheEditor
- 	{
- 		/// <summary>
- 		/// The cache instance this editor updates during
 diff --git a/NGit/NGit.Dircache/DirCacheCheckout.cs b/NGit/NGit.Dircache/DirCacheCheckout.cs
 index bac0954..26a4645 100644
 --- a/NGit/NGit.Dircache/DirCacheCheckout.cs
@@ -1387,12 +1374,12 @@ index b64b0b1..6e14bc2 100644
  			return new CommitTimeRevFilter.Between(since.GetTime(), until.GetTime());
  		}
 diff --git a/NGit/NGit.Revwalk/BlockRevQueue.cs b/NGit/NGit.Revwalk/BlockRevQueue.cs
-index 78e2d63..3d977c4 100644
+index 4d31129..d43f049 100644
 --- a/NGit/NGit.Revwalk/BlockRevQueue.cs
 +++ b/NGit/NGit.Revwalk/BlockRevQueue.cs
 @@ -48,7 +48,7 @@ namespace NGit.Revwalk
  {
- 	internal abstract class BlockRevQueue : AbstractRevQueue
+ 	public abstract class BlockRevQueue : AbstractRevQueue
  	{
 -		protected internal BlockRevQueue.BlockFreeList free;
 +		internal BlockRevQueue.BlockFreeList free;
@@ -1533,19 +1520,6 @@ index 54058ce..9bb6bbd 100644
  
  		private readonly FS fs;
  
-diff --git a/NGit/NGit.Storage.File/FileObjectDatabase.cs b/NGit/NGit.Storage.File/FileObjectDatabase.cs
-index 08f1fb1..dae5c34 100644
---- a/NGit/NGit.Storage.File/FileObjectDatabase.cs
-+++ b/NGit/NGit.Storage.File/FileObjectDatabase.cs
-@@ -49,7 +49,7 @@ using Sharpen;
- 
- namespace NGit.Storage.File
- {
--	internal abstract class FileObjectDatabase : ObjectDatabase
-+	public abstract class FileObjectDatabase : ObjectDatabase
- 	{
- 		internal enum InsertLooseObjectResult
- 		{
 diff --git a/NGit/NGit.Storage.File/ObjectDirectory.cs b/NGit/NGit.Storage.File/ObjectDirectory.cs
 index c5b8c92..5e68022 100644
 --- a/NGit/NGit.Storage.File/ObjectDirectory.cs
@@ -1612,7 +1586,7 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index c994589..6a64649 100644
+index dd7f225..1fd91ee 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
 @@ -322,7 +322,7 @@ namespace NGit.Storage.File
@@ -1624,7 +1598,7 @@ index c994589..6a64649 100644
  		}
  
  		private class LooseScanner
-@@ -1071,7 +1071,7 @@ namespace NGit.Storage.File
+@@ -1086,7 +1086,7 @@ namespace NGit.Storage.File
  			if (IsSymRef(buf, n))
  			{
  				// trim trailing whitespace
@@ -1633,7 +1607,7 @@ index c994589..6a64649 100644
  				{
  					n--;
  				}
-@@ -1096,7 +1096,7 @@ namespace NGit.Storage.File
+@@ -1111,7 +1111,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{
@@ -1765,24 +1739,11 @@ index 14f5150..ee19789 100644
  
  		private bool startedOperation;
  
-diff --git a/NGit/NGit.Transport/BasePackConnection.cs b/NGit/NGit.Transport/BasePackConnection.cs
-index 0ecd836..53f468c 100644
---- a/NGit/NGit.Transport/BasePackConnection.cs
-+++ b/NGit/NGit.Transport/BasePackConnection.cs
-@@ -60,7 +60,7 @@ namespace NGit.Transport
- 	/// </remarks>
- 	/// <seealso cref="BasePackFetchConnection">BasePackFetchConnection</seealso>
- 	/// <seealso cref="BasePackPushConnection">BasePackPushConnection</seealso>
--	internal abstract class BasePackConnection : BaseConnection
-+	public abstract class BasePackConnection : BaseConnection
- 	{
- 		/// <summary>The repository this transport fetches into, or pushes out of.</summary>
- 		/// <remarks>The repository this transport fetches into, or pushes out of.</remarks>
 diff --git a/NGit/NGit.Transport/BasePackFetchConnection.cs b/NGit/NGit.Transport/BasePackFetchConnection.cs
-index 399b4dc..5649dc8 100644
+index c347aaa..1c9c1d0 100644
 --- a/NGit/NGit.Transport/BasePackFetchConnection.cs
 +++ b/NGit/NGit.Transport/BasePackFetchConnection.cs
-@@ -664,7 +664,7 @@ SEND_HAVES_break: ;
+@@ -665,7 +665,7 @@ SEND_HAVES_break: ;
  						// A solitary ACK at this point means the remote won't
  						// speak anymore, but is going to send us a pack now.
  						//
@@ -1791,7 +1752,7 @@ index 399b4dc..5649dc8 100644
  					}
  
  					case PacketLineIn.AckNackResult.ACK_CONTINUE:
-@@ -683,7 +683,7 @@ SEND_HAVES_break: ;
+@@ -684,7 +684,7 @@ SEND_HAVES_break: ;
  				}
  READ_RESULT_continue: ;
  			}
@@ -1823,7 +1784,7 @@ index 98885de..a854707 100644
  						value = Sharpen.Runtime.Substring(auth, eq + 2, dq);
  						next = dq + 1;
 diff --git a/NGit/NGit.Transport/IndexPack.cs b/NGit/NGit.Transport/IndexPack.cs
-index d426cf0..bfd6327 100644
+index e6e3a6f..8481d25 100644
 --- a/NGit/NGit.Transport/IndexPack.cs
 +++ b/NGit/NGit.Transport/IndexPack.cs
 @@ -1154,7 +1154,12 @@ namespace NGit.Transport
@@ -2348,7 +2309,7 @@ index 49fce84..551432d 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index ebf8e63..5ecdc61 100644
+index ebf8e63..3547b49 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
 @@ -152,7 +152,7 @@ namespace NGit.Transport
@@ -2360,36 +2321,6 @@ index ebf8e63..5ecdc61 100644
  
  		/// <summary>Marked on objects we sent in our advertisement list.</summary>
  		/// <remarks>Marked on objects we sent in our advertisement list.</remarks>
-@@ -179,7 +179,7 @@ namespace NGit.Transport
- 
- 		private readonly RevFlagSet SAVE;
- 
--		private int multiAck = BasePackFetchConnection.MultiAck.OFF;
-+		private int multiAck = (int)BasePackFetchConnection.MultiAck.OFF;
- 
- 		/// <summary>Create a new pack upload for an open repository.</summary>
- 		/// <remarks>Create a new pack upload for an open repository.</remarks>
-@@ -372,17 +372,17 @@ namespace NGit.Transport
- 			}
- 			if (options.Contains(OPTION_MULTI_ACK_DETAILED))
- 			{
--				multiAck = BasePackFetchConnection.MultiAck.DETAILED;
-+				multiAck = (int)BasePackFetchConnection.MultiAck.DETAILED;
- 			}
- 			else
- 			{
- 				if (options.Contains(OPTION_MULTI_ACK))
- 				{
--					multiAck = BasePackFetchConnection.MultiAck.CONTINUE;
-+					multiAck = (int)BasePackFetchConnection.MultiAck.CONTINUE;
- 				}
- 				else
- 				{
--					multiAck = BasePackFetchConnection.MultiAck.OFF;
-+					multiAck = (int)BasePackFetchConnection.MultiAck.OFF;
- 				}
- 			}
- 			if (Negotiate())
 @@ -462,7 +462,7 @@ namespace NGit.Transport
  			{
  				return;
@@ -2399,42 +2330,6 @@ index ebf8e63..5ecdc61 100644
  			try
  			{
  				for (; ; )
-@@ -537,7 +537,7 @@ namespace NGit.Transport
- 				if (line == PacketLineIn.END)
- 				{
- 					last = ProcessHaveLines(peerHas, last);
--					if (commonBase.IsEmpty() || multiAck != BasePackFetchConnection.MultiAck.OFF)
-+					if (commonBase.IsEmpty() || multiAck != (int)BasePackFetchConnection.MultiAck.OFF)
- 					{
- 						pckOut.WriteString("NAK\n");
- 					}
-@@ -564,7 +564,7 @@ namespace NGit.Transport
- 							}
- 							else
- 							{
--								if (multiAck != BasePackFetchConnection.MultiAck.OFF)
-+								if (multiAck != (int)BasePackFetchConnection.MultiAck.OFF)
- 								{
- 									pckOut.WriteString("ACK " + last.Name + "\n");
- 								}
-@@ -619,7 +619,7 @@ namespace NGit.Transport
- 						((RevCommit)obj).Carry(PEER_HAS);
- 					}
- 					AddCommonBase(obj);
--					switch (multiAck)
-+					switch ((BasePackFetchConnection.MultiAck)multiAck)
- 					{
- 						case BasePackFetchConnection.MultiAck.OFF:
- 						{
-@@ -659,7 +659,7 @@ namespace NGit.Transport
- 				{
- 					if (OkToGiveUp())
- 					{
--						switch (multiAck)
-+						switch ((BasePackFetchConnection.MultiAck)multiAck)
- 						{
- 							case BasePackFetchConnection.MultiAck.OFF:
- 							{
 @@ -703,7 +703,7 @@ namespace NGit.Transport
  			{
  				okToGiveUp = Sharpen.Extensions.ValueOf(OkToGiveUpImp());

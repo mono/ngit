@@ -147,7 +147,7 @@ namespace NGit.Treewalk
 		}
 
 		/// <summary>Wrapper for a standard Java IO file</summary>
-		public class FileEntry : WorkingTreeIterator.Entry
+		internal class FileEntry : WorkingTreeIterator.Entry
 		{
 			internal readonly FilePath file;
 
