@@ -854,18 +854,18 @@ index b292c3c..cc9c0f9 100644
  		if (fileLastModified != cacheLastModified) {
  			// The file is dirty by timestamps
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
-index 50421fe..ac7ca48 100644
+index 9348afc..3d64b69 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
-@@ -120,7 +120,6 @@ public String toString() {
- 	 * treat such a difference as "all names added".
- 	 */
- 	public static final TreeFilter ANY_DIFF = new TreeFilter() {
--		private static final int baseTree = 0;
+@@ -124,17 +124,15 @@ public String toString() {
+ 	public static final TreeFilter ANY_DIFF = new AnyDiffFilter();
  
+ 	private static final class AnyDiffFilter extends TreeFilter {
+-		private static final int baseTree = 0;
+-
  		@Override
  		public boolean include(final TreeWalk walker) {
-@@ -128,9 +127,9 @@ public boolean include(final TreeWalk walker) {
+ 			final int n = walker.getTreeCount();
  			if (n == 1) // Assume they meant difference to empty tree.
  				return true;
  
