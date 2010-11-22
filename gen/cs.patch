@@ -2388,19 +2388,19 @@ index 4557681..024be0c 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index b8d3b33..76f3e21 100644
+index 95fa96d..e3c8022 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-@@ -580,7 +580,7 @@ namespace NGit.Treewalk
+@@ -539,7 +539,7 @@ namespace NGit.Treewalk
  			return ignoreNode;
  		}
  
--		private sealed class _IComparer_482 : IComparer<WorkingTreeIterator.Entry>
-+		internal sealed class _IComparer_482 : IComparer<WorkingTreeIterator.Entry>
+-		private sealed class _IComparer_455 : IComparer<WorkingTreeIterator.Entry>
++		internal sealed class _IComparer_455 : IComparer<WorkingTreeIterator.Entry>
  		{
- 			public _IComparer_482()
+ 			public _IComparer_455()
  			{
-@@ -876,7 +876,7 @@ namespace NGit.Treewalk
+@@ -838,7 +838,7 @@ namespace NGit.Treewalk
  
  		/// <summary>A single entry within a working directory tree.</summary>
  		/// <remarks>A single entry within a working directory tree.</remarks>

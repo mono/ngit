@@ -838,10 +838,10 @@ index 8f53a0d..77c01c8 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index b292c3c..cc9c0f9 100644
+index ac3a831..9f604bc 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-@@ -606,8 +606,10 @@ public boolean isModified(DirCacheEntry entry, boolean forceContentCheck,
+@@ -580,8 +580,10 @@ public boolean isModified(DirCacheEntry entry, boolean forceContentCheck,
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();
