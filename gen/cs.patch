@@ -723,6 +723,18 @@ index 52bba89..cac2d54 100644
  		}
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
+diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
+index 08152c0..499b178 100644
+--- a/NGit/NGit.Api/RebaseCommand.cs
++++ b/NGit/NGit.Api/RebaseCommand.cs
+@@ -149,6 +149,7 @@ namespace NGit.Api
+ 						{
+ 							return res;
+ 						}
++					break;
+ 					}
+ 				}
+ 				if (monitor.IsCancelled())
 diff --git a/NGit/NGit.Diff/DiffAlgorithm.cs b/NGit/NGit.Diff/DiffAlgorithm.cs
 index 2363bf5..27875ea 100644
 --- a/NGit/NGit.Diff/DiffAlgorithm.cs
@@ -1142,7 +1154,7 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index de40880..c9563bb 100644
+index d77e463..aa07c02 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
 @@ -527,7 +527,7 @@ namespace NGit.Merge

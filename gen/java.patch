@@ -126,7 +126,7 @@ index 045fecd..159a4cf 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index bda7f26..c145c81 100644
+index bda7f26..f399f95 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -73,6 +73,7 @@
@@ -155,7 +155,7 @@ index bda7f26..c145c81 100644
 -				break;
 -			default:
 +			if (s != RepositoryState.REBASING && s != RepositoryState.REBASING_INTERACTIVE &&
-+				s != RepositoryState.REBASING_MERGE && s != RepositoryState.REBASING_REBASING)
++				s != RepositoryState.REBASING_MERGE && s != RepositoryState.REBASING_REBASING) {
  				throw new WrongRepositoryStateException(MessageFormat.format(
  						JGitText.get().wrongRepositoryState, repo
  								.getRepositoryState().name()));
@@ -181,6 +181,20 @@ index bda7f26..c145c81 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
+@@ -586,10 +580,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+ 		return this;
+ 	}
+ 
+-	static enum Action {
+-		PICK("pick"); // later add SQUASH, EDIT, etc.
++	static class Action {
++		public static Action PICK = new Action ("pick"); // later add SQUASH, EDIT, etc.
+ 
+-		private final String token;
++		public final String token;
+ 
+ 		private Action(String token) {
+ 			this.token = token;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java b/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java
 index 76d86a9..e8e07a3 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java

@@ -396,7 +396,7 @@ namespace NGit.Merge
 				}
 				else
 				{
-					if (modeT == 0)
+					if ((modeT == 0) && (modeB != 0))
 					{
 						// we want THEIRS ... but THEIRS contains the deletion of the
 						// file
