@@ -194,6 +194,51 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestMergeNonVersionedPaths()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			WriteTrashFile("b", "1\nb\n3\n");
+			WriteTrashFile("c/c/c", "1\nc\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("b").AddFilepattern("c/c/c").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("a", "1\na(side)\n3\n");
+			WriteTrashFile("b", "1\nb(side)\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("b").Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			NUnit.Framework.Assert.AreEqual("1\nb(side)\n3\n", Read(new FilePath(db.WorkTree, 
+				"b")));
+			CheckoutBranch("refs/heads/master");
+			NUnit.Framework.Assert.AreEqual("1\nb\n3\n", Read(new FilePath(db.WorkTree, "b"))
+				);
+			WriteTrashFile("a", "1\na(main)\n3\n");
+			WriteTrashFile("c/c/c", "1\nc(main)\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("c/c/c").Call();
+			git.Commit().SetMessage("main").Call();
+			WriteTrashFile("d", "1\nd\n3\n");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "e").Mkdir());
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, result.GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual("1\n<<<<<<< HEAD\na(main)\n=======\na(side)\n>>>>>>> 86503e7e397465588cc267b65d778538bffccb83\n3\n"
+				, Read(new FilePath(db.WorkTree, "a")));
+			NUnit.Framework.Assert.AreEqual("1\nb(side)\n3\n", Read(new FilePath(db.WorkTree, 
+				"b")));
+			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
+				"c/c/c")));
+			NUnit.Framework.Assert.AreEqual("1\nd\n3\n", Read(new FilePath(db.WorkTree, "d"))
+				);
+			FilePath dir = new FilePath(db.WorkTree, "e");
+			NUnit.Framework.Assert.IsTrue(dir.IsDirectory());
+			NUnit.Framework.Assert.AreEqual(1, result.GetConflicts().Count);
+			NUnit.Framework.Assert.AreEqual(3, result.GetConflicts().Get("a")[0].Length);
+			NUnit.Framework.Assert.AreEqual(RepositoryState.MERGING, db.GetRepositoryState());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSuccessfulContentMerge()
 		{
 			Git git = new Git(db);

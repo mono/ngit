@@ -76,6 +76,8 @@ namespace NGit
 
 		public string abbreviationLengthMustBeNonNegative;
 
+		public string abortingRebase;
+
 		public string advertisementCameBefore;
 
 		public string advertisementOfCameBefore;
@@ -87,6 +89,8 @@ namespace NGit
 		public string ambiguousObjectAbbreviation;
 
 		public string anExceptionOccurredWhileTryingToAddTheIdOfHEAD;
+
+		public string applyingCommit;
 
 		public string anSSHSessionHasBeenAlreadyCreated;
 
@@ -390,6 +394,8 @@ namespace NGit
 
 		public string exceptionCaughtDuringExecutionOfPullCommand;
 
+		public string exceptionCaughtDuringExecutionOfRmCommand;
+
 		public string exceptionCaughtDuringExecutionOfTagCommand;
 
 		public string exceptionOccuredDuringAddingOfOptionToALogCommand;
@@ -576,6 +582,8 @@ namespace NGit
 
 		public string missingPrerequisiteCommits;
 
+		public string missingRequiredParameter;
+
 		public string missingSecretkey;
 
 		public string mixedStagesNotAllowed;
@@ -643,6 +651,8 @@ namespace NGit
 		public string objectIsNotA;
 
 		public string objectNotFoundIn;
+
+		public string obtainingCommitsForCherryPick;
 
 		public string offsetWrittenDeltaBaseForObjectNotFoundInAPack;
 
@@ -776,9 +786,13 @@ namespace NGit
 
 		public string requiredHashFunctionNotAvailable;
 
+		public string resettingHead;
+
 		public string resolvingDeltas;
 
 		public string resultLengthIncorrect;
+
+		public string rewinding;
 
 		public string searchForReuse;
 
@@ -931,5 +945,7 @@ namespace NGit
 		public string writingObjects;
 
 		public string wrongDecompressedLength;
+
+		public string wrongRepositoryState;
 	}
 }
