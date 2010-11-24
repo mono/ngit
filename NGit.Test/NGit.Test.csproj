@@ -194,6 +194,12 @@
     <Compile Include="NGit.Api\PullCommandTest.cs" />
     <Compile Include="NGit.Api\PushCommandTest.cs" />
     <Compile Include="NGit.Revplot\PlotCommitListTest.cs" />
+    <Compile Include="NGit.Api\CheckoutCommandTest.cs" />
+    <Compile Include="NGit.Api\CherryPickCommandTest.cs" />
+    <Compile Include="NGit.Api\RebaseCommandTest.cs" />
+    <Compile Include="NGit.Api\RmCommandTest.cs" />
+    <Compile Include="NGit.Notes\LeafBucketTest.cs" />
+    <Compile Include="NGit.Notes\NoteMapTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

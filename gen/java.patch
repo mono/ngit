@@ -126,7 +126,7 @@ index 045fecd..159a4cf 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index bda7f26..f399f95 100644
+index 0938ec1..09e7ab9 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -73,6 +73,7 @@
@@ -181,7 +181,7 @@ index bda7f26..f399f95 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -586,10 +580,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -587,10 +581,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  

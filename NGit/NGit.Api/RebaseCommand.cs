@@ -468,7 +468,7 @@ namespace NGit.Api
 
 						default:
 						{
-							throw new IOException("Could not abort rebase");
+							throw new JGitInternalException(JGitText.Get().abortingRebaseFailed);
 						}
 					}
 				}

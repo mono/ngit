@@ -376,6 +376,27 @@ namespace NGit.Api
 			return new RmCommand(repo);
 		}
 
+		/// <summary>
+		/// Returns a command object to execute a
+		/// <code>checkout</code>
+		/// command
+		/// </summary>
+		/// <seealso><a
+		/// *      href="http://www.kernel.org/pub/software/scm/git/docs/git-checkout.html"
+		/// *      >Git documentation about checkout</a></seealso>
+		/// <returns>
+		/// a
+		/// <see cref="CheckoutCommand">CheckoutCommand</see>
+		/// used to collect all optional parameters
+		/// and to finally execute the
+		/// <code>checkout</code>
+		/// command
+		/// </returns>
+		public virtual CheckoutCommand Checkout()
+		{
+			return new CheckoutCommand(repo);
+		}
+
 		/// <returns>the git repository this class is interacting with</returns>
 		public virtual Repository GetRepository()
 		{

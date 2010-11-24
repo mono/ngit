@@ -78,6 +78,8 @@ namespace NGit
 
 		public string abortingRebase;
 
+		public string abortingRebaseFailed;
+
 		public string advertisementCameBefore;
 
 		public string advertisementOfCameBefore;
@@ -213,6 +215,8 @@ namespace NGit
 		public string channelMustBeInRange0_255;
 
 		public string characterClassIsNotSupported;
+
+		public string checkoutUnexpectedResult;
 
 		public string checkoutConflictWithFile;
 
