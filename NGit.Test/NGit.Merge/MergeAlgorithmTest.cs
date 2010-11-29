@@ -193,11 +193,36 @@ namespace NGit.Merge
 			NUnit.Framework.Assert.AreEqual(T("aZcYe"), Merge("abcde", "aZcde", "abcYe"));
 		}
 
+		/// <summary>
+		/// Test merging two contents which do one similar modification and one
+		/// insertion is only done by one side.
+		/// </summary>
+		/// <remarks>
+		/// Test merging two contents which do one similar modification and one
+		/// insertion is only done by one side. Between modification and insertion is
+		/// a block which is common between the two contents and the common base
+		/// </remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestTwoSimilarModsAndOneInsert()
+		{
+			NUnit.Framework.Assert.AreEqual(T("IAAJ"), Merge("iA", "IA", "IAAJ"));
+			NUnit.Framework.Assert.AreEqual(T("aBcDde"), Merge("abcde", "aBcde", "aBcDde"));
+			NUnit.Framework.Assert.AreEqual(T("IAJ"), Merge("iA", "IA", "IAJ"));
+			NUnit.Framework.Assert.AreEqual(T("IAAAJ"), Merge("iA", "IA", "IAAAJ"));
+			NUnit.Framework.Assert.AreEqual(T("IAAAJCAB"), Merge("iACAB", "IACAB", "IAAAJCAB"
+				));
+			NUnit.Framework.Assert.AreEqual(T("HIAAAJCAB"), Merge("HiACAB", "HIACAB", "HIAAAJCAB"
+				));
+			NUnit.Framework.Assert.AreEqual(T("AGADEFHIAAAJCAB"), Merge("AGADEFHiACAB", "AGADEFHIACAB"
+				, "AGADEFHIAAAJCAB"));
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private string Merge(string commonBase, string ours, string theirs)
 		{
-			MergeResult<RawText> r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, RT(commonBase), RT
-				(ours), RT(theirs));
+			MergeResult<RawText> r = new MergeAlgorithm().Merge(RawTextComparator.DEFAULT, RT(commonBase
+				), RT(ours), RT(theirs));
 			ByteArrayOutputStream bo = new ByteArrayOutputStream(50);
 			fmt.FormatMerge(bo, r, "B", "O", "T", Constants.CHARACTER_ENCODING);
 			return Sharpen.Extensions.CreateString(bo.ToByteArray(), Constants.CHARACTER_ENCODING

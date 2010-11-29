@@ -109,10 +109,16 @@ namespace NGit.Merge
 
 		private WorkingTreeIterator workingTreeIterator;
 
+		private MergeAlgorithm mergeAlgorithm;
+
 		/// <param name="local"></param>
 		/// <param name="inCore"></param>
 		protected internal ResolveMerger(Repository local, bool inCore) : base(local)
 		{
+			DiffAlgorithm.SupportedAlgorithm diffAlg = local.GetConfig().GetEnum(ConfigConstants
+				.CONFIG_DIFF_SECTION, null, ConfigConstants.CONFIG_KEY_ALGORITHM, DiffAlgorithm.SupportedAlgorithm
+				.HISTOGRAM);
+			mergeAlgorithm = new MergeAlgorithm(DiffAlgorithm.GetAlgorithm(diffAlg));
 			commitNames = new string[] { "BASE", "OURS", "THEIRS" };
 			oi = GetObjectInserter();
 			this.inCore = inCore;
@@ -474,7 +480,7 @@ namespace NGit.Merge
 		{
 			MergeFormatter fmt = new MergeFormatter();
 			// do the merge
-			MergeResult<RawText> result = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, GetRawText
+			MergeResult<RawText> result = mergeAlgorithm.Merge(RawTextComparator.DEFAULT, GetRawText
 				(@base.GetEntryObjectId(), db), GetRawText(ours.GetEntryObjectId(), db), GetRawText
 				(theirs.GetEntryObjectId(), db));
 			FilePath of = null;

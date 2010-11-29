@@ -251,16 +251,16 @@ index ea55eac..d1c4780 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-index fee0e80..a77be4c 100644
+index 45aa835..7cfdd3d 100644
 --- a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
 +++ b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-@@ -196,7 +196,7 @@ namespace NGit.Merge
+@@ -221,7 +221,7 @@ namespace NGit.Merge
  		/// <exception cref="System.IO.IOException"></exception>
  		private string Merge(string commonBase, string ours, string theirs)
  		{
--			MergeResult r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, RT(commonBase), RT
-+			MergeResult<RawText> r = MergeAlgorithm.Merge(RawTextComparator.DEFAULT, RT(commonBase), RT
- 				(ours), RT(theirs));
+-			MergeResult r = new MergeAlgorithm().Merge(RawTextComparator.DEFAULT, RT(commonBase
++			MergeResult<RawText> r = new MergeAlgorithm().Merge(RawTextComparator.DEFAULT, RT(commonBase
+ 				), RT(ours), RT(theirs));
  			ByteArrayOutputStream bo = new ByteArrayOutputStream(50);
  			fmt.FormatMerge(bo, r, "B", "O", "T", Constants.CHARACTER_ENCODING);
 diff --git a/NGit.Test/NGit.Nls/TestNLS.cs b/NGit.Test/NGit.Nls/TestNLS.cs
@@ -724,7 +724,7 @@ index 52bba89..cac2d54 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index e4187a3..12bade3 100644
+index fd5bccd..bd9d6fe 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -149,6 +149,7 @@ namespace NGit.Api
@@ -736,10 +736,10 @@ index e4187a3..12bade3 100644
  				}
  				if (monitor.IsCancelled())
 diff --git a/NGit/NGit.Diff/DiffAlgorithm.cs b/NGit/NGit.Diff/DiffAlgorithm.cs
-index 2363bf5..27875ea 100644
+index c9cde2c..477a0d8 100644
 --- a/NGit/NGit.Diff/DiffAlgorithm.cs
 +++ b/NGit/NGit.Diff/DiffAlgorithm.cs
-@@ -92,8 +92,8 @@ namespace NGit.Diff
+@@ -125,8 +125,8 @@ namespace NGit.Diff
  		/// 's rules. The
  		/// result list is never null.
  		/// </returns>
@@ -750,7 +750,7 @@ index 2363bf5..27875ea 100644
  		{
  			Edit region = cmp.ReduceCommonStartEnd(a, b, CoverEdit(a, b));
  			switch (region.GetType())
-@@ -107,9 +107,9 @@ namespace NGit.Diff
+@@ -140,9 +140,9 @@ namespace NGit.Diff
  				case Edit.Type.REPLACE:
  				{
  					SubsequenceComparator<S> cs = new SubsequenceComparator<S>(cmp);
@@ -763,7 +763,7 @@ index 2363bf5..27875ea 100644
  					// The last insertion may need to be shifted later if it
  					// inserts elements that were previously reduced out as
  					// common at the end.
-@@ -179,7 +179,7 @@ namespace NGit.Diff
+@@ -212,7 +212,7 @@ namespace NGit.Diff
  		/// .
  		/// </param>
  		/// <returns>a modifiable edit list comparing the two sequences.</returns>
@@ -774,10 +774,10 @@ index 2363bf5..27875ea 100644
  	}
  }
 diff --git a/NGit/NGit.Diff/DiffFormatter.cs b/NGit/NGit.Diff/DiffFormatter.cs
-index b0fc30b..58ad140 100644
+index a3c9266..fe651b7 100644
 --- a/NGit/NGit.Diff/DiffFormatter.cs
 +++ b/NGit/NGit.Diff/DiffFormatter.cs
-@@ -511,7 +511,7 @@ namespace NGit.Diff
+@@ -514,7 +514,7 @@ namespace NGit.Diff
  					return Sharpen.Collections.SingletonList(ent);
  				}
  			}
@@ -1060,24 +1060,6 @@ index 963fda9..1857bb1 100644
  				}
  				catch (InvalidPatternException e)
  				{
-diff --git a/NGit/NGit.Merge/MergeAlgorithm.cs b/NGit/NGit.Merge/MergeAlgorithm.cs
-index ae6282b..a2f5f29 100644
---- a/NGit/NGit.Merge/MergeAlgorithm.cs
-+++ b/NGit/NGit.Merge/MergeAlgorithm.cs
-@@ -92,10 +92,10 @@ namespace NGit.Merge
- 			sequences.AddItem(@base);
- 			sequences.AddItem(ours);
- 			sequences.AddItem(theirs);
--			MergeResult result = new MergeResult<S>(sequences);
--			EditList oursEdits = MyersDiff.INSTANCE.Diff(cmp, @base, ours);
-+			MergeResult<S> result = new MergeResult<S>(sequences);
-+			EditList oursEdits = MyersDiff<S>.INSTANCE.Diff(cmp, @base, ours);
- 			Iterator<Edit> baseToOurs = oursEdits.Iterator();
--			EditList theirsEdits = MyersDiff.INSTANCE.Diff(cmp, @base, theirs);
-+			EditList theirsEdits = MyersDiff<S>.INSTANCE.Diff(cmp, @base, theirs);
- 			Iterator<Edit> baseToTheirs = theirsEdits.Iterator();
- 			int current = 0;
- 			// points to the next line (first line is 0) of base
 diff --git a/NGit/NGit.Merge/MergeFormatter.cs b/NGit/NGit.Merge/MergeFormatter.cs
 index 30d2124..9e19fd5 100644
 --- a/NGit/NGit.Merge/MergeFormatter.cs
@@ -1154,10 +1136,10 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index d77e463..aa07c02 100644
+index 209173d..8555ad0 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
-@@ -527,7 +527,7 @@ namespace NGit.Merge
+@@ -533,7 +533,7 @@ namespace NGit.Merge
  				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
  				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
  				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);

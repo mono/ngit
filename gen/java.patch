@@ -126,7 +126,7 @@ index 045fecd..159a4cf 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 0938ec1..09e7ab9 100644
+index f924590..8ad8e6a 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -73,6 +73,7 @@
@@ -181,7 +181,7 @@ index 0938ec1..09e7ab9 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -587,10 +581,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -592,10 +586,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -540,10 +540,10 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index a6119ed..eb96c64 100644
+index a1bda41..a50ca83 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-@@ -100,7 +100,7 @@
+@@ -103,7 +103,7 @@
  
  	private NameConflictTreeWalk tw;
  

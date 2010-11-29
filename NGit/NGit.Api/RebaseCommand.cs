@@ -420,6 +420,7 @@ namespace NGit.Api
 			try
 			{
 				fos.Write(Sharpen.Runtime.GetBytesForString(content, "UTF-8"));
+				fos.Write('\n');
 			}
 			finally
 			{
@@ -502,7 +503,14 @@ namespace NGit.Api
 		/// <exception cref="System.IO.IOException"></exception>
 		private string ReadFile(FilePath directory, string fileName)
 		{
-			return RawParseUtils.Decode(IOUtil.ReadFully(new FilePath(directory, fileName)));
+			byte[] content = IOUtil.ReadFully(new FilePath(directory, fileName));
+			// strip off the last LF
+			int end = content.Length;
+			while (0 < end && content[end - 1] == '\n')
+			{
+				end--;
+			}
+			return RawParseUtils.Decode(content, 0, end);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

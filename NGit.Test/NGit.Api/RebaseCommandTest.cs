@@ -270,7 +270,7 @@ namespace NGit.Api
 			// create file1 on master
 			FilePath theFile = WriteTrashFile("file1", "1\n2\n3\n");
 			git.Add().AddFilepattern("file1").Call();
-			RevCommit second = git.Commit().SetMessage("Add file1").Call();
+			RevCommit firstInMaster = git.Commit().SetMessage("Add file1").Call();
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
 			// change first line in master and commit
 			WriteTrashFile("file1", "1master\n2\n3\n");
@@ -278,33 +278,36 @@ namespace NGit.Api
 			git.Add().AddFilepattern("file1").Call();
 			git.Commit().SetMessage("change file1 in master").Call();
 			// create a topic branch based on second commit
-			CreateBranch(second, "refs/heads/topic");
+			CreateBranch(firstInMaster, "refs/heads/topic");
 			CheckoutBranch("refs/heads/topic");
 			// we have the old content again
 			CheckFile(theFile, "1\n2\n3\n");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
 			// add a line (non-conflicting)
-			WriteTrashFile("file1", "1\n2\n3\n4\n");
+			WriteTrashFile("file1", "1\n2\n3\ntopic4\n");
 			git.Add().AddFilepattern("file1").Call();
 			git.Commit().SetMessage("add a line to file1 in topic").Call();
 			// change first line (conflicting)
-			WriteTrashFile("file1", "1topic\n2\n3\n4\n");
+			WriteTrashFile("file1", "1topic\n2\n3\ntopic4\n");
 			git.Add().AddFilepattern("file1").Call();
-			git.Commit().SetMessage("change file1 in topic").Call();
+			RevCommit conflicting = git.Commit().SetMessage("change file1 in topic").Call();
 			// change second line (not conflicting)
-			WriteTrashFile("file1", "1topic\n2topic\n3\n4\n");
+			WriteTrashFile("file1", "1topic\n2topic\n3\ntopic4\n");
 			git.Add().AddFilepattern("file1").Call();
 			RevCommit lastTopicCommit = git.Commit().SetMessage("change file1 in topic again"
 				).Call();
 			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
-			CheckFile(theFile, "<<<<<<< OURS\n1master\n=======\n1topic\n>>>>>>> THEIRS\n2\n3\n4\n"
+			AssertEquals(conflicting, res.GetCurrentCommit());
+			CheckFile(theFile, "<<<<<<< OURS\n1master\n=======\n1topic\n>>>>>>> THEIRS\n2\n3\ntopic4\n"
 				);
 			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_MERGE, db.GetRepositoryState
 				());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "rebase-merge").Exists()
+				);
 			// the first one should be included, so we should have left two picks in
 			// the file
-			NUnit.Framework.Assert.AreEqual(CountPicks(), 2);
+			NUnit.Framework.Assert.AreEqual(2, CountPicks());
 			// rebase should not succeed in this state
 			try
 			{
@@ -319,9 +322,90 @@ namespace NGit.Api
 			res = git.Rebase().SetOperation(RebaseCommand.Operation.ABORT).Call();
 			NUnit.Framework.Assert.AreEqual(res.GetStatus(), RebaseResult.Status.ABORTED);
 			NUnit.Framework.Assert.AreEqual("refs/heads/topic", db.GetFullBranch());
-			CheckFile(theFile, "1topic\n2topic\n3\n4\n");
+			CheckFile(theFile, "1topic\n2topic\n3\ntopic4\n");
 			RevWalk rw = new RevWalk(db);
 			AssertEquals(lastTopicCommit, rw.ParseCommit(db.Resolve(Constants.HEAD)));
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+			// rebase- dir in .git must be deleted
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, "rebase-merge").Exists(
+				));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestAbortOnConflictFileCreationAndDeletion()
+		{
+			Git git = new Git(db);
+			// create file1 on master
+			WriteTrashFile("file1", "Hello World");
+			git.Add().AddFilepattern("file1").Call();
+			// create file2 on master
+			FilePath file2 = WriteTrashFile("file2", "Hello World 2");
+			git.Add().AddFilepattern("file2").Call();
+			// create file3 on master
+			FilePath file3 = WriteTrashFile("file3", "Hello World 3");
+			git.Add().AddFilepattern("file3").Call();
+			RevCommit firstInMaster = git.Commit().SetMessage("Add file 1, 2 and 3").Call();
+			// create file4 on master
+			FilePath file4 = WriteTrashFile("file4", "Hello World 4");
+			git.Add().AddFilepattern("file4").Call();
+			DeleteTrashFile("file2");
+			git.Add().SetUpdate(true).AddFilepattern("file2").Call();
+			// create folder folder6 on topic (conflicts with file folder6 on topic
+			// later on)
+			WriteTrashFile("folder6/file1", "Hello World folder6");
+			git.Add().AddFilepattern("folder6/file1").Call();
+			git.Commit().SetMessage("Add file 4 and folder folder6, delete file2 on master").
+				Call();
+			// create a topic branch based on second commit
+			CreateBranch(firstInMaster, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			DeleteTrashFile("file3");
+			git.Add().SetUpdate(true).AddFilepattern("file3").Call();
+			// create file5 on topic
+			FilePath file5 = WriteTrashFile("file5", "Hello World 5");
+			git.Add().AddFilepattern("file5").Call();
+			git.Commit().SetMessage("Delete file3 and add file5 in topic").Call();
+			// create file folder6 on topic (conflicts with folder6 on master)
+			WriteTrashFile("folder6", "Hello World 6");
+			git.Add().AddFilepattern("folder6").Call();
+			// create file7 on topic
+			FilePath file7 = WriteTrashFile("file7", "Hello World 7");
+			git.Add().AddFilepattern("file7").Call();
+			DeleteTrashFile("file5");
+			git.Add().SetUpdate(true).AddFilepattern("file5").Call();
+			RevCommit conflicting = git.Commit().SetMessage("Delete file5, add file folder6 and file7 in topic"
+				).Call();
+			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
+			AssertEquals(conflicting, res.GetCurrentCommit());
+			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_MERGE, db.GetRepositoryState
+				());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "rebase-merge").Exists()
+				);
+			// the first one should be included, so we should have left two picks in
+			// the file
+			NUnit.Framework.Assert.AreEqual(1, CountPicks());
+			NUnit.Framework.Assert.IsFalse(file2.Exists());
+			NUnit.Framework.Assert.IsFalse(file3.Exists());
+			NUnit.Framework.Assert.IsTrue(file4.Exists());
+			NUnit.Framework.Assert.IsFalse(file5.Exists());
+			NUnit.Framework.Assert.IsTrue(file7.Exists());
+			// abort should reset to topic branch
+			res = git.Rebase().SetOperation(RebaseCommand.Operation.ABORT).Call();
+			NUnit.Framework.Assert.AreEqual(res.GetStatus(), RebaseResult.Status.ABORTED);
+			NUnit.Framework.Assert.AreEqual("refs/heads/topic", db.GetFullBranch());
+			RevWalk rw = new RevWalk(db);
+			AssertEquals(conflicting, rw.ParseCommit(db.Resolve(Constants.HEAD)));
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+			// rebase- dir in .git must be deleted
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, "rebase-merge").Exists(
+				));
+			NUnit.Framework.Assert.IsTrue(file2.Exists());
+			NUnit.Framework.Assert.IsFalse(file3.Exists());
+			NUnit.Framework.Assert.IsFalse(file4.Exists());
+			NUnit.Framework.Assert.IsFalse(file5.Exists());
+			NUnit.Framework.Assert.IsTrue(file7.Exists());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

@@ -97,6 +97,16 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		protected internal virtual void DeleteTrashFile(string name)
+		{
+			FilePath path = new FilePath(db.WorkTree, name);
+			if (!path.Delete())
+			{
+				throw new IOException("Could not delete file " + path.GetPath());
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
 		protected internal static void CheckFile(FilePath f, string checkData)
 		{
 			StreamReader r = new InputStreamReader(new FileInputStream(f), "ISO-8859-1");
