@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.IO;
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
@@ -404,6 +405,33 @@ namespace NGit.Api
 				, IndexState(CONTENT));
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestAssumeUnchanged()
+		{
+			Git git = new Git(db);
+			string path = "a.txt";
+			WriteTrashFile(path, "content");
+			git.Add().AddFilepattern(path).Call();
+			string path2 = "b.txt";
+			WriteTrashFile(path2, "content");
+			git.Add().AddFilepattern(path2).Call();
+			git.Commit().SetMessage("commit").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:" + "content, assume-unchanged:false]"
+				 + "[b.txt, mode:100644, content:content, " + "assume-unchanged:false]", IndexState
+				(CONTENT | ASSUME_UNCHANGED));
+			AssumeUnchanged(path2);
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:content, " + "assume-unchanged:false][b.txt, mode:100644, "
+				 + "content:content, assume-unchanged:true]", IndexState(CONTENT | ASSUME_UNCHANGED
+				));
+			WriteTrashFile(path, "more content");
+			WriteTrashFile(path2, "more content");
+			git.Add().AddFilepattern(".").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:more content," + " assume-unchanged:false][b.txt, mode:100644,"
+				 + string.Empty + string.Empty + " content:content, assume-unchanged:true]", IndexState
+				(CONTENT | ASSUME_UNCHANGED));
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private DirCacheEntry AddEntryToBuilder(string path, FilePath file, ObjectInserter
 			 newObjectInserter, DirCacheBuilder builder, int stage)
@@ -419,6 +447,22 @@ namespace NGit.Api
 			entry.SetLength((int)file.Length());
 			builder.Add(entry);
 			return entry;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void AssumeUnchanged(string path)
+		{
+			DirCache dirc = db.LockDirCache();
+			DirCacheEntry ent = dirc.GetEntry(path);
+			if (ent != null)
+			{
+				ent.SetAssumeValid(true);
+			}
+			dirc.Write();
+			if (!dirc.Commit())
+			{
+				throw new IOException("could not commit");
+			}
 		}
 	}
 }

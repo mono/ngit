@@ -154,6 +154,8 @@ namespace NGit
 
 		public const int CONTENT = 16;
 
+		public const int ASSUME_UNCHANGED = 32;
+
 		/// <summary>Represent the state of the index in one String.</summary>
 		/// <remarks>
 		/// Represent the state of the index in one String. This representation is
@@ -244,6 +246,10 @@ namespace NGit
 				{
 					sb.Append(", content:" + Sharpen.Extensions.CreateString(db.Open(entry.GetObjectId
 						(), Constants.OBJ_BLOB).GetCachedBytes(), "UTF-8"));
+				}
+				if (0 != (includedOptions & ASSUME_UNCHANGED))
+				{
+					sb.Append(", assume-unchanged:" + entry.IsAssumeValid());
 				}
 				sb.Append("]");
 			}

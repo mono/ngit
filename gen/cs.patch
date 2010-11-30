@@ -620,6 +620,19 @@ index 06aaf16..5aeeb2b 100644
  			NUnit.Framework.Assert.AreEqual(Read(new FilePath(db.Directory, "MERGE_HEAD")), string.Empty
  				);
  			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads(), null);
+diff --git a/NGit.Test/NGit/RepositoryTestCase.cs b/NGit.Test/NGit/RepositoryTestCase.cs
+index 53e18bf..e1be82f 100644
+--- a/NGit.Test/NGit/RepositoryTestCase.cs
++++ b/NGit.Test/NGit/RepositoryTestCase.cs
+@@ -249,7 +249,7 @@ namespace NGit
+ 				}
+ 				if (0 != (includedOptions & ASSUME_UNCHANGED))
+ 				{
+-					sb.Append(", assume-unchanged:" + bool.ToString(entry.IsAssumeValid()));
++					sb.Append(", assume-unchanged:" + entry.IsAssumeValid());
+ 				}
+ 				sb.Append("]");
+ 			}
 diff --git a/NGit.Test/NGit/WorkDirCheckoutTest.cs b/NGit.Test/NGit/WorkDirCheckoutTest.cs
 index 1dbb183..4915d13 100644
 --- a/NGit.Test/NGit/WorkDirCheckoutTest.cs
@@ -736,9 +749,18 @@ index fd5bccd..bd9d6fe 100644
  				}
  				if (monitor.IsCancelled())
 diff --git a/NGit/NGit.Diff/DiffAlgorithm.cs b/NGit/NGit.Diff/DiffAlgorithm.cs
-index c9cde2c..477a0d8 100644
+index c9cde2c..ae3b1d7 100644
 --- a/NGit/NGit.Diff/DiffAlgorithm.cs
 +++ b/NGit/NGit.Diff/DiffAlgorithm.cs
+@@ -81,7 +81,7 @@ namespace NGit.Diff
+ 			{
+ 				case DiffAlgorithm.SupportedAlgorithm.MYERS:
+ 				{
+-					return MyersDiff.INSTANCE;
++					return MyersDiff<RawText>.INSTANCE;
+ 				}
+ 
+ 				case DiffAlgorithm.SupportedAlgorithm.HISTOGRAM:
 @@ -125,8 +125,8 @@ namespace NGit.Diff
  		/// 's rules. The
  		/// result list is never null.
@@ -773,6 +795,28 @@ index c9cde2c..477a0d8 100644
 +			S b) where S:Sequence;
  	}
  }
+diff --git a/NGit/NGit.Diff/DiffConfig.cs b/NGit/NGit.Diff/DiffConfig.cs
+index e6e0091..8b8f6c4 100644
+--- a/NGit/NGit.Diff/DiffConfig.cs
++++ b/NGit/NGit.Diff/DiffConfig.cs
+@@ -141,7 +141,7 @@ namespace NGit.Diff
+ 				}
+ 				else
+ 				{
+-					bool renameBoolean = StringUtils.ToBooleanOrNull(renameString);
++					bool? renameBoolean = StringUtils.ToBooleanOrNull(renameString);
+ 					if (renameBoolean == null)
+ 					{
+ 						throw new ArgumentException(MessageFormat.Format(JGitText.Get().enumValueNotSupported2
+@@ -149,7 +149,7 @@ namespace NGit.Diff
+ 					}
+ 					else
+ 					{
+-						if (renameBoolean)
++						if (renameBoolean.Value)
+ 						{
+ 							return DiffConfig.RenameDetectionType.TRUE;
+ 						}
 diff --git a/NGit/NGit.Diff/DiffFormatter.cs b/NGit/NGit.Diff/DiffFormatter.cs
 index a3c9266..fe651b7 100644
 --- a/NGit/NGit.Diff/DiffFormatter.cs
@@ -2649,7 +2693,7 @@ index f1ec18e..e576e09 100644
  			{
  				return this.@ref.ToString();
 diff --git a/NGit/NGit.Util/StringUtils.cs b/NGit/NGit.Util/StringUtils.cs
-index 9f738c9..e8183e0 100644
+index 05ff394..74f90dc 100644
 --- a/NGit/NGit.Util/StringUtils.cs
 +++ b/NGit/NGit.Util/StringUtils.cs
 @@ -58,7 +58,7 @@ namespace NGit.Util
@@ -2661,6 +2705,31 @@ index 9f738c9..e8183e0 100644
  			{
  				LC[c] = c;
  			}
+@@ -162,13 +162,13 @@ namespace NGit.Util
+ 			{
+ 				throw new ArgumentNullException(JGitText.Get().expectedBooleanStringValue);
+ 			}
+-			bool @bool = ToBooleanOrNull(stringValue);
++			bool? @bool = ToBooleanOrNull(stringValue);
+ 			if (@bool == null)
+ 			{
+ 				throw new ArgumentException(MessageFormat.Format(JGitText.Get().notABoolean, stringValue
+ 					));
+ 			}
+-			return @bool;
++			return @bool.Value;
+ 		}
+ 
+ 		/// <summary>Parse a string as a standard Git boolean value.</summary>
+@@ -212,7 +212,7 @@ namespace NGit.Util
+ 		/// or null in case the
+ 		/// string does not represent a boolean value
+ 		/// </returns>
+-		public static bool ToBooleanOrNull(string stringValue)
++		public static bool? ToBooleanOrNull(string stringValue)
+ 		{
+ 			if (stringValue == null)
+ 			{
 diff --git a/NGit/NGit/AnyObjectId.cs b/NGit/NGit/AnyObjectId.cs
 index cd2daec..0004081 100644
 --- a/NGit/NGit/AnyObjectId.cs
