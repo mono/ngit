@@ -908,10 +908,55 @@ index 8f53a0d..77c01c8 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index ac3a831..9f604bc 100644
+index ac3a831..3fc2603 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-@@ -580,8 +580,10 @@ public boolean isModified(DirCacheEntry entry, boolean forceContentCheck,
+@@ -120,6 +120,12 @@
+ 	private IgnoreNode ignoreNode;
+ 
+ 	/**
++	 * Cached value of isEntryIgnored(). 0 if not ignored, 1 if ignored, -1 if
++	 * the value is not yet cached.
++	 */
++	private int ignoreStatus = -1;
++
++	/**
+ 	 * Create a new iterator with no parent.
+ 	 *
+ 	 * @param options
+@@ -422,6 +428,8 @@ public boolean isEntryIgnored() throws IOException {
+ 	 *             a relevant ignore rule file exists but cannot be read.
+ 	 */
+ 	protected boolean isEntryIgnored(final int pLen) throws IOException {
++		if (ignoreStatus != -1)
++			return ignoreStatus == 1;
+ 		IgnoreNode rules = getIgnoreNode();
+ 		if (rules != null) {
+ 			// The ignore code wants path to start with a '/' if possible.
+@@ -434,15 +442,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
+ 			String p = TreeWalk.pathOf(path, pOff, pLen);
+ 			switch (rules.isIgnored(p, FileMode.TREE.equals(mode))) {
+ 			case IGNORED:
++				ignoreStatus = 1;
+ 				return true;
+ 			case NOT_IGNORED:
++				ignoreStatus = 0;
+ 				return false;
+ 			case CHECK_PARENT:
+ 				break;
+ 			}
+ 		}
+-		if (parent instanceof WorkingTreeIterator)
+-			return ((WorkingTreeIterator) parent).isEntryIgnored(pLen);
++		if (parent instanceof WorkingTreeIterator) {
++			ignoreStatus = ((WorkingTreeIterator) parent).isEntryIgnored(pLen) ? 1 : 0;
++			return ignoreStatus == 1;
++		}
++		ignoreStatus = 0;
+ 		return false;
+ 	}
+ 
+@@ -580,8 +593,10 @@ public boolean isModified(DirCacheEntry entry, boolean forceContentCheck,
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();
