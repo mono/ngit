@@ -912,12 +912,10 @@ namespace NGit.Storage.File
 				ReadFully(pos, ib, 0, 20, curs);
 				int c = ib[0] & unchecked((int)(0xff));
 				int type = (c >> 4) & 7;
-				int shift = 4;
 				int p = 1;
 				while ((c & unchecked((int)(0x80))) != 0)
 				{
 					c = ib[p++] & unchecked((int)(0xff));
-					shift += 7;
 				}
 				switch (type)
 				{

@@ -52,19 +52,21 @@ using Sharpen;
 namespace NGit
 {
 	/// <summary>
-	/// Compares the index, a tree, and the working directory
-	/// Ignored files are not taken into account.
+	/// Compares the index, a tree, and the working directory Ignored files are not
+	/// taken into account.
 	/// </summary>
 	/// <remarks>
-	/// Compares the index, a tree, and the working directory
-	/// Ignored files are not taken into account.
-	/// The following information is retrieved:
-	/// <li> added files
-	/// <li> changed files
-	/// <li> removed files
-	/// <li> missing files
-	/// <li> modified files
-	/// <li> untracked files
+	/// Compares the index, a tree, and the working directory Ignored files are not
+	/// taken into account. The following information is retrieved:
+	/// <ul>
+	/// <li>added files</li>
+	/// <li>changed files</li>
+	/// <li>removed files</li>
+	/// <li>missing files</li>
+	/// <li>modified files</li>
+	/// <li>untracked files</li>
+	/// <li>files with assume-unchanged flag</li>
+	/// </ul>
 	/// </remarks>
 	public class IndexDiff
 	{
@@ -82,17 +84,19 @@ namespace NGit
 
 		private readonly WorkingTreeIterator initialWorkingTreeIterator;
 
-		private HashSet<string> added = new HashSet<string>();
+		private ICollection<string> added = new HashSet<string>();
 
-		private HashSet<string> changed = new HashSet<string>();
+		private ICollection<string> changed = new HashSet<string>();
 
-		private HashSet<string> removed = new HashSet<string>();
+		private ICollection<string> removed = new HashSet<string>();
 
-		private HashSet<string> missing = new HashSet<string>();
+		private ICollection<string> missing = new HashSet<string>();
 
-		private HashSet<string> modified = new HashSet<string>();
+		private ICollection<string> modified = new HashSet<string>();
 
-		private HashSet<string> untracked = new HashSet<string>();
+		private ICollection<string> untracked = new HashSet<string>();
+
+		private ICollection<string> assumeUnchanged = new HashSet<string>();
 
 		/// <summary>Construct an IndexDiff</summary>
 		/// <param name="repository"></param>
@@ -187,6 +191,13 @@ namespace NGit
 				WorkingTreeIterator workingTreeIterator = treeWalk.GetTree<WorkingTreeIterator>(WORKDIR
 					);
 				FileMode fileModeTree = treeWalk.GetFileMode(TREE);
+				if (dirCacheIterator != null)
+				{
+					if (dirCacheIterator.GetDirCacheEntry().IsAssumeValid())
+					{
+						assumeUnchanged.AddItem(dirCacheIterator.GetEntryPathString());
+					}
+				}
 				if (treeIterator != null)
 				{
 					if (dirCacheIterator != null)
@@ -253,39 +264,45 @@ namespace NGit
 		}
 
 		/// <returns>list of files added to the index, not in the tree</returns>
-		public virtual HashSet<string> GetAdded()
+		public virtual ICollection<string> GetAdded()
 		{
 			return added;
 		}
 
 		/// <returns>list of files changed from tree to index</returns>
-		public virtual HashSet<string> GetChanged()
+		public virtual ICollection<string> GetChanged()
 		{
 			return changed;
 		}
 
 		/// <returns>list of files removed from index, but in tree</returns>
-		public virtual HashSet<string> GetRemoved()
+		public virtual ICollection<string> GetRemoved()
 		{
 			return removed;
 		}
 
 		/// <returns>list of files in index, but not filesystem</returns>
-		public virtual HashSet<string> GetMissing()
+		public virtual ICollection<string> GetMissing()
 		{
 			return missing;
 		}
 
 		/// <returns>list of files on modified on disk relative to the index</returns>
-		public virtual HashSet<string> GetModified()
+		public virtual ICollection<string> GetModified()
 		{
 			return modified;
 		}
 
 		/// <returns>list of files on modified on disk relative to the index</returns>
-		public virtual HashSet<string> GetUntracked()
+		public virtual ICollection<string> GetUntracked()
 		{
 			return untracked;
+		}
+
+		/// <returns>list of files with the flag assume-unchanged</returns>
+		public virtual ICollection<string> GetAssumeUnchanged()
+		{
+			return assumeUnchanged;
 		}
 	}
 }
