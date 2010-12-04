@@ -239,6 +239,52 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestMultipleCreations()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("b", "1\nb(side)\n3\n");
+			git.Add().AddFilepattern("b").Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile("b", "1\nb(main)\n3\n");
+			git.Add().AddFilepattern("b").Call();
+			git.Commit().SetMessage("main").Call();
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, result.GetMergeStatus());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestMultipleCreationsSameContent()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("b", "1\nb(1)\n3\n");
+			git.Add().AddFilepattern("b").Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile("b", "1\nb(1)\n3\n");
+			git.Add().AddFilepattern("b").Call();
+			git.Commit().SetMessage("main").Call();
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual("1\nb(1)\n3\n", Read(new FilePath(db.WorkTree, "b"
+				)));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestSuccessfulContentMerge()
 		{
 			Git git = new Git(db);
@@ -385,6 +431,31 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
 			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
 				"c/c/c")));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestMultipleDeletions()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "a").Delete());
+			git.Add().AddFilepattern("a").SetUpdate(true).Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "a").Exists());
+			CheckoutBranch("refs/heads/master");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "a").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "a").Delete());
+			git.Add().AddFilepattern("a").SetUpdate(true).Call();
+			git.Commit().SetMessage("main").Call();
+			// We are merging a deletion into our branch
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
 		}
 
 		/// <exception cref="System.Exception"></exception>

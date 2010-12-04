@@ -345,6 +345,7 @@ namespace NGit.Api
 			CreateFile(rebaseDir, "head", headId.Name);
 			CreateFile(rebaseDir, "head-name", headName);
 			CreateFile(rebaseDir, "onto", upstreamCommit.Name);
+			CreateFile(rebaseDir, "interactive", string.Empty);
 			BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream
 				(new FilePath(rebaseDir, "git-rebase-todo")), "UTF-8"));
 			fw.Write("# Created by EGit: rebasing " + upstreamCommit.Name + " onto " + headId

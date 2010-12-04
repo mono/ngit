@@ -301,7 +301,7 @@ namespace NGit.Api
 			AssertEquals(conflicting, res.GetCurrentCommit());
 			CheckFile(theFile, "<<<<<<< OURS\n1master\n=======\n1topic\n>>>>>>> THEIRS\n2\n3\ntopic4\n"
 				);
-			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_MERGE, db.GetRepositoryState
+			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, db.GetRepositoryState
 				());
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "rebase-merge").Exists()
 				);
@@ -379,7 +379,7 @@ namespace NGit.Api
 			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
 			AssertEquals(conflicting, res.GetCurrentCommit());
-			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_MERGE, db.GetRepositoryState
+			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, db.GetRepositoryState
 				());
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "rebase-merge").Exists()
 				);

@@ -479,10 +479,12 @@ namespace NGit.Merge
 			 theirs)
 		{
 			MergeFormatter fmt = new MergeFormatter();
+			RawText baseText = @base == null ? RawText.EMPTY_TEXT : GetRawText(@base.GetEntryObjectId
+				(), db);
 			// do the merge
-			MergeResult<RawText> result = mergeAlgorithm.Merge(RawTextComparator.DEFAULT, GetRawText
-				(@base.GetEntryObjectId(), db), GetRawText(ours.GetEntryObjectId(), db), GetRawText
-				(theirs.GetEntryObjectId(), db));
+			MergeResult<RawText> result = mergeAlgorithm.Merge(RawTextComparator.DEFAULT, baseText
+				, GetRawText(ours.GetEntryObjectId(), db), GetRawText(theirs.GetEntryObjectId(), 
+				db));
 			FilePath of = null;
 			FileOutputStream fos;
 			if (!inCore)

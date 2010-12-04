@@ -737,7 +737,7 @@ index 52bba89..cac2d54 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index fd5bccd..bd9d6fe 100644
+index e8033b4..259420d 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -149,6 +149,7 @@ namespace NGit.Api
@@ -946,7 +946,7 @@ index a986d08..3d96d78 100644
  
  			private readonly MyersDiff<S> _enclosing;
 diff --git a/NGit/NGit.Dircache/DirCacheCheckout.cs b/NGit/NGit.Dircache/DirCacheCheckout.cs
-index bac0954..26a4645 100644
+index bb00c2e..3715221 100644
 --- a/NGit/NGit.Dircache/DirCacheCheckout.cs
 +++ b/NGit/NGit.Dircache/DirCacheCheckout.cs
 @@ -842,7 +842,7 @@ namespace NGit.Dircache
@@ -1180,10 +1180,10 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index 209173d..8555ad0 100644
+index 8e974db..8e6413d 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
-@@ -533,7 +533,7 @@ namespace NGit.Merge
+@@ -535,7 +535,7 @@ namespace NGit.Merge
  				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
  				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
  				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);

@@ -954,23 +954,12 @@ namespace NGit.Dircache
 			, bool config_filemode)
 		{
 			ObjectLoader ol = repo.Open(entry.GetObjectId());
-			if (ol == null)
-			{
-				throw new MissingObjectException(entry.GetObjectId(), Constants.TYPE_BLOB);
-			}
-			byte[] bytes = ol.GetCachedBytes();
 			FilePath parentDir = f.GetParentFile();
 			FilePath tmpFile = FilePath.CreateTempFile("._" + f.GetName(), null, parentDir);
-			FileChannel channel = new FileOutputStream(tmpFile).GetChannel();
-			ByteBuffer buffer = ByteBuffer.Wrap(bytes);
+			FileOutputStream channel = new FileOutputStream(tmpFile);
 			try
 			{
-				int j = channel.Write(buffer);
-				if (j != bytes.Length)
-				{
-					throw new IOException(MessageFormat.Format(JGitText.Get().couldNotWriteFile, tmpFile
-						));
-				}
+				ol.CopyTo(channel);
 			}
 			finally
 			{
