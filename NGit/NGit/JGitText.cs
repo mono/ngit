@@ -198,6 +198,8 @@ namespace NGit
 
 		public string cannotReadTree;
 
+		public string cannotRebaseWithoutCurrentHead;
+
 		public string cannotResolveLocalTrackingRefForUpdating;
 
 		public string cannotStoreObjects;
@@ -909,6 +911,8 @@ namespace NGit
 		public string unknownZlibError;
 
 		public string unmergedPath;
+
+		public string unmergedPaths;
 
 		public string unpackException;
 

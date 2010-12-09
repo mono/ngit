@@ -126,10 +126,10 @@ index 045fecd..159a4cf 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index eaa96f5..322677d 100644
+index 6629c4f..4e14f6e 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-@@ -75,6 +75,7 @@
+@@ -82,6 +82,7 @@
  import org.eclipse.jgit.lib.Ref;
  import org.eclipse.jgit.lib.RefUpdate;
  import org.eclipse.jgit.lib.Repository;
@@ -137,7 +137,7 @@ index eaa96f5..322677d 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.revwalk.RevCommit;
  import org.eclipse.jgit.revwalk.RevWalk;
-@@ -401,36 +402,29 @@ private RebaseResult initFilesAndRewind() throws RefNotFoundException,
+@@ -537,30 +538,27 @@ private RebaseResult initFilesAndRewind() throws RefNotFoundException,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -145,21 +145,14 @@ index eaa96f5..322677d 100644
  		if (this.operation != Operation.BEGIN) {
  			// these operations are only possible while in a rebasing state
 -			switch (repo.getRepositoryState()) {
--			case REBASING:
--				// fall through
 -			case REBASING_INTERACTIVE:
--				// fall through
--			case REBASING_MERGE:
--				// fall through
--			case REBASING_REBASING:
 -				break;
 -			default:
-+			if (s != RepositoryState.REBASING && s != RepositoryState.REBASING_INTERACTIVE &&
-+				s != RepositoryState.REBASING_MERGE && s != RepositoryState.REBASING_REBASING) {
++			if (repo.getRepositoryState() != RepositoryState.REBASING_INTERACTIVE)
  				throw new WrongRepositoryStateException(MessageFormat.format(
  						JGitText.get().wrongRepositoryState, repo
  								.getRepositoryState().name()));
- 			}
+-			}
 -		} else
 -			switch (repo.getRepositoryState()) {
 -			case SAFE:
@@ -181,7 +174,7 @@ index eaa96f5..322677d 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -625,10 +619,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -755,10 +753,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -961,10 +954,10 @@ index 6365c11..b9b9862 100644
  		if (fileLastModified != cacheLastModified) {
  			// The file is dirty by timestamps
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
-index 9348afc..3d64b69 100644
+index acc1ae6..686d65a 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
-@@ -124,17 +124,15 @@ public String toString() {
+@@ -129,17 +129,15 @@ public String toString() {
  	public static final TreeFilter ANY_DIFF = new AnyDiffFilter();
  
  	private static final class AnyDiffFilter extends TreeFilter {

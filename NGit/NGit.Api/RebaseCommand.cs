@@ -41,7 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -51,6 +50,8 @@ using NGit.Api.Errors;
 using NGit.Diff;
 using NGit.Dircache;
 using NGit.Revwalk;
+using NGit.Treewalk;
+using NGit.Treewalk.Filter;
 using NGit.Util;
 using Sharpen;
 
@@ -74,6 +75,36 @@ namespace NGit.Api
 	/// *      >Git documentation about Rebase</a></seealso>
 	public class RebaseCommand : GitCommand<RebaseResult>
 	{
+		/// <summary>The name of the "rebase-merge" folder</summary>
+		public static readonly string REBASE_MERGE = "rebase-merge";
+
+		/// <summary>The name of the "stopped-sha" file</summary>
+		public static readonly string STOPPED_SHA = "stopped-sha";
+
+		private static readonly string AUTHOR_SCRIPT = "author-script";
+
+		private static readonly string DONE = "done";
+
+		private static readonly string GIT_AUTHOR_DATE = "GIT_AUTHOR_DATE";
+
+		private static readonly string GIT_AUTHOR_EMAIL = "GIT_AUTHOR_EMAIL";
+
+		private static readonly string GIT_AUTHOR_NAME = "GIT_AUTHOR_NAME";
+
+		private static readonly string GIT_REBASE_TODO = "git-rebase-todo";
+
+		private static readonly string HEAD_NAME = "head-name";
+
+		private static readonly string INTERACTIVE = "interactive";
+
+		private static readonly string MESSAGE = "message";
+
+		private static readonly string ONTO = "onto";
+
+		private static readonly string PATCH = "patch";
+
+		private static readonly string REBASE_HEAD = "head";
+
 		/// <summary>The available operations</summary>
 		public enum Operation
 		{
@@ -97,7 +128,7 @@ namespace NGit.Api
 		protected internal RebaseCommand(Repository repo) : base(repo)
 		{
 			walk = new RevWalk(repo);
-			rebaseDir = new FilePath(repo.Directory, "rebase-merge");
+			rebaseDir = new FilePath(repo.Directory, REBASE_MERGE);
 		}
 
 		/// <summary>
@@ -115,6 +146,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override RebaseResult Call()
 		{
+			RevCommit newHead = null;
 			CheckCallable();
 			CheckParameters();
 			try
@@ -138,7 +170,7 @@ namespace NGit.Api
 					case RebaseCommand.Operation.CONTINUE:
 					{
 						// fall through
-						string upstreamCommitName = ReadFile(rebaseDir, "onto");
+						string upstreamCommitName = ReadFile(rebaseDir, ONTO);
 						this.upstreamCommit = walk.ParseCommit(repo.Resolve(upstreamCommitName));
 						break;
 					}
@@ -159,14 +191,13 @@ namespace NGit.Api
 				}
 				if (this.operation == RebaseCommand.Operation.CONTINUE)
 				{
-					throw new NotSupportedException("--continue Not yet implemented");
+					newHead = ContinueRebase();
 				}
-				if (this.operation == RebaseCommand.Operation.SKIP)
-				{
-					throw new NotSupportedException("--skip Not yet implemented");
-				}
-				RevCommit newHead = null;
 				IList<RebaseCommand.Step> steps = LoadSteps();
+				if (this.operation == RebaseCommand.Operation.SKIP && !steps.IsEmpty())
+				{
+					CheckoutCurrentHead();
+				}
 				ObjectReader or = repo.NewObjectReader();
 				int stepsToPop = 0;
 				foreach (RebaseCommand.Step step in steps)
@@ -200,17 +231,24 @@ namespace NGit.Api
 					}
 					stepsToPop++;
 				}
-				if (newHead != null)
+				if (newHead != null || steps.IsEmpty())
 				{
 					// point the previous head (if any) to the new commit
-					string headName = ReadFile(rebaseDir, "head-name");
+					string headName = ReadFile(rebaseDir, HEAD_NAME);
 					if (headName.StartsWith(Constants.R_REFS))
 					{
 						RefUpdate rup = repo.UpdateRef(headName);
-						rup.SetNewObjectId(newHead);
-						rup.ForceUpdate();
+						if (newHead != null)
+						{
+							rup.SetNewObjectId(newHead);
+							rup.ForceUpdate();
+						}
 						rup = repo.UpdateRef(Constants.HEAD);
 						rup.Link(headName);
+					}
+					if (this.operation == RebaseCommand.Operation.SKIP && steps.IsEmpty())
+					{
+						CheckoutCurrentHead();
 					}
 					FileUtils.Delete(rebaseDir, FileUtils.RECURSIVE);
 					return new RebaseResult(RebaseResult.Status.OK);
@@ -224,29 +262,131 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		private void CheckoutCurrentHead()
+		{
+			ObjectId headTree = repo.Resolve(Constants.HEAD + "^{tree}");
+			if (headTree == null)
+			{
+				throw new NoHeadException(JGitText.Get().cannotRebaseWithoutCurrentHead);
+			}
+			DirCache dc = repo.LockDirCache();
+			try
+			{
+				DirCacheCheckout dco = new DirCacheCheckout(repo, dc, headTree);
+				dco.SetFailOnConflict(false);
+				bool needsDeleteFiles = dco.Checkout();
+				if (needsDeleteFiles)
+				{
+					IList<string> fileList = dco.GetToBeDeleted();
+					foreach (string filePath in fileList)
+					{
+						FilePath fileToDelete = new FilePath(repo.WorkTree, filePath);
+						if (fileToDelete.Exists())
+						{
+							FileUtils.Delete(fileToDelete, FileUtils.RECURSIVE | FileUtils.RETRY);
+						}
+					}
+				}
+			}
+			finally
+			{
+				dc.Unlock();
+			}
+		}
+
+		/// <returns>the commit if we had to do a commit, otherwise null</returns>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		private RevCommit ContinueRebase()
+		{
+			// if there are still conflicts, we throw a specific Exception
+			DirCache dc = repo.ReadDirCache();
+			bool hasUnmergedPaths = dc.HasUnmergedPaths();
+			if (hasUnmergedPaths)
+			{
+				throw new UnmergedPathsException();
+			}
+			// determine whether we need to commit
+			TreeWalk treeWalk = new TreeWalk(repo);
+			treeWalk.Reset();
+			treeWalk.Recursive = true;
+			treeWalk.AddTree(new DirCacheIterator(dc));
+			ObjectId id = repo.Resolve(Constants.HEAD + "^{tree}");
+			if (id == null)
+			{
+				throw new NoHeadException(JGitText.Get().cannotRebaseWithoutCurrentHead);
+			}
+			treeWalk.AddTree(id);
+			treeWalk.Filter = TreeFilter.ANY_DIFF;
+			bool needsCommit = treeWalk.Next();
+			treeWalk.Release();
+			if (needsCommit)
+			{
+				CommitCommand commit = new Git(repo).Commit();
+				commit.SetMessage(ReadFile(rebaseDir, MESSAGE));
+				commit.SetAuthor(ParseAuthor());
+				return commit.Call();
+			}
+			return null;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private PersonIdent ParseAuthor()
+		{
+			FilePath authorScriptFile = new FilePath(rebaseDir, AUTHOR_SCRIPT);
+			byte[] raw;
+			try
+			{
+				raw = IOUtil.ReadFully(authorScriptFile);
+			}
+			catch (FileNotFoundException)
+			{
+				return null;
+			}
+			return ParseAuthor(raw);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
 		private RebaseResult Stop(RevCommit commitToPick)
 		{
-			StringBuilder sb = new StringBuilder(100);
-			sb.Append("GIT_AUTHOR_NAME='");
-			sb.Append(commitToPick.GetAuthorIdent().GetName());
-			sb.Append("'\n");
-			sb.Append("GIT_AUTHOR_EMAIL='");
-			sb.Append(commitToPick.GetAuthorIdent().GetEmailAddress());
-			sb.Append("'\n");
-			sb.Append("GIT_AUTHOR_DATE='");
-			sb.Append(commitToPick.GetAuthorIdent().GetWhen());
-			sb.Append("'\n");
-			CreateFile(rebaseDir, "author-script", sb.ToString());
-			CreateFile(rebaseDir, "message", commitToPick.GetShortMessage());
+			PersonIdent author = commitToPick.GetAuthorIdent();
+			string authorScript = ToAuthorScript(author);
+			CreateFile(rebaseDir, AUTHOR_SCRIPT, authorScript);
+			CreateFile(rebaseDir, MESSAGE, commitToPick.GetFullMessage());
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			DiffFormatter df = new DiffFormatter(bos);
 			df.SetRepository(repo);
 			df.Format(commitToPick.GetParent(0), commitToPick);
-			CreateFile(rebaseDir, "patch", Sharpen.Extensions.CreateString(bos.ToByteArray(), 
-				"UTF-8"));
-			CreateFile(rebaseDir, "stopped-sha", repo.NewObjectReader().Abbreviate(commitToPick
+			CreateFile(rebaseDir, PATCH, Sharpen.Extensions.CreateString(bos.ToByteArray(), Constants
+				.CHARACTER_ENCODING));
+			CreateFile(rebaseDir, STOPPED_SHA, repo.NewObjectReader().Abbreviate(commitToPick
 				).Name);
 			return new RebaseResult(commitToPick);
+		}
+
+		internal virtual string ToAuthorScript(PersonIdent author)
+		{
+			StringBuilder sb = new StringBuilder(100);
+			sb.Append(GIT_AUTHOR_NAME);
+			sb.Append("='");
+			sb.Append(author.GetName());
+			sb.Append("'\n");
+			sb.Append(GIT_AUTHOR_EMAIL);
+			sb.Append("='");
+			sb.Append(author.GetEmailAddress());
+			sb.Append("'\n");
+			// the command line uses the "external String"
+			// representation for date and timezone
+			sb.Append(GIT_AUTHOR_DATE);
+			sb.Append("='");
+			string externalString = author.ToExternalString();
+			sb.Append(Sharpen.Runtime.Substring(externalString, externalString.LastIndexOf('>'
+				) + 2));
+			sb.Append("'\n");
+			return sb.ToString();
 		}
 
 		/// <summary>
@@ -264,10 +404,10 @@ namespace NGit.Api
 			}
 			IList<string> todoLines = new AList<string>();
 			IList<string> poppedLines = new AList<string>();
-			FilePath todoFile = new FilePath(rebaseDir, "git-rebase-todo");
-			FilePath doneFile = new FilePath(rebaseDir, "done");
+			FilePath todoFile = new FilePath(rebaseDir, GIT_REBASE_TODO);
+			FilePath doneFile = new FilePath(rebaseDir, DONE);
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(
-				todoFile), "UTF-8"));
+				todoFile), Constants.CHARACTER_ENCODING));
 			try
 			{
 				// check if the line starts with a action tag (pick, skip...)
@@ -306,7 +446,7 @@ namespace NGit.Api
 				br.Close();
 			}
 			BufferedWriter todoWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream
-				(todoFile), "UTF-8"));
+				(todoFile), Constants.CHARACTER_ENCODING));
 			try
 			{
 				foreach (string writeLine in todoLines)
@@ -323,7 +463,7 @@ namespace NGit.Api
 			{
 				// append here
 				BufferedWriter doneWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream
-					(doneFile, true), "UTF-8"));
+					(doneFile, true), Constants.CHARACTER_ENCODING));
 				try
 				{
 					foreach (string writeLine in poppedLines)
@@ -387,13 +527,13 @@ namespace NGit.Api
 			Sharpen.Collections.Reverse(cherryPickList);
 			// create the folder for the meta information
 			rebaseDir.Mkdir();
-			CreateFile(repo.Directory, "ORIG_HEAD", headId.Name);
-			CreateFile(rebaseDir, "head", headId.Name);
-			CreateFile(rebaseDir, "head-name", headName);
-			CreateFile(rebaseDir, "onto", upstreamCommit.Name);
-			CreateFile(rebaseDir, "interactive", string.Empty);
+			CreateFile(repo.Directory, Constants.ORIG_HEAD, headId.Name);
+			CreateFile(rebaseDir, REBASE_HEAD, headId.Name);
+			CreateFile(rebaseDir, HEAD_NAME, headName);
+			CreateFile(rebaseDir, ONTO, upstreamCommit.Name);
+			CreateFile(rebaseDir, INTERACTIVE, string.Empty);
 			BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream
-				(new FilePath(rebaseDir, "git-rebase-todo")), "UTF-8"));
+				(new FilePath(rebaseDir, GIT_REBASE_TODO)), Constants.CHARACTER_ENCODING));
 			fw.Write("# Created by EGit: rebasing " + upstreamCommit.Name + " onto " + headId
 				.Name);
 			fw.NewLine();
@@ -433,8 +573,7 @@ namespace NGit.Api
 			if (this.operation != RebaseCommand.Operation.BEGIN)
 			{
 				// these operations are only possible while in a rebasing state
-				if (s != RepositoryState.REBASING && s != RepositoryState.REBASING_INTERACTIVE &&
-					 s != RepositoryState.REBASING_MERGE && s != RepositoryState.REBASING_REBASING)
+				if (repo.GetRepositoryState() != RepositoryState.REBASING_INTERACTIVE)
 				{
 					throw new WrongRepositoryStateException(MessageFormat.Format(JGitText.Get().wrongRepositoryState
 						, repo.GetRepositoryState().Name()));
@@ -466,7 +605,8 @@ namespace NGit.Api
 			FileOutputStream fos = new FileOutputStream(file);
 			try
 			{
-				fos.Write(Sharpen.Runtime.GetBytesForString(content, "UTF-8"));
+				fos.Write(Sharpen.Runtime.GetBytesForString(content, Constants.CHARACTER_ENCODING
+					));
 				fos.Write('\n');
 			}
 			finally
@@ -480,7 +620,7 @@ namespace NGit.Api
 		{
 			try
 			{
-				string commitId = ReadFile(repo.Directory, "ORIG_HEAD");
+				string commitId = ReadFile(repo.Directory, Constants.ORIG_HEAD);
 				monitor.BeginTask(MessageFormat.Format(JGitText.Get().abortingRebase, commitId), 
 					ProgressMonitor.UNKNOWN);
 				RevCommit commit = walk.ParseCommit(repo.Resolve(commitId));
@@ -497,7 +637,7 @@ namespace NGit.Api
 			}
 			try
 			{
-				string headName = ReadFile(rebaseDir, "head-name");
+				string headName = ReadFile(rebaseDir, HEAD_NAME);
 				if (headName.StartsWith(Constants.R_REFS))
 				{
 					monitor.BeginTask(MessageFormat.Format(JGitText.Get().resettingHead, headName), ProgressMonitor
@@ -583,7 +723,7 @@ namespace NGit.Api
 		/// <exception cref="System.IO.IOException"></exception>
 		private IList<RebaseCommand.Step> LoadSteps()
 		{
-			byte[] buf = IOUtil.ReadFully(new FilePath(rebaseDir, "git-rebase-todo"));
+			byte[] buf = IOUtil.ReadFully(new FilePath(rebaseDir, GIT_REBASE_TODO));
 			int ptr = 0;
 			int tokenBegin = 0;
 			AList<RebaseCommand.Step> r = new AList<RebaseCommand.Step>();
@@ -742,6 +882,55 @@ namespace NGit.Api
 			{
 				this.action = action;
 			}
+		}
+
+		internal virtual PersonIdent ParseAuthor(byte[] raw)
+		{
+			if (raw.Length == 0)
+			{
+				return null;
+			}
+			IDictionary<string, string> keyValueMap = new Dictionary<string, string>();
+			for (int p = 0; p < raw.Length; )
+			{
+				int end = RawParseUtils.NextLF(raw, p);
+				if (end == p)
+				{
+					break;
+				}
+				int equalsIndex = RawParseUtils.Next(raw, p, '=');
+				if (equalsIndex == end)
+				{
+					break;
+				}
+				string key = RawParseUtils.Decode(raw, p, equalsIndex - 1);
+				string value = RawParseUtils.Decode(raw, equalsIndex + 1, end - 2);
+				p = end;
+				keyValueMap.Put(key, value);
+			}
+			string name = keyValueMap.Get(GIT_AUTHOR_NAME);
+			string email = keyValueMap.Get(GIT_AUTHOR_EMAIL);
+			string time = keyValueMap.Get(GIT_AUTHOR_DATE);
+			// the time is saved as <seconds since 1970> <timezone offset>
+			long when = long.Parse(Sharpen.Runtime.Substring(time, 0, time.IndexOf(' '))) * 1000;
+			string tzOffsetString = Sharpen.Runtime.Substring(time, time.IndexOf(' ') + 1);
+			int multiplier = -1;
+			if (tzOffsetString[0] == '+')
+			{
+				multiplier = 1;
+			}
+			int hours = System.Convert.ToInt32(Sharpen.Runtime.Substring(tzOffsetString, 1, 3
+				));
+			int minutes = System.Convert.ToInt32(Sharpen.Runtime.Substring(tzOffsetString, 3, 
+				5));
+			// this is in format (+/-)HHMM (hours and minutes)
+			// we need to convert into minutes
+			int tz = (hours * 60 + minutes) * multiplier;
+			if (name != null && email != null)
+			{
+				return new PersonIdent(name, email, when, tz);
+			}
+			return null;
 		}
 	}
 }

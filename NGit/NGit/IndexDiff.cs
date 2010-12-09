@@ -180,9 +180,8 @@ namespace NGit
 			{
 				filters.AddItem(filter);
 			}
-			filters.AddItem(new NotIgnoredFilter(WORKDIR));
 			filters.AddItem(new SkipWorkTreeFilter(INDEX));
-			filters.AddItem(TreeFilter.ANY_DIFF);
+			filters.AddItem(new IndexDiffFilter(INDEX, WORKDIR));
 			treeWalk.Filter = AndTreeFilter.Create(filters);
 			while (treeWalk.Next())
 			{
