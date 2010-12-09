@@ -204,7 +204,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(GetConflicts().IsEmpty());
 			// rule 11
 			SetupCase(headMap, null, idxMap);
-			new FilePath(trash, "foo").Delete();
+			NUnit.Framework.Assert.IsTrue(new FilePath(trash, "foo").Delete());
 			WriteTrashFile("foo", "bar");
 			db.GetIndex().GetMembers()[0].ForceRecheck();
 			Go();
@@ -236,7 +236,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(GetUpdated().ContainsKey("foo"));
 			// rules 21
 			SetupCase(idxMap, mergeMap, idxMap);
-			new FilePath(trash, "foo").Delete();
+			NUnit.Framework.Assert.IsTrue(new FilePath(trash, "foo").Delete());
 			WriteTrashFile("foo", "bar");
 			db.GetIndex().GetMembers()[0].ForceRecheck();
 			Go();
@@ -716,7 +716,6 @@ namespace NGit
 		public virtual void AssertWorkDir(Dictionary<string, string> i)
 		{
 			TreeWalk walk = new TreeWalk(db);
-			walk.Reset();
 			walk.Recursive = true;
 			walk.AddTree(new FileTreeIterator(db));
 			string expectedValue;

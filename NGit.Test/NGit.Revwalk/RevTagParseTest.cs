@@ -422,7 +422,7 @@ namespace NGit.Revwalk
 			src.SetTagger(committer);
 			src.SetTag("a.test");
 			src.SetMessage("Test tag\n\nThis is a test.\n");
-			RevTag p = RevTag.Parse(src.Format());
+			RevTag p = RevTag.Parse(src.Build());
 			AssertEquals(src.GetObjectId(), p.GetObject());
 			NUnit.Framework.Assert.AreEqual(committer, p.GetTaggerIdent());
 			NUnit.Framework.Assert.AreEqual("a.test", p.GetTagName());

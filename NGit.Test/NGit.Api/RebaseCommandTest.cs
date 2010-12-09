@@ -307,7 +307,7 @@ namespace NGit.Api
 				);
 			// the first one should be included, so we should have left two picks in
 			// the file
-			NUnit.Framework.Assert.AreEqual(2, CountPicks());
+			NUnit.Framework.Assert.AreEqual(1, CountPicks());
 			// rebase should not succeed in this state
 			try
 			{
@@ -385,7 +385,7 @@ namespace NGit.Api
 				);
 			// the first one should be included, so we should have left two picks in
 			// the file
-			NUnit.Framework.Assert.AreEqual(1, CountPicks());
+			NUnit.Framework.Assert.AreEqual(0, CountPicks());
 			NUnit.Framework.Assert.IsFalse(file2.Exists());
 			NUnit.Framework.Assert.IsFalse(file3.Exists());
 			NUnit.Framework.Assert.IsTrue(file4.Exists());

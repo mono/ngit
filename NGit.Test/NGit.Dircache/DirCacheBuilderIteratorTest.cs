@@ -75,7 +75,6 @@ namespace NGit.Dircache
 			int expIdx = 2;
 			DirCacheBuilder b_1 = dc.Builder();
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.AddTree(new DirCacheBuildIterator(b_1));
 			tw.Recursive = true;
 			tw.Filter = PathFilterGroup.CreateFromStrings(Collections.Singleton(paths[expIdx]

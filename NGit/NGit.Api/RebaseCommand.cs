@@ -48,6 +48,7 @@ using System.Text;
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
+using NGit.Diff;
 using NGit.Dircache;
 using NGit.Revwalk;
 using NGit.Util;
@@ -174,6 +175,7 @@ namespace NGit.Api
 					{
 						continue;
 					}
+					PopSteps(1);
 					ICollection<ObjectId> ids = or.Resolve(step.commit);
 					if (ids.Count != 1)
 					{
@@ -194,8 +196,7 @@ namespace NGit.Api
 					monitor.EndTask();
 					if (newHead == null)
 					{
-						PopSteps(stepsToPop);
-						return new RebaseResult(commitToPick);
+						return Stop(commitToPick);
 					}
 					stepsToPop++;
 				}
@@ -211,7 +212,7 @@ namespace NGit.Api
 						rup = repo.UpdateRef(Constants.HEAD);
 						rup.Link(headName);
 					}
-					DeleteRecursive(rebaseDir);
+					FileUtils.Delete(rebaseDir, FileUtils.RECURSIVE);
 					return new RebaseResult(RebaseResult.Status.OK);
 				}
 				return new RebaseResult(RebaseResult.Status.UP_TO_DATE);
@@ -220,6 +221,32 @@ namespace NGit.Api
 			{
 				throw new JGitInternalException(ioe.Message, ioe);
 			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private RebaseResult Stop(RevCommit commitToPick)
+		{
+			StringBuilder sb = new StringBuilder(100);
+			sb.Append("GIT_AUTHOR_NAME='");
+			sb.Append(commitToPick.GetAuthorIdent().GetName());
+			sb.Append("'\n");
+			sb.Append("GIT_AUTHOR_EMAIL='");
+			sb.Append(commitToPick.GetAuthorIdent().GetEmailAddress());
+			sb.Append("'\n");
+			sb.Append("GIT_AUTHOR_DATE='");
+			sb.Append(commitToPick.GetAuthorIdent().GetWhen());
+			sb.Append("'\n");
+			CreateFile(rebaseDir, "author-script", sb.ToString());
+			CreateFile(rebaseDir, "message", commitToPick.GetShortMessage());
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			DiffFormatter df = new DiffFormatter(bos);
+			df.SetRepository(repo);
+			df.Format(commitToPick.GetParent(0), commitToPick);
+			CreateFile(rebaseDir, "patch", Sharpen.Extensions.CreateString(bos.ToByteArray(), 
+				"UTF-8"));
+			CreateFile(rebaseDir, "stopped-sha", repo.NewObjectReader().Abbreviate(commitToPick
+				).Name);
+			return new RebaseResult(commitToPick);
 		}
 
 		/// <summary>
@@ -235,15 +262,16 @@ namespace NGit.Api
 			{
 				return;
 			}
-			IList<string> lines = new AList<string>();
-			FilePath file = new FilePath(rebaseDir, "git-rebase-todo");
+			IList<string> todoLines = new AList<string>();
+			IList<string> poppedLines = new AList<string>();
+			FilePath todoFile = new FilePath(rebaseDir, "git-rebase-todo");
+			FilePath doneFile = new FilePath(rebaseDir, "done");
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(
-				file), "UTF-8"));
-			int popped = 0;
+				todoFile), "UTF-8"));
 			try
 			{
 				// check if the line starts with a action tag (pick, skip...)
-				while (popped < numSteps)
+				while (poppedLines.Count < numSteps)
 				{
 					string popCandidate = br.ReadLine();
 					if (popCandidate == null)
@@ -259,17 +287,17 @@ namespace NGit.Api
 					}
 					if (pop)
 					{
-						popped++;
+						poppedLines.AddItem(popCandidate);
 					}
 					else
 					{
-						lines.AddItem(popCandidate);
+						todoLines.AddItem(popCandidate);
 					}
 				}
 				string readLine = br.ReadLine();
 				while (readLine != null)
 				{
-					lines.AddItem(readLine);
+					todoLines.AddItem(readLine);
 					readLine = br.ReadLine();
 				}
 			}
@@ -277,19 +305,37 @@ namespace NGit.Api
 			{
 				br.Close();
 			}
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream
-				(file), "UTF-8"));
+			BufferedWriter todoWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream
+				(todoFile), "UTF-8"));
 			try
 			{
-				foreach (string writeLine in lines)
+				foreach (string writeLine in todoLines)
 				{
-					bw.Write(writeLine);
-					bw.NewLine();
+					todoWriter.Write(writeLine);
+					todoWriter.NewLine();
 				}
 			}
 			finally
 			{
-				bw.Close();
+				todoWriter.Close();
+			}
+			if (poppedLines.Count > 0)
+			{
+				// append here
+				BufferedWriter doneWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream
+					(doneFile, true), "UTF-8"));
+				try
+				{
+					foreach (string writeLine in poppedLines)
+					{
+						doneWriter.Write(writeLine);
+						doneWriter.NewLine();
+					}
+				}
+				finally
+				{
+					doneWriter.Close();
+				}
 			}
 		}
 
@@ -475,29 +521,12 @@ namespace NGit.Api
 					}
 				}
 				// cleanup the files
-				DeleteRecursive(rebaseDir);
+				FileUtils.Delete(rebaseDir, FileUtils.RECURSIVE);
 				return new RebaseResult(RebaseResult.Status.ABORTED);
 			}
 			finally
 			{
 				monitor.EndTask();
-			}
-		}
-
-		/// <exception cref="System.IO.IOException"></exception>
-		private void DeleteRecursive(FilePath fileOrFolder)
-		{
-			FilePath[] children = fileOrFolder.ListFiles();
-			if (children != null)
-			{
-				foreach (FilePath child in children)
-				{
-					DeleteRecursive(child);
-				}
-			}
-			if (!fileOrFolder.Delete())
-			{
-				throw new IOException("Could not delete " + fileOrFolder.GetPath());
 			}
 		}
 

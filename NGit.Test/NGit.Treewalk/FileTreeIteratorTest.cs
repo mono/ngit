@@ -80,8 +80,8 @@ namespace NGit.Treewalk
 		{
 			FilePath r = new FilePath(trash, paths[0]);
 			NUnit.Framework.Assert.IsTrue(r.IsFile());
-			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, WorkingTreeOptions.
-				CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, ((FileBasedConfig)db
+				.GetConfig()).Get(WorkingTreeOptions.KEY));
 			NUnit.Framework.Assert.IsTrue(fti.First());
 			NUnit.Framework.Assert.IsTrue(fti.Eof());
 		}
@@ -92,8 +92,8 @@ namespace NGit.Treewalk
 		{
 			FilePath r = new FilePath(trash, "not-existing-file");
 			NUnit.Framework.Assert.IsFalse(r.Exists());
-			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, WorkingTreeOptions.
-				CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, ((FileBasedConfig)db
+				.GetConfig()).Get(WorkingTreeOptions.KEY));
 			NUnit.Framework.Assert.IsTrue(fti.First());
 			NUnit.Framework.Assert.IsTrue(fti.Eof());
 		}
@@ -106,8 +106,8 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.IsFalse(r.Exists());
 			r.Mkdir();
 			NUnit.Framework.Assert.IsTrue(r.IsDirectory());
-			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, WorkingTreeOptions.
-				CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, ((FileBasedConfig)db
+				.GetConfig()).Get(WorkingTreeOptions.KEY));
 			NUnit.Framework.Assert.IsTrue(fti.First());
 			NUnit.Framework.Assert.IsTrue(fti.Eof());
 		}
@@ -116,8 +116,8 @@ namespace NGit.Treewalk
 		[NUnit.Framework.Test]
 		public virtual void TestSimpleIterate()
 		{
-			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, WorkingTreeOptions
-				.CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, ((FileBasedConfig
+				)db.GetConfig()).Get(WorkingTreeOptions.KEY));
 			NUnit.Framework.Assert.IsTrue(top.First());
 			NUnit.Framework.Assert.IsFalse(top.Eof());
 			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), top.mode);
@@ -161,8 +161,8 @@ namespace NGit.Treewalk
 		[NUnit.Framework.Test]
 		public virtual void TestComputeFileObjectId()
 		{
-			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, WorkingTreeOptions
-				.CreateConfigurationInstance(((FileBasedConfig)db.GetConfig())));
+			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, ((FileBasedConfig
+				)db.GetConfig()).Get(WorkingTreeOptions.KEY));
 			MessageDigest md = Constants.NewMessageDigest();
 			md.Update(Constants.EncodeASCII(Constants.TYPE_BLOB));
 			md.Update(unchecked((byte)' '));
@@ -173,7 +173,7 @@ namespace NGit.Treewalk
 			AssertEquals(expect, top.GetEntryObjectId());
 			// Verify it was cached by removing the file and getting it again.
 			//
-			new FilePath(trash, paths[0]).Delete();
+			FileUtils.Delete(new FilePath(trash, paths[0]));
 			AssertEquals(expect, top.GetEntryObjectId());
 		}
 

@@ -54,6 +54,7 @@ using NGit.Storage.File;
 using NGit.Storage.Pack;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
+using NGit.Util;
 using NUnit.Framework;
 using R = NGit.Repository;
 using Sharpen;
@@ -522,7 +523,7 @@ namespace NGit.Junit
 			if (db is FileRepository)
 			{
 				FileRepository fr = (FileRepository)db;
-				RefWriter rw = new _RefWriter_492(this, fr, fr.GetAllRefs().Values);
+				RefWriter rw = new _RefWriter_493(this, fr, fr.GetAllRefs().Values);
 				rw.WritePackedRefs();
 				rw.WriteInfoRefs();
 				StringBuilder w = new StringBuilder();
@@ -537,9 +538,9 @@ namespace NGit.Junit
 			}
 		}
 
-		private sealed class _RefWriter_492 : RefWriter
+		private sealed class _RefWriter_493 : RefWriter
 		{
-			public _RefWriter_492(TestRepository _enclosing, FileRepository fr, ICollection
+			public _RefWriter_493(TestRepository _enclosing, FileRepository fr, ICollection
 				<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -737,13 +738,14 @@ namespace NGit.Junit
 			}
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
 		private void PrunePacked(ObjectDirectory odb)
 		{
 			foreach (PackFile p in odb.GetPacks())
 			{
 				foreach (PackIndex.MutableEntry e in p)
 				{
-					odb.FileFor(e.ToObjectId()).Delete();
+					FileUtils.Delete(odb.FileFor(e.ToObjectId()));
 				}
 			}
 		}
@@ -919,14 +921,14 @@ namespace NGit.Junit
 			public virtual TestRepository.CommitBuilder Add(string path, RevBlob id)
 			{
 				DirCacheEditor e = this.tree.Editor();
-				e.Add(new _PathEdit_792(id, path));
+				e.Add(new _PathEdit_793(id, path));
 				e.Finish();
 				return this;
 			}
 
-			private sealed class _PathEdit_792 : DirCacheEditor.PathEdit
+			private sealed class _PathEdit_793 : DirCacheEditor.PathEdit
 			{
-				public _PathEdit_792(RevBlob id, string baseArg1) : base(baseArg1)
+				public _PathEdit_793(RevBlob id, string baseArg1) : base(baseArg1)
 				{
 					this.id = id;
 				}

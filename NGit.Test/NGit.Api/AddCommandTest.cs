@@ -46,6 +46,7 @@ using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Dircache;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Api
@@ -163,7 +164,7 @@ namespace NGit.Api
 			Git git = new Git(db);
 			DirCache dc = git.Add().AddFilepattern("a.txt").Call();
 			dc.GetEntry(0).GetObjectId();
-			file.Delete();
+			FileUtils.Delete(file);
 			// is supposed to do nothing
 			dc = git.Add().AddFilepattern("a.txt").Call();
 			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:content]", IndexState
@@ -183,7 +184,7 @@ namespace NGit.Api
 			DirCache dc = git.Add().AddFilepattern("a.txt").Call();
 			git.Commit().SetMessage("commit a.txt").Call();
 			dc.GetEntry(0).GetObjectId();
-			file.Delete();
+			FileUtils.Delete(file);
 			// is supposed to do nothing
 			dc = git.Add().AddFilepattern("a.txt").Call();
 			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:content]", IndexState
@@ -352,7 +353,7 @@ namespace NGit.Api
 			writer.Write("modified content");
 			writer.Close();
 			// file sub/b.txt is deleted
-			file2.Delete();
+			FileUtils.Delete(file2);
 			git.Add().AddFilepattern("sub").Call();
 			// change in sub/a.txt is staged
 			// deletion of sub/b.txt is not staged
@@ -395,7 +396,7 @@ namespace NGit.Api
 			writer = new PrintWriter(file);
 			writer.Write("modified content");
 			writer.Close();
-			file2.Delete();
+			FileUtils.Delete(file2);
 			// change in sub/a.txt is staged
 			// deletion of sub/b.txt is staged
 			// sub/c.txt is not staged

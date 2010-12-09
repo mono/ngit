@@ -55,6 +55,7 @@ namespace NGit.Treewalk.Filter
 		public virtual void TestALL_IncludesAnything()
 		{
 			TreeWalk tw = new TreeWalk(db);
+			tw.AddTree(new EmptyTreeIterator());
 			NUnit.Framework.Assert.IsTrue(TreeFilter.ALL.Include(tw));
 		}
 
@@ -77,6 +78,7 @@ namespace NGit.Treewalk.Filter
 		public virtual void TestNotALL_IncludesNothing()
 		{
 			TreeWalk tw = new TreeWalk(db);
+			tw.AddTree(new EmptyTreeIterator());
 			NUnit.Framework.Assert.IsFalse(TreeFilter.ALL.Negate().Include(tw));
 		}
 
@@ -85,6 +87,7 @@ namespace NGit.Treewalk.Filter
 		public virtual void TestANY_DIFF_IncludesSingleTreeCase()
 		{
 			TreeWalk tw = new TreeWalk(db);
+			tw.AddTree(new EmptyTreeIterator());
 			NUnit.Framework.Assert.IsTrue(TreeFilter.ANY_DIFF.Include(tw));
 		}
 

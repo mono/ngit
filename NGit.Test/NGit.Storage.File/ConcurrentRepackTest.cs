@@ -47,6 +47,7 @@ using NGit.Errors;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Storage.Pack;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
@@ -237,12 +238,13 @@ namespace NGit.Storage.File
 			Touch(begin, files[0].GetParentFile());
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
 		private static void Delete(FilePath[] list)
 		{
 			long begin = list[0].GetParentFile().LastModified();
 			foreach (FilePath f in list)
 			{
-				f.Delete();
+				FileUtils.Delete(f);
 				NUnit.Framework.Assert.IsFalse(f.Exists(), f + " was removed");
 			}
 			Touch(begin, list[0].GetParentFile());

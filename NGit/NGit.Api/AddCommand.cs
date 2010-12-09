@@ -139,7 +139,6 @@ namespace NGit.Api
 				DirCacheIterator c;
 				DirCacheBuilder builder = dc.Builder();
 				TreeWalk tw = new TreeWalk(repo);
-				tw.Reset();
 				tw.AddTree(new DirCacheBuildIterator(builder));
 				if (workingTreeIterator == null)
 				{

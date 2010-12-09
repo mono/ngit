@@ -49,6 +49,7 @@ using NGit.Dircache;
 using NGit.Junit;
 using NGit.Storage.File;
 using NGit.Treewalk;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit
@@ -100,10 +101,7 @@ namespace NGit
 		protected internal virtual void DeleteTrashFile(string name)
 		{
 			FilePath path = new FilePath(db.WorkTree, name);
-			if (!path.Delete())
-			{
-				throw new IOException("Could not delete file " + path.GetPath());
-			}
+			FileUtils.Delete(path);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -377,7 +375,7 @@ namespace NGit
 			}
 			finally
 			{
-				tmp.Delete();
+				FileUtils.Delete(tmp);
 			}
 		}
 	}

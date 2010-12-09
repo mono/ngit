@@ -85,7 +85,6 @@ namespace NGit
 			FileTreeIteratorWithTimeControl fileIt = new FileTreeIteratorWithTimeControl(db, 
 				modTimes);
 			NameConflictTreeWalk tw = new NameConflictTreeWalk(db);
-			tw.Reset();
 			tw.AddTree(fileIt);
 			tw.Recursive = true;
 			FileTreeIterator t;

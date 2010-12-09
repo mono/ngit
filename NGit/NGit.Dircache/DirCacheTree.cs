@@ -390,7 +390,7 @@ namespace NGit.Dircache
 						e.IdOffset());
 					entryIdx++;
 				}
-				id = fmt.Insert(ow);
+				id = ow.Insert(fmt);
 			}
 			return id;
 		}

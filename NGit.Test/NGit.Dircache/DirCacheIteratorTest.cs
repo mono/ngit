@@ -68,7 +68,6 @@ namespace NGit.Dircache
 			DirCache dc = db.ReadDirCache();
 			NUnit.Framework.Assert.AreEqual(0, dc.GetEntryCount());
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.AddTree(new DirCacheIterator(dc));
 			NUnit.Framework.Assert.IsFalse(tw.Next());
 		}
@@ -123,7 +122,6 @@ namespace NGit.Dircache
 			b.Finish();
 			DirCacheIterator i_2 = new DirCacheIterator(dc);
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.AddTree(i_2);
 			int pathIdx = 0;
 			while (tw.Next())
@@ -163,7 +161,6 @@ namespace NGit.Dircache
 			int[] expPos = new int[] { 0, -1, 4 };
 			DirCacheIterator i_2 = new DirCacheIterator(dc);
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.AddTree(i_2);
 			tw.Recursive = false;
 			int pathIdx = 0;
@@ -208,7 +205,6 @@ namespace NGit.Dircache
 			b.Finish();
 			DirCacheIterator i_2 = new DirCacheIterator(dc);
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.AddTree(i_2);
 			tw.Recursive = true;
 			int pathIdx = 0;
@@ -246,7 +242,6 @@ namespace NGit.Dircache
 			}
 			b.Finish();
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.AddTree(new DirCacheIterator(dc));
 			tw.Recursive = true;
 			int pathIdx = 0;

@@ -79,7 +79,6 @@ namespace NGit.Treewalk
 				NUnit.Framework.Assert.AreEqual(1, tree1.GetEntryCount());
 			}
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.AddTree(new DirCacheIterator(tree0));
 			tw.AddTree(new DirCacheIterator(tree1));
 			AssertModes("a", REGULAR_FILE, MISSING, tw);
@@ -109,7 +108,6 @@ namespace NGit.Treewalk
 				NUnit.Framework.Assert.AreEqual(1, tree1.GetEntryCount());
 			}
 			NameConflictTreeWalk tw = new NameConflictTreeWalk(db);
-			tw.Reset();
 			tw.AddTree(new DirCacheIterator(tree0));
 			tw.AddTree(new DirCacheIterator(tree1));
 			AssertModes("a", REGULAR_FILE, TREE, tw);
@@ -144,7 +142,6 @@ namespace NGit.Treewalk
 				NUnit.Framework.Assert.AreEqual(2, tree1.GetEntryCount());
 			}
 			NameConflictTreeWalk tw = new NameConflictTreeWalk(db);
-			tw.Reset();
 			tw.AddTree(new DirCacheIterator(tree0));
 			tw.AddTree(new DirCacheIterator(tree1));
 			AssertModes("a", REGULAR_FILE, TREE, tw);
@@ -179,7 +176,6 @@ namespace NGit.Treewalk
 				NUnit.Framework.Assert.AreEqual(3, tree1.GetEntryCount());
 			}
 			NameConflictTreeWalk tw = new NameConflictTreeWalk(db);
-			tw.Reset();
 			tw.AddTree(new DirCacheIterator(tree0));
 			tw.AddTree(new DirCacheIterator(tree1));
 			AssertModes("a", REGULAR_FILE, TREE, tw);
@@ -215,7 +211,6 @@ namespace NGit.Treewalk
 				NUnit.Framework.Assert.AreEqual(4, tree1.GetEntryCount());
 			}
 			NameConflictTreeWalk tw = new NameConflictTreeWalk(db);
-			tw.Reset();
 			tw.AddTree(new DirCacheIterator(tree0));
 			tw.AddTree(new DirCacheIterator(tree1));
 			AssertModes("0", REGULAR_FILE, REGULAR_FILE, tw);

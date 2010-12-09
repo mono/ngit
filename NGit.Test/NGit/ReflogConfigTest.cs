@@ -114,9 +114,10 @@ namespace NGit
 			commit.Message = commitMsg;
 			commit.TreeId = t.GetTreeId();
 			ObjectInserter inserter = db.NewObjectInserter();
+			ObjectId id;
 			try
 			{
-				inserter.Insert(commit);
+				id = inserter.Insert(commit);
 				inserter.Flush();
 			}
 			finally
@@ -125,7 +126,7 @@ namespace NGit
 			}
 			int nl = commitMsg.IndexOf('\n');
 			RefUpdate ru = db.UpdateRef(Constants.HEAD);
-			ru.SetNewObjectId(commit.CommitId);
+			ru.SetNewObjectId(id);
 			ru.SetRefLogMessage("commit : " + ((nl == -1) ? commitMsg : Sharpen.Runtime.Substring
 				(commitMsg, 0, nl)), false);
 			ru.ForceUpdate();

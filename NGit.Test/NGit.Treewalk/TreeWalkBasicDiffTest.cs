@@ -99,7 +99,7 @@ namespace NGit.Treewalk
 			inserter.Flush();
 			inserter.Release();
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset(new ObjectId[] { oldTree, newTree });
+			tw.Reset(oldTree, newTree);
 			tw.Recursive = true;
 			tw.Filter = TreeFilter.ANY_DIFF;
 			NUnit.Framework.Assert.IsTrue(tw.Next());

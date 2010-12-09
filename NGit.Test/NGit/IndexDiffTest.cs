@@ -274,17 +274,18 @@ namespace NGit
 			IndexDiff diff = new IndexDiff(db, Constants.HEAD, iterator);
 			diff.Diff();
 			NUnit.Framework.Assert.AreEqual(1, diff.GetAssumeUnchanged().Count);
-			NUnit.Framework.Assert.AreEqual(2, diff.GetModified().Count);
+			NUnit.Framework.Assert.AreEqual(1, diff.GetModified().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetChanged().Count);
+			NUnit.Framework.Assert.IsTrue(diff.GetAssumeUnchanged().Contains("file2"));
+			NUnit.Framework.Assert.IsTrue(diff.GetModified().Contains("file"));
 			git.Add().AddFilepattern(".").Call();
 			iterator = new FileTreeIterator(db);
 			diff = new IndexDiff(db, Constants.HEAD, iterator);
 			diff.Diff();
 			NUnit.Framework.Assert.AreEqual(1, diff.GetAssumeUnchanged().Count);
-			NUnit.Framework.Assert.AreEqual(1, diff.GetModified().Count);
+			NUnit.Framework.Assert.AreEqual(0, diff.GetModified().Count);
 			NUnit.Framework.Assert.AreEqual(1, diff.GetChanged().Count);
 			NUnit.Framework.Assert.IsTrue(diff.GetAssumeUnchanged().Contains("file2"));
-			NUnit.Framework.Assert.IsTrue(diff.GetModified().Contains("file2"));
 			NUnit.Framework.Assert.IsTrue(diff.GetChanged().Contains("file"));
 		}
 

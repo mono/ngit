@@ -324,6 +324,8 @@ namespace NGit
 
 		public string deleteBranchUnexpectedResult;
 
+		public string deleteFileFailed;
+
 		public string deletingNotSupported;
 
 		public string destinationIsNotAWildcard;

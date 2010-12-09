@@ -126,10 +126,10 @@ index 045fecd..159a4cf 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 45c66e5..74b71a7 100644
+index eaa96f5..322677d 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-@@ -73,6 +73,7 @@
+@@ -75,6 +75,7 @@
  import org.eclipse.jgit.lib.Ref;
  import org.eclipse.jgit.lib.RefUpdate;
  import org.eclipse.jgit.lib.Repository;
@@ -137,7 +137,7 @@ index 45c66e5..74b71a7 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.revwalk.RevCommit;
  import org.eclipse.jgit.revwalk.RevWalk;
-@@ -359,36 +360,29 @@ private RebaseResult initFilesAndRewind() throws RefNotFoundException,
+@@ -401,36 +402,29 @@ private RebaseResult initFilesAndRewind() throws RefNotFoundException,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -181,7 +181,7 @@ index 45c66e5..74b71a7 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -593,10 +587,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -625,10 +619,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -540,10 +540,10 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index aea84a1..75d33bc 100644
+index 15309fc..45b35b8 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-@@ -103,7 +103,7 @@
+@@ -104,7 +104,7 @@
  
  	private NameConflictTreeWalk tw;
  
@@ -605,7 +605,7 @@ index a95303b..c67652f 100644
  	static final int SORT_COMMIT_TIME_DESC = 1 << 0;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
-index 4e9f5e9..0ba5ba8 100644
+index 418c3c0..44d8a6d 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
 @@ -57,7 +57,7 @@
@@ -708,10 +708,10 @@ index 19f5748..53a30b3 100644
  	private boolean thinPack;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-index 716416a..77127c6 100644
+index 8feb483..03be11f 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-@@ -697,11 +697,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
+@@ -713,11 +713,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
  			if (n < 0)
  				break;
  			if (origRemaining != 0) {
@@ -727,14 +727,6 @@ index 716416a..77127c6 100644
  			} else
  				tailDigest.update(buf, 0, n);
  
-@@ -969,7 +969,6 @@ private void inflate(final Source src, final long inflatedSize,
- 			long cnt = 0;
- 			int p = fill(src, 24);
- 			inf.setInput(buf, p, bAvail);
--
- 			for (;;) {
- 				int r = inf.inflate(dst, off, dst.length - off);
- 				if (r == 0) {
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
 index 60ebeab..859ca28 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
@@ -895,7 +887,7 @@ index 0d1c035..4b9669f 100644
  						break;
  					}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
-index 8f53a0d..77c01c8 100644
+index c683308..09a5bf3 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
 @@ -146,7 +146,7 @@ public AbstractTreeIterator createSubtreeIterator(final ObjectReader reader)
@@ -908,10 +900,10 @@ index 8f53a0d..77c01c8 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index ac3a831..3fc2603 100644
+index 6365c11..b9b9862 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-@@ -120,6 +120,12 @@
+@@ -119,6 +119,12 @@
  	private IgnoreNode ignoreNode;
  
  	/**
@@ -924,7 +916,7 @@ index ac3a831..3fc2603 100644
  	 * Create a new iterator with no parent.
  	 *
  	 * @param options
-@@ -422,6 +428,8 @@ public boolean isEntryIgnored() throws IOException {
+@@ -421,6 +427,8 @@ public boolean isEntryIgnored() throws IOException {
  	 *             a relevant ignore rule file exists but cannot be read.
  	 */
  	protected boolean isEntryIgnored(final int pLen) throws IOException {
@@ -933,7 +925,7 @@ index ac3a831..3fc2603 100644
  		IgnoreNode rules = getIgnoreNode();
  		if (rules != null) {
  			// The ignore code wants path to start with a '/' if possible.
-@@ -434,15 +442,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
+@@ -433,15 +441,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
  			String p = TreeWalk.pathOf(path, pOff, pLen);
  			switch (rules.isIgnored(p, FileMode.TREE.equals(mode))) {
  			case IGNORED:
@@ -956,7 +948,7 @@ index ac3a831..3fc2603 100644
  		return false;
  	}
  
-@@ -580,8 +593,10 @@ public boolean isModified(DirCacheEntry entry, boolean forceContentCheck,
+@@ -571,8 +584,10 @@ public boolean isModified(DirCacheEntry entry, boolean forceContentCheck) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();

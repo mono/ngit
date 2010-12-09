@@ -100,7 +100,6 @@ namespace NGit.Treewalk
 				NUnit.Framework.Assert.AreEqual(4, tree.GetEntryCount());
 			}
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.PostOrderTraversal = false;
 			tw.AddTree(new DirCacheIterator(tree));
 			AssertModes("a", FileMode.REGULAR_FILE, tw);
@@ -128,7 +127,6 @@ namespace NGit.Treewalk
 				NUnit.Framework.Assert.AreEqual(4, tree.GetEntryCount());
 			}
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.PostOrderTraversal = true;
 			tw.AddTree(new DirCacheIterator(tree));
 			AssertModes("a", FileMode.REGULAR_FILE, tw);
@@ -159,7 +157,6 @@ namespace NGit.Treewalk
 				NUnit.Framework.Assert.AreEqual(4, tree.GetEntryCount());
 			}
 			TreeWalk tw = new TreeWalk(db);
-			tw.Reset();
 			tw.PostOrderTraversal = true;
 			tw.AddTree(new DirCacheIterator(tree));
 			AssertModes("a", FileMode.REGULAR_FILE, tw);

@@ -112,7 +112,6 @@ namespace NGit.Merge
 			/// <exception cref="System.IO.IOException"></exception>
 			protected internal override bool MergeImpl()
 			{
-				tw.Reset();
 				tw.AddTree(MergeBase());
 				tw.AddTree(sourceTrees[0]);
 				tw.AddTree(sourceTrees[1]);

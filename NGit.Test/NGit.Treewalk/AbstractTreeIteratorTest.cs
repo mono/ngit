@@ -59,8 +59,8 @@ namespace NGit.Treewalk
 		public class FakeTreeIterator : WorkingTreeIterator
 		{
 			public FakeTreeIterator(AbstractTreeIteratorTest _enclosing, string pathName, FileMode
-				 fileMode) : base(AbstractTreeIteratorTest.Prefix(pathName), new WorkingTreeOptions
-				(CoreConfig.AutoCRLF.FALSE))
+				 fileMode) : base(AbstractTreeIteratorTest.Prefix(pathName), new Config().Get(WorkingTreeOptions
+				.KEY))
 			{
 				this._enclosing = _enclosing;
 				this.mode = fileMode.GetBits();

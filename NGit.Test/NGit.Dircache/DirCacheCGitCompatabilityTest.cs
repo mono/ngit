@@ -91,7 +91,6 @@ namespace NGit.Dircache
 				Iterator<DirCacheCGitCompatabilityTest.CGitIndexRecord> rItr = ls.Values.Iterator
 					();
 				TreeWalk tw = new TreeWalk(db);
-				tw.Reset();
 				tw.Recursive = true;
 				tw.AddTree(new DirCacheIterator(dc));
 				while (rItr.HasNext())

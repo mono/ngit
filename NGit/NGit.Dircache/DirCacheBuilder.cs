@@ -171,7 +171,6 @@ namespace NGit.Dircache
 			 tree)
 		{
 			TreeWalk tw = new TreeWalk(reader);
-			tw.Reset();
 			tw.AddTree(new CanonicalTreeParser(pathPrefix, reader, tree.ToObjectId()));
 			tw.Recursive = true;
 			if (tw.Next())

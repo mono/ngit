@@ -96,7 +96,9 @@ namespace NGit
 
 		private ICollection<string> untracked = new HashSet<string>();
 
-		private ICollection<string> assumeUnchanged = new HashSet<string>();
+		private ICollection<string> assumeUnchanged;
+
+		private DirCache dirCache;
 
 		/// <summary>Construct an IndexDiff</summary>
 		/// <param name="repository"></param>
@@ -159,10 +161,8 @@ namespace NGit
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		public virtual bool Diff()
 		{
-			bool changesExist = false;
-			DirCache dirCache = repository.ReadDirCache();
+			dirCache = repository.ReadDirCache();
 			TreeWalk treeWalk = new TreeWalk(repository);
-			treeWalk.Reset();
 			treeWalk.Recursive = true;
 			// add the trees (tree, dirchache, workdir)
 			if (tree != null)
@@ -175,7 +175,7 @@ namespace NGit
 			}
 			treeWalk.AddTree(new DirCacheIterator(dirCache));
 			treeWalk.AddTree(initialWorkingTreeIterator);
-			ICollection<TreeFilter> filters = new AList<TreeFilter>(filter == null ? 3 : 4);
+			ICollection<TreeFilter> filters = new AList<TreeFilter>(4);
 			if (filter != null)
 			{
 				filters.AddItem(filter);
@@ -190,36 +190,24 @@ namespace NGit
 				DirCacheIterator dirCacheIterator = treeWalk.GetTree<DirCacheIterator>(INDEX);
 				WorkingTreeIterator workingTreeIterator = treeWalk.GetTree<WorkingTreeIterator>(WORKDIR
 					);
-				FileMode fileModeTree = treeWalk.GetFileMode(TREE);
-				if (dirCacheIterator != null)
-				{
-					if (dirCacheIterator.GetDirCacheEntry().IsAssumeValid())
-					{
-						assumeUnchanged.AddItem(dirCacheIterator.GetEntryPathString());
-					}
-				}
 				if (treeIterator != null)
 				{
 					if (dirCacheIterator != null)
 					{
-						if (!treeIterator.GetEntryObjectId().Equals(dirCacheIterator.GetEntryObjectId()))
+						if (!treeIterator.IdEqual(dirCacheIterator) || treeIterator.GetEntryRawMode() != 
+							dirCacheIterator.GetEntryRawMode())
 						{
 							// in repo, in index, content diff => changed
-							changed.AddItem(dirCacheIterator.GetEntryPathString());
-							changesExist = true;
+							changed.AddItem(treeWalk.PathString);
 						}
 					}
 					else
 					{
 						// in repo, not in index => removed
-						if (!fileModeTree.Equals(FileMode.TYPE_TREE))
+						removed.AddItem(treeWalk.PathString);
+						if (workingTreeIterator != null)
 						{
-							removed.AddItem(treeIterator.GetEntryPathString());
-							changesExist = true;
-							if (workingTreeIterator != null)
-							{
-								untracked.AddItem(workingTreeIterator.GetEntryPathString());
-							}
+							untracked.AddItem(treeWalk.PathString);
 						}
 					}
 				}
@@ -228,16 +216,14 @@ namespace NGit
 					if (dirCacheIterator != null)
 					{
 						// not in repo, in index => added
-						added.AddItem(dirCacheIterator.GetEntryPathString());
-						changesExist = true;
+						added.AddItem(treeWalk.PathString);
 					}
 					else
 					{
 						// not in repo, not in index => untracked
 						if (workingTreeIterator != null && !workingTreeIterator.IsEntryIgnored())
 						{
-							untracked.AddItem(workingTreeIterator.GetEntryPathString());
-							changesExist = true;
+							untracked.AddItem(treeWalk.PathString);
 						}
 					}
 				}
@@ -246,21 +232,27 @@ namespace NGit
 					if (workingTreeIterator == null)
 					{
 						// in index, not in workdir => missing
-						missing.AddItem(dirCacheIterator.GetEntryPathString());
-						changesExist = true;
+						missing.AddItem(treeWalk.PathString);
 					}
 					else
 					{
-						if (!dirCacheIterator.IdEqual(workingTreeIterator))
+						if (workingTreeIterator.IsModified(dirCacheIterator.GetDirCacheEntry(), true))
 						{
 							// in index, in workdir, content differs => modified
-							modified.AddItem(dirCacheIterator.GetEntryPathString());
-							changesExist = true;
+							modified.AddItem(treeWalk.PathString);
 						}
 					}
 				}
 			}
-			return changesExist;
+			if (added.IsEmpty() && changed.IsEmpty() && removed.IsEmpty() && missing.IsEmpty(
+				) && modified.IsEmpty() && untracked.IsEmpty())
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
 		}
 
 		/// <returns>list of files added to the index, not in the tree</returns>
@@ -293,7 +285,7 @@ namespace NGit
 			return modified;
 		}
 
-		/// <returns>list of files on modified on disk relative to the index</returns>
+		/// <returns>list of files that are not ignored, and not in the index.</returns>
 		public virtual ICollection<string> GetUntracked()
 		{
 			return untracked;
@@ -302,6 +294,18 @@ namespace NGit
 		/// <returns>list of files with the flag assume-unchanged</returns>
 		public virtual ICollection<string> GetAssumeUnchanged()
 		{
+			if (assumeUnchanged == null)
+			{
+				HashSet<string> unchanged = new HashSet<string>();
+				for (int i = 0; i < dirCache.GetEntryCount(); i++)
+				{
+					if (dirCache.GetEntry(i).IsAssumeValid())
+					{
+						unchanged.AddItem(dirCache.GetEntry(i).GetPathString());
+					}
+				}
+				assumeUnchanged = unchanged;
+			}
 			return assumeUnchanged;
 		}
 	}

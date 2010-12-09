@@ -90,7 +90,7 @@ namespace NGit.Treewalk
 		}
 
 		public FileTreeIteratorWithTimeControl(FilePath f, FS fs, TreeSet<long> modTimes)
-			 : base(f, fs, new WorkingTreeOptions(CoreConfig.AutoCRLF.FALSE))
+			 : base(f, fs, new Config().Get(WorkingTreeOptions.KEY))
 		{
 			this.modTimes = modTimes;
 		}

@@ -45,6 +45,7 @@ using System.Text;
 using NGit;
 using NGit.Ignore;
 using NGit.Treewalk;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Ignore
@@ -126,7 +127,7 @@ namespace NGit.Ignore
 			BeginWalk();
 			AssertEntry(F, tracked, ".gitignore");
 			AssertEntry(F, tracked, "out");
-			new FilePath(trash, "out").Delete();
+			FileUtils.Delete(new FilePath(trash, "out"));
 			WriteTrashFile("out/foo", string.Empty);
 			BeginWalk();
 			AssertEntry(F, tracked, ".gitignore");
@@ -158,7 +159,6 @@ namespace NGit.Ignore
 		private void BeginWalk()
 		{
 			walk = new TreeWalk(db);
-			walk.Reset();
 			walk.AddTree(new FileTreeIterator(db));
 		}
 

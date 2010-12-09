@@ -380,7 +380,7 @@ namespace NGit.Revwalk
 			src.Author = author;
 			src.Committer = committer;
 			src.Message = "Test commit\n\nThis is a test.\n";
-			RevCommit p = RevCommit.Parse(src.Format());
+			RevCommit p = RevCommit.Parse(src.Build());
 			AssertEquals(src.TreeId, p.Tree);
 			NUnit.Framework.Assert.AreEqual(0, p.ParentCount);
 			NUnit.Framework.Assert.AreEqual(author, p.GetAuthorIdent());

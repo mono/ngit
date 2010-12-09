@@ -50,6 +50,7 @@ using NGit.Dircache;
 using NGit.Errors;
 using NGit.Merge;
 using NGit.Treewalk;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Merge
@@ -147,7 +148,6 @@ namespace NGit.Merge
 				builder = dircache.Builder();
 				DirCacheBuildIterator buildIt = new DirCacheBuildIterator(builder);
 				tw = new NameConflictTreeWalk(db);
-				tw.Reset();
 				tw.AddTree(MergeBase());
 				tw.AddTree(sourceTrees[0]);
 				tw.AddTree(sourceTrees[1]);
@@ -223,7 +223,7 @@ namespace NGit.Merge
 				if (entry.Value != null)
 				{
 					CreateDir(f.GetParentFile());
-					DirCacheCheckout.CheckoutEntry(db, f, entry.Value, true);
+					DirCacheCheckout.CheckoutEntry(db, f, entry.Value);
 				}
 				else
 				{
@@ -250,7 +250,7 @@ namespace NGit.Merge
 				{
 					throw new IOException(JGitText.Get().cannotCreateDirectory);
 				}
-				p.Delete();
+				FileUtils.Delete(p);
 				if (!f.Mkdirs())
 				{
 					throw new IOException(JGitText.Get().cannotCreateDirectory);
@@ -457,7 +457,7 @@ namespace NGit.Merge
 					// We are going to update the worktree. Make sure the worktree
 					// is not modified
 					if (work != null && (!NonTree(work.GetEntryRawMode()) || work.IsModified(index.GetDirCacheEntry
-						(), true, true, db.FileSystem)))
+						(), true)))
 					{
 						failingPathes.Put(tw.PathString, ResolveMerger.MergeFailureReason.DIRTY_WORKTREE);
 						return false;
@@ -556,7 +556,7 @@ namespace NGit.Merge
 					@is.Close();
 					if (inCore)
 					{
-						of.Delete();
+						FileUtils.Delete(of);
 					}
 				}
 				builder.Add(dce);

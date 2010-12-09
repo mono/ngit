@@ -169,6 +169,26 @@ namespace NGit.Transport
 			ip.RenameAndOpenPack();
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPackWithDuplicateBlob()
+		{
+			byte[] data = Constants.Encode("0123456789abcdefg");
+			TestRepository<Repository> d = new TestRepository<Repository>(db);
+			NUnit.Framework.Assert.IsTrue(db.HasObject(d.Blob(data)));
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
+			PackHeader(pack, 1);
+			pack.Write((Constants.OBJ_BLOB) << 4 | unchecked((int)(0x80)) | 1);
+			pack.Write(1);
+			Deflate(pack, data);
+			Digest(pack);
+			byte[] raw = pack.ToByteArray();
+			IndexPack ip = IndexPack.Create(db, new ByteArrayInputStream(raw));
+			ip.SetStreamFileThreshold(1);
+			ip.Index(NullProgressMonitor.INSTANCE);
+			ip.RenameAndOpenPack();
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private void PackHeader(TemporaryBuffer.Heap tinyPack, int cnt)
 		{

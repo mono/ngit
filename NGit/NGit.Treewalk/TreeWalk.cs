@@ -78,6 +78,9 @@ namespace NGit.Treewalk
 	/// </summary>
 	public class TreeWalk
 	{
+		private static readonly AbstractTreeIterator[] NO_TREES = new AbstractTreeIterator
+			[] {  };
+
 		/// <summary>Open a tree walk and filter to exactly one path.</summary>
 		/// <remarks>
 		/// Open a tree walk and filter to exactly one path.
@@ -223,7 +226,7 @@ namespace NGit.Treewalk
 		{
 			reader = or;
 			filter = TreeFilter.ALL;
-			trees = new AbstractTreeIterator[] { new EmptyTreeIterator() };
+			trees = NO_TREES;
 		}
 
 		/// <returns>the reader this walker is using to load objects.</returns>
@@ -374,7 +377,7 @@ namespace NGit.Treewalk
 		/// <remarks>Reset this walker so new tree iterators can be added to it.</remarks>
 		public virtual void Reset()
 		{
-			trees = new AbstractTreeIterator[0];
+			trees = NO_TREES;
 			advance = false;
 			depth = 0;
 		}
@@ -446,7 +449,7 @@ namespace NGit.Treewalk
 		/// </exception>
 		/// <exception cref="System.IO.IOException">a loose object or pack file could not be read.
 		/// 	</exception>
-		public virtual void Reset(AnyObjectId[] ids)
+		public virtual void Reset(params AnyObjectId[] ids)
 		{
 			int oldLen = trees.Length;
 			int newLen = ids.Length;

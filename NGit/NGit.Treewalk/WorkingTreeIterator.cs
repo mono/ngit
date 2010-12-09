@@ -268,7 +268,7 @@ namespace NGit.Treewalk
 				{
 					state.InitializeDigestAndReadBuffer();
 					long len = e.GetLength();
-					if (!MightNeedCleaning(e))
+					if (!MightNeedCleaning())
 					{
 						return ComputeHash(@is, len);
 					}
@@ -277,9 +277,9 @@ namespace NGit.Treewalk
 						ByteBuffer rawbuf = IOUtil.ReadWholeStream(@is, (int)len);
 						byte[] raw = ((byte[])rawbuf.Array());
 						int n = rawbuf.Limit();
-						if (!IsBinary(e, raw, n))
+						if (!IsBinary(raw, n))
 						{
-							rawbuf = FilterClean(e, raw, n);
+							rawbuf = FilterClean(raw, n);
 							raw = ((byte[])rawbuf.Array());
 							n = rawbuf.Limit();
 						}
@@ -290,7 +290,7 @@ namespace NGit.Treewalk
 						return ComputeHash(@is, len);
 					}
 					long canonLen;
-					InputStream lenIs = FilterClean(e, e.OpenInputStream());
+					InputStream lenIs = FilterClean(e.OpenInputStream());
 					try
 					{
 						canonLen = ComputeLength(lenIs);
@@ -299,7 +299,7 @@ namespace NGit.Treewalk
 					{
 						SafeClose(lenIs);
 					}
-					return ComputeHash(FilterClean(e, @is), canonLen);
+					return ComputeHash(FilterClean(@is), canonLen);
 				}
 				finally
 				{
@@ -327,7 +327,7 @@ namespace NGit.Treewalk
 		// Suppress any error related to closing an input
 		// stream. We don't care, we should not have any
 		// outstanding data to flush or anything like that.
-		private bool MightNeedCleaning(WorkingTreeIterator.Entry entry)
+		private bool MightNeedCleaning()
 		{
 			switch (GetOptions().GetAutoCRLF())
 			{
@@ -346,7 +346,7 @@ namespace NGit.Treewalk
 			}
 		}
 
-		private bool IsBinary(WorkingTreeIterator.Entry entry, byte[] content, int sz)
+		private bool IsBinary(byte[] content, int sz)
 		{
 			return RawText.IsBinary(content, sz);
 		}
@@ -366,14 +366,13 @@ namespace NGit.Treewalk
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		private ByteBuffer FilterClean(WorkingTreeIterator.Entry entry, byte[] src, int n
-			)
+		private ByteBuffer FilterClean(byte[] src, int n)
 		{
 			InputStream @in = new ByteArrayInputStream(src);
-			return IOUtil.ReadWholeStream(FilterClean(entry, @in), n);
+			return IOUtil.ReadWholeStream(FilterClean(@in), n);
 		}
 
-		private InputStream FilterClean(WorkingTreeIterator.Entry entry, InputStream @in)
+		private InputStream FilterClean(InputStream @in)
 		{
 			return new EolCanonicalizingInputStream(@in);
 		}
@@ -555,9 +554,9 @@ namespace NGit.Treewalk
 			return ignoreNode;
 		}
 
-		private sealed class _IComparer_468 : IComparer<WorkingTreeIterator.Entry>
+		private sealed class _IComparer_467 : IComparer<WorkingTreeIterator.Entry>
 		{
-			public _IComparer_468()
+			public _IComparer_467()
 			{
 			}
 
@@ -591,7 +590,7 @@ namespace NGit.Treewalk
 			}
 		}
 
-		private static readonly IComparer<WorkingTreeIterator.Entry> ENTRY_CMP = new _IComparer_468
+		private static readonly IComparer<WorkingTreeIterator.Entry> ENTRY_CMP = new _IComparer_467
 			();
 
 		internal static int LastPathChar(WorkingTreeIterator.Entry e)
@@ -673,17 +672,8 @@ namespace NGit.Treewalk
 		/// True if the actual file content should be checked if
 		/// modification time differs.
 		/// </param>
-		/// <param name="checkFilemode">
-		/// whether the executable-bit in the filemode should be checked
-		/// to detect modifications
-		/// </param>
-		/// <param name="fs">
-		/// The filesystem this repo uses. Needed to find out whether the
-		/// executable-bits are supported
-		/// </param>
 		/// <returns>true if content is most likely different.</returns>
-		public virtual bool IsModified(DirCacheEntry entry, bool forceContentCheck, bool 
-			checkFilemode, FS fs)
+		public virtual bool IsModified(DirCacheEntry entry, bool forceContentCheck)
 		{
 			if (entry.IsAssumeValid())
 			{
@@ -704,7 +694,7 @@ namespace NGit.Treewalk
 			// Ignore the executable file bits if checkFilemode tells me to do so.
 			// Ignoring is done by setting the bits representing a EXECUTABLE_FILE
 			// to '0' in modeDiff
-			if (!checkFilemode)
+			if (!state.options.IsFileMode())
 			{
 				modeDiff &= ~FileMode.EXECUTABLE_FILE.GetBits();
 			}
