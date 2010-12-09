@@ -158,8 +158,8 @@ namespace NGit.Treewalk
 			{
 				AbstractTreeIteratorTest.FakeTreeIterator i = new AbstractTreeIteratorTest.FakeTreeIterator
 					(this, "a", m);
-				NUnit.Framework.Assert.AreEqual(m.GetBits(), i.GetEntryRawMode());
-				NUnit.Framework.Assert.AreSame(m, i.GetEntryFileMode());
+				NUnit.Framework.Assert.AreEqual(m.GetBits(), i.EntryRawMode);
+				NUnit.Framework.Assert.AreSame(m, i.EntryFileMode);
 			}
 		}
 
@@ -168,8 +168,8 @@ namespace NGit.Treewalk
 		{
 			AbstractTreeIteratorTest.FakeTreeIterator i = new AbstractTreeIteratorTest.FakeTreeIterator
 				(this, "a/b/cd", FileMode.TREE);
-			NUnit.Framework.Assert.AreEqual("a/b/cd", i.GetEntryPathString());
-			NUnit.Framework.Assert.AreEqual(2, i.GetNameLength());
+			NUnit.Framework.Assert.AreEqual("a/b/cd", i.EntryPathString);
+			NUnit.Framework.Assert.AreEqual(2, i.NameLength);
 			byte[] b = new byte[3];
 			b[0] = unchecked((int)(0x0a));
 			i.GetName(b, 1);
@@ -185,8 +185,7 @@ namespace NGit.Treewalk
 				(this, "a/b/cd", FileMode.TREE);
 			EmptyTreeIterator e = i.CreateEmptyTreeIterator();
 			NUnit.Framework.Assert.IsNotNull(e);
-			NUnit.Framework.Assert.AreEqual(i.GetEntryPathString() + "/", e.GetEntryPathString
-				());
+			NUnit.Framework.Assert.AreEqual(i.EntryPathString + "/", e.EntryPathString);
 		}
 	}
 }

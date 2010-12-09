@@ -59,7 +59,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(FileMode.REGULAR_FILE);
+				ents[i].FileMode = FileMode.REGULAR_FILE;
 			}
 			int aFirst = 1;
 			int aLast = 3;

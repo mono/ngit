@@ -175,12 +175,11 @@ namespace NGit.Api
 									// the file exists
 									long sz = f.GetEntryLength();
 									DirCacheEntry entry = new DirCacheEntry(path);
-									if (c == null || c.GetDirCacheEntry() == null || !c.GetDirCacheEntry().IsAssumeValid
-										())
+									if (c == null || c.GetDirCacheEntry() == null || !c.GetDirCacheEntry().IsAssumeValid)
 									{
 										entry.SetLength(sz);
-										entry.SetLastModified(f.GetEntryLastModified());
-										entry.SetFileMode(f.GetEntryFileMode());
+										entry.LastModified = f.GetEntryLastModified();
+										entry.FileMode = f.EntryFileMode;
 										InputStream @in = f.OpenEntryStream();
 										try
 										{

@@ -136,7 +136,7 @@ namespace NGit.Merge
 		private DirCacheEntry MakeEntry(string path, FileMode mode, string content)
 		{
 			DirCacheEntry ent = new DirCacheEntry(path);
-			ent.SetFileMode(mode);
+			ent.FileMode = mode;
 			ent.SetObjectId(new ObjectInserter.Formatter().IdFor(Constants.OBJ_BLOB, Constants
 				.Encode(content)));
 			return ent;

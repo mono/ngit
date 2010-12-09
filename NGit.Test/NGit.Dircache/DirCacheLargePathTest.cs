@@ -93,10 +93,10 @@ namespace NGit.Dircache
 			string shortPath = "~~~ shorter-path";
 			DirCacheEntry longEnt = new DirCacheEntry(longPath);
 			DirCacheEntry shortEnt = new DirCacheEntry(shortPath);
-			longEnt.SetFileMode(FileMode.REGULAR_FILE);
-			shortEnt.SetFileMode(FileMode.REGULAR_FILE);
-			NUnit.Framework.Assert.AreEqual(longPath, longEnt.GetPathString());
-			NUnit.Framework.Assert.AreEqual(shortPath, shortEnt.GetPathString());
+			longEnt.FileMode = FileMode.REGULAR_FILE;
+			shortEnt.FileMode = FileMode.REGULAR_FILE;
+			NUnit.Framework.Assert.AreEqual(longPath, longEnt.PathString);
+			NUnit.Framework.Assert.AreEqual(shortPath, shortEnt.PathString);
 			{
 				DirCache dc1 = db.LockDirCache();
 				{
@@ -113,9 +113,9 @@ namespace NGit.Dircache
 				DirCache dc2 = db.ReadDirCache();
 				NUnit.Framework.Assert.AreEqual(2, dc2.GetEntryCount());
 				NUnit.Framework.Assert.AreNotSame(longEnt, dc2.GetEntry(0));
-				NUnit.Framework.Assert.AreEqual(longPath, dc2.GetEntry(0).GetPathString());
+				NUnit.Framework.Assert.AreEqual(longPath, dc2.GetEntry(0).PathString);
 				NUnit.Framework.Assert.AreNotSame(shortEnt, dc2.GetEntry(1));
-				NUnit.Framework.Assert.AreEqual(shortPath, dc2.GetEntry(1).GetPathString());
+				NUnit.Framework.Assert.AreEqual(shortPath, dc2.GetEntry(1).PathString);
 			}
 		}
 

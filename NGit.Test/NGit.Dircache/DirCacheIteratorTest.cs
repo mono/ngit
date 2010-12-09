@@ -58,7 +58,7 @@ namespace NGit.Dircache
 			DirCache dc = db.ReadDirCache();
 			NUnit.Framework.Assert.AreEqual(0, dc.GetEntryCount());
 			DirCacheIterator i = new DirCacheIterator(dc);
-			NUnit.Framework.Assert.IsTrue(i.Eof());
+			NUnit.Framework.Assert.IsTrue(i.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -82,7 +82,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(FileMode.REGULAR_FILE);
+				ents[i].FileMode = FileMode.REGULAR_FILE;
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = 0; i_1 < ents.Length; i_1++)
@@ -92,7 +92,7 @@ namespace NGit.Dircache
 			b.Finish();
 			DirCacheIterator i_2 = new DirCacheIterator(dc);
 			int pathIdx = 0;
-			for (; !i_2.Eof(); i_2.Next(1))
+			for (; !i_2.Eof; i_2.Next(1))
 			{
 				NUnit.Framework.Assert.AreEqual(pathIdx, i_2.ptr);
 				NUnit.Framework.Assert.AreSame(ents[pathIdx], i_2.GetDirCacheEntry());
@@ -112,7 +112,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(modes[i]);
+				ents[i].FileMode = modes[i];
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = 0; i_1 < ents.Length; i_1++)
@@ -147,7 +147,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(FileMode.REGULAR_FILE);
+				ents[i].FileMode = FileMode.REGULAR_FILE;
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = 0; i_1 < ents.Length; i_1++)
@@ -195,7 +195,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(mode);
+				ents[i].FileMode = mode;
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = 0; i_1 < ents.Length; i_1++)
@@ -233,7 +233,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(mode);
+				ents[i].FileMode = mode;
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = 0; i_1 < ents.Length; i_1++)
@@ -270,7 +270,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(mode);
+				ents[i].FileMode = mode;
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = 0; i_1 < ents.Length; i_1++)

@@ -54,8 +54,8 @@ namespace NGit.Treewalk
 		public virtual void TestAtEOF()
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
-			NUnit.Framework.Assert.IsTrue(etp.First());
-			NUnit.Framework.Assert.IsTrue(etp.Eof());
+			NUnit.Framework.Assert.IsTrue(etp.First);
+			NUnit.Framework.Assert.IsTrue(etp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -66,8 +66,8 @@ namespace NGit.Treewalk
 			ObjectReader reader = db.NewObjectReader();
 			AbstractTreeIterator sub = etp.CreateSubtreeIterator(reader);
 			NUnit.Framework.Assert.IsNotNull(sub);
-			NUnit.Framework.Assert.IsTrue(sub.First());
-			NUnit.Framework.Assert.IsTrue(sub.Eof());
+			NUnit.Framework.Assert.IsTrue(sub.First);
+			NUnit.Framework.Assert.IsTrue(sub.Eof);
 			NUnit.Framework.Assert.IsTrue(sub is EmptyTreeIterator);
 		}
 
@@ -76,10 +76,10 @@ namespace NGit.Treewalk
 		public virtual void TestEntryObjectId()
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
-			NUnit.Framework.Assert.AreSame(ObjectId.ZeroId, etp.GetEntryObjectId());
-			NUnit.Framework.Assert.IsNotNull(etp.IdBuffer());
-			NUnit.Framework.Assert.AreEqual(0, etp.IdOffset());
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer()));
+			NUnit.Framework.Assert.AreSame(ObjectId.ZeroId, etp.EntryObjectId);
+			NUnit.Framework.Assert.IsNotNull(etp.IdBuffer);
+			NUnit.Framework.Assert.AreEqual(0, etp.IdOffset);
+			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -88,13 +88,13 @@ namespace NGit.Treewalk
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
 			etp.Next(1);
-			NUnit.Framework.Assert.IsTrue(etp.First());
-			NUnit.Framework.Assert.IsTrue(etp.Eof());
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer()));
+			NUnit.Framework.Assert.IsTrue(etp.First);
+			NUnit.Framework.Assert.IsTrue(etp.Eof);
+			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 			etp.Next(1);
-			NUnit.Framework.Assert.IsTrue(etp.First());
-			NUnit.Framework.Assert.IsTrue(etp.Eof());
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer()));
+			NUnit.Framework.Assert.IsTrue(etp.First);
+			NUnit.Framework.Assert.IsTrue(etp.Eof);
+			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -103,13 +103,13 @@ namespace NGit.Treewalk
 		{
 			EmptyTreeIterator etp = new EmptyTreeIterator();
 			etp.Back(1);
-			NUnit.Framework.Assert.IsTrue(etp.First());
-			NUnit.Framework.Assert.IsTrue(etp.Eof());
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer()));
+			NUnit.Framework.Assert.IsTrue(etp.First);
+			NUnit.Framework.Assert.IsTrue(etp.Eof);
+			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 			etp.Back(1);
-			NUnit.Framework.Assert.IsTrue(etp.First());
-			NUnit.Framework.Assert.IsTrue(etp.Eof());
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer()));
+			NUnit.Framework.Assert.IsTrue(etp.First);
+			NUnit.Framework.Assert.IsTrue(etp.Eof);
+			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 		}
 
 		/// <exception cref="System.Exception"></exception>

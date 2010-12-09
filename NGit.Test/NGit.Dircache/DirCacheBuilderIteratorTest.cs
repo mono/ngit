@@ -62,7 +62,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(mode);
+				ents[i].FileMode = mode;
 			}
 			{
 				DirCacheBuilder b = dc.Builder();

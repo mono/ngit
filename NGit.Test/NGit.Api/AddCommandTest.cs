@@ -443,8 +443,8 @@ namespace NGit.Api
 			inputStream.Close();
 			DirCacheEntry entry = new DirCacheEntry(path, stage);
 			entry.SetObjectId(id);
-			entry.SetFileMode(FileMode.REGULAR_FILE);
-			entry.SetLastModified(file.LastModified());
+			entry.FileMode = FileMode.REGULAR_FILE;
+			entry.LastModified = file.LastModified();
 			entry.SetLength((int)file.Length());
 			builder.Add(entry);
 			return entry;
@@ -457,7 +457,7 @@ namespace NGit.Api
 			DirCacheEntry ent = dirc.GetEntry(path);
 			if (ent != null)
 			{
-				ent.SetAssumeValid(true);
+				ent.IsAssumeValid = true;
 			}
 			dirc.Write();
 			if (!dirc.Commit())

@@ -207,8 +207,8 @@ namespace NGit.Merge
 					{
 						DirCacheEntry e;
 						e = new DirCacheEntry(tw.RawPath, stage);
-						e.SetObjectIdFromRaw(i.IdBuffer(), i.IdOffset());
-						e.SetFileMode(tw.GetFileMode(tree));
+						e.SetObjectIdFromRaw(i.IdBuffer, i.IdOffset);
+						e.FileMode = tw.GetFileMode(tree);
 						builder.Add(e);
 					}
 				}

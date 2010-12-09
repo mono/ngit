@@ -725,7 +725,7 @@ namespace NGit
 			while (walk.Next())
 			{
 				ft = walk.GetTree<FileTreeIterator>(0);
-				path = ft.GetEntryPathString();
+				path = ft.EntryPathString;
 				expectedValue = i.Get(path);
 				NUnit.Framework.Assert.IsNotNull(expectedValue, "found unexpected file for path "
 					 + path + " in workdir");

@@ -308,7 +308,7 @@ namespace NGit
 			DirCacheEntry ent = dirc.GetEntry(path);
 			if (ent != null)
 			{
-				ent.SetAssumeValid(true);
+				ent.IsAssumeValid = true;
 			}
 			dirc.Write();
 			if (!dirc.Commit())

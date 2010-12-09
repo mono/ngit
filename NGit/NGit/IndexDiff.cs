@@ -194,8 +194,8 @@ namespace NGit
 				{
 					if (dirCacheIterator != null)
 					{
-						if (!treeIterator.IdEqual(dirCacheIterator) || treeIterator.GetEntryRawMode() != 
-							dirCacheIterator.GetEntryRawMode())
+						if (!treeIterator.IdEqual(dirCacheIterator) || treeIterator.EntryRawMode != dirCacheIterator
+							.EntryRawMode)
 						{
 							// in repo, in index, content diff => changed
 							changed.AddItem(treeWalk.PathString);
@@ -299,9 +299,9 @@ namespace NGit
 				HashSet<string> unchanged = new HashSet<string>();
 				for (int i = 0; i < dirCache.GetEntryCount(); i++)
 				{
-					if (dirCache.GetEntry(i).IsAssumeValid())
+					if (dirCache.GetEntry(i).IsAssumeValid)
 					{
-						unchanged.AddItem(dirCache.GetEntry(i).GetPathString());
+						unchanged.AddItem(dirCache.GetEntry(i).PathString);
 					}
 				}
 				assumeUnchanged = unchanged;

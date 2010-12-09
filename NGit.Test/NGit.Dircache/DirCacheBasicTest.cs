@@ -195,7 +195,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(FileMode.REGULAR_FILE);
+				ents[i].FileMode = FileMode.REGULAR_FILE;
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = 0; i_1 < ents.Length; i_1++)
@@ -217,11 +217,11 @@ namespace NGit.Dircache
 			DirCache dc = db.ReadDirCache();
 			DirCacheEntry[] ents = new DirCacheEntry[3];
 			ents[0] = new DirCacheEntry("a", 1);
-			ents[0].SetFileMode(FileMode.REGULAR_FILE);
+			ents[0].FileMode = FileMode.REGULAR_FILE;
 			ents[1] = new DirCacheEntry("a", 2);
-			ents[1].SetFileMode(FileMode.REGULAR_FILE);
+			ents[1].FileMode = FileMode.REGULAR_FILE;
 			ents[2] = new DirCacheEntry("a", 3);
-			ents[2].SetFileMode(FileMode.REGULAR_FILE);
+			ents[2].FileMode = FileMode.REGULAR_FILE;
 			DirCacheBuilder b = dc.Builder();
 			for (int i = 0; i < ents.Length; i++)
 			{

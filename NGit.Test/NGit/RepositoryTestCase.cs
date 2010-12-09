@@ -207,34 +207,34 @@ namespace NGit
 				timeStamps = new TreeSet<long>();
 				for (int i = 0; i < dc.GetEntryCount(); ++i)
 				{
-					timeStamps.AddItem(Sharpen.Extensions.ValueOf(dc.GetEntry(i).GetLastModified()));
+					timeStamps.AddItem(Sharpen.Extensions.ValueOf(dc.GetEntry(i).LastModified));
 				}
 			}
 			// iterate again, now produce the result string
 			for (int i_1 = 0; i_1 < dc.GetEntryCount(); ++i_1)
 			{
 				DirCacheEntry entry = dc.GetEntry(i_1);
-				sb.Append("[" + entry.GetPathString() + ", mode:" + entry.GetFileMode());
-				int stage = entry.GetStage();
+				sb.Append("[" + entry.PathString + ", mode:" + entry.FileMode);
+				int stage = entry.Stage;
 				if (stage != 0)
 				{
 					sb.Append(", stage:" + stage);
 				}
 				if (0 != (includedOptions & MOD_TIME))
 				{
-					sb.Append(", time:t" + timeStamps.HeadSet(Sharpen.Extensions.ValueOf(entry.GetLastModified
-						())).Count);
+					sb.Append(", time:t" + timeStamps.HeadSet(Sharpen.Extensions.ValueOf(entry.LastModified
+						)).Count);
 				}
 				if (0 != (includedOptions & SMUDGE))
 				{
-					if (entry.IsSmudged())
+					if (entry.IsSmudged)
 					{
 						sb.Append(", smudged");
 					}
 				}
 				if (0 != (includedOptions & LENGTH))
 				{
-					sb.Append(", length:" + Sharpen.Extensions.ToString(entry.GetLength()));
+					sb.Append(", length:" + Sharpen.Extensions.ToString(entry.Length));
 				}
 				if (0 != (includedOptions & CONTENT_ID))
 				{
@@ -247,7 +247,7 @@ namespace NGit
 				}
 				if (0 != (includedOptions & ASSUME_UNCHANGED))
 				{
-					sb.Append(", assume-unchanged:" + entry.IsAssumeValid());
+					sb.Append(", assume-unchanged:" + entry.IsAssumeValid);
 				}
 				sb.Append("]");
 			}
@@ -279,12 +279,12 @@ namespace NGit
 			ObjectInserter inserter = db.NewObjectInserter();
 			DirCacheBuilder builder = db.LockDirCache().Builder();
 			DirCacheEntry dce;
-			while (!treeItr.Eof())
+			while (!treeItr.Eof)
 			{
 				long len = treeItr.GetEntryLength();
-				dce = new DirCacheEntry(treeItr.GetEntryPathString());
-				dce.SetFileMode(treeItr.GetEntryFileMode());
-				dce.SetLastModified(treeItr.GetEntryLastModified());
+				dce = new DirCacheEntry(treeItr.EntryPathString);
+				dce.FileMode = treeItr.EntryFileMode;
+				dce.LastModified = treeItr.GetEntryLastModified();
 				dce.SetLength((int)len);
 				FileInputStream @in = new FileInputStream(treeItr.GetEntryFile());
 				dce.SetObjectId(inserter.Insert(Constants.OBJ_BLOB, len, @in));

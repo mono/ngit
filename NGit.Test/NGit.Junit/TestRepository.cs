@@ -204,7 +204,7 @@ namespace NGit.Junit
 		public virtual DirCacheEntry File(string path, RevBlob blob)
 		{
 			DirCacheEntry e = new DirCacheEntry(path);
-			e.SetFileMode(FileMode.REGULAR_FILE);
+			e.FileMode = FileMode.REGULAR_FILE;
 			e.SetObjectId(blob);
 			return e;
 		}
@@ -935,7 +935,7 @@ namespace NGit.Junit
 
 				public override void Apply(DirCacheEntry ent)
 				{
-					ent.SetFileMode(FileMode.REGULAR_FILE);
+					ent.FileMode = FileMode.REGULAR_FILE;
 					ent.SetObjectId(id);
 				}
 

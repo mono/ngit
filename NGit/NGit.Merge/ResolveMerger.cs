@@ -304,11 +304,11 @@ namespace NGit.Merge
 		/// <returns>the entry which was added to the index</returns>
 		private DirCacheEntry Add(byte[] path, CanonicalTreeParser p, int stage)
 		{
-			if (p != null && !p.GetEntryFileMode().Equals(FileMode.TREE))
+			if (p != null && !p.EntryFileMode.Equals(FileMode.TREE))
 			{
 				DirCacheEntry e = new DirCacheEntry(path, stage);
-				e.SetFileMode(p.GetEntryFileMode());
-				e.SetObjectId(p.GetEntryObjectId());
+				e.FileMode = p.EntryFileMode;
+				e.SetObjectId(p.EntryObjectId);
 				builder.Add(e);
 				return e;
 			}
@@ -456,7 +456,7 @@ namespace NGit.Merge
 				{
 					// We are going to update the worktree. Make sure the worktree
 					// is not modified
-					if (work != null && (!NonTree(work.GetEntryRawMode()) || work.IsModified(index.GetDirCacheEntry
+					if (work != null && (!NonTree(work.EntryRawMode) || work.IsModified(index.GetDirCacheEntry
 						(), true)))
 					{
 						failingPathes.Put(tw.PathString, ResolveMerger.MergeFailureReason.DIRTY_WORKTREE);
@@ -479,12 +479,11 @@ namespace NGit.Merge
 			 theirs)
 		{
 			MergeFormatter fmt = new MergeFormatter();
-			RawText baseText = @base == null ? RawText.EMPTY_TEXT : GetRawText(@base.GetEntryObjectId
-				(), db);
+			RawText baseText = @base == null ? RawText.EMPTY_TEXT : GetRawText(@base.EntryObjectId
+				, db);
 			// do the merge
 			MergeResult<RawText> result = mergeAlgorithm.Merge(RawTextComparator.DEFAULT, baseText
-				, GetRawText(ours.GetEntryObjectId(), db), GetRawText(theirs.GetEntryObjectId(), 
-				db));
+				, GetRawText(ours.EntryObjectId, db), GetRawText(theirs.EntryObjectId, db));
 			FilePath of = null;
 			FileOutputStream fos;
 			if (!inCore)
@@ -543,8 +542,8 @@ namespace NGit.Merge
 				// no conflict occured, the file will contain fully merged content.
 				// the index will be populated with the new merged version
 				DirCacheEntry dce = new DirCacheEntry(tw.PathString);
-				dce.SetFileMode(tw.GetFileMode(0));
-				dce.SetLastModified(of.LastModified());
+				dce.FileMode = tw.GetFileMode(0);
+				dce.LastModified = of.LastModified();
 				dce.SetLength((int)of.Length());
 				InputStream @is = new FileInputStream(of);
 				try

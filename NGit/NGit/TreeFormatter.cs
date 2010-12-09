@@ -351,7 +351,7 @@ namespace NGit
 			p.Reset(raw);
 			StringBuilder r = new StringBuilder();
 			r.Append("Tree={");
-			if (!p.Eof())
+			if (!p.Eof)
 			{
 				r.Append('\n');
 				try
@@ -364,16 +364,16 @@ namespace NGit
 					r.Append('\n');
 				}
 			}
-			while (!p.Eof())
+			while (!p.Eof)
 			{
-				FileMode mode = p.GetEntryFileMode();
+				FileMode mode = p.EntryFileMode;
 				r.Append(mode);
 				r.Append(' ');
 				r.Append(Constants.TypeString(mode.GetObjectType()));
 				r.Append(' ');
-				r.Append(p.GetEntryObjectId().Name);
+				r.Append(p.EntryObjectId.Name);
 				r.Append(' ');
-				r.Append(p.GetEntryPathString());
+				r.Append(p.EntryPathString);
 				r.Append('\n');
 				p.Next();
 			}

@@ -82,8 +82,8 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.IsTrue(r.IsFile());
 			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, ((FileBasedConfig)db
 				.GetConfig()).Get(WorkingTreeOptions.KEY));
-			NUnit.Framework.Assert.IsTrue(fti.First());
-			NUnit.Framework.Assert.IsTrue(fti.Eof());
+			NUnit.Framework.Assert.IsTrue(fti.First);
+			NUnit.Framework.Assert.IsTrue(fti.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -94,8 +94,8 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.IsFalse(r.Exists());
 			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, ((FileBasedConfig)db
 				.GetConfig()).Get(WorkingTreeOptions.KEY));
-			NUnit.Framework.Assert.IsTrue(fti.First());
-			NUnit.Framework.Assert.IsTrue(fti.Eof());
+			NUnit.Framework.Assert.IsTrue(fti.First);
+			NUnit.Framework.Assert.IsTrue(fti.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -108,8 +108,8 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.IsTrue(r.IsDirectory());
 			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, ((FileBasedConfig)db
 				.GetConfig()).Get(WorkingTreeOptions.KEY));
-			NUnit.Framework.Assert.IsTrue(fti.First());
-			NUnit.Framework.Assert.IsTrue(fti.Eof());
+			NUnit.Framework.Assert.IsTrue(fti.First);
+			NUnit.Framework.Assert.IsTrue(fti.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -118,43 +118,43 @@ namespace NGit.Treewalk
 		{
 			FileTreeIterator top = new FileTreeIterator(trash, db.FileSystem, ((FileBasedConfig
 				)db.GetConfig()).Get(WorkingTreeOptions.KEY));
-			NUnit.Framework.Assert.IsTrue(top.First());
-			NUnit.Framework.Assert.IsFalse(top.Eof());
+			NUnit.Framework.Assert.IsTrue(top.First);
+			NUnit.Framework.Assert.IsFalse(top.Eof);
 			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), top.mode);
 			NUnit.Framework.Assert.AreEqual(paths[0], NameOf(top));
 			NUnit.Framework.Assert.AreEqual(paths[0].Length, top.GetEntryLength());
 			NUnit.Framework.Assert.AreEqual(mtime[0], top.GetEntryLastModified());
 			top.Next(1);
-			NUnit.Framework.Assert.IsFalse(top.First());
-			NUnit.Framework.Assert.IsFalse(top.Eof());
+			NUnit.Framework.Assert.IsFalse(top.First);
+			NUnit.Framework.Assert.IsFalse(top.Eof);
 			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), top.mode);
 			NUnit.Framework.Assert.AreEqual(paths[1], NameOf(top));
 			NUnit.Framework.Assert.AreEqual(paths[1].Length, top.GetEntryLength());
 			NUnit.Framework.Assert.AreEqual(mtime[1], top.GetEntryLastModified());
 			top.Next(1);
-			NUnit.Framework.Assert.IsFalse(top.First());
-			NUnit.Framework.Assert.IsFalse(top.Eof());
+			NUnit.Framework.Assert.IsFalse(top.First);
+			NUnit.Framework.Assert.IsFalse(top.Eof);
 			NUnit.Framework.Assert.AreEqual(FileMode.TREE.GetBits(), top.mode);
 			ObjectReader reader = db.NewObjectReader();
 			AbstractTreeIterator sub = top.CreateSubtreeIterator(reader);
 			NUnit.Framework.Assert.IsTrue(sub is FileTreeIterator);
 			FileTreeIterator subfti = (FileTreeIterator)sub;
-			NUnit.Framework.Assert.IsTrue(sub.First());
-			NUnit.Framework.Assert.IsFalse(sub.Eof());
+			NUnit.Framework.Assert.IsTrue(sub.First);
+			NUnit.Framework.Assert.IsFalse(sub.Eof);
 			NUnit.Framework.Assert.AreEqual(paths[2], NameOf(sub));
 			NUnit.Framework.Assert.AreEqual(paths[2].Length, subfti.GetEntryLength());
 			NUnit.Framework.Assert.AreEqual(mtime[2], subfti.GetEntryLastModified());
 			sub.Next(1);
-			NUnit.Framework.Assert.IsTrue(sub.Eof());
+			NUnit.Framework.Assert.IsTrue(sub.Eof);
 			top.Next(1);
-			NUnit.Framework.Assert.IsFalse(top.First());
-			NUnit.Framework.Assert.IsFalse(top.Eof());
+			NUnit.Framework.Assert.IsFalse(top.First);
+			NUnit.Framework.Assert.IsFalse(top.Eof);
 			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), top.mode);
 			NUnit.Framework.Assert.AreEqual(paths[3], NameOf(top));
 			NUnit.Framework.Assert.AreEqual(paths[3].Length, top.GetEntryLength());
 			NUnit.Framework.Assert.AreEqual(mtime[3], top.GetEntryLastModified());
 			top.Next(1);
-			NUnit.Framework.Assert.IsTrue(top.Eof());
+			NUnit.Framework.Assert.IsTrue(top.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -170,11 +170,11 @@ namespace NGit.Treewalk
 			md.Update(unchecked((byte)0));
 			md.Update(Constants.Encode(paths[0]));
 			ObjectId expect = ObjectId.FromRaw(md.Digest());
-			AssertEquals(expect, top.GetEntryObjectId());
+			AssertEquals(expect, top.EntryObjectId);
 			// Verify it was cached by removing the file and getting it again.
 			//
 			FileUtils.Delete(new FilePath(trash, paths[0]));
-			AssertEquals(expect, top.GetEntryObjectId());
+			AssertEquals(expect, top.EntryObjectId);
 		}
 
 		private static string NameOf(AbstractTreeIterator i)

@@ -89,6 +89,16 @@
 -propertyMapping org.eclipse.jgit.treewalk.TreeWalk.getDepth Depth
 -propertyMapping org.eclipse.jgit.treewalk.TreeWalk.isSubtree IsSubtree
 -propertyMapping org.eclipse.jgit.treewalk.TreeWalk.isPostChildren IsPostChildren
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.hasId HasId
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.getEntryObjectId() EntryObjectId
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.getEntryFileMode EntryFileMode
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.getEntryRawMode EntryRawMode
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.getEntryPathString EntryPathString
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.idBuffer IdBuffer
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.idOffset IdOffset
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.first First
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.eof Eof
+-propertyMapping org.eclipse.jgit.treewalk.AbstractTreeIterator.getNameLength NameLength
 -propertyMapping org.eclipse.jgit.revwalk.RevObject.getType Type
 -propertyMapping org.eclipse.jgit.revwalk.RevObject.getId Id
 -propertyMapping org.eclipse.jgit.revwalk.RevCommit.getCommitTime CommitTime
@@ -99,6 +109,24 @@
 -propertyMapping org.eclipse.jgit.revwalk.RevCommit.getEncoding Encoding
 -propertyMapping org.eclipse.jgit.storage.file.ObjectDirectory.getDirectory Directory
 -propertyMapping org.eclipse.jgit.storage.file.ObjectDirectory.exists Exists
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.isSmudged IsSmudged
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.idBuffer IdBuffer
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.idOffset IdOffset
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.isAssumeValid IsAssumeValid
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.setAssumeValid IsAssumeValid
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.isUpdateNeeded IsUpdateNeeded
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.setUpdateNeeded IsUpdateNeeded
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.getStage Stage
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.isSkipWorkTree IsSkipWorkTree
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.isIntentToAdd IsIntentToAdd
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.getRawMode RawMode
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.getFileMode FileMode
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.setFileMode FileMode
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.getLastModified LastModified
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.setLastModified LastModified
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.getLength Length
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.getPathString PathString
+-propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.isExtended IsExtended
 -fullyQualify CommitBuilder
 
 -namespaceMapping com.jcraft.jsch NSch

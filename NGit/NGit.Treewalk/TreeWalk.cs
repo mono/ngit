@@ -593,7 +593,7 @@ namespace NGit.Treewalk
 				for (; ; )
 				{
 					AbstractTreeIterator t = Min();
-					if (t.Eof())
+					if (t.Eof)
 					{
 						if (depth > 0)
 						{
@@ -719,7 +719,7 @@ namespace NGit.Treewalk
 		public virtual ObjectId GetObjectId(int nth)
 		{
 			AbstractTreeIterator t = trees[nth];
-			return t.matches == currentHead ? t.GetEntryObjectId() : ObjectId.ZeroId;
+			return t.matches == currentHead ? t.EntryObjectId : ObjectId.ZeroId;
 		}
 
 		/// <summary>Obtain the ObjectId for the current entry.</summary>
@@ -774,7 +774,7 @@ namespace NGit.Treewalk
 				//
 				return true;
 			}
-			if (!a.HasId() || !b.HasId())
+			if (!a.HasId || !b.HasId)
 			{
 				return false;
 			}
@@ -1026,7 +1026,7 @@ namespace NGit.Treewalk
 			{
 				AbstractTreeIterator t = trees[i];
 				AbstractTreeIterator n;
-				if (t.matches == ch && !t.Eof() && FileMode.TREE.Equals(t.mode))
+				if (t.matches == ch && !t.Eof && FileMode.TREE.Equals(t.mode))
 				{
 					n = t.CreateSubtreeIterator(reader, idBuffer);
 				}
@@ -1046,11 +1046,11 @@ namespace NGit.Treewalk
 		{
 			int i = 0;
 			AbstractTreeIterator minRef = trees[i];
-			while (minRef.Eof() && ++i < trees.Length)
+			while (minRef.Eof && ++i < trees.Length)
 			{
 				minRef = trees[i];
 			}
-			if (minRef.Eof())
+			if (minRef.Eof)
 			{
 				return minRef;
 			}
@@ -1058,7 +1058,7 @@ namespace NGit.Treewalk
 			while (++i < trees.Length)
 			{
 				AbstractTreeIterator t = trees[i];
-				if (t.Eof())
+				if (t.Eof)
 				{
 					continue;
 				}

@@ -74,8 +74,8 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestCreate_ByStringPath()
 		{
-			NUnit.Framework.Assert.AreEqual("a", new DirCacheEntry("a").GetPathString());
-			NUnit.Framework.Assert.AreEqual("a/b", new DirCacheEntry("a/b").GetPathString());
+			NUnit.Framework.Assert.AreEqual("a", new DirCacheEntry("a").PathString);
+			NUnit.Framework.Assert.AreEqual("a/b", new DirCacheEntry("a/b").PathString);
 			try
 			{
 				new DirCacheEntry("/a");
@@ -92,17 +92,17 @@ namespace NGit.Dircache
 		{
 			DirCacheEntry e;
 			e = new DirCacheEntry("a", 0);
-			NUnit.Framework.Assert.AreEqual("a", e.GetPathString());
-			NUnit.Framework.Assert.AreEqual(0, e.GetStage());
+			NUnit.Framework.Assert.AreEqual("a", e.PathString);
+			NUnit.Framework.Assert.AreEqual(0, e.Stage);
 			e = new DirCacheEntry("a/b", 1);
-			NUnit.Framework.Assert.AreEqual("a/b", e.GetPathString());
-			NUnit.Framework.Assert.AreEqual(1, e.GetStage());
+			NUnit.Framework.Assert.AreEqual("a/b", e.PathString);
+			NUnit.Framework.Assert.AreEqual(1, e.Stage);
 			e = new DirCacheEntry("a/c", 2);
-			NUnit.Framework.Assert.AreEqual("a/c", e.GetPathString());
-			NUnit.Framework.Assert.AreEqual(2, e.GetStage());
+			NUnit.Framework.Assert.AreEqual("a/c", e.PathString);
+			NUnit.Framework.Assert.AreEqual(2, e.Stage);
 			e = new DirCacheEntry("a/d", 3);
-			NUnit.Framework.Assert.AreEqual("a/d", e.GetPathString());
-			NUnit.Framework.Assert.AreEqual(3, e.GetStage());
+			NUnit.Framework.Assert.AreEqual("a/d", e.PathString);
+			NUnit.Framework.Assert.AreEqual(3, e.Stage);
 			try
 			{
 				new DirCacheEntry("/a", 1);
@@ -136,23 +136,22 @@ namespace NGit.Dircache
 		public virtual void TestSetFileMode()
 		{
 			DirCacheEntry e = new DirCacheEntry("a");
-			NUnit.Framework.Assert.AreEqual(0, e.GetRawMode());
-			e.SetFileMode(FileMode.REGULAR_FILE);
-			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, e.GetFileMode());
-			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), e.GetRawMode());
-			e.SetFileMode(FileMode.EXECUTABLE_FILE);
-			NUnit.Framework.Assert.AreSame(FileMode.EXECUTABLE_FILE, e.GetFileMode());
-			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE.GetBits(), e.GetRawMode(
-				));
-			e.SetFileMode(FileMode.SYMLINK);
-			NUnit.Framework.Assert.AreSame(FileMode.SYMLINK, e.GetFileMode());
-			NUnit.Framework.Assert.AreEqual(FileMode.SYMLINK.GetBits(), e.GetRawMode());
-			e.SetFileMode(FileMode.GITLINK);
-			NUnit.Framework.Assert.AreSame(FileMode.GITLINK, e.GetFileMode());
-			NUnit.Framework.Assert.AreEqual(FileMode.GITLINK.GetBits(), e.GetRawMode());
+			NUnit.Framework.Assert.AreEqual(0, e.RawMode);
+			e.FileMode = FileMode.REGULAR_FILE;
+			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, e.FileMode);
+			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE.GetBits(), e.RawMode);
+			e.FileMode = FileMode.EXECUTABLE_FILE;
+			NUnit.Framework.Assert.AreSame(FileMode.EXECUTABLE_FILE, e.FileMode);
+			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE.GetBits(), e.RawMode);
+			e.FileMode = FileMode.SYMLINK;
+			NUnit.Framework.Assert.AreSame(FileMode.SYMLINK, e.FileMode);
+			NUnit.Framework.Assert.AreEqual(FileMode.SYMLINK.GetBits(), e.RawMode);
+			e.FileMode = FileMode.GITLINK;
+			NUnit.Framework.Assert.AreSame(FileMode.GITLINK, e.FileMode);
+			NUnit.Framework.Assert.AreEqual(FileMode.GITLINK.GetBits(), e.RawMode);
 			try
 			{
-				e.SetFileMode(FileMode.MISSING);
+				e.FileMode = FileMode.MISSING;
 				NUnit.Framework.Assert.Fail("incorrectly accepted FileMode.MISSING");
 			}
 			catch (ArgumentException err)
@@ -161,7 +160,7 @@ namespace NGit.Dircache
 			}
 			try
 			{
-				e.SetFileMode(FileMode.TREE);
+				e.FileMode = FileMode.TREE;
 				NUnit.Framework.Assert.Fail("incorrectly accepted FileMode.TREE");
 			}
 			catch (ArgumentException err)

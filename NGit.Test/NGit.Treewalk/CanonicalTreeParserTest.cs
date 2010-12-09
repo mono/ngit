@@ -117,7 +117,7 @@ namespace NGit.Treewalk
 		public virtual void TestEmptyTree_AtEOF()
 		{
 			ctp.Reset(new byte[0]);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -125,14 +125,14 @@ namespace NGit.Treewalk
 		public virtual void TestOneEntry_Forward()
 		{
 			ctp.Reset(tree1);
-			NUnit.Framework.Assert.IsTrue(ctp.First());
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.First);
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("a", Path());
-			NUnit.Framework.Assert.AreEqual(hash_a, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_a, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsFalse(ctp.First());
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.First);
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -140,19 +140,19 @@ namespace NGit.Treewalk
 		public virtual void TestTwoEntries_ForwardOneAtATime()
 		{
 			ctp.Reset(tree2);
-			NUnit.Framework.Assert.IsTrue(ctp.First());
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.First);
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("a", Path());
-			NUnit.Framework.Assert.AreEqual(hash_a, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_a, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("foo", Path());
-			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsFalse(ctp.First());
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.First);
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -161,7 +161,7 @@ namespace NGit.Treewalk
 		{
 			ctp.Reset(tree1);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -170,7 +170,7 @@ namespace NGit.Treewalk
 		{
 			ctp.Reset(tree2);
 			ctp.Next(2);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -179,7 +179,7 @@ namespace NGit.Treewalk
 		{
 			ctp.Reset(tree3);
 			ctp.Next(3);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -188,13 +188,13 @@ namespace NGit.Treewalk
 		{
 			ctp.Reset(tree3);
 			ctp.Next(2);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("foo", Path());
-			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -203,14 +203,14 @@ namespace NGit.Treewalk
 		{
 			ctp.Reset(tree1);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsFalse(ctp.First());
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.First);
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 			ctp.Back(1);
-			NUnit.Framework.Assert.IsTrue(ctp.First());
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.First);
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("a", Path());
-			NUnit.Framework.Assert.AreEqual(hash_a, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_a, ctp.EntryObjectId);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -219,17 +219,17 @@ namespace NGit.Treewalk
 		{
 			ctp.Reset(tree2);
 			ctp.Next(2);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 			ctp.Back(1);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("foo", Path());
-			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.EntryObjectId);
 			ctp.Back(1);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("a", Path());
-			NUnit.Framework.Assert.AreEqual(hash_a, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_a, ctp.EntryObjectId);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -238,19 +238,19 @@ namespace NGit.Treewalk
 		{
 			ctp.Reset(tree2);
 			ctp.Next(2);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 			ctp.Back(2);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("a", Path());
-			NUnit.Framework.Assert.AreEqual(hash_a, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_a, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("foo", Path());
-			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -259,19 +259,19 @@ namespace NGit.Treewalk
 		{
 			ctp.Reset(tree3);
 			ctp.Next(3);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 			ctp.Back(2);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(mt.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("b_sometree", Path());
-			NUnit.Framework.Assert.AreEqual(hash_sometree, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_sometree, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("foo", Path());
-			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_foo, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -282,17 +282,17 @@ namespace NGit.Treewalk
 			ctp.Reset(Mktree(Entry(m644, "a", hash_a), Entry(mt, aVeryConfusingName, hash_sometree
 				), Entry(m644, "foo", hash_foo)));
 			ctp.Next(3);
-			NUnit.Framework.Assert.IsTrue(ctp.Eof());
+			NUnit.Framework.Assert.IsTrue(ctp.Eof);
 			ctp.Back(2);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(mt.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual(aVeryConfusingName, Path());
-			NUnit.Framework.Assert.AreEqual(hash_sometree, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_sometree, ctp.EntryObjectId);
 			ctp.Back(1);
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(m644.GetBits(), ctp.mode);
 			NUnit.Framework.Assert.AreEqual("a", Path());
-			NUnit.Framework.Assert.AreEqual(hash_a, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual(hash_a, ctp.EntryObjectId);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -314,17 +314,17 @@ namespace NGit.Treewalk
 			ctp.Reset(Mktree(Entry(mt, "common", common), Entry(mt, "darwin-x86", darwinx86), 
 				Entry(mt, "linux-x86", linuxx86), Entry(mt, "windows", windows)));
 			ctp.Next(3);
-			NUnit.Framework.Assert.AreEqual("windows", ctp.GetEntryPathString());
-			NUnit.Framework.Assert.AreSame(mt, ctp.GetEntryFileMode());
-			NUnit.Framework.Assert.AreEqual(windows, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual("windows", ctp.EntryPathString);
+			NUnit.Framework.Assert.AreSame(mt, ctp.EntryFileMode);
+			NUnit.Framework.Assert.AreEqual(windows, ctp.EntryObjectId);
 			ctp.Back(1);
-			NUnit.Framework.Assert.AreEqual("linux-x86", ctp.GetEntryPathString());
-			NUnit.Framework.Assert.AreSame(mt, ctp.GetEntryFileMode());
-			NUnit.Framework.Assert.AreEqual(linuxx86, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual("linux-x86", ctp.EntryPathString);
+			NUnit.Framework.Assert.AreSame(mt, ctp.EntryFileMode);
+			NUnit.Framework.Assert.AreEqual(linuxx86, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.AreEqual("windows", ctp.GetEntryPathString());
-			NUnit.Framework.Assert.AreSame(mt, ctp.GetEntryFileMode());
-			NUnit.Framework.Assert.AreEqual(windows, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual("windows", ctp.EntryPathString);
+			NUnit.Framework.Assert.AreSame(mt, ctp.EntryFileMode);
+			NUnit.Framework.Assert.AreEqual(windows, ctp.EntryObjectId);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -346,17 +346,17 @@ namespace NGit.Treewalk
 			ctp.Reset(Mktree(Entry(mt, "common", common), Entry(mt, "darwin-x86", darwinx86), 
 				Entry(mt, "linux-x86", linuxx86), Entry(mt, "windows", windows)));
 			ctp.Next(3);
-			NUnit.Framework.Assert.AreEqual("windows", ctp.GetEntryPathString());
-			NUnit.Framework.Assert.AreSame(mt, ctp.GetEntryFileMode());
-			NUnit.Framework.Assert.AreEqual(windows, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual("windows", ctp.EntryPathString);
+			NUnit.Framework.Assert.AreSame(mt, ctp.EntryFileMode);
+			NUnit.Framework.Assert.AreEqual(windows, ctp.EntryObjectId);
 			ctp.Back(1);
-			NUnit.Framework.Assert.AreEqual("linux-x86", ctp.GetEntryPathString());
-			NUnit.Framework.Assert.AreSame(mt, ctp.GetEntryFileMode());
-			NUnit.Framework.Assert.AreEqual(linuxx86, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual("linux-x86", ctp.EntryPathString);
+			NUnit.Framework.Assert.AreSame(mt, ctp.EntryFileMode);
+			NUnit.Framework.Assert.AreEqual(linuxx86, ctp.EntryObjectId);
 			ctp.Next(1);
-			NUnit.Framework.Assert.AreEqual("windows", ctp.GetEntryPathString());
-			NUnit.Framework.Assert.AreSame(mt, ctp.GetEntryFileMode());
-			NUnit.Framework.Assert.AreEqual(windows, ctp.GetEntryObjectId());
+			NUnit.Framework.Assert.AreEqual("windows", ctp.EntryPathString);
+			NUnit.Framework.Assert.AreSame(mt, ctp.EntryFileMode);
+			NUnit.Framework.Assert.AreEqual(windows, ctp.EntryObjectId);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -371,7 +371,7 @@ namespace NGit.Treewalk
 			}
 			string name = b.ToString();
 			ctp.Reset(Entry(m644, name, hash_a));
-			NUnit.Framework.Assert.IsFalse(ctp.Eof());
+			NUnit.Framework.Assert.IsFalse(ctp.Eof);
 			NUnit.Framework.Assert.AreEqual(name, RawParseUtils.Decode(Constants.CHARSET, ctp
 				.path, ctp.pathOffset, ctp.pathLen));
 		}

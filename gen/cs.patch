@@ -58,7 +58,7 @@ index 9815204..53d3e54 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Dircache/DirCacheFindTest.cs b/NGit.Test/NGit.Dircache/DirCacheFindTest.cs
-index 289b1ab..f965895 100644
+index 6548fb9..e6061e6 100644
 --- a/NGit.Test/NGit.Dircache/DirCacheFindTest.cs
 +++ b/NGit.Test/NGit.Dircache/DirCacheFindTest.cs
 @@ -78,7 +78,7 @@ namespace NGit.Dircache
@@ -106,7 +106,7 @@ index 0c18736..36c98eb 100644
  				return silent;
  			}
 diff --git a/NGit.Test/NGit.Junit/TestRepository.cs b/NGit.Test/NGit.Junit/TestRepository.cs
-index fa4c21d..6e8e174 100644
+index b8eff97..83c8760 100644
 --- a/NGit.Test/NGit.Junit/TestRepository.cs
 +++ b/NGit.Test/NGit.Junit/TestRepository.cs
 @@ -56,6 +56,7 @@ using NGit.Treewalk;
@@ -621,15 +621,15 @@ index 06aaf16..5aeeb2b 100644
  				);
  			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads(), null);
 diff --git a/NGit.Test/NGit/RepositoryTestCase.cs b/NGit.Test/NGit/RepositoryTestCase.cs
-index 038ac2d..364144b 100644
+index faf9307..d44492b 100644
 --- a/NGit.Test/NGit/RepositoryTestCase.cs
 +++ b/NGit.Test/NGit/RepositoryTestCase.cs
 @@ -247,7 +247,7 @@ namespace NGit
  				}
  				if (0 != (includedOptions & ASSUME_UNCHANGED))
  				{
--					sb.Append(", assume-unchanged:" + bool.ToString(entry.IsAssumeValid()));
-+					sb.Append(", assume-unchanged:" + entry.IsAssumeValid());
+-					sb.Append(", assume-unchanged:" + bool.ToString(entry.IsAssumeValid));
++					sb.Append(", assume-unchanged:" + entry.IsAssumeValid);
  				}
  				sb.Append("]");
  			}
@@ -946,27 +946,27 @@ index a986d08..3d96d78 100644
  
  			private readonly MyersDiff<S> _enclosing;
 diff --git a/NGit/NGit.Dircache/DirCacheEntry.cs b/NGit/NGit.Dircache/DirCacheEntry.cs
-index 3009464..c473055 100644
+index 4d5263f..ae63e05 100644
 --- a/NGit/NGit.Dircache/DirCacheEntry.cs
 +++ b/NGit/NGit.Dircache/DirCacheEntry.cs
-@@ -429,7 +429,7 @@ namespace NGit.Dircache
- 			}
- 			else
- 			{
--				info[infoOffset + P_FLAGS] &= ~ASSUME_VALID;
-+				info[infoOffset + P_FLAGS] &= unchecked((byte)~ASSUME_VALID);
- 			}
- 		}
- 
-@@ -449,7 +449,7 @@ namespace NGit.Dircache
- 			}
- 			else
- 			{
--				inCoreFlags &= ~UPDATE_NEEDED;
-+				inCoreFlags &= unchecked((byte)~UPDATE_NEEDED);
+@@ -439,7 +439,7 @@ namespace NGit.Dircache
+ 				}
+ 				else
+ 				{
+-					info[infoOffset + P_FLAGS] &= ~ASSUME_VALID;
++					info[infoOffset + P_FLAGS] &= unchecked((byte)~ASSUME_VALID);
+ 				}
  			}
  		}
- 
+@@ -462,7 +462,7 @@ namespace NGit.Dircache
+ 				}
+ 				else
+ 				{
+-					inCoreFlags &= ~UPDATE_NEEDED;
++					inCoreFlags &= unchecked((byte)~UPDATE_NEEDED);
+ 				}
+ 			}
+ 		}
 diff --git a/NGit/NGit.Events/RepositoryEvent.cs b/NGit/NGit.Events/RepositoryEvent.cs
 index ecc16a0..c470c28 100644
 --- a/NGit/NGit.Events/RepositoryEvent.cs
@@ -1158,10 +1158,10 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index b15e9fd..474e872 100644
+index a8ec488..b946077 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
-@@ -535,7 +535,7 @@ namespace NGit.Merge
+@@ -534,7 +534,7 @@ namespace NGit.Merge
  				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
  				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
  				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);
@@ -2392,10 +2392,10 @@ index 4557681..024be0c 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index 73d2e64..96290b0 100644
+index 8120b9b..3efc33d 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-@@ -844,7 +844,7 @@ namespace NGit.Treewalk
+@@ -859,7 +859,7 @@ namespace NGit.Treewalk
  
  		/// <summary>A single entry within a working directory tree.</summary>
  		/// <remarks>A single entry within a working directory tree.</remarks>

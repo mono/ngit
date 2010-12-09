@@ -111,7 +111,7 @@ namespace NGit.Dircache
 			DirCache dc = new DirCache(PathOf("gitgit.index.ZZZZ"), FS.DETECTED);
 			dc.Read();
 			NUnit.Framework.Assert.AreEqual(1, dc.GetEntryCount());
-			NUnit.Framework.Assert.AreEqual("A", dc.GetEntry(0).GetPathString());
+			NUnit.Framework.Assert.AreEqual("A", dc.GetEntry(0).PathString);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -152,10 +152,10 @@ namespace NGit.Dircache
 		{
 			NUnit.Framework.Assert.IsNotNull(c);
 			NUnit.Framework.Assert.IsNotNull(j);
-			NUnit.Framework.Assert.AreEqual(c.path, j.GetPathString());
+			NUnit.Framework.Assert.AreEqual(c.path, j.PathString);
 			AssertEquals(c.id, j.GetObjectId());
-			NUnit.Framework.Assert.AreEqual(c.mode, j.GetRawMode());
-			NUnit.Framework.Assert.AreEqual(c.stage, j.GetStage());
+			NUnit.Framework.Assert.AreEqual(c.mode, j.RawMode);
+			NUnit.Framework.Assert.AreEqual(c.stage, j.Stage);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -228,9 +228,9 @@ namespace NGit.Dircache
 			, bool intentToAdd, DirCache dc)
 		{
 			DirCacheEntry entry = dc.GetEntry(indexPosition);
-			NUnit.Framework.Assert.AreEqual(path, entry.GetPathString());
-			NUnit.Framework.Assert.AreEqual(skipWorkTree, entry.IsSkipWorkTree());
-			NUnit.Framework.Assert.AreEqual(intentToAdd, entry.IsIntentToAdd());
+			NUnit.Framework.Assert.AreEqual(path, entry.PathString);
+			NUnit.Framework.Assert.AreEqual(skipWorkTree, entry.IsSkipWorkTree);
+			NUnit.Framework.Assert.AreEqual(intentToAdd, entry.IsIntentToAdd);
 		}
 
 		private FilePath PathOf(string name)

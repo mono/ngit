@@ -76,7 +76,7 @@ namespace NGit.Dircache
 			DirCacheBuilder b = dc.Builder();
 			NUnit.Framework.Assert.IsNotNull(b);
 			DirCacheEntry e = new DirCacheEntry("a");
-			NUnit.Framework.Assert.AreEqual(0, e.GetRawMode());
+			NUnit.Framework.Assert.AreEqual(0, e.RawMode);
 			try
 			{
 				b.Add(e);
@@ -101,17 +101,17 @@ namespace NGit.Dircache
 				DirCacheBuilder b = dc.Builder();
 				NUnit.Framework.Assert.IsNotNull(b);
 				entOrig = new DirCacheEntry(path);
-				entOrig.SetFileMode(mode);
-				entOrig.SetLastModified(lastModified);
+				entOrig.FileMode = mode;
+				entOrig.LastModified = lastModified;
 				entOrig.SetLength(length);
-				NUnit.Framework.Assert.AreNotSame(path, entOrig.GetPathString());
-				NUnit.Framework.Assert.AreEqual(path, entOrig.GetPathString());
+				NUnit.Framework.Assert.AreNotSame(path, entOrig.PathString);
+				NUnit.Framework.Assert.AreEqual(path, entOrig.PathString);
 				AssertEquals(ObjectId.ZeroId, entOrig.GetObjectId());
-				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.GetRawMode());
-				NUnit.Framework.Assert.AreEqual(0, entOrig.GetStage());
-				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.GetLastModified());
-				NUnit.Framework.Assert.AreEqual(length, entOrig.GetLength());
-				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid());
+				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.RawMode);
+				NUnit.Framework.Assert.AreEqual(0, entOrig.Stage);
+				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);
+				NUnit.Framework.Assert.AreEqual(length, entOrig.Length);
+				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid);
 				b.Add(entOrig);
 				b.Finish();
 				NUnit.Framework.Assert.AreEqual(1, dc.GetEntryCount());
@@ -124,13 +124,13 @@ namespace NGit.Dircache
 				NUnit.Framework.Assert.AreEqual(1, dc.GetEntryCount());
 				DirCacheEntry entRead = dc.GetEntry(0);
 				NUnit.Framework.Assert.AreNotSame(entOrig, entRead);
-				NUnit.Framework.Assert.AreEqual(path, entRead.GetPathString());
+				NUnit.Framework.Assert.AreEqual(path, entRead.PathString);
 				AssertEquals(ObjectId.ZeroId, entOrig.GetObjectId());
-				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.GetRawMode());
-				NUnit.Framework.Assert.AreEqual(0, entOrig.GetStage());
-				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.GetLastModified());
-				NUnit.Framework.Assert.AreEqual(length, entOrig.GetLength());
-				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid());
+				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.RawMode);
+				NUnit.Framework.Assert.AreEqual(0, entOrig.Stage);
+				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);
+				NUnit.Framework.Assert.AreEqual(length, entOrig.Length);
+				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid);
 			}
 		}
 
@@ -148,17 +148,17 @@ namespace NGit.Dircache
 				DirCacheBuilder b = dc.Builder();
 				NUnit.Framework.Assert.IsNotNull(b);
 				entOrig = new DirCacheEntry(path);
-				entOrig.SetFileMode(mode);
-				entOrig.SetLastModified(lastModified);
+				entOrig.FileMode = mode;
+				entOrig.LastModified = lastModified;
 				entOrig.SetLength(length);
-				NUnit.Framework.Assert.AreNotSame(path, entOrig.GetPathString());
-				NUnit.Framework.Assert.AreEqual(path, entOrig.GetPathString());
+				NUnit.Framework.Assert.AreNotSame(path, entOrig.PathString);
+				NUnit.Framework.Assert.AreEqual(path, entOrig.PathString);
 				AssertEquals(ObjectId.ZeroId, entOrig.GetObjectId());
-				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.GetRawMode());
-				NUnit.Framework.Assert.AreEqual(0, entOrig.GetStage());
-				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.GetLastModified());
-				NUnit.Framework.Assert.AreEqual(length, entOrig.GetLength());
-				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid());
+				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.RawMode);
+				NUnit.Framework.Assert.AreEqual(0, entOrig.Stage);
+				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);
+				NUnit.Framework.Assert.AreEqual(length, entOrig.Length);
+				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid);
 				b.Add(entOrig);
 				NUnit.Framework.Assert.IsTrue(b.Commit());
 				NUnit.Framework.Assert.AreEqual(1, dc.GetEntryCount());
@@ -170,13 +170,13 @@ namespace NGit.Dircache
 				NUnit.Framework.Assert.AreEqual(1, dc.GetEntryCount());
 				DirCacheEntry entRead = dc.GetEntry(0);
 				NUnit.Framework.Assert.AreNotSame(entOrig, entRead);
-				NUnit.Framework.Assert.AreEqual(path, entRead.GetPathString());
+				NUnit.Framework.Assert.AreEqual(path, entRead.PathString);
 				AssertEquals(ObjectId.ZeroId, entOrig.GetObjectId());
-				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.GetRawMode());
-				NUnit.Framework.Assert.AreEqual(0, entOrig.GetStage());
-				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.GetLastModified());
-				NUnit.Framework.Assert.AreEqual(length, entOrig.GetLength());
-				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid());
+				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.RawMode);
+				NUnit.Framework.Assert.AreEqual(0, entOrig.Stage);
+				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);
+				NUnit.Framework.Assert.AreEqual(length, entOrig.Length);
+				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid);
 			}
 		}
 
@@ -189,9 +189,9 @@ namespace NGit.Dircache
 			DirCacheBuilder b = dc.Builder();
 			NUnit.Framework.Assert.IsNotNull(b);
 			DirCacheEntry entOrig = new DirCacheEntry(path);
-			entOrig.SetFileMode(FileMode.REGULAR_FILE);
-			NUnit.Framework.Assert.AreNotSame(path, entOrig.GetPathString());
-			NUnit.Framework.Assert.AreEqual(path, entOrig.GetPathString());
+			entOrig.FileMode = FileMode.REGULAR_FILE;
+			NUnit.Framework.Assert.AreNotSame(path, entOrig.PathString);
+			NUnit.Framework.Assert.AreEqual(path, entOrig.PathString);
 			b.Add(entOrig);
 			b.Finish();
 			NUnit.Framework.Assert.AreEqual(1, dc.GetEntryCount());
@@ -214,7 +214,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(FileMode.REGULAR_FILE);
+				ents[i].FileMode = FileMode.REGULAR_FILE;
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = 0; i_1 < ents.Length; i_1++)
@@ -226,7 +226,7 @@ namespace NGit.Dircache
 			for (int i_2 = 0; i_2 < paths.Length; i_2++)
 			{
 				NUnit.Framework.Assert.AreSame(ents[i_2], dc.GetEntry(i_2));
-				NUnit.Framework.Assert.AreEqual(paths[i_2], dc.GetEntry(i_2).GetPathString());
+				NUnit.Framework.Assert.AreEqual(paths[i_2], dc.GetEntry(i_2).PathString);
 				NUnit.Framework.Assert.AreEqual(i_2, dc.FindEntry(paths[i_2]));
 				NUnit.Framework.Assert.AreSame(ents[i_2], dc.GetEntry(paths[i_2]));
 			}
@@ -242,7 +242,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(FileMode.REGULAR_FILE);
+				ents[i].FileMode = FileMode.REGULAR_FILE;
 			}
 			DirCacheBuilder b = dc.Builder();
 			for (int i_1 = ents.Length - 1; i_1 >= 0; i_1--)
@@ -254,7 +254,7 @@ namespace NGit.Dircache
 			for (int i_2 = 0; i_2 < paths.Length; i_2++)
 			{
 				NUnit.Framework.Assert.AreSame(ents[i_2], dc.GetEntry(i_2));
-				NUnit.Framework.Assert.AreEqual(paths[i_2], dc.GetEntry(i_2).GetPathString());
+				NUnit.Framework.Assert.AreEqual(paths[i_2], dc.GetEntry(i_2).PathString);
 				NUnit.Framework.Assert.AreEqual(i_2, dc.FindEntry(paths[i_2]));
 				NUnit.Framework.Assert.AreSame(ents[i_2], dc.GetEntry(paths[i_2]));
 			}
@@ -270,7 +270,7 @@ namespace NGit.Dircache
 			for (int i = 0; i < paths.Length; i++)
 			{
 				ents[i] = new DirCacheEntry(paths[i]);
-				ents[i].SetFileMode(FileMode.REGULAR_FILE);
+				ents[i].FileMode = FileMode.REGULAR_FILE;
 			}
 			{
 				DirCacheBuilder b = dc.Builder();
