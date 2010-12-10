@@ -184,7 +184,6 @@ namespace NGit.Transport
 			Digest(pack);
 			byte[] raw = pack.ToByteArray();
 			IndexPack ip = IndexPack.Create(db, new ByteArrayInputStream(raw));
-			ip.SetStreamFileThreshold(1);
 			ip.Index(NullProgressMonitor.INSTANCE);
 			ip.RenameAndOpenPack();
 		}

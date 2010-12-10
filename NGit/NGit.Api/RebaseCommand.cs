@@ -193,13 +193,12 @@ namespace NGit.Api
 				{
 					newHead = ContinueRebase();
 				}
-				IList<RebaseCommand.Step> steps = LoadSteps();
-				if (this.operation == RebaseCommand.Operation.SKIP && !steps.IsEmpty())
+				if (this.operation == RebaseCommand.Operation.SKIP)
 				{
-					CheckoutCurrentHead();
+					newHead = CheckoutCurrentHead();
 				}
 				ObjectReader or = repo.NewObjectReader();
-				int stepsToPop = 0;
+				IList<RebaseCommand.Step> steps = LoadSteps();
 				foreach (RebaseCommand.Step step in steps)
 				{
 					if (step.action != RebaseCommand.Action.PICK)
@@ -229,26 +228,46 @@ namespace NGit.Api
 					{
 						return Stop(commitToPick);
 					}
-					stepsToPop++;
 				}
-				if (newHead != null || steps.IsEmpty())
+				if (newHead != null)
 				{
 					// point the previous head (if any) to the new commit
 					string headName = ReadFile(rebaseDir, HEAD_NAME);
 					if (headName.StartsWith(Constants.R_REFS))
 					{
 						RefUpdate rup = repo.UpdateRef(headName);
-						if (newHead != null)
+						rup.SetNewObjectId(newHead);
+						RefUpdate.Result res_1 = rup.ForceUpdate();
+						switch (res_1)
 						{
-							rup.SetNewObjectId(newHead);
-							rup.ForceUpdate();
+							case RefUpdate.Result.FAST_FORWARD:
+							case RefUpdate.Result.FORCED:
+							case RefUpdate.Result.NO_CHANGE:
+							{
+								break;
+							}
+
+							default:
+							{
+								throw new JGitInternalException("Updating HEAD failed");
+							}
 						}
 						rup = repo.UpdateRef(Constants.HEAD);
-						rup.Link(headName);
-					}
-					if (this.operation == RebaseCommand.Operation.SKIP && steps.IsEmpty())
-					{
-						CheckoutCurrentHead();
+						res_1 = rup.Link(headName);
+						switch (res_1)
+						{
+							case RefUpdate.Result.FAST_FORWARD:
+							case RefUpdate.Result.FORCED:
+							case RefUpdate.Result.NO_CHANGE:
+							{
+								break;
+							}
+
+							default:
+							{
+								throw new JGitInternalException("Updating HEAD failed");
+							}
+						}
 					}
 					FileUtils.Delete(rebaseDir, FileUtils.RECURSIVE);
 					return new RebaseResult(RebaseResult.Status.OK);
@@ -264,7 +283,7 @@ namespace NGit.Api
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		private void CheckoutCurrentHead()
+		private RevCommit CheckoutCurrentHead()
 		{
 			ObjectId headTree = repo.Resolve(Constants.HEAD + "^{tree}");
 			if (headTree == null)
@@ -294,6 +313,10 @@ namespace NGit.Api
 			{
 				dc.Unlock();
 			}
+			RevWalk rw = new RevWalk(repo);
+			RevCommit commit = rw.ParseCommit(repo.Resolve(Constants.HEAD));
+			rw.Release();
+			return commit;
 		}
 
 		/// <returns>the commit if we had to do a commit, otherwise null</returns>

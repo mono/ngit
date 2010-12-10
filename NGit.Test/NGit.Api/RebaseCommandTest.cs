@@ -469,6 +469,38 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestMergeFirstStopOnLastConflictAndSkip()
+		{
+			// create file1 on master
+			RevCommit firstInMaster = WriteFileAndCommit(FILE1, "Add file1", "1", "2", "3");
+			// change in master
+			WriteFileAndCommit(FILE1, "change file1 in master", "1master", "2", "3");
+			CheckFile(FILE1, "1master", "2", "3");
+			// create a topic branch based on the first commit
+			CreateBranch(firstInMaster, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			// we have the old content again
+			CheckFile(FILE1, "1", "2", "3");
+			// add a line (conflicting)
+			WriteFileAndCommit(FILE1, "add a line to file1 in topic", "1topic", "2", "3", "4topic"
+				);
+			// change first line (conflicting again)
+			WriteFileAndCommit(FILE1, "change file1 in topic\n\nThis is conflicting", "1topicagain"
+				, "2", "3", "4topic");
+			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
+			WriteFileAndAdd(FILE1, "merged");
+			res = git.Rebase().SetOperation(RebaseCommand.Operation.CONTINUE).Call();
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
+			res = git.Rebase().SetOperation(RebaseCommand.Operation.SKIP).Call();
+			NUnit.Framework.Assert.IsNotNull(res);
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.OK, res.GetStatus());
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+			CheckFile(FILE1, "merged");
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStopOnConflictAndSkipNoConflict()
 		{
 			// create file1 on master

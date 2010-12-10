@@ -67,6 +67,9 @@ namespace NGit.Util
 		/// <summary>Option to retry deletion if not successful</summary>
 		public const int RETRY = 2;
 
+		/// <summary>Option to skip deletion if file doesn't exist</summary>
+		public const int SKIP_MISSING = 4;
+
 		/// <summary>Delete file or empty folder</summary>
 		/// <param name="f">
 		/// <code>File</code>
@@ -112,6 +115,10 @@ namespace NGit.Util
 		/// </exception>
 		public static void Delete(FilePath f, int options)
 		{
+			if ((options & SKIP_MISSING) != 0 && !f.Exists())
+			{
+				return;
+			}
 			if ((options & RECURSIVE) != 0 && f.IsDirectory())
 			{
 				FilePath[] items = f.ListFiles();

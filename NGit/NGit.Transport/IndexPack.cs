@@ -113,8 +113,6 @@ namespace NGit.Transport
 
 		private readonly Repository repo;
 
-		private int streamFileThreshold;
-
 		/// <summary>Object database used for loading existing objects</summary>
 		private readonly ObjectDatabase objectDatabase;
 
@@ -222,8 +220,6 @@ namespace NGit.Transport
 		public IndexPack(Repository db, InputStream src, FilePath dstBase)
 		{
 			repo = db;
-			streamFileThreshold = 5 * (1 << 20);
-			// A reasonable default for now.
 			objectDatabase = db.ObjectDatabase.NewCachedDatabase();
 			@in = src;
 			inflater = new IndexPack.InflaterStream(this);
@@ -247,11 +243,6 @@ namespace NGit.Transport
 				dstPack = null;
 				dstIdx = null;
 			}
-		}
-
-		internal virtual void SetStreamFileThreshold(int sz)
-		{
-			streamFileThreshold = sz;
 		}
 
 		/// <summary>Set the pack index file format version this instance will create.</summary>
@@ -998,7 +989,7 @@ namespace NGit.Transport
 			objectDigest.Update(Constants.EncodeASCII(sz));
 			objectDigest.Update(unchecked((byte)0));
 			bool checkContentLater = false;
-			if (type == Constants.OBJ_BLOB && sz >= streamFileThreshold)
+			if (type == Constants.OBJ_BLOB)
 			{
 				InputStream inf = Inflate(IndexPack.Source.INPUT, sz);
 				long cnt = 0;

@@ -126,7 +126,7 @@ index 045fecd..159a4cf 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 6629c4f..4e14f6e 100644
+index 70cf702..3a50175 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -82,6 +82,7 @@
@@ -137,7 +137,7 @@ index 6629c4f..4e14f6e 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.revwalk.RevCommit;
  import org.eclipse.jgit.revwalk.RevWalk;
-@@ -537,30 +538,27 @@ private RebaseResult initFilesAndRewind() throws RefNotFoundException,
+@@ -549,30 +550,27 @@ private RebaseResult initFilesAndRewind() throws RefNotFoundException,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -174,7 +174,7 @@ index 6629c4f..4e14f6e 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -755,10 +753,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -767,10 +765,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -701,10 +701,10 @@ index 19f5748..53a30b3 100644
  	private boolean thinPack;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-index 8feb483..03be11f 100644
+index bb9edc2..b512dd9 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-@@ -713,11 +713,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
+@@ -706,11 +706,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
  			if (n < 0)
  				break;
  			if (origRemaining != 0) {

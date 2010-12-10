@@ -139,31 +139,24 @@ namespace NGit.Merge
 						}
 						else
 						{
-							if (tw.IsSubtree)
-							{
-								if (NonTree(modeB))
-								{
-									Add(T_BASE, DirCacheEntry.STAGE_1);
-									hasConflict = true;
-								}
-								if (NonTree(modeO))
-								{
-									Add(T_OURS, DirCacheEntry.STAGE_2);
-									hasConflict = true;
-								}
-								if (NonTree(modeT))
-								{
-									Add(T_THEIRS, DirCacheEntry.STAGE_3);
-									hasConflict = true;
-								}
-								tw.EnterSubtree();
-							}
-							else
+							if (NonTree(modeB))
 							{
 								Add(T_BASE, DirCacheEntry.STAGE_1);
+								hasConflict = true;
+							}
+							if (NonTree(modeO))
+							{
 								Add(T_OURS, DirCacheEntry.STAGE_2);
+								hasConflict = true;
+							}
+							if (NonTree(modeT))
+							{
 								Add(T_THEIRS, DirCacheEntry.STAGE_3);
 								hasConflict = true;
+							}
+							if (tw.IsSubtree)
+							{
+								tw.EnterSubtree();
 							}
 						}
 					}
