@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Text;
 using NGit;
 using NGit.Api;
@@ -813,7 +814,17 @@ namespace NGit.Api
 				string line = br.ReadLine();
 				while (line != null)
 				{
-					if (line.StartsWith("pick "))
+					string actionToken = Sharpen.Runtime.Substring(line, 0, line.IndexOf(' '));
+					RebaseCommand.Action action = null;
+					try
+					{
+						action = RebaseCommand.Action.Parse(actionToken);
+					}
+					catch (Exception)
+					{
+					}
+					// ignore
+					if (action != null)
 					{
 						count++;
 					}

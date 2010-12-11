@@ -201,10 +201,6 @@ namespace NGit.Api
 				IList<RebaseCommand.Step> steps = LoadSteps();
 				foreach (RebaseCommand.Step step in steps)
 				{
-					if (step.action != RebaseCommand.Action.PICK)
-					{
-						continue;
-					}
 					PopSteps(1);
 					ICollection<ObjectId> ids = or.Resolve(step.commit);
 					if (ids.Count != 1)
@@ -440,6 +436,10 @@ namespace NGit.Api
 					if (popCandidate == null)
 					{
 						break;
+					}
+					if (popCandidate[0] == '#')
+					{
+						continue;
 					}
 					int spaceIndex = popCandidate.IndexOf(' ');
 					bool pop = false;
@@ -767,6 +767,11 @@ namespace NGit.Api
 							string actionToken = Sharpen.Extensions.CreateString(buf, tokenBegin, nextSpace -
 								 tokenBegin - 1);
 							tokenBegin = nextSpace;
+							if (actionToken[0] == '#')
+							{
+								tokenCount = 3;
+								break;
+							}
 							RebaseCommand.Action action = RebaseCommand.Action.Parse(actionToken);
 							if (action != null)
 							{
@@ -889,7 +894,8 @@ namespace NGit.Api
 				{
 					return PICK;
 				}
-				return null;
+				throw new JGitInternalException(MessageFormat.Format("Unknown or unsupported command \"{0}\", only  \"pick\" is allowed"
+					, token));
 			}
 		}
 
