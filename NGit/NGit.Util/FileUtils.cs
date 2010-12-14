@@ -154,5 +154,117 @@ namespace NGit.Util
 					()));
 			}
 		}
+
+		/// <summary>Creates the directory named by this abstract pathname.</summary>
+		/// <remarks>Creates the directory named by this abstract pathname.</remarks>
+		/// <param name="d">directory to be created</param>
+		/// <exception cref="System.IO.IOException">
+		/// if creation of
+		/// <code>d</code>
+		/// fails. This may occur if
+		/// <code>d</code>
+		/// did exist when the method was called. This can therefore
+		/// cause IOExceptions during race conditions when multiple
+		/// concurrent threads all try to create the same directory.
+		/// </exception>
+		public static void Mkdir(FilePath d)
+		{
+			Mkdir(d, false);
+		}
+
+		/// <summary>Creates the directory named by this abstract pathname.</summary>
+		/// <remarks>Creates the directory named by this abstract pathname.</remarks>
+		/// <param name="d">directory to be created</param>
+		/// <param name="skipExisting">
+		/// if
+		/// <code>true</code>
+		/// skip creation of the given directory if it
+		/// already exists in the file system
+		/// </param>
+		/// <exception cref="System.IO.IOException">
+		/// if creation of
+		/// <code>d</code>
+		/// fails. This may occur if
+		/// <code>d</code>
+		/// did exist when the method was called. This can therefore
+		/// cause IOExceptions during race conditions when multiple
+		/// concurrent threads all try to create the same directory.
+		/// </exception>
+		public static void Mkdir(FilePath d, bool skipExisting)
+		{
+			if (!d.Mkdir())
+			{
+				if (skipExisting && d.IsDirectory())
+				{
+					return;
+				}
+				throw new IOException(MessageFormat.Format(JGitText.Get().mkDirFailed, d.GetAbsolutePath
+					()));
+			}
+		}
+
+		/// <summary>
+		/// Creates the directory named by this abstract pathname, including any
+		/// necessary but nonexistent parent directories.
+		/// </summary>
+		/// <remarks>
+		/// Creates the directory named by this abstract pathname, including any
+		/// necessary but nonexistent parent directories. Note that if this operation
+		/// fails it may have succeeded in creating some of the necessary parent
+		/// directories.
+		/// </remarks>
+		/// <param name="d">directory to be created</param>
+		/// <exception cref="System.IO.IOException">
+		/// if creation of
+		/// <code>d</code>
+		/// fails. This may occur if
+		/// <code>d</code>
+		/// did exist when the method was called. This can therefore
+		/// cause IOExceptions during race conditions when multiple
+		/// concurrent threads all try to create the same directory.
+		/// </exception>
+		public static void Mkdirs(FilePath d)
+		{
+			Mkdirs(d, false);
+		}
+
+		/// <summary>
+		/// Creates the directory named by this abstract pathname, including any
+		/// necessary but nonexistent parent directories.
+		/// </summary>
+		/// <remarks>
+		/// Creates the directory named by this abstract pathname, including any
+		/// necessary but nonexistent parent directories. Note that if this operation
+		/// fails it may have succeeded in creating some of the necessary parent
+		/// directories.
+		/// </remarks>
+		/// <param name="d">directory to be created</param>
+		/// <param name="skipExisting">
+		/// if
+		/// <code>true</code>
+		/// skip creation of the given directory if it
+		/// already exists in the file system
+		/// </param>
+		/// <exception cref="System.IO.IOException">
+		/// if creation of
+		/// <code>d</code>
+		/// fails. This may occur if
+		/// <code>d</code>
+		/// did exist when the method was called. This can therefore
+		/// cause IOExceptions during race conditions when multiple
+		/// concurrent threads all try to create the same directory.
+		/// </exception>
+		public static void Mkdirs(FilePath d, bool skipExisting)
+		{
+			if (!d.Mkdirs())
+			{
+				if (skipExisting && d.IsDirectory())
+				{
+					return;
+				}
+				throw new IOException(MessageFormat.Format(JGitText.Get().mkDirsFailed, d.GetAbsolutePath
+					()));
+			}
+		}
 	}
 }

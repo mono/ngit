@@ -818,10 +818,10 @@ index e6e0091..8b8f6c4 100644
  							return DiffConfig.RenameDetectionType.TRUE;
  						}
 diff --git a/NGit/NGit.Diff/DiffFormatter.cs b/NGit/NGit.Diff/DiffFormatter.cs
-index 0fce9d4..a12a010 100644
+index 6d35de9..bf3107e 100644
 --- a/NGit/NGit.Diff/DiffFormatter.cs
 +++ b/NGit/NGit.Diff/DiffFormatter.cs
-@@ -513,7 +513,7 @@ namespace NGit.Diff
+@@ -524,7 +524,7 @@ namespace NGit.Diff
  					return Sharpen.Collections.SingletonList(ent);
  				}
  			}

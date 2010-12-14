@@ -596,6 +596,10 @@ namespace NGit
 
 		public string mixedStagesNotAllowed;
 
+		public string mkDirFailed;
+
+		public string mkDirsFailed;
+
 		public string multipleMergeBasesFor;
 
 		public string need2Arguments;
