@@ -675,6 +675,11 @@ namespace Sharpen
 			return string.IsNullOrEmpty (uri.UserInfo) ? null : uri.UserInfo;
 		}
 		
+		public static string GetQuery (this Uri uri)
+		{
+			return string.IsNullOrEmpty (uri.Query) ? null : uri.Query;
+		}
+		
 		public static HttpURLConnection OpenConnection (this Uri uri, Proxy p)
 		{
 			return new HttpURLConnection (uri, p);

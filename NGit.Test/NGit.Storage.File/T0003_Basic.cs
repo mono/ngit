@@ -326,12 +326,10 @@ namespace NGit.Storage.File
 		{
 			FilePath cfg = new FilePath(db.Directory, "config");
 			FileBasedConfig c = new FileBasedConfig(cfg, db.FileSystem);
-			FileWriter pw = new FileWriter(cfg);
 			string configStr = "  [core];comment\n\tfilemode = yes\n" + "[user]\n" + "  email = A U Thor <thor@example.com> # Just an example...\n"
 				 + " name = \"A  Thor \\\\ \\\"\\t \"\n" + "    defaultCheckInComment = a many line\\n\\\ncomment\\n\\\n"
 				 + " to test\n";
-			pw.Write(configStr);
-			pw.Close();
+			Write(cfg, configStr);
 			c.Load();
 			NUnit.Framework.Assert.AreEqual("yes", c.GetString("core", null, "filemode"));
 			NUnit.Framework.Assert.AreEqual("A U Thor <thor@example.com>", c.GetString("user"
@@ -365,11 +363,9 @@ namespace NGit.Storage.File
 		public virtual void Test008_FailOnWrongVersion()
 		{
 			FilePath cfg = new FilePath(db.Directory, "config");
-			FileWriter pw = new FileWriter(cfg);
 			string badvers = "ihopethisisneveraversion";
 			string configStr = "[core]\n" + "\trepositoryFormatVersion=" + badvers + "\n";
-			pw.Write(configStr);
-			pw.Close();
+			Write(cfg, configStr);
 			try
 			{
 				new FileRepository(db.Directory);
@@ -669,12 +665,8 @@ namespace NGit.Storage.File
 		[NUnit.Framework.Test]
 		public virtual void Test027_UnpackedRefHigherPriorityThanPacked()
 		{
-			PrintWriter writer = new PrintWriter(new FileWriter(new FilePath(db.Directory, "refs/heads/a"
-				)));
 			string unpackedId = "7f822839a2fe9760f386cbbbcb3f92c5fe81def7";
-			writer.Write(unpackedId);
-			writer.Write('\n');
-			writer.Close();
+			Write(new FilePath(db.Directory, "refs/heads/a"), unpackedId + "\n");
 			ObjectId resolved = db.Resolve("refs/heads/a");
 			NUnit.Framework.Assert.AreEqual(unpackedId, resolved.Name);
 		}

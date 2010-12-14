@@ -169,12 +169,9 @@ namespace NGit.Api
 			db.UpdateRef(Constants.HEAD).Link("refs/heads/side");
 			RevCommit firstSide = git.Commit().SetMessage("first side commit").SetAuthor(author
 				).Call();
-			FileWriter wr = new FileWriter(new FilePath(db.Directory, Constants.MERGE_HEAD));
-			wr.Write(ObjectId.ToString(db.Resolve("refs/heads/master")));
-			wr.Close();
-			wr = new FileWriter(new FilePath(db.Directory, Constants.MERGE_MSG));
-			wr.Write("merging");
-			wr.Close();
+			Write(new FilePath(db.Directory, Constants.MERGE_HEAD), ObjectId.ToString(db.Resolve
+				("refs/heads/master")));
+			Write(new FilePath(db.Directory, Constants.MERGE_MSG), "merging");
 			RevCommit commit = git.Commit().Call();
 			RevCommit[] parents = commit.Parents;
 			AssertEquals(parents[0], firstSide);

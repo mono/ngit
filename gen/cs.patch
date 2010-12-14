@@ -1778,10 +1778,10 @@ index c347aaa..1c9c1d0 100644
  
  		/// <exception cref="System.IO.IOException"></exception>
 diff --git a/NGit/NGit.Transport/HttpAuthMethod.cs b/NGit/NGit.Transport/HttpAuthMethod.cs
-index 98885de..a854707 100644
+index e0ff10d..b752205 100644
 --- a/NGit/NGit.Transport/HttpAuthMethod.cs
 +++ b/NGit/NGit.Transport/HttpAuthMethod.cs
-@@ -346,7 +346,7 @@ namespace NGit.Transport
+@@ -400,7 +400,7 @@ namespace NGit.Transport
  					int eq = auth.IndexOf('=', next);
  					if (eq < 0 || eq + 1 == auth.Length)
  					{
@@ -1790,7 +1790,7 @@ index 98885de..a854707 100644
  					}
  					string name = Sharpen.Runtime.Substring(auth, next, eq);
  					string value;
-@@ -355,7 +355,7 @@ namespace NGit.Transport
+@@ -409,7 +409,7 @@ namespace NGit.Transport
  						int dq = auth.IndexOf('"', eq + 2);
  						if (dq < 0)
  						{
