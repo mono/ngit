@@ -63,11 +63,12 @@ namespace NGit.Api
 			Repository db2 = CreateWorkRepository();
 			Git git2 = new Git(db2);
 			// setup the first repository to fetch from the second repository
-			Config config = ((FileBasedConfig)db.GetConfig());
+			StoredConfig config = ((FileBasedConfig)db.GetConfig());
 			RemoteConfig remoteConfig = new RemoteConfig(config, "test");
 			URIish uri = new URIish(db2.Directory.ToURI().ToURL());
 			remoteConfig.AddURI(uri);
 			remoteConfig.Update(config);
+			config.Save();
 			// create some refs via commits and tag
 			RevCommit commit = git2.Commit().SetMessage("initial commit").Call();
 			RevTag tag = git2.Tag().SetName("tag").Call();

@@ -63,11 +63,12 @@ namespace NGit.Api
 			// create other repository
 			Repository db2 = CreateWorkRepository();
 			// setup the first repository
-			Config config = ((FileBasedConfig)db.GetConfig());
+			StoredConfig config = ((FileBasedConfig)db.GetConfig());
 			RemoteConfig remoteConfig = new RemoteConfig(config, "test");
 			URIish uri = new URIish(db2.Directory.ToURI().ToURL());
 			remoteConfig.AddURI(uri);
 			remoteConfig.Update(config);
+			config.Save();
 			Git git1 = new Git(db);
 			// create some refs via commits and tag
 			RevCommit commit = git1.Commit().SetMessage("initial commit").Call();

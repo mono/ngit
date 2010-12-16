@@ -142,8 +142,7 @@ namespace NGit.Storage.File
 			//
 			LoadUserConfig();
 			LoadRepoConfig();
-			((FileBasedConfig)GetConfig()).AddChangeListener(new _ConfigChangedListener_163(this
-				));
+			repoConfig.AddChangeListener(new _ConfigChangedListener_163(this));
 			refs = new RefDirectory(this);
 			objectDatabase = new ObjectDirectory(repoConfig, options.GetObjectDirectory(), options
 				.GetAlternateObjectDirectories(), FileSystem);

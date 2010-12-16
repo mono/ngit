@@ -42,6 +42,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
+using NGit.Api;
+using NGit.Dircache;
 using NGit.Storage.File;
 using NGit.Treewalk;
 using NGit.Util;
@@ -175,6 +177,27 @@ namespace NGit.Treewalk
 			//
 			FileUtils.Delete(new FilePath(trash, paths[0]));
 			AssertEquals(expect, top.EntryObjectId);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestIsModifiedSymlink()
+		{
+			FilePath f = WriteTrashFile("symlink", "content");
+			Git git = new Git(db);
+			git.Add().AddFilepattern("symlink").Call();
+			git.Commit().SetMessage("commit").Call();
+			// Modify previously committed DirCacheEntry and write it back to disk
+			DirCacheEntry dce = db.ReadDirCache().GetEntry("symlink");
+			dce.FileMode = FileMode.SYMLINK;
+			DirCacheCheckout.CheckoutEntry(db, f, dce);
+			FileTreeIterator fti = new FileTreeIterator(trash, db.FileSystem, ((FileBasedConfig
+				)db.GetConfig()).Get(WorkingTreeOptions.KEY));
+			while (!fti.EntryPathString.Equals("symlink"))
+			{
+				fti.Next(1);
+			}
+			NUnit.Framework.Assert.IsFalse(fti.IsModified(dce, false));
 		}
 
 		private static string NameOf(AbstractTreeIterator i)

@@ -59,8 +59,9 @@ namespace NGit
 			// reflogs
 			NUnit.Framework.Assert.AreEqual(0, db.GetReflogReader(Constants.HEAD).GetReverseEntries
 				().Count);
-			((FileBasedConfig)db.GetConfig()).SetBoolean("core", null, "logallrefupdates", false
-				);
+			FileBasedConfig cfg = ((FileBasedConfig)db.GetConfig());
+			cfg.SetBoolean("core", null, "logallrefupdates", false);
+			cfg.Save();
 			// do one commit and check that reflog size is 0: no reflogs should be
 			// written
 			Tree t = new Tree(db);
@@ -71,10 +72,9 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(db.GetReflogReader(Constants.HEAD).GetReverseEntries
 				().Count == 0, "Reflog for HEAD still contain no entry");
 			// set the logAllRefUpdates parameter to true and check it
-			((FileBasedConfig)db.GetConfig()).SetBoolean("core", null, "logallrefupdates", true
-				);
-			NUnit.Framework.Assert.IsTrue(((FileBasedConfig)db.GetConfig()).Get(CoreConfig.KEY
-				).IsLogAllRefUpdates());
+			cfg.SetBoolean("core", null, "logallrefupdates", true);
+			cfg.Save();
+			NUnit.Framework.Assert.IsTrue(cfg.Get(CoreConfig.KEY).IsLogAllRefUpdates());
 			// do one commit and check that reflog size is increased to 1
 			AddFileToTree(t, "i-am-another-file", "and this is other data in me\n");
 			Commit(t, "A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(
@@ -83,10 +83,9 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(db.GetReflogReader(Constants.HEAD).GetReverseEntries
 				().Count == 1, "Reflog for HEAD should contain one entry");
 			// set the logAllRefUpdates parameter to false and check it
-			((FileBasedConfig)db.GetConfig()).SetBoolean("core", null, "logallrefupdates", false
-				);
-			NUnit.Framework.Assert.IsFalse(((FileBasedConfig)db.GetConfig()).Get(CoreConfig.KEY
-				).IsLogAllRefUpdates());
+			cfg.SetBoolean("core", null, "logallrefupdates", false);
+			cfg.Save();
+			NUnit.Framework.Assert.IsFalse(cfg.Get(CoreConfig.KEY).IsLogAllRefUpdates());
 			// do one commit and check that reflog size is 2
 			AddFileToTree(t, "i-am-anotheranother-file", "and this is other other data in me\n"
 				);

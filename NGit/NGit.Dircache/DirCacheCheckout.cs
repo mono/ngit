@@ -120,7 +120,7 @@ namespace NGit.Dircache
 		/// </returns>
 		public virtual IList<string> GetToBeDeleted()
 		{
-			return conflicts;
+			return toBeDeleted;
 		}
 
 		/// <returns>a list of all files removed by this checkout</returns>

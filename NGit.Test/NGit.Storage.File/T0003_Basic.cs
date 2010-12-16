@@ -184,9 +184,9 @@ namespace NGit.Storage.File
 			FileRepository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants
 				.DOT_GIT));
 			repo1initial.Create();
-			((FileBasedConfig)repo1initial.GetConfig()).SetString("core", null, "worktree", workdir
-				.GetAbsolutePath());
-			((FileBasedConfig)repo1initial.GetConfig()).Save();
+			FileBasedConfig cfg = ((FileBasedConfig)repo1initial.GetConfig());
+			cfg.SetString("core", null, "worktree", workdir.GetAbsolutePath());
+			cfg.Save();
 			repo1initial.Close();
 			FilePath theDir = new FilePath(repo1Parent, Constants.DOT_GIT);
 			FileRepository r = new FileRepositoryBuilder().SetGitDir(theDir).Build();
@@ -209,9 +209,9 @@ namespace NGit.Storage.File
 			FileRepository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants
 				.DOT_GIT));
 			repo1initial.Create();
-			((FileBasedConfig)repo1initial.GetConfig()).SetString("core", null, "worktree", "../../rw"
-				);
-			((FileBasedConfig)repo1initial.GetConfig()).Save();
+			FileBasedConfig cfg = ((FileBasedConfig)repo1initial.GetConfig());
+			cfg.SetString("core", null, "worktree", "../../rw");
+			cfg.Save();
 			repo1initial.Close();
 			FilePath theDir = new FilePath(repo1Parent, Constants.DOT_GIT);
 			FileRepository r = new FileRepositoryBuilder().SetGitDir(theDir).Build();

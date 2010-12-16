@@ -172,8 +172,8 @@ namespace NGit.Api
 			RemoteConfig config = new RemoteConfig(targetConfig, "origin");
 			config.AddURI(new URIish(source.GetRepository().WorkTree.GetPath()));
 			config.AddFetchRefSpec(new RefSpec("+refs/heads/*:refs/remotes/origin/*"));
-			targetConfig.Save();
 			config.Update(targetConfig);
+			targetConfig.Save();
 			targetFile = new FilePath(dbTarget.WorkTree, "SomeFile.txt");
 			WriteToFile(targetFile, "Hello world");
 			// make sure we have the same content

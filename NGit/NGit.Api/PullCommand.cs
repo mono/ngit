@@ -164,7 +164,7 @@ namespace NGit.Api
 			FetchResult fetchRes;
 			if (isRemote)
 			{
-				remoteUri = repo.GetConfig().GetString("remote", remote, ConfigConstants.CONFIG_KEY_URL
+				remoteUri = repoConfig.GetString("remote", remote, ConfigConstants.CONFIG_KEY_URL
 					);
 				if (remoteUri == null)
 				{
