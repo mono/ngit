@@ -195,7 +195,7 @@ namespace NGit
 		}
 
 		/// <returns>
-		/// a new inserter to create objects in
+		/// a new reader to read objects from
 		/// <see cref="ObjectDatabase()">ObjectDatabase()</see>
 		/// 
 		/// </returns>

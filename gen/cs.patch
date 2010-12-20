@@ -2941,7 +2941,7 @@ index 8913cf3..718a906 100644
  			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
-index d3543a0..9752bdf 100644
+index a242f17..1228f21 100644
 --- a/NGit/NGit/Repository.cs
 +++ b/NGit/NGit/Repository.cs
 @@ -302,7 +302,6 @@ namespace NGit
