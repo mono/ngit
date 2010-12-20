@@ -778,11 +778,16 @@ namespace Sharpen
 		public static void SetCommand (this ProcessStartInfo si, IList<string> args)
 		{
 			si.FileName = args[0];
-			si.Arguments = string.Join (" ", args.Select (a => "\"" + a + "\"").ToArray ());
+			si.Arguments = string.Join (" ", args.Skip (1).Select (a => "\"" + a + "\"").ToArray ());
 		}
 		
 		public static Process Start (this ProcessStartInfo si)
 		{
+			si.UseShellExecute = false;
+			si.RedirectStandardInput = true;
+			si.RedirectStandardError = true;
+			si.RedirectStandardOutput = true;
+			si.CreateNoWindow = true;
 			return Process.Start (si);
 		}
 	}
