@@ -481,6 +481,8 @@
     <Compile Include="NGit.Util\FileUtils.cs" />
     <Compile Include="NGit.Treewalk.Filter\IndexDiffFilter.cs" />
     <Compile Include="NGit.Api.Errors\UnmergedPathsException.cs" />
+    <Compile Include="NGit.Storage.File\FileSnapshot.cs" />
+    <Compile Include="NGit.Api\CheckoutResult.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

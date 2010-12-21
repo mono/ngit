@@ -249,7 +249,7 @@ namespace NGit.Api
 			{
 				throw new JGitInternalException(e.Message, e);
 			}
-			catch (CheckoutConflictException e)
+			catch (NGit.Api.Errors.CheckoutConflictException e)
 			{
 				throw new JGitInternalException(e.Message, e);
 			}

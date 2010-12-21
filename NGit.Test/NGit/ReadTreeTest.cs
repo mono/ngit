@@ -45,7 +45,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using NGit;
-using NGit.Errors;
 using NGit.Treewalk;
 using Sharpen;
 
@@ -638,7 +637,7 @@ namespace NGit
 			{
 				Checkout();
 			}
-			catch (CheckoutConflictException)
+			catch (NGit.Errors.CheckoutConflictException)
 			{
 				AssertWorkDir(Mkmap("a", "a", "b/c", "b/c", "d", "d", "e/f", "e/f", "e/g", "e/g3"
 					));
@@ -672,7 +671,7 @@ namespace NGit
 				Checkout();
 				NUnit.Framework.Assert.Fail("did not throw exception");
 			}
-			catch (CheckoutConflictException)
+			catch (NGit.Errors.CheckoutConflictException)
 			{
 				AssertIndex(Mkmap("foo", "bar"));
 				AssertWorkDir(Mkmap("foo", "bar"));
@@ -702,7 +701,7 @@ namespace NGit
 				Checkout();
 				NUnit.Framework.Assert.Fail("Didn't got the expected conflict");
 			}
-			catch (CheckoutConflictException)
+			catch (NGit.Errors.CheckoutConflictException)
 			{
 				AssertIndex(Mk("foo"));
 				AssertWorkDir(Mkmap("foo", "different"));

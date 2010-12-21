@@ -128,6 +128,7 @@
 -propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.getPathString PathString
 -propertyMapping org.eclipse.jgit.dircache.DirCacheEntry.isExtended IsExtended
 -fullyQualify CommitBuilder
+-fullyQualify CheckoutConflictException
 
 -namespaceMapping com.jcraft.jsch NSch
 -namespaceMapping com.jcraft.jzlib NSch.ZLib

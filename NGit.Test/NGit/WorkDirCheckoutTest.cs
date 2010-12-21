@@ -42,7 +42,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
-using NGit.Errors;
 using Sharpen;
 using System.Collections.Generic;
 
@@ -98,7 +97,7 @@ namespace NGit
 				workDirCheckout.Checkout();
 				NUnit.Framework.Assert.Fail("Should have thrown exception");
 			}
-			catch (CheckoutConflictException)
+			catch (NGit.Errors.CheckoutConflictException)
 			{
 			}
 			// all is well

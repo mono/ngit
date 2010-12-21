@@ -120,12 +120,12 @@ namespace NGit.Storage.File
 		}
 
 		/// <summary>
-		/// Check that we can pass both a git directory and a work tree
-		/// repo when the gitDir is given.
+		/// Check that we can pass both a git directory and a work tree repo when the
+		/// gitDir is given.
 		/// </summary>
 		/// <remarks>
-		/// Check that we can pass both a git directory and a work tree
-		/// repo when the gitDir is given.
+		/// Check that we can pass both a git directory and a work tree repo when the
+		/// gitDir is given.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		[NUnit.Framework.Test]
@@ -273,10 +273,11 @@ namespace NGit.Storage.File
 			// object (as it already exists in the pack).
 			//
 			Repository newdb = CreateBareRepository();
-			Tree t = new Tree(newdb);
-			t.Accept(new WriteTree(trash, newdb), TreeEntry.MODIFIED_ONLY);
-			NUnit.Framework.Assert.AreEqual("4b825dc642cb6eb9a060e54bf8d69288fbee4904", t.GetId
-				().Name);
+			ObjectInserter oi = newdb.NewObjectInserter();
+			ObjectId treeId = oi.Insert(new TreeFormatter());
+			oi.Release();
+			NUnit.Framework.Assert.AreEqual("4b825dc642cb6eb9a060e54bf8d69288fbee4904", treeId
+				.Name);
 			FilePath o = new FilePath(new FilePath(new FilePath(newdb.Directory, "objects"), 
 				"4b"), "825dc642cb6eb9a060e54bf8d69288fbee4904");
 			NUnit.Framework.Assert.IsTrue(o.IsFile(), "Exists " + o);
@@ -289,34 +290,12 @@ namespace NGit.Storage.File
 		{
 			// File shouldn't exist as it is in a test pack.
 			//
-			Tree t = new Tree(db);
-			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
-			NUnit.Framework.Assert.AreEqual("4b825dc642cb6eb9a060e54bf8d69288fbee4904", t.GetId
-				().Name);
+			ObjectId treeId = InsertTree(new TreeFormatter());
+			NUnit.Framework.Assert.AreEqual("4b825dc642cb6eb9a060e54bf8d69288fbee4904", treeId
+				.Name);
 			FilePath o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "4b"
 				), "825dc642cb6eb9a060e54bf8d69288fbee4904");
 			NUnit.Framework.Assert.IsFalse(o.IsFile(), "Exists " + o);
-		}
-
-		/// <exception cref="System.IO.IOException"></exception>
-		[NUnit.Framework.Test]
-		public virtual void Test003_WriteShouldBeEmptyTree()
-		{
-			Tree t = new Tree(db);
-			ObjectId emptyId = InsertEmptyBlob();
-			t.AddFile("should-be-empty").SetId(emptyId);
-			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
-			NUnit.Framework.Assert.AreEqual("7bb943559a305bdd6bdee2cef6e5df2413c3d30a", t.GetId
-				().Name);
-			FilePath o;
-			o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "7b"), "b943559a305bdd6bdee2cef6e5df2413c3d30a"
-				);
-			NUnit.Framework.Assert.IsTrue(o.IsFile(), "Exists " + o);
-			NUnit.Framework.Assert.IsTrue(!o.CanWrite(), "Read-only " + o);
-			o = new FilePath(new FilePath(new FilePath(db.Directory, "objects"), "e6"), "9de29bb2d1d6434b8b29ae775ad8c2e48c5391"
-				);
-			NUnit.Framework.Assert.IsTrue(o.IsFile(), "Exists " + o);
-			NUnit.Framework.Assert.IsTrue(!o.CanWrite(), "Read-only " + o);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -382,20 +361,15 @@ namespace NGit.Storage.File
 		[NUnit.Framework.Test]
 		public virtual void Test009_CreateCommitOldFormat()
 		{
-			Tree t = new Tree(db);
-			FileTreeEntry f = t.AddFile("i-am-a-file");
-			WriteTrashFile(f.GetName(), "and this is the data in me\n");
-			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
-			AssertEquals(ObjectId.FromString("00b1f73724f493096d1ffa0b0f1f1482dbb8c936"), t.GetTreeId
-				());
+			ObjectId treeId = InsertTree(new TreeFormatter());
 			NGit.CommitBuilder c = new NGit.CommitBuilder();
 			c.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c.Message = "A Commit\n";
-			c.TreeId = t.GetTreeId();
-			AssertEquals(t.GetTreeId(), c.TreeId);
+			c.TreeId = treeId;
+			AssertEquals(treeId, c.TreeId);
 			ObjectId actid = InsertCommit(c);
-			ObjectId cmtid = ObjectId.FromString("803aec4aba175e8ab1d666873c984c0308179099");
+			ObjectId cmtid = ObjectId.FromString("9208b2459ea6609a5af68627cc031796d0d9329b");
 			AssertEquals(cmtid, actid);
 			// Verify the commit we just wrote is in the correct format.
 			ObjectDatabase odb = ((ObjectDirectory)db.ObjectDatabase);
@@ -437,9 +411,10 @@ namespace NGit.Storage.File
 			e2.SetId(emptyBlob);
 			e3.SetId(emptyBlob);
 			e4.SetId(emptyBlob);
-			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
-			AssertEquals(ObjectId.FromString("b47a8f0a4190f7572e11212769090523e23eb1ea"), t.GetId
-				());
+			Tree a = (Tree)t.FindTreeMember("a");
+			a.SetId(InsertTree(a));
+			AssertEquals(ObjectId.FromString("b47a8f0a4190f7572e11212769090523e23eb1ea"), InsertTree
+				(t));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -584,18 +559,29 @@ namespace NGit.Storage.File
 		[NUnit.Framework.Test]
 		public virtual void Test026_CreateCommitMultipleparents()
 		{
-			Tree t = new Tree(db);
-			FileTreeEntry f = t.AddFile("i-am-a-file");
-			WriteTrashFile(f.GetName(), "and this is the data in me\n");
-			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
-			AssertEquals(ObjectId.FromString("00b1f73724f493096d1ffa0b0f1f1482dbb8c936"), t.GetTreeId
-				());
+			ObjectId treeId;
+			ObjectInserter oi = db.NewObjectInserter();
+			try
+			{
+				ObjectId blobId = oi.Insert(Constants.OBJ_BLOB, Sharpen.Runtime.GetBytesForString
+					("and this is the data in me\n", Constants.CHARSET.EncodingName));
+				TreeFormatter fmt = new TreeFormatter();
+				fmt.Append("i-am-a-file", FileMode.REGULAR_FILE, blobId);
+				treeId = oi.Insert(fmt);
+				oi.Flush();
+			}
+			finally
+			{
+				oi.Release();
+			}
+			AssertEquals(ObjectId.FromString("00b1f73724f493096d1ffa0b0f1f1482dbb8c936"), treeId
+				);
 			NGit.CommitBuilder c1 = new NGit.CommitBuilder();
 			c1.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c1.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c1.Message = "A Commit\n";
-			c1.TreeId = t.GetTreeId();
-			AssertEquals(t.GetTreeId(), c1.TreeId);
+			c1.TreeId = treeId;
+			AssertEquals(treeId, c1.TreeId);
 			ObjectId actid1 = InsertCommit(c1);
 			ObjectId cmtid1 = ObjectId.FromString("803aec4aba175e8ab1d666873c984c0308179099");
 			AssertEquals(cmtid1, actid1);
@@ -603,15 +589,16 @@ namespace NGit.Storage.File
 			c2.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c2.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c2.Message = "A Commit 2\n";
-			c2.TreeId = t.GetTreeId();
-			AssertEquals(t.GetTreeId(), c2.TreeId);
+			c2.TreeId = treeId;
+			AssertEquals(treeId, c2.TreeId);
 			c2.SetParentIds(actid1);
 			ObjectId actid2 = InsertCommit(c2);
 			ObjectId cmtid2 = ObjectId.FromString("95d068687c91c5c044fb8c77c5154d5247901553");
 			AssertEquals(cmtid2, actid2);
 			RevCommit rm2 = ParseCommit(cmtid2);
 			NUnit.Framework.Assert.AreNotSame(c2, rm2);
-			// assert the parsed objects is not from the cache
+			// assert the parsed objects is not from the
+			// cache
 			NUnit.Framework.Assert.AreEqual(c2.Author, rm2.GetAuthorIdent());
 			AssertEquals(actid2, rm2.Id);
 			NUnit.Framework.Assert.AreEqual(c2.Message, rm2.GetFullMessage());
@@ -622,15 +609,16 @@ namespace NGit.Storage.File
 			c3.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c3.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c3.Message = "A Commit 3\n";
-			c3.TreeId = t.GetTreeId();
-			AssertEquals(t.GetTreeId(), c3.TreeId);
+			c3.TreeId = treeId;
+			AssertEquals(treeId, c3.TreeId);
 			c3.SetParentIds(actid1, actid2);
 			ObjectId actid3 = InsertCommit(c3);
 			ObjectId cmtid3 = ObjectId.FromString("ce6e1ce48fbeeb15a83f628dc8dc2debefa066f4");
 			AssertEquals(cmtid3, actid3);
 			RevCommit rm3 = ParseCommit(cmtid3);
 			NUnit.Framework.Assert.AreNotSame(c3, rm3);
-			// assert the parsed objects is not from the cache
+			// assert the parsed objects is not from the
+			// cache
 			NUnit.Framework.Assert.AreEqual(c3.Author, rm3.GetAuthorIdent());
 			AssertEquals(actid3, rm3.Id);
 			NUnit.Framework.Assert.AreEqual(c3.Message, rm3.GetFullMessage());
@@ -642,15 +630,16 @@ namespace NGit.Storage.File
 			c4.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c4.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c4.Message = "A Commit 4\n";
-			c4.TreeId = t.GetTreeId();
-			AssertEquals(t.GetTreeId(), c3.TreeId);
+			c4.TreeId = treeId;
+			AssertEquals(treeId, c3.TreeId);
 			c4.SetParentIds(actid1, actid2, actid3);
 			ObjectId actid4 = InsertCommit(c4);
 			ObjectId cmtid4 = ObjectId.FromString("d1fca9fe3fef54e5212eb67902c8ed3e79736e27");
 			AssertEquals(cmtid4, actid4);
 			RevCommit rm4 = ParseCommit(cmtid4);
 			NUnit.Framework.Assert.AreNotSame(c4, rm3);
-			// assert the parsed objects is not from the cache
+			// assert the parsed objects is not from the
+			// cache
 			NUnit.Framework.Assert.AreEqual(c4.Author, rm4.GetAuthorIdent());
 			AssertEquals(actid4, rm4.Id);
 			NUnit.Framework.Assert.AreEqual(c4.Message, rm4.GetFullMessage());
@@ -758,6 +747,22 @@ namespace NGit.Storage.File
 			try
 			{
 				ObjectId id = oi.Insert(Constants.OBJ_TREE, tree.Format());
+				oi.Flush();
+				return id;
+			}
+			finally
+			{
+				oi.Release();
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private ObjectId InsertTree(TreeFormatter tree)
+		{
+			ObjectInserter oi = db.NewObjectInserter();
+			try
+			{
+				ObjectId id = oi.Insert(tree);
 				oi.Flush();
 				return id;
 			}

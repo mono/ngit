@@ -634,18 +634,18 @@ index faf9307..d44492b 100644
  				sb.Append("]");
  			}
 diff --git a/NGit.Test/NGit/WorkDirCheckoutTest.cs b/NGit.Test/NGit/WorkDirCheckoutTest.cs
-index 1dbb183..4915d13 100644
+index 5c22c1c..6308b9e 100644
 --- a/NGit.Test/NGit/WorkDirCheckoutTest.cs
 +++ b/NGit.Test/NGit/WorkDirCheckoutTest.cs
-@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
  using NGit;
- using NGit.Errors;
  using Sharpen;
 +using System.Collections.Generic;
  
  namespace NGit
  {
-@@ -62,8 +63,8 @@ namespace NGit
+@@ -61,8 +62,8 @@ namespace NGit
  			WriteTrashFile("foo", "troublesome little bugger");
  			WorkDirCheckout workDirCheckout = new WorkDirCheckout(db, trash, index, index);
  			workDirCheckout.PrescanOneTree();
@@ -1523,21 +1523,21 @@ index 143e950..6ea5f5d 100644
  		{
  			public _AsyncRevObjectQueue_914(RevWalk _enclosing, Sharpen.Iterator<RevObject> objItr
  				, AsyncObjectLoaderQueue<T> lItr)
-diff --git a/NGit/NGit.Storage.File/FileBasedConfig.cs b/NGit/NGit.Storage.File/FileBasedConfig.cs
-index 54058ce..9bb6bbd 100644
---- a/NGit/NGit.Storage.File/FileBasedConfig.cs
-+++ b/NGit/NGit.Storage.File/FileBasedConfig.cs
-@@ -56,7 +56,7 @@ namespace NGit.Storage.File
- 	{
- 		private readonly FilePath configFile;
+diff --git a/NGit/NGit.Storage.File/FileSnapshot.cs b/NGit/NGit.Storage.File/FileSnapshot.cs
+index 682f81d..ad024e4 100644
+--- a/NGit/NGit.Storage.File/FileSnapshot.cs
++++ b/NGit/NGit.Storage.File/FileSnapshot.cs
+@@ -106,7 +106,7 @@ namespace NGit.Storage.File
  
--		private volatile long lastModified;
-+		private long lastModified;
+ 		/// <summary>Last wall-clock time the path was read.</summary>
+ 		/// <remarks>Last wall-clock time the path was read.</remarks>
+-		private volatile long lastRead;
++		private long lastRead;
  
- 		private readonly FS fs;
- 
+ 		/// <summary>
+ 		/// True once
 diff --git a/NGit/NGit.Storage.File/ObjectDirectory.cs b/NGit/NGit.Storage.File/ObjectDirectory.cs
-index 27ffc3f..2d92cfc 100644
+index a91101b..c902e98 100644
 --- a/NGit/NGit.Storage.File/ObjectDirectory.cs
 +++ b/NGit/NGit.Storage.File/ObjectDirectory.cs
 @@ -787,9 +787,9 @@ SEARCH_break: ;
@@ -1552,15 +1552,6 @@ index 27ffc3f..2d92cfc 100644
  			foreach (string name in nameList)
  			{
  				if (name.StartsWith("pack-"))
-@@ -879,7 +879,7 @@ SEARCH_break: ;
- 		{
- 			/// <summary>Last wall-clock time the directory was read.</summary>
- 			/// <remarks>Last wall-clock time the directory was read.</remarks>
--			internal volatile long lastRead;
-+			internal long lastRead;
- 
- 			/// <summary>
- 			/// Last modification time of
 diff --git a/NGit/NGit.Storage.File/PackIndex.cs b/NGit/NGit.Storage.File/PackIndex.cs
 index d73d8e5..e0edfde 100644
 --- a/NGit/NGit.Storage.File/PackIndex.cs
@@ -2995,10 +2986,10 @@ index 55f1884..0602f92 100644
  			if (p >= 0 && slash < s.Length && contents[p] is NGit.Tree)
  			{
 diff --git a/NGit/NGit/WorkDirCheckout.cs b/NGit/NGit/WorkDirCheckout.cs
-index 4a9eca1..bad96c6 100644
+index 82ea97c..63d0f2e 100644
 --- a/NGit/NGit/WorkDirCheckout.cs
 +++ b/NGit/NGit/WorkDirCheckout.cs
-@@ -333,13 +333,13 @@ namespace NGit
+@@ -332,13 +332,13 @@ namespace NGit
  		}
  
  		/// <returns>a list of conflicts created by this checkout</returns>

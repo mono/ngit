@@ -64,11 +64,9 @@ namespace NGit
 			cfg.Save();
 			// do one commit and check that reflog size is 0: no reflogs should be
 			// written
-			Tree t = new Tree(db);
-			AddFileToTree(t, "i-am-a-file", "and this is the data in me\n");
-			Commit(t, "A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(
-				committer, commitTime, tz));
-			commitTime += 100;
+			Commit("A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(committer
+				, commitTime, tz));
+			commitTime += 60 * 1000;
 			NUnit.Framework.Assert.IsTrue(db.GetReflogReader(Constants.HEAD).GetReverseEntries
 				().Count == 0, "Reflog for HEAD still contain no entry");
 			// set the logAllRefUpdates parameter to true and check it
@@ -76,10 +74,9 @@ namespace NGit
 			cfg.Save();
 			NUnit.Framework.Assert.IsTrue(cfg.Get(CoreConfig.KEY).IsLogAllRefUpdates());
 			// do one commit and check that reflog size is increased to 1
-			AddFileToTree(t, "i-am-another-file", "and this is other data in me\n");
-			Commit(t, "A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(
-				committer, commitTime, tz));
-			commitTime += 100;
+			Commit("A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(committer
+				, commitTime, tz));
+			commitTime += 60 * 1000;
 			NUnit.Framework.Assert.IsTrue(db.GetReflogReader(Constants.HEAD).GetReverseEntries
 				().Count == 1, "Reflog for HEAD should contain one entry");
 			// set the logAllRefUpdates parameter to false and check it
@@ -87,35 +84,24 @@ namespace NGit
 			cfg.Save();
 			NUnit.Framework.Assert.IsFalse(cfg.Get(CoreConfig.KEY).IsLogAllRefUpdates());
 			// do one commit and check that reflog size is 2
-			AddFileToTree(t, "i-am-anotheranother-file", "and this is other other data in me\n"
-				);
-			Commit(t, "A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(
-				committer, commitTime, tz));
+			Commit("A Commit\n", new PersonIdent(author, commitTime, tz), new PersonIdent(committer
+				, commitTime, tz));
 			NUnit.Framework.Assert.IsTrue(db.GetReflogReader(Constants.HEAD).GetReverseEntries
 				().Count == 2, "Reflog for HEAD should contain two entries");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		private void AddFileToTree(Tree t, string filename, string content)
-		{
-			FileTreeEntry f = t.AddFile(filename);
-			WriteTrashFile(f.GetName(), content);
-			t.Accept(new WriteTree(trash, db), TreeEntry.MODIFIED_ONLY);
-		}
-
-		/// <exception cref="System.IO.IOException"></exception>
-		private void Commit(Tree t, string commitMsg, PersonIdent author, PersonIdent committer
-			)
+		private void Commit(string commitMsg, PersonIdent author, PersonIdent committer)
 		{
 			NGit.CommitBuilder commit = new NGit.CommitBuilder();
 			commit.Author = author;
 			commit.Committer = committer;
 			commit.Message = commitMsg;
-			commit.TreeId = t.GetTreeId();
 			ObjectInserter inserter = db.NewObjectInserter();
 			ObjectId id;
 			try
 			{
+				commit.TreeId = inserter.Insert(new TreeFormatter());
 				id = inserter.Insert(commit);
 				inserter.Flush();
 			}

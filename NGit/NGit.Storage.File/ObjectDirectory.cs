@@ -80,7 +80,7 @@ namespace NGit.Storage.File
 	public class ObjectDirectory : FileObjectDatabase
 	{
 		private static readonly ObjectDirectory.PackList NO_PACKS = new ObjectDirectory.PackList
-			(-1, -1, new PackFile[0]);
+			(FileSnapshot.DIRTY, new PackFile[0]);
 
 		/// <summary>Maximum number of candidates offered as resolutions of abbreviation.</summary>
 		/// <remarks>Maximum number of candidates offered as resolutions of abbreviation.</remarks>
@@ -588,7 +588,7 @@ SEARCH_break: ;
 		internal override bool TryAgain1()
 		{
 			ObjectDirectory.PackList old = packList.Get();
-			if (old.TryAgain(packDirectory.LastModified()))
+			if (old.snapshot.IsModified(packDirectory))
 			{
 				return old != ScanPacks(old);
 			}
@@ -627,7 +627,7 @@ SEARCH_break: ;
 				PackFile[] newList = new PackFile[1 + oldList.Length];
 				newList[0] = pf;
 				System.Array.Copy(oldList, 0, newList, 1, oldList.Length);
-				n = new ObjectDirectory.PackList(o.lastRead, o.lastModified, newList);
+				n = new ObjectDirectory.PackList(o.snapshot, newList);
 			}
 			while (!packList.CompareAndSet(o, n));
 		}
@@ -648,7 +648,7 @@ SEARCH_break: ;
 				PackFile[] newList = new PackFile[oldList.Length - 1];
 				System.Array.Copy(oldList, 0, newList, 0, j);
 				System.Array.Copy(oldList, j + 1, newList, j, newList.Length - j);
-				n = new ObjectDirectory.PackList(o.lastRead, o.lastModified, newList);
+				n = new ObjectDirectory.PackList(o.snapshot, newList);
 			}
 			while (!packList.CompareAndSet(o, n));
 			deadPack.Close();
@@ -696,8 +696,7 @@ SEARCH_break: ;
 		private ObjectDirectory.PackList ScanPacksImpl(ObjectDirectory.PackList old)
 		{
 			IDictionary<string, PackFile> forReuse = ReuseMap(old);
-			long lastRead = Runtime.CurrentTimeMillis();
-			long lastModified = packDirectory.LastModified();
+			FileSnapshot snapshot = FileSnapshot.Save(packDirectory);
 			ICollection<string> names = ListPackDirectory();
 			IList<PackFile> list = new AList<PackFile>(names.Count >> 2);
 			bool foundNew = false;
@@ -735,9 +734,10 @@ SEARCH_break: ;
 			// the same as the set we were given. Instead of building a new object
 			// return the same collection.
 			//
-			if (!foundNew && lastModified == old.lastModified && forReuse.IsEmpty())
+			if (!foundNew && forReuse.IsEmpty() && snapshot.Equals(old.snapshot))
 			{
-				return old.UpdateLastRead(lastRead);
+				old.snapshot.SetClean(snapshot);
+				return old;
 			}
 			foreach (PackFile p in forReuse.Values)
 			{
@@ -745,11 +745,11 @@ SEARCH_break: ;
 			}
 			if (list.IsEmpty())
 			{
-				return new ObjectDirectory.PackList(lastRead, lastModified, NO_PACKS.packs);
+				return new ObjectDirectory.PackList(snapshot, NO_PACKS.packs);
 			}
 			PackFile[] r = Sharpen.Collections.ToArray(list, new PackFile[list.Count]);
 			Arrays.Sort(r, PackFile.SORT);
-			return new ObjectDirectory.PackList(lastRead, lastModified, r);
+			return new ObjectDirectory.PackList(snapshot, r);
 		}
 
 		private static IDictionary<string, PackFile> ReuseMap(ObjectDirectory.PackList old
@@ -877,16 +877,9 @@ SEARCH_break: ;
 
 		private sealed class PackList
 		{
-			/// <summary>Last wall-clock time the directory was read.</summary>
-			/// <remarks>Last wall-clock time the directory was read.</remarks>
-			internal long lastRead;
-
-			/// <summary>
-			/// Last modification time of
-			/// <see cref="ObjectDirectory.packDirectory">ObjectDirectory.packDirectory</see>
-			/// .
-			/// </summary>
-			internal readonly long lastModified;
+			/// <summary>State just before reading the pack directory.</summary>
+			/// <remarks>State just before reading the pack directory.</remarks>
+			internal readonly FileSnapshot snapshot;
 
 			/// <summary>
 			/// All known packs, sorted by
@@ -895,60 +888,10 @@ SEARCH_break: ;
 			/// </summary>
 			internal readonly PackFile[] packs;
 
-			private bool cannotBeRacilyClean;
-
-			internal PackList(long lastRead, long lastModified, PackFile[] packs)
+			internal PackList(FileSnapshot monitor, PackFile[] packs)
 			{
-				this.lastRead = lastRead;
-				this.lastModified = lastModified;
+				this.snapshot = monitor;
 				this.packs = packs;
-				this.cannotBeRacilyClean = NotRacyClean(lastRead);
-			}
-
-			private bool NotRacyClean(long read)
-			{
-				return read - lastModified > 2 * 60 * 1000L;
-			}
-
-			internal ObjectDirectory.PackList UpdateLastRead(long now)
-			{
-				if (NotRacyClean(now))
-				{
-					cannotBeRacilyClean = true;
-				}
-				lastRead = now;
-				return this;
-			}
-
-			internal bool TryAgain(long currLastModified)
-			{
-				// Any difference indicates the directory was modified.
-				//
-				if (lastModified != currLastModified)
-				{
-					return true;
-				}
-				// We have already determined the last read was far enough
-				// after the last modification that any new modifications
-				// are certain to change the last modified time.
-				//
-				if (cannotBeRacilyClean)
-				{
-					return false;
-				}
-				if (NotRacyClean(lastRead))
-				{
-					// Our last read should have marked cannotBeRacilyClean,
-					// but this thread may not have seen the change. The read
-					// of the volatile field lastRead should have fixed that.
-					//
-					return false;
-				}
-				// We last read this directory too close to its last observed
-				// modification time. We may have missed a modification. Scan
-				// the directory again, to ensure we still see the same state.
-				//
-				return true;
 			}
 		}
 

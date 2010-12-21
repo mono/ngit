@@ -374,8 +374,8 @@ namespace NGit.Dircache
 				if (failOnConflict)
 				{
 					dc.Unlock();
-					throw new CheckoutConflictException(Sharpen.Collections.ToArray(conflicts, new string
-						[conflicts.Count]));
+					throw new NGit.Errors.CheckoutConflictException(Sharpen.Collections.ToArray(conflicts
+						, new string[conflicts.Count]));
 				}
 				else
 				{
@@ -865,8 +865,8 @@ namespace NGit.Dircache
 				FilePath conflict = new FilePath(repo.WorkTree, c);
 				if (!conflict.Delete())
 				{
-					throw new CheckoutConflictException(MessageFormat.Format(JGitText.Get().cannotDeleteFile
-						, c));
+					throw new NGit.Errors.CheckoutConflictException(MessageFormat.Format(JGitText.Get
+						().cannotDeleteFile, c));
 				}
 				RemoveEmptyParents(conflict);
 			}
@@ -875,8 +875,8 @@ namespace NGit.Dircache
 				FilePath file = new FilePath(repo.WorkTree, r);
 				if (!file.Delete())
 				{
-					throw new CheckoutConflictException(MessageFormat.Format(JGitText.Get().cannotDeleteFile
-						, file.GetAbsolutePath()));
+					throw new NGit.Errors.CheckoutConflictException(MessageFormat.Format(JGitText.Get
+						().cannotDeleteFile, file.GetAbsolutePath()));
 				}
 				RemoveEmptyParents(file);
 			}

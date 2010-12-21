@@ -42,10 +42,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.IO;
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Revwalk;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Api
@@ -98,9 +100,12 @@ namespace NGit.Api
 				git.Checkout().SetName("test").Call();
 				NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Some change]", IndexState
 					(CONTENT));
-				git.Checkout().SetName("master").Call();
+				Ref result = git.Checkout().SetName("master").Call();
 				NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Hello world]", IndexState
 					(CONTENT));
+				NUnit.Framework.Assert.AreEqual("refs/heads/master", result.GetName());
+				NUnit.Framework.Assert.AreEqual("refs/heads/master", git.GetRepository().GetFullBranch
+					());
 			}
 			catch (Exception e)
 			{
@@ -138,6 +143,94 @@ namespace NGit.Api
 			{
 			}
 		}
+
 		// except to hit here
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutWithConflict()
+		{
+			CheckoutCommand co = git.Checkout();
+			FilePath trashFile = WriteTrashFile("Test.txt", "Another change");
+			try
+			{
+				WriteTrashFile("Test.txt", "Another change");
+				NUnit.Framework.Assert.AreEqual(CheckoutResult.Status.NOT_TRIED, co.GetResult().GetStatus
+					());
+				co.SetName("master").Call();
+				NUnit.Framework.Assert.Fail("Should have failed");
+			}
+			catch (Exception)
+			{
+				NUnit.Framework.Assert.AreEqual(CheckoutResult.Status.CONFLICTS, co.GetResult().GetStatus
+					());
+				NUnit.Framework.Assert.IsTrue(co.GetResult().GetConflictList().Contains(trashFile
+					));
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutWithNonDeletedFiles()
+		{
+			FilePath testFile = WriteTrashFile("temp", string.Empty);
+			FileInputStream fis = new FileInputStream(testFile);
+			try
+			{
+				FileUtils.Delete(testFile);
+				return;
+			}
+			catch (IOException)
+			{
+			}
+			// the test makes only sense if deletion of
+			// a file with open stream fails
+			fis.Close();
+			FileUtils.Delete(testFile);
+			CheckoutCommand co = git.Checkout();
+			// delete Test.txt in branch test
+			testFile = new FilePath(db.WorkTree, "Test.txt");
+			NUnit.Framework.Assert.IsTrue(testFile.Exists());
+			FileUtils.Delete(testFile);
+			NUnit.Framework.Assert.IsFalse(testFile.Exists());
+			git.Add().AddFilepattern("Test.txt");
+			git.Commit().SetMessage("Delete Test.txt").SetAll(true).Call();
+			git.Checkout().SetName("master").Call();
+			NUnit.Framework.Assert.IsTrue(testFile.Exists());
+			// lock the file so it can't be deleted (in Windows, that is)
+			fis = new FileInputStream(testFile);
+			try
+			{
+				NUnit.Framework.Assert.AreEqual(CheckoutResult.Status.NOT_TRIED, co.GetResult().GetStatus
+					());
+				co.SetName("test").Call();
+				NUnit.Framework.Assert.IsTrue(testFile.Exists());
+				NUnit.Framework.Assert.AreEqual(CheckoutResult.Status.NONDELETED, co.GetResult().
+					GetStatus());
+				NUnit.Framework.Assert.IsTrue(co.GetResult().GetUndeletedList().Contains(testFile
+					));
+			}
+			finally
+			{
+				fis.Close();
+			}
+		}
+
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutCommit()
+		{
+			try
+			{
+				Ref result = git.Checkout().SetName(initialCommit.Name).Call();
+				NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Hello world]", IndexState
+					(CONTENT));
+				NUnit.Framework.Assert.IsNull(result);
+				NUnit.Framework.Assert.AreEqual(initialCommit.Name, git.GetRepository().GetFullBranch
+					());
+			}
+			catch (Exception e)
+			{
+				NUnit.Framework.Assert.Fail(e.Message);
+			}
+		}
 	}
 }
