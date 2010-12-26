@@ -2692,7 +2692,7 @@ index cd2daec..0004081 100644
  			return Name;
  		}
 diff --git a/NGit/NGit/BaseRepositoryBuilder.cs b/NGit/NGit/BaseRepositoryBuilder.cs
-index 203e1a5..83e95b7 100644
+index 93630ea..cb1ceeb 100644
 --- a/NGit/NGit/BaseRepositoryBuilder.cs
 +++ b/NGit/NGit/BaseRepositoryBuilder.cs
 @@ -63,7 +63,7 @@ namespace NGit

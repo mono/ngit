@@ -45,6 +45,7 @@ using NGit;
 using NGit.Dircache;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Dircache
@@ -55,7 +56,7 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestEmptyTree_NoTreeWalk()
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = DirCache.NewInCore();
 			NUnit.Framework.Assert.AreEqual(0, dc.GetEntryCount());
 			DirCacheIterator i = new DirCacheIterator(dc);
 			NUnit.Framework.Assert.IsTrue(i.Eof);
@@ -65,7 +66,7 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestEmptyTree_WithTreeWalk()
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = DirCache.NewInCore();
 			NUnit.Framework.Assert.AreEqual(0, dc.GetEntryCount());
 			TreeWalk tw = new TreeWalk(db);
 			tw.AddTree(new DirCacheIterator(dc));
@@ -76,7 +77,7 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestNoSubtree_NoTreeWalk()
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = DirCache.NewInCore();
 			string[] paths = new string[] { "a.", "a0b" };
 			DirCacheEntry[] ents = new DirCacheEntry[paths.Length];
 			for (int i = 0; i < paths.Length; i++)
@@ -105,7 +106,7 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestNoSubtree_WithTreeWalk()
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = DirCache.NewInCore();
 			string[] paths = new string[] { "a.", "a0b" };
 			FileMode[] modes = new FileMode[] { FileMode.EXECUTABLE_FILE, FileMode.GITLINK };
 			DirCacheEntry[] ents = new DirCacheEntry[paths.Length];
@@ -141,7 +142,7 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestSingleSubtree_NoRecursion()
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = DirCache.NewInCore();
 			string[] paths = new string[] { "a.", "a/b", "a/c", "a/d", "a0b" };
 			DirCacheEntry[] ents = new DirCacheEntry[paths.Length];
 			for (int i = 0; i < paths.Length; i++)
@@ -188,7 +189,7 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestSingleSubtree_Recursive()
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = DirCache.NewInCore();
 			FileMode mode = FileMode.REGULAR_FILE;
 			string[] paths = new string[] { "a.", "a/b", "a/c", "a/d", "a0b" };
 			DirCacheEntry[] ents = new DirCacheEntry[paths.Length];
@@ -226,7 +227,7 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestTwoLevelSubtree_Recursive()
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = DirCache.NewInCore();
 			FileMode mode = FileMode.REGULAR_FILE;
 			string[] paths = new string[] { "a.", "a/b", "a/c/e", "a/c/f", "a/d", "a0b" };
 			DirCacheEntry[] ents = new DirCacheEntry[paths.Length];
@@ -263,7 +264,7 @@ namespace NGit.Dircache
 		[NUnit.Framework.Test]
 		public virtual void TestTwoLevelSubtree_FilterPath()
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = DirCache.NewInCore();
 			FileMode mode = FileMode.REGULAR_FILE;
 			string[] paths = new string[] { "a.", "a/b", "a/c/e", "a/c/f", "a/d", "a0b" };
 			DirCacheEntry[] ents = new DirCacheEntry[paths.Length];
@@ -296,6 +297,25 @@ namespace NGit.Dircache
 				NUnit.Framework.Assert.AreSame(mode, tw.GetFileMode(0));
 				NUnit.Framework.Assert.IsFalse(tw.Next());
 			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRemovedSubtree()
+		{
+			FilePath path = JGitTestUtil.GetTestResourceFile("dircache.testRemovedSubtree");
+			DirCache dc = DirCache.Read(path, FS.DETECTED);
+			NUnit.Framework.Assert.AreEqual(2, dc.GetEntryCount());
+			TreeWalk tw = new TreeWalk(db);
+			tw.Recursive = true;
+			tw.AddTree(new DirCacheIterator(dc));
+			NUnit.Framework.Assert.IsTrue(tw.Next());
+			NUnit.Framework.Assert.AreEqual("a/a", tw.PathString);
+			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, tw.GetFileMode(0));
+			NUnit.Framework.Assert.IsTrue(tw.Next());
+			NUnit.Framework.Assert.AreEqual("q", tw.PathString);
+			NUnit.Framework.Assert.AreSame(FileMode.REGULAR_FILE, tw.GetFileMode(0));
+			NUnit.Framework.Assert.IsFalse(tw.Next());
 		}
 	}
 }
