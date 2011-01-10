@@ -18,6 +18,19 @@ index 0374789..e132d64 100644
  			return cmd.Call();
  		}
  	}
+diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
+index 9c0d573..d084686 100644
+--- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
++++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
+@@ -655,7 +655,7 @@ namespace NGit.Api
+ 				sb.Append(line);
+ 				sb.Append('\n');
+ 			}
+-			CheckFile(file, sb.ToString());
++			RepositoryTestCase.CheckFile(file, sb.ToString());
+ 		}
+ 
+ 		/// <exception cref="System.Exception"></exception>
 diff --git a/NGit.Test/NGit.Diff/EditListTest.cs b/NGit.Test/NGit.Diff/EditListTest.cs
 index 813e9dd..5989194 100644
 --- a/NGit.Test/NGit.Diff/EditListTest.cs

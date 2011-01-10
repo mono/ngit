@@ -655,7 +655,7 @@ namespace NGit.Api
 				sb.Append(line);
 				sb.Append('\n');
 			}
-			CheckFile(file, sb.ToString());
+			RepositoryTestCase.CheckFile(file, sb.ToString());
 		}
 
 		/// <exception cref="System.Exception"></exception>
