@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using NGit.Diff;
+using NGit.Junit;
 using NGit.Patch;
 using NGit.Util;
 using Sharpen;
@@ -64,7 +65,7 @@ namespace NGit.Diff
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			@out = new ByteArrayOutputStream();
 			fmt = new DiffFormatter(@out);
@@ -175,7 +176,7 @@ namespace NGit.Diff
 		/// <exception cref="System.IO.IOException"></exception>
 		private void AssertFormatted()
 		{
-			AssertFormatted(Sharpen.Extensions.GetTestName(this) + ".out");
+			AssertFormatted(Sharpen.Extensions.GetTestName() + ".out");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

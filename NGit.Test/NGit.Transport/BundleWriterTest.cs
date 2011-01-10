@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit.Transport
 {
+	[NUnit.Framework.TestFixture]
 	public class BundleWriterTest : SampleDataRepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>

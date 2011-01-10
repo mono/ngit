@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class IndexTreeWalkerTest : RepositoryTestCase
 	{
 		private AList<string> treeOnlyEntriesVisited = new AList<string>();
@@ -151,13 +152,13 @@ namespace NGit
 			GitIndex index = new GitIndex(db);
 			index.Add(trash, WriteTrashFile("foo/bar", "foo/bar"));
 			index.Add(trash, WriteTrashFile("foobar", "foobar"));
-			new IndexTreeWalker(index, db.MapTree(index.WriteTree()), trash, new _AbstractIndexTreeVisitor_134
+			new IndexTreeWalker(index, db.MapTree(index.WriteTree()), trash, new _AbstractIndexTreeVisitor_144
 				()).Walk();
 		}
 
-		private sealed class _AbstractIndexTreeVisitor_134 : AbstractIndexTreeVisitor
+		private sealed class _AbstractIndexTreeVisitor_144 : AbstractIndexTreeVisitor
 		{
-			public _AbstractIndexTreeVisitor_134()
+			public _AbstractIndexTreeVisitor_144()
 			{
 			}
 

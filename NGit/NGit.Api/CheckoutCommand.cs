@@ -41,7 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.Collections.Generic;
 using System.IO;
 using NGit;
 using NGit.Api;
@@ -128,12 +127,7 @@ namespace NGit.Api
 				}
 				catch (NGit.Errors.CheckoutConflictException e)
 				{
-					IList<FilePath> fileList = new AList<FilePath>();
-					foreach (string filePath in dco.GetConflicts())
-					{
-						fileList.AddItem(new FilePath(repo.WorkTree, filePath));
-					}
-					status = new CheckoutResult(CheckoutResult.Status.CONFLICTS, fileList);
+					status = new CheckoutResult(CheckoutResult.Status.CONFLICTS, dco.GetConflicts());
 					throw;
 				}
 				Ref @ref = repo.GetRef(name);
@@ -183,14 +177,10 @@ namespace NGit.Api
 					throw new JGitInternalException(MessageFormat.Format(JGitText.Get().checkoutUnexpectedResult
 						, updateResult.ToString()));
 				}
-				if (!repo.IsBare && !dco.GetToBeDeleted().IsEmpty())
+				if (!dco.GetToBeDeleted().IsEmpty())
 				{
-					IList<FilePath> fileList = new AList<FilePath>();
-					foreach (string filePath in dco.GetToBeDeleted())
-					{
-						fileList.AddItem(new FilePath(repo.WorkTree, filePath));
-					}
-					status = new CheckoutResult(CheckoutResult.Status.NONDELETED, fileList);
+					status = new CheckoutResult(CheckoutResult.Status.NONDELETED, dco.GetToBeDeleted(
+						));
 				}
 				else
 				{

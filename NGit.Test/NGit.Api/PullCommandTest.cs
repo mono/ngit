@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class PullCommandTest : RepositoryTestCase
 	{
 		/// <summary>Second Test repository</summary>
@@ -149,7 +150,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			dbTarget = CreateWorkRepository();

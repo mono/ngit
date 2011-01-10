@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Treewalk
 {
+	[NUnit.Framework.TestFixture]
 	public class NameConflictTreeWalkTest : RepositoryTestCase
 	{
 		private static readonly FileMode TREE = FileMode.TREE;

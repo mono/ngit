@@ -52,6 +52,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class CheckoutCommandTest : RepositoryTestCase
 	{
 		private Git git;
@@ -61,7 +62,8 @@ namespace NGit.Api
 		internal RevCommit secondCommit;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			git = new Git(db);
@@ -145,12 +147,10 @@ namespace NGit.Api
 		}
 
 		// except to hit here
-		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCheckoutWithConflict()
 		{
 			CheckoutCommand co = git.Checkout();
-			FilePath trashFile = WriteTrashFile("Test.txt", "Another change");
 			try
 			{
 				WriteTrashFile("Test.txt", "Another change");
@@ -163,7 +163,7 @@ namespace NGit.Api
 			{
 				NUnit.Framework.Assert.AreEqual(CheckoutResult.Status.CONFLICTS, co.GetResult().GetStatus
 					());
-				NUnit.Framework.Assert.IsTrue(co.GetResult().GetConflictList().Contains(trashFile
+				NUnit.Framework.Assert.IsTrue(co.GetResult().GetConflictList().Contains("Test.txt"
 					));
 			}
 		}
@@ -206,7 +206,7 @@ namespace NGit.Api
 				NUnit.Framework.Assert.IsTrue(testFile.Exists());
 				NUnit.Framework.Assert.AreEqual(CheckoutResult.Status.NONDELETED, co.GetResult().
 					GetStatus());
-				NUnit.Framework.Assert.IsTrue(co.GetResult().GetUndeletedList().Contains(testFile
+				NUnit.Framework.Assert.IsTrue(co.GetResult().GetUndeletedList().Contains("Test.txt"
 					));
 			}
 			finally

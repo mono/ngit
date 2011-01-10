@@ -67,7 +67,7 @@ namespace NGit.Util
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			packed = RefList.EmptyList();
 			loose = RefList.EmptyList();

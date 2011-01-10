@@ -42,8 +42,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
+using NGit.Junit;
 using NGit.Storage.File;
-using NGit.Util;
 using Sharpen;
 
 namespace NGit
@@ -53,7 +53,7 @@ namespace NGit
 	public abstract class SampleDataRepositoryTestCase : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		public override void SetUp()
 		{
 			base.SetUp();
 			string[] packs = new string[] { "pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f", 

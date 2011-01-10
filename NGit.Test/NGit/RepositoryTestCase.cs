@@ -135,7 +135,8 @@ namespace NGit
 		protected internal FilePath trash;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			db = CreateWorkRepository();

@@ -46,6 +46,7 @@ using Sharpen;
 
 namespace NGit.Diff
 {
+	[NUnit.Framework.TestFixture]
 	public class HistogramDiffTest : AbstractDiffTestCase
 	{
 		protected internal override DiffAlgorithm Algorithm()
@@ -104,15 +105,15 @@ namespace NGit.Diff
 			HistogramDiff hd = new HistogramDiff();
 			hd.SetFallbackAlgorithm(null);
 			hd.SetMaxChainLength(3);
-			SequenceComparator<RawText> cmp = new _SequenceComparator_88();
+			SequenceComparator<RawText> cmp = new _SequenceComparator_97();
 			EditList r = hd.Diff(cmp, T("RabS"), T("QabT"));
 			NUnit.Framework.Assert.AreEqual(1, r.Count);
 			NUnit.Framework.Assert.AreEqual(new Edit(0, 4, 0, 4), r[0]);
 		}
 
-		private sealed class _SequenceComparator_88 : SequenceComparator<RawText>
+		private sealed class _SequenceComparator_97 : SequenceComparator<RawText>
 		{
-			public _SequenceComparator_88()
+			public _SequenceComparator_97()
 			{
 			}
 

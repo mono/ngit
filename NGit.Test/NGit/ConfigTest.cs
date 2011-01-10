@@ -125,7 +125,7 @@ namespace NGit
 			MockSystemReader mockSystemReader = new MockSystemReader();
 			SystemReader.SetInstance(mockSystemReader);
 			string hostname = mockSystemReader.GetHostname();
-			Config userGitConfig = mockSystemReader.OpenUserConfig(FS.DETECTED);
+			Config userGitConfig = mockSystemReader.OpenUserConfig(null, FS.DETECTED);
 			Config localConfig = new Config(userGitConfig);
 			mockSystemReader.ClearProperties();
 			string authorName;
@@ -375,13 +375,22 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void Test009_readNamesInSection()
 		{
-			string configString = "[core]\n" + "repositoryformatversion = 0\n" + "filemode = false\n"
-				 + "logallrefupdates = true\n";
+			string configString = "[core]\n" + "repositoryFormatVersion = 0\n" + "filemode = false\n"
+				 + "logAllRefUpdates = true\n";
 			Config c = Parse(configString);
 			ICollection<string> names = c.GetNames("core");
 			NUnit.Framework.Assert.AreEqual(3, names.Count, "Core section size");
 			NUnit.Framework.Assert.IsTrue(names.Contains("filemode"), "Core section should contain \"filemode\""
 				);
+			NUnit.Framework.Assert.IsTrue(names.Contains("repositoryFormatVersion"), "Core section should contain \"repositoryFormatVersion\""
+				);
+			NUnit.Framework.Assert.IsTrue(names.Contains("repositoryformatversion"), "Core section should contain \"repositoryformatversion\""
+				);
+			Iterator<string> itr = names.Iterator();
+			NUnit.Framework.Assert.AreEqual("repositoryFormatVersion", itr.Next());
+			NUnit.Framework.Assert.AreEqual("filemode", itr.Next());
+			NUnit.Framework.Assert.AreEqual("logAllRefUpdates", itr.Next());
+			NUnit.Framework.Assert.IsFalse(itr.HasNext());
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>

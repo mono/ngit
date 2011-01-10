@@ -483,6 +483,8 @@
     <Compile Include="NGit.Api.Errors\UnmergedPathsException.cs" />
     <Compile Include="NGit.Storage.File\FileSnapshot.cs" />
     <Compile Include="NGit.Api\CheckoutResult.cs" />
+    <Compile Include="NGit.Util\FS_POSIX.cs" />
+    <Compile Include="NGit.Api\RevertCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

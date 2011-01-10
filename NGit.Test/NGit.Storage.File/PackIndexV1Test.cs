@@ -43,12 +43,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using NGit;
+using NGit.Junit;
 using NGit.Storage.File;
-using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class PackIndexV1Test : PackIndexTestCase
 	{
 		public override FilePath GetFileForPack34be9032()

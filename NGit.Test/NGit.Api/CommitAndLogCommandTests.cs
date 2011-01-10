@@ -59,7 +59,6 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
-		[NUnit.Framework.Test]
 		public virtual void TestSomeCommits()
 		{
 			// do 4 commits
@@ -97,7 +96,6 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
-		[NUnit.Framework.Test]
 		public virtual void TestWrongParams()
 		{
 			Git git = new Git(db);
@@ -120,7 +118,6 @@ namespace NGit.Api
 		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
-		[NUnit.Framework.Test]
 		public virtual void TestMultipleInvocations()
 		{
 			Git git = new Git(db);
@@ -156,7 +153,6 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
-		[NUnit.Framework.Test]
 		public virtual void TestMergeEmptyBranches()
 		{
 			Git git = new Git(db);
@@ -174,8 +170,8 @@ namespace NGit.Api
 			Write(new FilePath(db.Directory, Constants.MERGE_MSG), "merging");
 			RevCommit commit = git.Commit().Call();
 			RevCommit[] parents = commit.Parents;
-			AssertEquals(parents[0], firstSide);
-			AssertEquals(parents[1], second);
+			NUnit.Framework.Assert.AreEqual(parents[0], firstSide);
+			NUnit.Framework.Assert.AreEqual(parents[1], second);
 			NUnit.Framework.Assert.IsTrue(parents.Length == 2);
 		}
 
@@ -186,7 +182,6 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
-		[NUnit.Framework.Test]
 		public virtual void TestAddUnstagedChanges()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
@@ -221,7 +216,6 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
 		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
-		[NUnit.Framework.Test]
 		public virtual void TestCommitRange()
 		{
 			// do 4 commits and set the range to the second and fourth one

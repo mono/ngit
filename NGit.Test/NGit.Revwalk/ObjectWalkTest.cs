@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class ObjectWalkTest : RevWalkTestCase
 	{
 		protected internal ObjectWalk objw;

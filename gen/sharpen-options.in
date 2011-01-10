@@ -19,6 +19,7 @@
 -methodMapping org.eclipse.jgit.util.Base64.decode DecodeBytes
 -methodMapping org.eclipse.jgit.lib.ObjectLoader.GetType GetLoaderType
 -methodMapping junit.framework.TestCase.getName Sharpen.Extensions.GetTestName
+-methodMapping org.eclipse.jgit.junit.JGitTestUtil.getName Sharpen.Extensions.GetTestName
 -methodMapping org.eclipse.jgit.transport.HttpAuthMethod.Digest.LHEX Lhex
 -methodMapping org.eclipse.jgit.merge.MergeAlgorithmTest.T RT
 -fieldMapping org.eclipse.jgit.revwalk.RewriteGenerator.REWRITE RewriteOp
@@ -288,4 +289,5 @@
 -fullyQualify SignatureRSA
 -fullyQualify KeyPair
 -fullyQualify GSSContext
+-fullyQualify Test
 

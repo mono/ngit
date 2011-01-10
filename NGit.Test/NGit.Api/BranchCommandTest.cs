@@ -51,6 +51,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class BranchCommandTest : RepositoryTestCase
 	{
 		private Git git;
@@ -60,7 +61,8 @@ namespace NGit.Api
 		internal RevCommit secondCommit;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			git = new Git(db);
@@ -173,10 +175,10 @@ namespace NGit.Api
 		{
 			Ref branch = git.BranchCreate().SetName("FromInitial").SetStartPoint(initialCommit
 				).Call();
-			AssertEquals(initialCommit.Id, branch.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(initialCommit.Id, branch.GetObjectId());
 			branch = git.BranchCreate().SetName("FromInitial2").SetStartPoint(initialCommit.Id
 				.Name).Call();
-			AssertEquals(initialCommit.Id, branch.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(initialCommit.Id, branch.GetObjectId());
 			try
 			{
 				git.BranchCreate().SetName("FromInitial").SetStartPoint(secondCommit).Call();
@@ -187,7 +189,7 @@ namespace NGit.Api
 			// expected
 			branch = git.BranchCreate().SetName("FromInitial").SetStartPoint(secondCommit).SetForce
 				(true).Call();
-			AssertEquals(secondCommit.Id, branch.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(secondCommit.Id, branch.GetObjectId());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -196,7 +198,8 @@ namespace NGit.Api
 		{
 			// using commits
 			Ref newBranch = CreateBranch(git, "NewForce", false, secondCommit.Id.Name, null);
-			AssertEquals(newBranch.GetTarget().GetObjectId(), secondCommit.Id);
+			NUnit.Framework.Assert.AreEqual(newBranch.GetTarget().GetObjectId(), secondCommit
+				.Id);
 			try
 			{
 				newBranch = CreateBranch(git, "NewForce", false, initialCommit.Id.Name, null);
@@ -207,11 +210,13 @@ namespace NGit.Api
 			}
 			// expected
 			newBranch = CreateBranch(git, "NewForce", true, initialCommit.Id.Name, null);
-			AssertEquals(newBranch.GetTarget().GetObjectId(), initialCommit.Id);
+			NUnit.Framework.Assert.AreEqual(newBranch.GetTarget().GetObjectId(), initialCommit
+				.Id);
 			git.BranchDelete().SetBranchNames("NewForce").Call();
 			// using names
 			git.BranchCreate().SetName("NewForce").SetStartPoint("master").Call();
-			AssertEquals(newBranch.GetTarget().GetObjectId(), initialCommit.Id);
+			NUnit.Framework.Assert.AreEqual(newBranch.GetTarget().GetObjectId(), initialCommit
+				.Id);
 			try
 			{
 				git.BranchCreate().SetName("NewForce").SetStartPoint("master").Call();
@@ -223,7 +228,8 @@ namespace NGit.Api
 			// expected
 			git.BranchCreate().SetName("NewForce").SetStartPoint("master").SetForce(true).Call
 				();
-			AssertEquals(newBranch.GetTarget().GetObjectId(), initialCommit.Id);
+			NUnit.Framework.Assert.AreEqual(newBranch.GetTarget().GetObjectId(), initialCommit
+				.Id);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -261,9 +267,11 @@ namespace NGit.Api
 			// expected
 			// change starting point
 			Ref newBranch = CreateBranch(git, "ForDelete", true, initialCommit.Name, null);
-			AssertEquals(newBranch.GetTarget().GetObjectId(), initialCommit.Id);
+			NUnit.Framework.Assert.AreEqual(newBranch.GetTarget().GetObjectId(), initialCommit
+				.Id);
 			newBranch = CreateBranch(git, "ForDelete", true, secondCommit.Name, null);
-			AssertEquals(newBranch.GetTarget().GetObjectId(), secondCommit.Id);
+			NUnit.Framework.Assert.AreEqual(newBranch.GetTarget().GetObjectId(), secondCommit
+				.Id);
 			git.BranchDelete().SetBranchNames("ForDelete").SetForce(true);
 			try
 			{

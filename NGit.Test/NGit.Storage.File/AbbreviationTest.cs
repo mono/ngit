@@ -52,6 +52,7 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class AbbreviationTest : LocalDiskRepositoryTestCase
 	{
 		private FileRepository db;
@@ -61,7 +62,8 @@ namespace NGit.Storage.File
 		private TestRepository<FileRepository> test;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			db = CreateBareRepository();
@@ -70,7 +72,8 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			if (reader != null)
 			{
@@ -98,7 +101,7 @@ namespace NGit.Storage.File
 			matches = reader.Resolve(AbbreviatedObjectId.FromObjectId(id));
 			NUnit.Framework.Assert.IsNotNull(matches);
 			NUnit.Framework.Assert.AreEqual(1, matches.Count);
-			AssertEquals(id, matches.Iterator().Next());
+			NUnit.Framework.Assert.AreEqual(id, matches.Iterator().Next());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -114,8 +117,8 @@ namespace NGit.Storage.File
 			ICollection<ObjectId> matches = reader.Resolve(reader.Abbreviate(id, 8));
 			NUnit.Framework.Assert.IsNotNull(matches);
 			NUnit.Framework.Assert.AreEqual(1, matches.Count);
-			AssertEquals(id, matches.Iterator().Next());
-			AssertEquals(id, db.Resolve(reader.Abbreviate(id, 8).Name));
+			NUnit.Framework.Assert.AreEqual(id, matches.Iterator().Next());
+			NUnit.Framework.Assert.AreEqual(id, db.Resolve(reader.Abbreviate(id, 8).Name));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -133,8 +136,8 @@ namespace NGit.Storage.File
 			ICollection<ObjectId> matches = reader.Resolve(reader.Abbreviate(id, 8));
 			NUnit.Framework.Assert.IsNotNull(matches);
 			NUnit.Framework.Assert.AreEqual(1, matches.Count);
-			AssertEquals(id, matches.Iterator().Next());
-			AssertEquals(id, db.Resolve(reader.Abbreviate(id, 8).Name));
+			NUnit.Framework.Assert.AreEqual(id, matches.Iterator().Next());
+			NUnit.Framework.Assert.AreEqual(id, db.Resolve(reader.Abbreviate(id, 8).Name));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -197,7 +200,7 @@ namespace NGit.Storage.File
 						);
 				}
 			}
-			AssertEquals(id, db.Resolve(id.Abbreviate(20).Name));
+			NUnit.Framework.Assert.AreEqual(id, db.Resolve(id.Abbreviate(20).Name));
 		}
 
 		private static ObjectId Id(string name)

@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class RepositoryResolveTest : SampleDataRepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
@@ -233,12 +234,12 @@ namespace NGit
 		public virtual void TestParseGitDescribeOutput()
 		{
 			ObjectId exp = db.Resolve("b");
-			AssertEquals(exp, db.Resolve("B-g7f82283"));
+			NUnit.Framework.Assert.AreEqual(exp, db.Resolve("B-g7f82283"));
 			// old style
-			AssertEquals(exp, db.Resolve("B-6-g7f82283"));
+			NUnit.Framework.Assert.AreEqual(exp, db.Resolve("B-6-g7f82283"));
 			// new style
-			AssertEquals(exp, db.Resolve("B-6-g7f82283^0"));
-			AssertEquals(exp, db.Resolve("B-6-g7f82283^{commit}"));
+			NUnit.Framework.Assert.AreEqual(exp, db.Resolve("B-6-g7f82283^0"));
+			NUnit.Framework.Assert.AreEqual(exp, db.Resolve("B-6-g7f82283^{commit}"));
 			try
 			{
 				db.Resolve("B-6-g7f82283^{blob}");
@@ -248,8 +249,8 @@ namespace NGit
 			{
 			}
 			// Expected
-			AssertEquals(db.Resolve("b^1"), db.Resolve("B-6-g7f82283^1"));
-			AssertEquals(db.Resolve("b~2"), db.Resolve("B-6-g7f82283~2"));
+			NUnit.Framework.Assert.AreEqual(db.Resolve("b^1"), db.Resolve("B-6-g7f82283^1"));
+			NUnit.Framework.Assert.AreEqual(db.Resolve("b~2"), db.Resolve("B-6-g7f82283~2"));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -260,10 +261,10 @@ namespace NGit
 			ObjectId b3_b2_txt = Id("e6bfff5c1d0f0ecd501552b43a1e13d8008abc31");
 			ObjectId b_root = Id("acd0220f06f7e4db50ea5ba242f0dfed297b27af");
 			ObjectId master_txt = Id("82b1d08466e9505f8666b778744f9a3471a70c81");
-			AssertEquals(b2_txt, db.Resolve("b:b/b2.txt"));
-			AssertEquals(b_root, db.Resolve("b:"));
-			AssertEquals(master_txt, db.Resolve(":master.txt"));
-			AssertEquals(b3_b2_txt, db.Resolve("b~3:b/b2.txt"));
+			NUnit.Framework.Assert.AreEqual(b2_txt, db.Resolve("b:b/b2.txt"));
+			NUnit.Framework.Assert.AreEqual(b_root, db.Resolve("b:"));
+			NUnit.Framework.Assert.AreEqual(master_txt, db.Resolve(":master.txt"));
+			NUnit.Framework.Assert.AreEqual(b3_b2_txt, db.Resolve("b~3:b/b2.txt"));
 			NUnit.Framework.Assert.IsNull(db.Resolve("b:FOO"), "no FOO");
 			NUnit.Framework.Assert.IsNull(db.Resolve("b:b/FOO"), "no b/FOO");
 			NUnit.Framework.Assert.IsNull(db.Resolve(":b/FOO"), "no b/FOO");

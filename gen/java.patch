@@ -1,8 +1,8 @@
-diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/TestNLS.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/TestNLS.java
-index 8b02f2f..7deea86 100644
---- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/TestNLS.java
-+++ b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/TestNLS.java
-@@ -103,12 +103,12 @@ public void testParallelThreadsWithDifferentLocales() throws InterruptedExceptio
+diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/NLSTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/NLSTest.java
+index 6d81f86..8eb2abc 100644
+--- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/NLSTest.java
++++ b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/NLSTest.java
+@@ -110,12 +110,12 @@ public void testParallelThreadsWithDifferentLocales() throws InterruptedExceptio
  
  		final CyclicBarrier barrier = new CyclicBarrier(2);
  
@@ -17,7 +17,7 @@ index 8b02f2f..7deea86 100644
  				this.locale = locale;
  			}
  
-@@ -126,8 +126,8 @@ public void run() {
+@@ -133,8 +133,8 @@ public void run() {
  			}
  		}
  
@@ -28,12 +28,12 @@ index 8b02f2f..7deea86 100644
  		t1.start();
  		t2.start();
  		t1.join();
-diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/stringext/TestStringExternalization.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/stringext/TestStringExternalization.java
+diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java
 deleted file mode 100644
-index 8c4bc22..0000000
---- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/stringext/TestStringExternalization.java
+index 201f03b..0000000
+--- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java
 +++ /dev/null
-@@ -1,75 +0,0 @@
+@@ -1,90 +0,0 @@
 -/*
 - * Copyright (C) 2010, Sasa Zivkov <sasa.zivkov@sap.com>
 - * and other copyright owners as documented in the project's IP log.
@@ -77,36 +77,51 @@ index 8c4bc22..0000000
 - * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 - */
 -
--package org.eclipse.jgit.stringext;
--
--import junit.framework.TestCase;
+-package org.eclipse.jgit.nls;
 -
 -import org.eclipse.jgit.JGitText;
 -import org.eclipse.jgit.awtui.UIText;
 -import org.eclipse.jgit.console.ConsoleText;
 -import org.eclipse.jgit.http.server.HttpServerText;
 -import org.eclipse.jgit.iplog.IpLogText;
--import org.eclipse.jgit.nls.NLS;
 -import org.eclipse.jgit.pgm.CLIText;
+-import org.junit.Before;
+-import org.junit.Test;
 -
--public class TestStringExternalization extends TestCase {
--
--	private static Class[] translationBundleClasses = new Class[] {
--		ConsoleText.class, HttpServerText.class, IpLogText.class, CLIText.class,
--		UIText.class, JGitText.class,
--	};
--
--	/**
--	 * Verifies that all translation keys are defined in the root resource bundle.
--	 * <p>
--	 * This makes sure that all translation bundles will get all strings populated
--	 * since the string will be found at last in the root resource bundle.
--	 */
--	public void testAllTranslationKeysDefinedInRoot() {
+-public class RootLocaleTest {
+-	@Before
+-	public void setUp() {
 -		NLS.setLocale(NLS.ROOT_LOCALE);
--		for (Class c : translationBundleClasses) {
--			NLS.getBundleFor(c);
--		}
+-	}
+-
+-	@Test
+-	public void testJGitText() {
+-		NLS.getBundleFor(JGitText.class);
+-	}
+-
+-	@Test
+-	public void testHttpServerText() {
+-		NLS.getBundleFor(HttpServerText.class);
+-	}
+-
+-	@Test
+-	public void testConsoleText() {
+-		NLS.getBundleFor(ConsoleText.class);
+-	}
+-
+-	@Test
+-	public void testCLIText() {
+-		NLS.getBundleFor(CLIText.class);
+-	}
+-
+-	@Test
+-	public void testUIText() {
+-		NLS.getBundleFor(UIText.class);
+-	}
+-
+-	@Test
+-	public void testIpLogText() {
+-		NLS.getBundleFor(IpLogText.class);
 -	}
 -}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
@@ -701,10 +716,10 @@ index 19f5748..53a30b3 100644
  	private boolean thinPack;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-index bb9edc2..b512dd9 100644
+index f8dc391..02def8b 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-@@ -706,11 +706,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
+@@ -748,11 +748,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
  			if (n < 0)
  				break;
  			if (origRemaining != 0) {
@@ -978,10 +993,10 @@ index acc1ae6..686d65a 100644
  			return false;
  		}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java b/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
-index 475c871..aa85a84 100644
+index ced1d90..ad4f4cd 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
-@@ -62,7 +62,7 @@
+@@ -63,7 +63,7 @@
   */
  public abstract class SystemReader {
  	private static SystemReader INSTANCE = new SystemReader() {
@@ -990,7 +1005,7 @@ index 475c871..aa85a84 100644
  
  		public String getenv(String variable) {
  			return System.getenv(variable);
-@@ -86,7 +86,6 @@ public String getHostname() {
+@@ -106,7 +106,6 @@ public String getHostname() {
  					// we do nothing
  					hostname = "localhost";
  				}

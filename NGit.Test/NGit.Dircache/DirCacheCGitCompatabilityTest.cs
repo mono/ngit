@@ -52,6 +52,7 @@ using Sharpen;
 
 namespace NGit.Dircache
 {
+	[NUnit.Framework.TestFixture]
 	public class DirCacheCGitCompatabilityTest : LocalDiskRepositoryTestCase
 	{
 		private readonly FilePath index;
@@ -153,7 +154,7 @@ namespace NGit.Dircache
 			NUnit.Framework.Assert.IsNotNull(c);
 			NUnit.Framework.Assert.IsNotNull(j);
 			NUnit.Framework.Assert.AreEqual(c.path, j.PathString);
-			AssertEquals(c.id, j.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(c.id, j.GetObjectId());
 			NUnit.Framework.Assert.AreEqual(c.mode, j.RawMode);
 			NUnit.Framework.Assert.AreEqual(c.stage, j.Stage);
 		}
@@ -175,8 +176,8 @@ namespace NGit.Dircache
 			NUnit.Framework.Assert.AreEqual(string.Empty, jTree.GetNameString());
 			NUnit.Framework.Assert.AreEqual(string.Empty, jTree.GetPathString());
 			NUnit.Framework.Assert.IsTrue(jTree.IsValid());
-			AssertEquals(ObjectId.FromString("698dd0b8d0c299f080559a1cffc7fe029479a408"), jTree
-				.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("698dd0b8d0c299f080559a1cffc7fe029479a408"
+				), jTree.GetObjectId());
 			NUnit.Framework.Assert.AreEqual(cList.Count, jTree.GetEntrySpan());
 			AList<DirCacheCGitCompatabilityTest.CGitLsTreeRecord> subtrees = new AList<DirCacheCGitCompatabilityTest.CGitLsTreeRecord
 				>();
@@ -195,7 +196,7 @@ namespace NGit.Dircache
 				NUnit.Framework.Assert.AreEqual(sc.path, sj.GetNameString());
 				NUnit.Framework.Assert.AreEqual(sc.path + "/", sj.GetPathString());
 				NUnit.Framework.Assert.IsTrue(sj.IsValid());
-				AssertEquals(sc.id, sj.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(sc.id, sj.GetObjectId());
 			}
 		}
 

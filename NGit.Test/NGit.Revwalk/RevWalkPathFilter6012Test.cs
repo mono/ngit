@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class RevWalkPathFilter6012Test : RevWalkTestCase
 	{
 		private static readonly string pA = "pA";
@@ -85,7 +86,8 @@ namespace NGit.Revwalk
 		// don't quite yet have a distiction for in JGit.
 		//
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			// Test graph was stolen from git-core t6012-rev-list-simplify

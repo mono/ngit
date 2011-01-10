@@ -49,6 +49,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class FooterLineTest : RepositoryTestCase
 	{
 		[NUnit.Framework.Test]

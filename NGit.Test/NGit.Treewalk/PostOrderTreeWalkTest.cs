@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Treewalk
 {
+	[NUnit.Framework.TestFixture]
 	public class PostOrderTreeWalkTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>

@@ -49,6 +49,7 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class RefUpdateTest : SampleDataRepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
@@ -114,13 +115,13 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsNotNull(r.GetObjectId());
 			NUnit.Framework.Assert.AreNotSame(newid, r.GetObjectId());
 			NUnit.Framework.Assert.AreSame(typeof(ObjectId), r.GetObjectId().GetType());
-			AssertEquals(newid, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(newid, r.GetObjectId());
 			IList<ReflogReader.Entry> reverseEntries1 = db.GetReflogReader("refs/heads/abc").
 				GetReverseEntries();
 			ReflogReader.Entry entry1 = reverseEntries1[0];
 			NUnit.Framework.Assert.AreEqual(1, reverseEntries1.Count);
-			AssertEquals(ObjectId.ZeroId, entry1.GetOldId());
-			AssertEquals(r.GetObjectId(), entry1.GetNewId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, entry1.GetOldId());
+			NUnit.Framework.Assert.AreEqual(r.GetObjectId(), entry1.GetNewId());
 			NUnit.Framework.Assert.AreEqual(new PersonIdent(db).ToString(), entry1.GetWho().ToString
 				());
 			NUnit.Framework.Assert.AreEqual(string.Empty, entry1.GetComment());
@@ -209,7 +210,7 @@ namespace NGit.Storage.File
 			RefUpdate updateRef2 = db.UpdateRef("refs/heads/master");
 			RefUpdate.Result delete = updateRef2.Delete();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.REJECTED_CURRENT_BRANCH, delete);
-			AssertEquals(pid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(pid, db.Resolve("refs/heads/master"));
 			NUnit.Framework.Assert.AreEqual(1, db.GetReflogReader("refs/heads/master").GetReverseEntries
 				().Count);
 			NUnit.Framework.Assert.AreEqual(0, db.GetReflogReader("HEAD").GetReverseEntries()
@@ -323,13 +324,13 @@ namespace NGit.Storage.File
 			updateRef.SetForceUpdate(true);
 			RefUpdate.Result update = updateRef.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, update);
-			AssertEquals(ppid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(ppid, db.Resolve("refs/heads/master"));
 			// real test
 			RefUpdate updateRef2 = db.UpdateRef("refs/heads/master");
 			updateRef2.SetNewObjectId(pid);
 			RefUpdate.Result update2 = updateRef2.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FAST_FORWARD, update2);
-			AssertEquals(pid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(pid, db.Resolve("refs/heads/master"));
 		}
 
 		/// <summary>Update the HEAD ref.</summary>
@@ -345,16 +346,16 @@ namespace NGit.Storage.File
 			updateRef.SetNewObjectId(ppid);
 			RefUpdate.Result update = updateRef.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, update);
-			AssertEquals(ppid, db.Resolve("HEAD"));
+			NUnit.Framework.Assert.AreEqual(ppid, db.Resolve("HEAD"));
 			Ref @ref = db.GetRef("HEAD");
 			NUnit.Framework.Assert.AreEqual("HEAD", @ref.GetName());
 			NUnit.Framework.Assert.IsTrue(!@ref.IsSymbolic(), "is detached");
 			// the branch HEAD referred to is left untouched
-			AssertEquals(pid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(pid, db.Resolve("refs/heads/master"));
 			ReflogReader reflogReader = new ReflogReader(db, "HEAD");
 			ReflogReader.Entry e = reflogReader.GetReverseEntries()[0];
-			AssertEquals(pid, e.GetOldId());
-			AssertEquals(ppid, e.GetNewId());
+			NUnit.Framework.Assert.AreEqual(pid, e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ppid, e.GetNewId());
 			NUnit.Framework.Assert.AreEqual("GIT_COMMITTER_EMAIL", e.GetWho().GetEmailAddress
 				());
 			NUnit.Framework.Assert.AreEqual("GIT_COMMITTER_NAME", e.GetWho().GetName());
@@ -373,7 +374,7 @@ namespace NGit.Storage.File
 			updateRef.SetNewObjectId(ppid);
 			RefUpdate.Result update = updateRef.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NEW, update);
-			AssertEquals(ppid, db.Resolve("HEAD"));
+			NUnit.Framework.Assert.AreEqual(ppid, db.Resolve("HEAD"));
 			Ref @ref = db.GetRef("HEAD");
 			NUnit.Framework.Assert.AreEqual("HEAD", @ref.GetName());
 			NUnit.Framework.Assert.IsTrue(!@ref.IsSymbolic(), "is detached");
@@ -381,8 +382,8 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsNull(db.Resolve("refs/heads/unborn"));
 			ReflogReader reflogReader = new ReflogReader(db, "HEAD");
 			ReflogReader.Entry e = reflogReader.GetReverseEntries()[0];
-			AssertEquals(ObjectId.ZeroId, e.GetOldId());
-			AssertEquals(ppid, e.GetNewId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ppid, e.GetNewId());
 			NUnit.Framework.Assert.AreEqual("GIT_COMMITTER_EMAIL", e.GetWho().GetEmailAddress
 				());
 			NUnit.Framework.Assert.AreEqual("GIT_COMMITTER_NAME", e.GetWho().GetName());
@@ -423,7 +424,7 @@ namespace NGit.Storage.File
 			updateRef.SetNewObjectId(pid);
 			RefUpdate.Result update = updateRef.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NO_CHANGE, update);
-			AssertEquals(pid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(pid, db.Resolve("refs/heads/master"));
 		}
 
 		/// <summary>
@@ -513,7 +514,7 @@ namespace NGit.Storage.File
 			updateRef.SetExpectedOldObjectId(db.Resolve("refs/heads/master^"));
 			RefUpdate.Result update = updateRef.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.LOCK_FAILURE, update);
-			AssertEquals(pid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(pid, db.Resolve("refs/heads/master"));
 		}
 
 		/// <summary>Try modify a ref forward, fast forward, checking old value first</summary>
@@ -528,14 +529,14 @@ namespace NGit.Storage.File
 			updateRef.SetForceUpdate(true);
 			RefUpdate.Result update = updateRef.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, update);
-			AssertEquals(ppid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(ppid, db.Resolve("refs/heads/master"));
 			// real test
 			RefUpdate updateRef2 = db.UpdateRef("refs/heads/master");
 			updateRef2.SetExpectedOldObjectId(ppid);
 			updateRef2.SetNewObjectId(pid);
 			RefUpdate.Result update2 = updateRef2.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FAST_FORWARD, update2);
-			AssertEquals(pid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(pid, db.Resolve("refs/heads/master"));
 		}
 
 		/// <summary>Try modify a ref forward, fast forward, checking old commit first</summary>
@@ -550,7 +551,7 @@ namespace NGit.Storage.File
 			updateRef.SetForceUpdate(true);
 			RefUpdate.Result update = updateRef.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, update);
-			AssertEquals(ppid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(ppid, db.Resolve("refs/heads/master"));
 			// real test
 			RevCommit old = new RevWalk(db).ParseCommit(ppid);
 			RefUpdate updateRef2 = db.UpdateRef("refs/heads/master");
@@ -558,7 +559,7 @@ namespace NGit.Storage.File
 			updateRef2.SetNewObjectId(pid);
 			RefUpdate.Result update2 = updateRef2.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FAST_FORWARD, update2);
-			AssertEquals(pid, db.Resolve("refs/heads/master"));
+			NUnit.Framework.Assert.AreEqual(pid, db.Resolve("refs/heads/master"));
 		}
 
 		/// <summary>Try modify a ref that is locked</summary>
@@ -578,7 +579,7 @@ namespace NGit.Storage.File
 				// precondition to test
 				RefUpdate.Result update = updateRef.Update();
 				NUnit.Framework.Assert.AreEqual(RefUpdate.Result.LOCK_FAILURE, update);
-				AssertEquals(opid, db.Resolve("refs/heads/master"));
+				NUnit.Framework.Assert.AreEqual(opid, db.Resolve("refs/heads/master"));
 				LockFile lockFile2 = new LockFile(new FilePath(db.Directory, "refs/heads/master")
 					, db.FileSystem);
 				NUnit.Framework.Assert.IsFalse(lockFile2.Lock());
@@ -602,7 +603,7 @@ namespace NGit.Storage.File
 			updateRef.SetNewObjectId(pid);
 			RefUpdate.Result update = updateRef.Update();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.REJECTED, update);
-			AssertEquals(oldpid, db.Resolve("refs/heads/c"));
+			NUnit.Framework.Assert.AreEqual(oldpid, db.Resolve("refs/heads/c"));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -618,7 +619,7 @@ namespace NGit.Storage.File
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
-			AssertEquals(rb, db.Resolve("refs/heads/new/name"));
+			NUnit.Framework.Assert.AreEqual(rb, db.Resolve("refs/heads/new/name"));
 			NUnit.Framework.Assert.IsNull(db.Resolve("refs/heads/b"));
 			NUnit.Framework.Assert.AreEqual(1, db.GetReflogReader("new/name").GetReverseEntries
 				().Count);
@@ -626,7 +627,7 @@ namespace NGit.Storage.File
 				("new/name").GetLastEntry().GetComment());
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, "logs/refs/heads/b").Exists
 				());
-			AssertEquals(oldHead, db.Resolve(Constants.HEAD));
+			NUnit.Framework.Assert.AreEqual(oldHead, db.Resolve(Constants.HEAD));
 		}
 
 		// unchanged
@@ -644,7 +645,7 @@ namespace NGit.Storage.File
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
-			AssertEquals(rb, db.Resolve("refs/heads/new/name"));
+			NUnit.Framework.Assert.AreEqual(rb, db.Resolve("refs/heads/new/name"));
 			NUnit.Framework.Assert.IsNull(db.Resolve("refs/heads/b"));
 			NUnit.Framework.Assert.AreEqual(2, db.GetReflogReader("new/name").GetReverseEntries
 				().Count);
@@ -654,7 +655,7 @@ namespace NGit.Storage.File
 				GetReverseEntries()[1].GetComment());
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, "logs/refs/heads/b").Exists
 				());
-			AssertEquals(oldHead, db.Resolve(Constants.HEAD));
+			NUnit.Framework.Assert.AreEqual(oldHead, db.Resolve(Constants.HEAD));
 		}
 
 		// unchanged
@@ -673,13 +674,13 @@ namespace NGit.Storage.File
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
-			AssertEquals(rb, db.Resolve("refs/heads/new/name"));
+			NUnit.Framework.Assert.AreEqual(rb, db.Resolve("refs/heads/new/name"));
 			NUnit.Framework.Assert.IsNull(db.Resolve("refs/heads/b"));
 			NUnit.Framework.Assert.AreEqual("Branch: renamed b to new/name", db.GetReflogReader
 				("new/name").GetLastEntry().GetComment());
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, "logs/refs/heads/b").Exists
 				());
-			AssertEquals(rb, db.Resolve(Constants.HEAD));
+			NUnit.Framework.Assert.AreEqual(rb, db.Resolve(Constants.HEAD));
 			NUnit.Framework.Assert.AreEqual(2, db.GetReflogReader("new/name").GetReverseEntries
 				().Count);
 			NUnit.Framework.Assert.AreEqual("Branch: renamed b to new/name", db.GetReflogReader
@@ -710,7 +711,7 @@ namespace NGit.Storage.File
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
-			AssertEquals(rb2, db.Resolve("refs/heads/new/name"));
+			NUnit.Framework.Assert.AreEqual(rb2, db.Resolve("refs/heads/new/name"));
 			NUnit.Framework.Assert.IsNull(db.Resolve("refs/heads/b"));
 			NUnit.Framework.Assert.AreEqual("Branch: renamed b to new/name", db.GetReflogReader
 				("new/name").GetLastEntry().GetComment());
@@ -726,7 +727,7 @@ namespace NGit.Storage.File
 			// Create new Repository instance, to reread caches and make sure our
 			// assumptions are persistent.
 			Repository ndb = new FileRepository(db.Directory);
-			AssertEquals(rb2, ndb.Resolve("refs/heads/new/name"));
+			NUnit.Framework.Assert.AreEqual(rb2, ndb.Resolve("refs/heads/new/name"));
 			NUnit.Framework.Assert.IsNull(ndb.Resolve("refs/heads/b"));
 		}
 
@@ -767,8 +768,8 @@ namespace NGit.Storage.File
 					AssertExists(false, "logs/" + fromName + ".lock");
 				}
 				AssertExists(false, "logs/" + toName + ".lock");
-				AssertEquals(oldHeadId, db.Resolve(Constants.HEAD));
-				AssertEquals(oldfromId, db.Resolve(fromName));
+				NUnit.Framework.Assert.AreEqual(oldHeadId, db.Resolve(Constants.HEAD));
+				NUnit.Framework.Assert.AreEqual(oldfromId, db.Resolve(fromName));
 				NUnit.Framework.Assert.IsNull(db.Resolve(toName));
 				NUnit.Framework.Assert.AreEqual(oldFromLog.ToString(), db.GetReflogReader(fromName
 					).GetReverseEntries().ToString());
@@ -869,7 +870,7 @@ namespace NGit.Storage.File
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
 			NUnit.Framework.Assert.IsNull(db.Resolve("refs/heads/a"));
-			AssertEquals(rb, db.Resolve("refs/heads/a/b"));
+			NUnit.Framework.Assert.AreEqual(rb, db.Resolve("refs/heads/a/b"));
 			NUnit.Framework.Assert.AreEqual(3, db.GetReflogReader("a/b").GetReverseEntries().
 				Count);
 			NUnit.Framework.Assert.AreEqual("Branch: renamed a to a/b", db.GetReflogReader("a/b"
@@ -906,7 +907,7 @@ namespace NGit.Storage.File
 			RefUpdate.Result result = renameRef.Rename();
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.RENAMED, result);
 			NUnit.Framework.Assert.IsNull(db.Resolve("refs/heads/prefix/a"));
-			AssertEquals(rb, db.Resolve("refs/heads/prefix"));
+			NUnit.Framework.Assert.AreEqual(rb, db.Resolve("refs/heads/prefix"));
 			NUnit.Framework.Assert.AreEqual(3, db.GetReflogReader("prefix").GetReverseEntries
 				().Count);
 			NUnit.Framework.Assert.AreEqual("Branch: renamed prefix/a to prefix", db.GetReflogReader

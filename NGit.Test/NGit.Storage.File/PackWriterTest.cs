@@ -45,15 +45,16 @@ using System.Collections.Generic;
 using System.IO;
 using NGit;
 using NGit.Errors;
+using NGit.Junit;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Storage.Pack;
 using NGit.Transport;
-using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class PackWriterTest : SampleDataRepositoryTestCase
 	{
 		private static readonly IList<ObjectId> EMPTY_LIST_OBJECT = Sharpen.Collections.EmptyList
@@ -77,7 +78,8 @@ namespace NGit.Storage.File
 		private PackFile pack;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			os = new ByteArrayOutputStream();
@@ -88,7 +90,8 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			if (writer != null)
 			{
@@ -455,7 +458,7 @@ namespace NGit.Storage.File
 			for (int i = 0; i < idx1.GetObjectCount(); i++)
 			{
 				ObjectId id = idx1.GetObjectId(i);
-				AssertEquals(id, idx2.GetObjectId(i));
+				NUnit.Framework.Assert.AreEqual(id, idx2.GetObjectId(i));
 				NUnit.Framework.Assert.AreEqual(idx1.FindOffset(id), idx2.FindOffset(id));
 				NUnit.Framework.Assert.AreEqual(idx1.FindCRC32(id), idx2.FindCRC32(id));
 			}
@@ -602,17 +605,18 @@ namespace NGit.Storage.File
 			{
 				entries.AddItem(me.CloneEntry());
 			}
-			entries.Sort(new _IComparer_544());
+			entries.Sort(new _IComparer_572());
 			int i = 0;
 			foreach (PackIndex.MutableEntry me_1 in entries)
 			{
-				AssertEquals(objectsOrder[i++].ToObjectId(), me_1.ToObjectId());
+				NUnit.Framework.Assert.AreEqual(objectsOrder[i++].ToObjectId(), me_1.ToObjectId()
+					);
 			}
 		}
 
-		private sealed class _IComparer_544 : IComparer<PackIndex.MutableEntry>
+		private sealed class _IComparer_572 : IComparer<PackIndex.MutableEntry>
 		{
-			public _IComparer_544()
+			public _IComparer_572()
 			{
 			}
 

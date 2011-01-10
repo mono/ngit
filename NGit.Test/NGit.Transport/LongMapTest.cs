@@ -53,7 +53,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			map = new LongMap<long>();
 		}

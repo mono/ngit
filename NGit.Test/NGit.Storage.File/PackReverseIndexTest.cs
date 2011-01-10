@@ -44,12 +44,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using NGit;
 using NGit.Errors;
+using NGit.Junit;
 using NGit.Storage.File;
-using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class PackReverseIndexTest : RepositoryTestCase
 	{
 		private PackIndex idx;
@@ -59,7 +60,8 @@ namespace NGit.Storage.File
 		/// <summary>Set up tested class instance, test constructor by the way.</summary>
 		/// <remarks>Set up tested class instance, test constructor by the way.</remarks>
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			// index with both small (< 2^31) and big offsets
@@ -74,7 +76,8 @@ namespace NGit.Storage.File
 		{
 			foreach (PackIndex.MutableEntry me in idx)
 			{
-				AssertEquals(me.ToObjectId(), reverseIdx.FindObject(me.GetOffset()));
+				NUnit.Framework.Assert.AreEqual(me.ToObjectId(), reverseIdx.FindObject(me.GetOffset
+					()));
 			}
 		}
 

@@ -42,7 +42,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit.Ignore;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Ignore
@@ -226,11 +225,20 @@ namespace NGit.Ignore
 			AssertNotMatched(pattern, "/test.astp");
 			//Test matches for name-only, applies to file name or folder name
 			pattern = "src";
+			AssertMatched(pattern, "/src");
+			AssertMatched(pattern, "/src/");
 			AssertMatched(pattern, "/src/a.c");
 			AssertMatched(pattern, "/src/new/a.c");
 			AssertMatched(pattern, "/new/src/a.c");
 			AssertMatched(pattern, "/file/src");
+			//Test matches for name-only, applies only to folder names
+			pattern = "src/";
 			AssertMatched(pattern, "/src/");
+			AssertMatched(pattern, "/src/a.c");
+			AssertMatched(pattern, "/src/new/a.c");
+			AssertMatched(pattern, "/new/src/a.c");
+			AssertNotMatched(pattern, "/src");
+			AssertNotMatched(pattern, "/file/src");
 			//Test matches for name-only, applies to file name or folder name
 			//With a small wildcard
 			pattern = "?rc";

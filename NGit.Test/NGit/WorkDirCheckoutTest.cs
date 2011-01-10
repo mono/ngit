@@ -47,6 +47,7 @@ using System.Collections.Generic;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class WorkDirCheckoutTest : RepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>

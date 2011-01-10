@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit.Transport
 {
+	[NUnit.Framework.TestFixture]
 	public class PushProcessTest : SampleDataRepositoryTestCase
 	{
 		private PushProcess process;
@@ -63,7 +64,8 @@ namespace NGit.Transport
 		private RemoteRefUpdate.Status connectionUpdateStatus;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			transport = new PushProcessTest.MockTransport(this, db, new URIish());

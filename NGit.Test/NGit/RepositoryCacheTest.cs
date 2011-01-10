@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class RepositoryCacheTest : RepositoryTestCase
 	{
 		[NUnit.Framework.Test]

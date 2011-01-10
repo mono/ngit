@@ -41,50 +41,53 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit;
-using NGit.Storage.File;
+using System.Text;
 using NGit.Util;
 using Sharpen;
 
-namespace NGit.Storage.File
+namespace NGit.Util
 {
-	public class T0004_PackReader : SampleDataRepositoryTestCase
+	internal abstract class FS_POSIX : FS
 	{
-		private static readonly string PACK_NAME = "pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f";
-
-		private static readonly FilePath TEST_PACK = JGitTestUtil.GetTestResourceFile(PACK_NAME
-			 + ".pack");
-
-		private static readonly FilePath TEST_IDX = JGitTestUtil.GetTestResourceFile(PACK_NAME
-			 + ".idx");
-
-		/// <exception cref="System.IO.IOException"></exception>
-		[NUnit.Framework.Test]
-		public virtual void Test003_lookupCompressedObject()
+		public override FilePath GitPrefix()
 		{
-			PackFile pr;
-			ObjectId id;
-			ObjectLoader or;
-			id = ObjectId.FromString("902d5476fa249b7abc9d84c611577a81381f0327");
-			pr = new PackFile(TEST_IDX, TEST_PACK);
-			or = pr.Get(new WindowCursor(null), id);
-			NUnit.Framework.Assert.IsNotNull(or);
-			NUnit.Framework.Assert.AreEqual(Constants.OBJ_TREE, or.GetType());
-			NUnit.Framework.Assert.AreEqual(35, or.GetSize());
-			pr.Close();
+			string path = SystemReader.GetInstance().Getenv("PATH");
+			FilePath gitExe = SearchPath(path, "git");
+			if (gitExe != null)
+			{
+				return gitExe.GetParentFile().GetParentFile();
+			}
+			if (IsMacOS())
+			{
+				// On MacOSX, PATH is shorter when Eclipse is launched from the
+				// Finder than from a terminal. Therefore try to launch bash as a
+				// login shell and search using that.
+				//
+				string w = ReadPipe(UserHome(), new string[] { "bash", "--login", "-c", "which git"
+					 }, Encoding.Default.EncodingName);
+				//
+				//
+				return new FilePath(w).GetParentFile().GetParentFile();
+			}
+			return null;
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
-		[NUnit.Framework.Test]
-		public virtual void Test004_lookupDeltifiedObject()
+		private static bool IsMacOS()
 		{
-			ObjectId id;
-			ObjectLoader or;
-			id = ObjectId.FromString("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259");
-			or = db.Open(id);
-			NUnit.Framework.Assert.IsNotNull(or);
-			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, or.GetType());
-			NUnit.Framework.Assert.AreEqual(18009, or.GetSize());
+			string osDotName = AccessController.DoPrivileged(new _PrivilegedAction_74());
+			return "Mac OS X".Equals(osDotName);
+		}
+
+		private sealed class _PrivilegedAction_74 : PrivilegedAction<string>
+		{
+			public _PrivilegedAction_74()
+			{
+			}
+
+			public string Run()
+			{
+				return Runtime.GetProperty("os.name");
+			}
 		}
 	}
 }

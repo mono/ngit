@@ -210,6 +210,8 @@ namespace NGit
 
 		public string canOnlyCherryPickCommitsWithOneParent;
 
+		public string canOnlyRevertCommitsWithOneParent;
+
 		public string cantFindObjectInReversePackIndexForTheSpecifiedOffset;
 
 		public string cantPassMeATree;
@@ -402,6 +404,8 @@ namespace NGit
 
 		public string exceptionCaughtDuringExecutionOfPullCommand;
 
+		public string exceptionCaughtDuringExecutionOfRevertCommand;
+
 		public string exceptionCaughtDuringExecutionOfRmCommand;
 
 		public string exceptionCaughtDuringExecutionOfTagCommand;
@@ -571,6 +575,10 @@ namespace NGit
 		public string lockOnNotHeld;
 
 		public string malformedpersonIdentString;
+
+		public string mergeConflictOnNotes;
+
+		public string mergeConflictOnNonNoteEntries;
 
 		public string mergeStrategyAlreadyExistsAsDefault;
 
@@ -845,6 +853,8 @@ namespace NGit
 		public string submodulesNotSupported;
 
 		public string symlinkCannotBeWrittenAsTheLinkTarget;
+
+		public string systemConfigFileInvalid;
 
 		public string tagNameInvalid;
 

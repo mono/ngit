@@ -58,23 +58,23 @@ namespace NGit.Api
 		/// <see cref="Status.OK">Status.OK</see>
 		/// result;
 		/// </summary>
-		public static NGit.Api.CheckoutResult OK_RESULT = new NGit.Api.CheckoutResult(CheckoutResult.Status
-			.OK, null);
+		public static readonly NGit.Api.CheckoutResult OK_RESULT = new NGit.Api.CheckoutResult
+			(CheckoutResult.Status.OK, null);
 
 		/// <summary>
 		/// The
 		/// <see cref="Status.ERROR">Status.ERROR</see>
 		/// result;
 		/// </summary>
-		public static NGit.Api.CheckoutResult ERROR_RESULT = new NGit.Api.CheckoutResult(
-			CheckoutResult.Status.ERROR, null);
+		public static readonly NGit.Api.CheckoutResult ERROR_RESULT = new NGit.Api.CheckoutResult
+			(CheckoutResult.Status.ERROR, null);
 
 		/// <summary>
 		/// The
 		/// <see cref="Status.NOT_TRIED">Status.NOT_TRIED</see>
 		/// result;
 		/// </summary>
-		public static NGit.Api.CheckoutResult NOT_TRIED_RESULT = new NGit.Api.CheckoutResult
+		public static readonly NGit.Api.CheckoutResult NOT_TRIED_RESULT = new NGit.Api.CheckoutResult
 			(CheckoutResult.Status.NOT_TRIED, null);
 
 		/// <summary>The status</summary>
@@ -89,11 +89,11 @@ namespace NGit.Api
 
 		private readonly CheckoutResult.Status myStatus;
 
-		private readonly IList<FilePath> conflictList;
+		private readonly IList<string> conflictList;
 
-		private readonly IList<FilePath> undeletedList;
+		private readonly IList<string> undeletedList;
 
-		internal CheckoutResult(CheckoutResult.Status status, IList<FilePath> fileList)
+		internal CheckoutResult(CheckoutResult.Status status, IList<string> fileList)
 		{
 			myStatus = status;
 			if (status == CheckoutResult.Status.CONFLICTS)
@@ -102,7 +102,7 @@ namespace NGit.Api
 			}
 			else
 			{
-				this.conflictList = new AList<FilePath>(0);
+				this.conflictList = new AList<string>(0);
 			}
 			if (status == CheckoutResult.Status.NONDELETED)
 			{
@@ -110,7 +110,7 @@ namespace NGit.Api
 			}
 			else
 			{
-				this.undeletedList = new AList<FilePath>(0);
+				this.undeletedList = new AList<string>(0);
 			}
 		}
 
@@ -128,7 +128,7 @@ namespace NGit.Api
 		/// <see cref="Status.CONFLICTS">Status.CONFLICTS</see>
 		/// ;
 		/// </returns>
-		public virtual IList<FilePath> GetConflictList()
+		public virtual IList<string> GetConflictList()
 		{
 			return conflictList;
 		}
@@ -141,7 +141,7 @@ namespace NGit.Api
 		/// <see cref="Status.NONDELETED">Status.NONDELETED</see>
 		/// ;
 		/// </returns>
-		public virtual IList<FilePath> GetUndeletedList()
+		public virtual IList<string> GetUndeletedList()
 		{
 			return undeletedList;
 		}

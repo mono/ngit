@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class RmCommandTest : RepositoryTestCase
 	{
 		private Git git;
@@ -54,7 +55,8 @@ namespace NGit.Api
 		private static readonly string FILE = "test.txt";
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			git = new Git(db);

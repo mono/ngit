@@ -52,10 +52,12 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class ConcurrentRepackTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			WindowCacheConfig windowCacheConfig = new WindowCacheConfig();
 			windowCacheConfig.SetPackedGitOpenFiles(1);
@@ -64,7 +66,8 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			base.TearDown();
 			WindowCacheConfig windowCacheConfig = new WindowCacheConfig();

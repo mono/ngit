@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class IndexDiffTest : RepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>

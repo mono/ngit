@@ -51,6 +51,7 @@ using Sharpen;
 namespace NGit.Storage.File
 {
 	/// <summary>Tests for setting up the working directory when creating a Repository</summary>
+	[NUnit.Framework.TestFixture]
 	public class RepositorySetupWorkDirTest : LocalDiskRepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>

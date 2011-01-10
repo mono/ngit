@@ -55,7 +55,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			config = new Config();
 		}
@@ -70,11 +70,6 @@ namespace NGit.Transport
 		private void CheckConfig(string exp)
 		{
 			NUnit.Framework.Assert.AreEqual(exp, config.ToText());
-		}
-
-		private static void AssertEquals(string exp, URIish act)
-		{
-			NUnit.Framework.Assert.AreEqual(exp, act != null ? act.ToString() : null);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -94,7 +89,8 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(0, rc.Timeout);
 			NUnit.Framework.Assert.AreEqual(TagOpt.AUTO_FOLLOW, rc.TagOpt);
 			NUnit.Framework.Assert.AreEqual(1, allURIs.Count);
-			AssertEquals("http://www.spearce.org/egit.git", allURIs[0]);
+			NUnit.Framework.Assert.AreEqual("http://www.spearce.org/egit.git", allURIs[0].ToString
+				());
 			NUnit.Framework.Assert.AreEqual(1, rc.FetchRefSpecs.Count);
 			spec = rc.FetchRefSpecs[0];
 			NUnit.Framework.Assert.IsTrue(spec.IsForceUpdate());
@@ -138,7 +134,8 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsNotNull(rc.FetchRefSpecs);
 			NUnit.Framework.Assert.IsNotNull(rc.PushRefSpecs);
 			NUnit.Framework.Assert.AreEqual(1, allURIs.Count);
-			AssertEquals("http://www.spearce.org/egit.git", allURIs[0]);
+			NUnit.Framework.Assert.AreEqual("http://www.spearce.org/egit.git", allURIs[0].ToString
+				());
 			NUnit.Framework.Assert.AreEqual(2, rc.FetchRefSpecs.Count);
 			spec = rc.FetchRefSpecs[0];
 			NUnit.Framework.Assert.IsTrue(spec.IsForceUpdate());
@@ -168,8 +165,10 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsNotNull(rc.FetchRefSpecs);
 			NUnit.Framework.Assert.IsNotNull(rc.PushRefSpecs);
 			NUnit.Framework.Assert.AreEqual(2, allURIs.Count);
-			AssertEquals("http://www.spearce.org/egit.git", allURIs[0]);
-			AssertEquals("user@repo.or.cz:/srv/git/egit.git", allURIs[1]);
+			NUnit.Framework.Assert.AreEqual("http://www.spearce.org/egit.git", allURIs[0].ToString
+				());
+			NUnit.Framework.Assert.AreEqual("user@repo.or.cz:/srv/git/egit.git", allURIs[1].ToString
+				());
 			NUnit.Framework.Assert.AreEqual(0, rc.FetchRefSpecs.Count);
 			NUnit.Framework.Assert.AreEqual(2, rc.PushRefSpecs.Count);
 			spec = rc.PushRefSpecs[0];
@@ -199,7 +198,8 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsNotNull(rc.FetchRefSpecs);
 			NUnit.Framework.Assert.IsNotNull(rc.PushRefSpecs);
 			NUnit.Framework.Assert.AreEqual(1, allURIs.Count);
-			AssertEquals("user@example.com:egit.git", allURIs[0]);
+			NUnit.Framework.Assert.AreEqual("user@example.com:egit.git", allURIs[0].ToString(
+				));
 			NUnit.Framework.Assert.AreEqual(1, rc.FetchRefSpecs.Count);
 			spec = rc.FetchRefSpecs[0];
 			NUnit.Framework.Assert.IsTrue(spec.IsForceUpdate());

@@ -49,7 +49,6 @@ using NGit;
 using NGit.Junit;
 using NGit.Storage.File;
 using NGit.Util;
-using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Junit
@@ -76,7 +75,6 @@ namespace NGit.Junit
 	/// a test, or tests may fail altogether if there is insufficient file
 	/// descriptors or address space for the test process.
 	/// </remarks>
-	[NUnit.Framework.TestFixture]
 	public abstract class LocalDiskRepositoryTestCase
 	{
 		private static Sharpen.Thread shutdownHook;
@@ -102,7 +100,7 @@ namespace NGit.Junit
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			lock (this)
 			{
@@ -117,7 +115,7 @@ namespace NGit.Junit
 					Runtime.GetRuntime().AddShutdownHook(shutdownHook);
 				}
 			}
-			RecursiveDelete(TestName(), trash, true, false);
+			RecursiveDelete(TestId(), trash, true, false);
 			mockSystemReader = new MockSystemReader();
 			mockSystemReader.userGitConfig = new FileBasedConfig(new FilePath(trash, "usergitconfig"
 				), FS.DETECTED);
@@ -181,7 +179,7 @@ namespace NGit.Junit
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.TearDown]
-		protected virtual void TearDown()
+		public virtual void TearDown()
 		{
 			RepositoryCache.Clear();
 			foreach (Repository r in toClose)
@@ -197,7 +195,7 @@ namespace NGit.Junit
 			{
 				System.GC.Collect();
 			}
-			RecursiveDelete(TestName(), trash, false, true);
+			RecursiveDelete(TestId(), trash, false, true);
 		}
 
 		/// <summary>
@@ -221,7 +219,7 @@ namespace NGit.Junit
 		/// <param name="dir">the recursively directory to delete, if present.</param>
 		protected internal virtual void RecursiveDelete(FilePath dir)
 		{
-			RecursiveDelete(TestName(), dir, false, true);
+			RecursiveDelete(TestId(), dir, false, true);
 		}
 
 		private static bool RecursiveDelete(string testName, FilePath dir, bool silent, bool
@@ -442,11 +440,6 @@ namespace NGit.Junit
 			return Sharpen.Extensions.CreateString(body, 0, body.Length, "UTF-8");
 		}
 
-		protected internal static void AssertEquals(AnyObjectId exp, AnyObjectId act)
-		{
-			NUnit.Framework.Assert.AreEqual(exp, act);
-		}
-
 		private static string[] ToEnvArray(IDictionary<string, string> env)
 		{
 			string[] envp = new string[env.Count];
@@ -463,9 +456,9 @@ namespace NGit.Junit
 			return new Dictionary<string, string>(Sharpen.Runtime.GetEnv());
 		}
 
-		private string TestName()
+		private string TestId()
 		{
-			return GetType().FullName + "." + Sharpen.Extensions.GetTestName(this);
+			return GetType().FullName + "." + testCount;
 		}
 	}
 }

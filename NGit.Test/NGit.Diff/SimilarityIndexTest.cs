@@ -138,7 +138,7 @@ namespace NGit.Diff
 		/// <exception cref="NGit.Diff.SimilarityIndex.TableFullException"></exception>
 		private static SimilarityIndex Hash(string text)
 		{
-			SimilarityIndex src = new _SimilarityIndex_127();
+			SimilarityIndex src = new _SimilarityIndex_135();
 			byte[] raw = Constants.Encode(text);
 			src.SetFileSize(raw.Length);
 			src.Hash(raw, 0, raw.Length);
@@ -146,9 +146,9 @@ namespace NGit.Diff
 			return src;
 		}
 
-		private sealed class _SimilarityIndex_127 : SimilarityIndex
+		private sealed class _SimilarityIndex_135 : SimilarityIndex
 		{
-			public _SimilarityIndex_127()
+			public _SimilarityIndex_135()
 			{
 			}
 

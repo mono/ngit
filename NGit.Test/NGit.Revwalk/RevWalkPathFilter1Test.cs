@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class RevWalkPathFilter1Test : RevWalkTestCase
 	{
 		protected internal virtual void Filter(string path)

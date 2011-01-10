@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class DirCacheCheckoutTest : ReadTreeTest
 	{
 		private DirCacheCheckout dco;

@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public abstract class ReadTreeTest : RepositoryTestCase
 	{
 		protected internal Tree theHead;
@@ -70,11 +71,11 @@ namespace NGit
 			PrescanTwoTrees(head, merge);
 			NUnit.Framework.Assert.IsTrue(GetRemoved().Contains("foo"));
 			PrescanTwoTrees(merge, head);
-			AssertEquals(objectId, GetUpdated().Get("foo"));
+			NUnit.Framework.Assert.AreEqual(objectId, GetUpdated().Get("foo"));
 			merge = BuildTree(Mkmap("foo", "a"));
 			ObjectId anotherId = merge.FindBlobMember("foo").GetId();
 			PrescanTwoTrees(head, merge);
-			AssertEquals(anotherId, GetUpdated().Get("foo"));
+			NUnit.Framework.Assert.AreEqual(anotherId, GetUpdated().Get("foo"));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

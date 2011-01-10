@@ -54,6 +54,7 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class PackFileTest : LocalDiskRepositoryTestCase
 	{
 		private int streamThreshold = 16 * 1024;
@@ -66,21 +67,31 @@ namespace NGit.Storage.File
 
 		private WindowCursor wc;
 
+		private TestRng GetRng()
+		{
+			if (rng == null)
+			{
+				rng = new TestRng(Sharpen.Extensions.GetTestName());
+			}
+			return rng;
+		}
+
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			WindowCacheConfig cfg = new WindowCacheConfig();
 			cfg.SetStreamFileThreshold(streamThreshold);
 			WindowCache.Reconfigure(cfg);
-			rng = new TestRng(Sharpen.Extensions.GetTestName(this));
 			repo = CreateBareRepository();
 			tr = new TestRepository<FileRepository>(repo);
 			wc = (WindowCursor)repo.NewObjectReader();
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			if (wc != null)
 			{
@@ -95,7 +106,7 @@ namespace NGit.Storage.File
 		public virtual void TestWhole_SmallObject()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			RevBlob id = tr.Blob(data);
 			tr.Branch("master").Commit().Add("A", id).Create();
 			tr.PackAndPrune();
@@ -123,7 +134,7 @@ namespace NGit.Storage.File
 		public virtual void TestWhole_LargeObject()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(streamThreshold + 5);
+			byte[] data = GetRng().NextBytes(streamThreshold + 5);
 			RevBlob id = tr.Blob(data);
 			tr.Branch("master").Commit().Add("A", id).Create();
 			tr.PackAndPrune();

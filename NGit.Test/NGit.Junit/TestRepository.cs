@@ -244,8 +244,6 @@ namespace NGit.Junit
 		/// <param name="tree">the tree to search.</param>
 		/// <param name="path">the path to find the entry of.</param>
 		/// <returns>the parsed object entry at this path, never null.</returns>
-		/// <exception cref="NUnit.Framework.AssertionFailedError">if the path does not exist in the given tree.
-		/// 	</exception>
 		/// <exception cref="System.Exception">System.Exception</exception>
 		public virtual RevObject Get(RevTree tree, string path)
 		{
@@ -523,7 +521,7 @@ namespace NGit.Junit
 			if (db is FileRepository)
 			{
 				FileRepository fr = (FileRepository)db;
-				RefWriter rw = new _RefWriter_493(this, fr, fr.GetAllRefs().Values);
+				RefWriter rw = new _RefWriter_490(this, fr, fr.GetAllRefs().Values);
 				rw.WritePackedRefs();
 				rw.WriteInfoRefs();
 				StringBuilder w = new StringBuilder();
@@ -538,9 +536,9 @@ namespace NGit.Junit
 			}
 		}
 
-		private sealed class _RefWriter_493 : RefWriter
+		private sealed class _RefWriter_490 : RefWriter
 		{
-			public _RefWriter_493(TestRepository _enclosing, FileRepository fr, ICollection
+			public _RefWriter_490(TestRepository _enclosing, FileRepository fr, ICollection
 				<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -921,14 +919,14 @@ namespace NGit.Junit
 			public virtual TestRepository.CommitBuilder Add(string path, RevBlob id)
 			{
 				DirCacheEditor e = this.tree.Editor();
-				e.Add(new _PathEdit_793(id, path));
+				e.Add(new _PathEdit_790(id, path));
 				e.Finish();
 				return this;
 			}
 
-			private sealed class _PathEdit_793 : DirCacheEditor.PathEdit
+			private sealed class _PathEdit_790 : DirCacheEditor.PathEdit
 			{
-				public _PathEdit_793(RevBlob id, string baseArg1) : base(baseArg1)
+				public _PathEdit_790(RevBlob id, string baseArg1) : base(baseArg1)
 				{
 					this.id = id;
 				}

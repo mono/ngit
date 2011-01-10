@@ -49,6 +49,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class RevWalkMergeBaseTest : RevWalkTestCase
 	{
 		/// <exception cref="System.Exception"></exception>

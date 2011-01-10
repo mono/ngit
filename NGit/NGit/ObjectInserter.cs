@@ -191,6 +191,15 @@ namespace NGit
 			return ObjectId.FromRaw(md.Digest());
 		}
 
+		/// <summary>Compute the ObjectId for the given tree without inserting it.</summary>
+		/// <remarks>Compute the ObjectId for the given tree without inserting it.</remarks>
+		/// <param name="formatter"></param>
+		/// <returns>the computed ObjectId</returns>
+		public virtual ObjectId IdFor(TreeFormatter formatter)
+		{
+			return formatter.ComputeId(this);
+		}
+
 		/// <summary>Insert a single tree into the store, returning its unique name.</summary>
 		/// <remarks>Insert a single tree into the store, returning its unique name.</remarks>
 		/// <param name="formatter">the formatter containing the proposed tree's data.</param>

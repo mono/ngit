@@ -51,6 +51,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class MergeCommandTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
@@ -76,7 +77,7 @@ namespace NGit.Api
 				Call();
 			NUnit.Framework.Assert.AreEqual(MergeStatus.ALREADY_UP_TO_DATE, result.GetMergeStatus
 				());
-			AssertEquals(second, result.GetNewHead());
+			NUnit.Framework.Assert.AreEqual(second, result.GetNewHead());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -92,7 +93,7 @@ namespace NGit.Api
 				();
 			NUnit.Framework.Assert.AreEqual(MergeStatus.FAST_FORWARD, result.GetMergeStatus()
 				);
-			AssertEquals(second, result.GetNewHead());
+			NUnit.Framework.Assert.AreEqual(second, result.GetNewHead());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -117,7 +118,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
 			NUnit.Framework.Assert.AreEqual(MergeStatus.FAST_FORWARD, result.GetMergeStatus()
 				);
-			AssertEquals(second, result.GetNewHead());
+			NUnit.Framework.Assert.AreEqual(second, result.GetNewHead());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -319,14 +320,14 @@ namespace NGit.Api
 				"c/c/c")));
 			NUnit.Framework.Assert.AreEqual(null, result.GetConflicts());
 			NUnit.Framework.Assert.IsTrue(2 == result.GetMergedCommits().Length);
-			AssertEquals(thirdCommit, result.GetMergedCommits()[0]);
-			AssertEquals(secondCommit, result.GetMergedCommits()[1]);
+			NUnit.Framework.Assert.AreEqual(thirdCommit, result.GetMergedCommits()[0]);
+			NUnit.Framework.Assert.AreEqual(secondCommit, result.GetMergedCommits()[1]);
 			Iterator<RevCommit> it = git.Log().Call().Iterator();
 			RevCommit newHead = it.Next();
-			AssertEquals(newHead, result.GetNewHead());
+			NUnit.Framework.Assert.AreEqual(newHead, result.GetNewHead());
 			NUnit.Framework.Assert.AreEqual(2, newHead.ParentCount);
-			AssertEquals(thirdCommit, newHead.GetParent(0));
-			AssertEquals(secondCommit, newHead.GetParent(1));
+			NUnit.Framework.Assert.AreEqual(thirdCommit, newHead.GetParent(0));
+			NUnit.Framework.Assert.AreEqual(secondCommit, newHead.GetParent(1));
 			NUnit.Framework.Assert.AreEqual("Merge commit '3fa334456d236a92db020289fe0bf481d91777b4' into HEAD"
 				, newHead.GetFullMessage());
 			// @TODO fix me
@@ -373,14 +374,14 @@ namespace NGit.Api
 				"c/c/c")));
 			NUnit.Framework.Assert.AreEqual(null, result.GetConflicts());
 			NUnit.Framework.Assert.IsTrue(2 == result.GetMergedCommits().Length);
-			AssertEquals(thirdCommit, result.GetMergedCommits()[0]);
-			AssertEquals(secondCommit, result.GetMergedCommits()[1]);
+			NUnit.Framework.Assert.AreEqual(thirdCommit, result.GetMergedCommits()[0]);
+			NUnit.Framework.Assert.AreEqual(secondCommit, result.GetMergedCommits()[1]);
 			Iterator<RevCommit> it = git.Log().Call().Iterator();
 			RevCommit newHead = it.Next();
-			AssertEquals(newHead, result.GetNewHead());
+			NUnit.Framework.Assert.AreEqual(newHead, result.GetNewHead());
 			NUnit.Framework.Assert.AreEqual(2, newHead.ParentCount);
-			AssertEquals(thirdCommit, newHead.GetParent(0));
-			AssertEquals(secondCommit, newHead.GetParent(1));
+			NUnit.Framework.Assert.AreEqual(thirdCommit, newHead.GetParent(0));
+			NUnit.Framework.Assert.AreEqual(secondCommit, newHead.GetParent(1));
 			NUnit.Framework.Assert.AreEqual("Merge commit '064d54d98a4cdb0fed1802a21c656bfda67fe879' into HEAD"
 				, newHead.GetFullMessage());
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());

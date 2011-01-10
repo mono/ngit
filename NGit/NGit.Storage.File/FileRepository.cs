@@ -78,6 +78,8 @@ namespace NGit.Storage.File
 	/// </remarks>
 	public class FileRepository : Repository
 	{
+		private readonly FileBasedConfig systemConfig;
+
 		private readonly FileBasedConfig userConfig;
 
 		private readonly FileBasedConfig repoConfig;
@@ -135,14 +137,16 @@ namespace NGit.Storage.File
 		/// </exception>
 		protected internal FileRepository(BaseRepositoryBuilder options) : base(options)
 		{
-			userConfig = SystemReader.GetInstance().OpenUserConfig(FileSystem);
+			systemConfig = SystemReader.GetInstance().OpenSystemConfig(null, FileSystem);
+			userConfig = SystemReader.GetInstance().OpenUserConfig(systemConfig, FileSystem);
 			repoConfig = new FileBasedConfig(userConfig, FileSystem.Resolve(Directory, "config"
 				), FileSystem);
 			//
 			//
+			LoadSystemConfig();
 			LoadUserConfig();
 			LoadRepoConfig();
-			repoConfig.AddChangeListener(new _ConfigChangedListener_163(this));
+			repoConfig.AddChangeListener(new _ConfigChangedListener_168(this));
 			refs = new RefDirectory(this);
 			objectDatabase = new ObjectDirectory(repoConfig, options.GetObjectDirectory(), options
 				.GetAlternateObjectDirectories(), FileSystem);
@@ -161,9 +165,9 @@ namespace NGit.Storage.File
 			}
 		}
 
-		private sealed class _ConfigChangedListener_163 : ConfigChangedListener
+		private sealed class _ConfigChangedListener_168 : ConfigChangedListener
 		{
-			public _ConfigChangedListener_163(FileRepository _enclosing)
+			public _ConfigChangedListener_168(FileRepository _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -174,6 +178,22 @@ namespace NGit.Storage.File
 			}
 
 			private readonly FileRepository _enclosing;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void LoadSystemConfig()
+		{
+			try
+			{
+				systemConfig.Load();
+			}
+			catch (ConfigInvalidException e1)
+			{
+				IOException e2 = new IOException(MessageFormat.Format(JGitText.Get().systemConfigFileInvalid
+					, systemConfig.GetFile().GetAbsolutePath(), e1));
+				Sharpen.Extensions.InitCause(e2, e1);
+				throw e2;
+			}
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -293,6 +313,17 @@ namespace NGit.Storage.File
 		/// <returns>the configuration of this repository</returns>
 		public override StoredConfig GetConfig()
 		{
+			if (systemConfig.IsOutdated())
+			{
+				try
+				{
+					LoadSystemConfig();
+				}
+				catch (IOException e)
+				{
+					throw new RuntimeException(e);
+				}
+			}
 			if (userConfig.IsOutdated())
 			{
 				try

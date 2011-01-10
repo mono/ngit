@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit.Diff
 {
+	[NUnit.Framework.TestFixture]
 	public class RenameDetectorTest : RepositoryTestCase
 	{
 		private static readonly string PATH_A = "src/A";
@@ -65,7 +66,8 @@ namespace NGit.Diff
 		private TestRepository testDb;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			testDb = new TestRepository(db);

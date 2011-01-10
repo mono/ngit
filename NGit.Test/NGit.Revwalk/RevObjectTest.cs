@@ -47,11 +47,12 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class RevObjectTest : RevWalkTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
-		public virtual void TestId()
+		public void TestRevId()
 		{
 			RevCommit a = Commit();
 			NUnit.Framework.Assert.AreSame(a, a.Id);

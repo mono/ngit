@@ -67,11 +67,19 @@ namespace NGit.Storage.Pack
 
 		private byte[] delta;
 
+		private TestRng GetRng()
+		{
+			if (rng == null)
+			{
+				rng = new TestRng(Sharpen.Extensions.GetTestName());
+			}
+			return rng;
+		}
+
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
-			rng = new TestRng(Sharpen.Extensions.GetTestName(this));
 			deltaBuf = new ByteArrayOutputStream();
 		}
 
@@ -178,16 +186,16 @@ namespace NGit.Storage.Pack
 			// Skip should not open the base as we move past it, but it
 			// will open when we need to start copying data from it.
 			bool[] opened = new bool[1];
-			in_1 = new _DeltaStream_160(this, opened, new ByteArrayInputStream(delta));
+			in_1 = new _DeltaStream_179(this, opened, new ByteArrayInputStream(delta));
 			IOUtil.SkipFully(in_1, 7);
 			NUnit.Framework.Assert.IsFalse(opened[0], "not yet open");
 			NUnit.Framework.Assert.AreEqual(data[7], in_1.Read());
 			NUnit.Framework.Assert.IsTrue(opened[0], "now open");
 		}
 
-		private sealed class _DeltaStream_160 : DeltaStream
+		private sealed class _DeltaStream_179 : DeltaStream
 		{
-			public _DeltaStream_160(DeltaStreamTest _enclosing, bool[] opened, InputStream baseArg1
+			public _DeltaStream_179(DeltaStreamTest _enclosing, bool[] opened, InputStream baseArg1
 				) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -219,7 +227,7 @@ namespace NGit.Storage.Pack
 			Init(4, 4);
 			Copy(0, 4);
 			AssertValidState();
-			DeltaStream @in = new _DeltaStream_183(this, new ByteArrayInputStream(delta));
+			DeltaStream @in = new _DeltaStream_203(this, new ByteArrayInputStream(delta));
 			try
 			{
 				@in.Read(new byte[4]);
@@ -229,7 +237,7 @@ namespace NGit.Storage.Pack
 			{
 				NUnit.Framework.Assert.AreEqual(JGitText.Get().baseLengthIncorrect, e.Message);
 			}
-			@in = new _DeltaStream_201(new ByteArrayInputStream(delta));
+			@in = new _DeltaStream_221(new ByteArrayInputStream(delta));
 			try
 			{
 				@in.Read(new byte[4]);
@@ -241,9 +249,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _DeltaStream_183 : DeltaStream
+		private sealed class _DeltaStream_203 : DeltaStream
 		{
-			public _DeltaStream_183(DeltaStreamTest _enclosing, InputStream baseArg1) : base(
+			public _DeltaStream_203(DeltaStreamTest _enclosing, InputStream baseArg1) : base(
 				baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -264,9 +272,9 @@ namespace NGit.Storage.Pack
 			private readonly DeltaStreamTest _enclosing;
 		}
 
-		private sealed class _DeltaStream_201 : DeltaStream
+		private sealed class _DeltaStream_221 : DeltaStream
 		{
-			public _DeltaStream_201(InputStream baseArg1) : base(baseArg1)
+			public _DeltaStream_221(InputStream baseArg1) : base(baseArg1)
 			{
 			}
 
@@ -286,7 +294,7 @@ namespace NGit.Storage.Pack
 		/// <exception cref="System.IO.IOException"></exception>
 		private void Init(int baseSize, int dataSize)
 		{
-			@base = rng.NextBytes(baseSize);
+			@base = GetRng().NextBytes(baseSize);
 			data = new byte[dataSize];
 			deltaEnc = new DeltaEncoder(deltaBuf, baseSize, dataSize);
 			dataPtr = 0;
@@ -358,12 +366,12 @@ namespace NGit.Storage.Pack
 		/// <exception cref="System.IO.IOException"></exception>
 		private DeltaStream Open()
 		{
-			return new _DeltaStream_278(this, new ByteArrayInputStream(delta));
+			return new _DeltaStream_298(this, new ByteArrayInputStream(delta));
 		}
 
-		private sealed class _DeltaStream_278 : DeltaStream
+		private sealed class _DeltaStream_298 : DeltaStream
 		{
-			public _DeltaStream_278(DeltaStreamTest _enclosing, InputStream baseArg1) : base(
+			public _DeltaStream_298(DeltaStreamTest _enclosing, InputStream baseArg1) : base(
 				baseArg1)
 			{
 				this._enclosing = _enclosing;

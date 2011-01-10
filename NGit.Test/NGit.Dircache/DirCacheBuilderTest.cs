@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Dircache
 {
+	[NUnit.Framework.TestFixture]
 	public class DirCacheBuilderTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
@@ -106,7 +107,7 @@ namespace NGit.Dircache
 				entOrig.SetLength(length);
 				NUnit.Framework.Assert.AreNotSame(path, entOrig.PathString);
 				NUnit.Framework.Assert.AreEqual(path, entOrig.PathString);
-				AssertEquals(ObjectId.ZeroId, entOrig.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, entOrig.GetObjectId());
 				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.RawMode);
 				NUnit.Framework.Assert.AreEqual(0, entOrig.Stage);
 				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);
@@ -125,7 +126,7 @@ namespace NGit.Dircache
 				DirCacheEntry entRead = dc.GetEntry(0);
 				NUnit.Framework.Assert.AreNotSame(entOrig, entRead);
 				NUnit.Framework.Assert.AreEqual(path, entRead.PathString);
-				AssertEquals(ObjectId.ZeroId, entOrig.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, entOrig.GetObjectId());
 				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.RawMode);
 				NUnit.Framework.Assert.AreEqual(0, entOrig.Stage);
 				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);
@@ -153,7 +154,7 @@ namespace NGit.Dircache
 				entOrig.SetLength(length);
 				NUnit.Framework.Assert.AreNotSame(path, entOrig.PathString);
 				NUnit.Framework.Assert.AreEqual(path, entOrig.PathString);
-				AssertEquals(ObjectId.ZeroId, entOrig.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, entOrig.GetObjectId());
 				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.RawMode);
 				NUnit.Framework.Assert.AreEqual(0, entOrig.Stage);
 				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);
@@ -171,7 +172,7 @@ namespace NGit.Dircache
 				DirCacheEntry entRead = dc.GetEntry(0);
 				NUnit.Framework.Assert.AreNotSame(entOrig, entRead);
 				NUnit.Framework.Assert.AreEqual(path, entRead.PathString);
-				AssertEquals(ObjectId.ZeroId, entOrig.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, entOrig.GetObjectId());
 				NUnit.Framework.Assert.AreEqual(mode.GetBits(), entOrig.RawMode);
 				NUnit.Framework.Assert.AreEqual(0, entOrig.Stage);
 				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);

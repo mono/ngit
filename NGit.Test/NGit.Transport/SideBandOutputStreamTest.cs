@@ -59,7 +59,7 @@ namespace NGit.Transport
 		// perl -e 'printf "%4.4x%s\n", 4+length($ARGV[0]),$ARGV[0]'
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			rawOut = new ByteArrayOutputStream();
 		}
@@ -184,15 +184,15 @@ namespace NGit.Transport
 		public virtual void TestFlush()
 		{
 			int[] flushCnt = new int[1];
-			OutputStream mockout = new _OutputStream_160(flushCnt);
+			OutputStream mockout = new _OutputStream_171(flushCnt);
 			new SideBandOutputStream(SideBandOutputStream.CH_DATA, SideBandOutputStream.SMALL_BUF
 				, mockout).Flush();
 			NUnit.Framework.Assert.AreEqual(1, flushCnt[0]);
 		}
 
-		private sealed class _OutputStream_160 : OutputStream
+		private sealed class _OutputStream_171 : OutputStream
 		{
-			public _OutputStream_160(int[] flushCnt)
+			public _OutputStream_171(int[] flushCnt)
 			{
 				this.flushCnt = flushCnt;
 			}

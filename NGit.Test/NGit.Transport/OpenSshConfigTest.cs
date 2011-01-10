@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit.Transport
 {
+	[NUnit.Framework.TestFixture]
 	public class OpenSshConfigTest : RepositoryTestCase
 	{
 		private FilePath home;
@@ -56,7 +57,8 @@ namespace NGit.Transport
 		private OpenSshConfig osc;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			home = new FilePath(trash, "home");

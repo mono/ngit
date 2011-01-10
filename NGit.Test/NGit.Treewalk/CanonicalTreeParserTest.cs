@@ -75,7 +75,7 @@ namespace NGit.Treewalk
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			tree1 = Mktree(Entry(m644, "a", hash_a));
 			tree2 = Mktree(Entry(m644, "a", hash_a), Entry(m644, "foo", hash_foo));

@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class WindowCacheReconfigureTest : RepositoryTestCase
 	{
 		[NUnit.Framework.Test]

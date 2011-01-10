@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public abstract class PackIndexTestCase : RepositoryTestCase
 	{
 		internal PackIndex smallIdx;
@@ -55,7 +56,7 @@ namespace NGit.Storage.File
 		internal PackIndex denseIdx;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		public override void SetUp()
 		{
 			base.SetUp();
 			smallIdx = PackIndex.Open(GetFileForPack34be9032());
@@ -77,7 +78,6 @@ namespace NGit.Storage.File
 		/// <exception cref="NGit.Errors.MissingObjectException">NGit.Errors.MissingObjectException
 		/// 	</exception>
 		/// <exception cref="System.NotSupportedException">System.NotSupportedException</exception>
-		[NUnit.Framework.Test]
 		public abstract void TestCRC32();
 
 		/// <summary>

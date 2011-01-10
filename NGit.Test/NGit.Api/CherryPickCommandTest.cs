@@ -50,6 +50,7 @@ using Sharpen;
 namespace NGit.Api
 {
 	/// <summary>Test cherry-pick command</summary>
+	[NUnit.Framework.TestFixture]
 	public class CherryPickCommandTest : RepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>

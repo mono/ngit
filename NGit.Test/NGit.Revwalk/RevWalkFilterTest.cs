@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class RevWalkFilterTest : RevWalkTestCase
 	{
 		private static readonly RevWalkFilterTest.MyAll MY_ALL = new RevWalkFilterTest.MyAll

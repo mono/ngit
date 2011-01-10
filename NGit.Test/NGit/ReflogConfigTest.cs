@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class ReflogConfigTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>

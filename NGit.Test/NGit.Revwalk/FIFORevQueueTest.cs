@@ -46,6 +46,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	internal class FIFORevQueueTest : RevQueueTestCase<FIFORevQueue>
 	{
 		protected internal override FIFORevQueue Create()

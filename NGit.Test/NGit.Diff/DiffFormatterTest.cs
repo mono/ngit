@@ -51,6 +51,7 @@ using Sharpen;
 
 namespace NGit.Diff
 {
+	[NUnit.Framework.TestFixture]
 	public class DiffFormatterTest : RepositoryTestCase
 	{
 		private static readonly string DIFF = "diff --git ";
@@ -68,7 +69,8 @@ namespace NGit.Diff
 		private TestRepository testDb;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			testDb = new TestRepository(db);
@@ -78,7 +80,8 @@ namespace NGit.Diff
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			if (df != null)
 			{

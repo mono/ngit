@@ -186,7 +186,7 @@ namespace NGit.Notes
 				int cell = ParseFanoutCell();
 				if (0 <= cell)
 				{
-					fanout.ParseOneEntry(cell, EntryObjectId);
+					fanout.SetBucket(cell, EntryObjectId);
 				}
 				else
 				{

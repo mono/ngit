@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit.Dircache
 {
+	[NUnit.Framework.TestFixture]
 	public class DirCacheBasicTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>

@@ -49,6 +49,7 @@ using Sharpen;
 
 namespace NGit.Transport
 {
+	[NUnit.Framework.TestFixture]
 	public class TransportTest : SampleDataRepositoryTestCase
 	{
 		private NGit.Transport.Transport transport;
@@ -56,7 +57,8 @@ namespace NGit.Transport
 		private RemoteConfig remoteConfig;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			Config config = ((FileBasedConfig)db.GetConfig());
@@ -66,7 +68,8 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			if (transport != null)
 			{
@@ -96,7 +99,8 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsNull(rru.GetExpectedOldObjectId());
 			NUnit.Framework.Assert.IsFalse(rru.IsForceUpdate());
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", rru.GetSrcRef());
-			AssertEquals(db.Resolve("refs/heads/master"), rru.GetNewObjectId());
+			NUnit.Framework.Assert.AreEqual(db.Resolve("refs/heads/master"), rru.GetNewObjectId
+				());
 			NUnit.Framework.Assert.AreEqual("refs/heads/x", rru.GetRemoteName());
 		}
 
@@ -120,7 +124,8 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsNull(rru.GetExpectedOldObjectId());
 			NUnit.Framework.Assert.IsTrue(rru.IsForceUpdate());
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", rru.GetSrcRef());
-			AssertEquals(db.Resolve("refs/heads/master"), rru.GetNewObjectId());
+			NUnit.Framework.Assert.AreEqual(db.Resolve("refs/heads/master"), rru.GetNewObjectId
+				());
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", rru.GetRemoteName());
 		}
 
@@ -204,7 +209,7 @@ namespace NGit.Transport
 			TrackingRefUpdate tru = result.Iterator().Next().GetTrackingRefUpdate();
 			NUnit.Framework.Assert.AreEqual("refs/remotes/test/a", tru.GetLocalName());
 			NUnit.Framework.Assert.AreEqual("refs/heads/a", tru.GetRemoteName());
-			AssertEquals(db.Resolve("refs/heads/a"), tru.GetNewObjectId());
+			NUnit.Framework.Assert.AreEqual(db.Resolve("refs/heads/a"), tru.GetNewObjectId());
 			NUnit.Framework.Assert.IsNull(tru.GetOldObjectId());
 		}
 	}

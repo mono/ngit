@@ -46,12 +46,13 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
-	internal abstract class RevQueueTestCase<T> : RevWalkTestCase where T:AbstractRevQueue
+	[NUnit.Framework.TestFixture]
+	public abstract class RevQueueTestCase<T> : RevWalkTestCase where T:AbstractRevQueue
 	{
 		protected internal T q;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		public override void SetUp()
 		{
 			base.SetUp();
 			q = Create();

@@ -52,6 +52,7 @@ using Sharpen;
 
 namespace NGit.Notes
 {
+	[NUnit.Framework.TestFixture]
 	public class NoteMapTest : RepositoryTestCase
 	{
 		private TestRepository<Repository> tr;
@@ -61,7 +62,8 @@ namespace NGit.Notes
 		private ObjectInserter inserter;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			tr = new TestRepository<Repository>(db);
@@ -70,7 +72,8 @@ namespace NGit.Notes
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			reader.Release();
 			inserter.Release();
@@ -94,8 +97,8 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.IsNotNull(map, "have map");
 			NUnit.Framework.Assert.IsTrue(map.Contains(a), "has note for a");
 			NUnit.Framework.Assert.IsTrue(map.Contains(b), "has note for b");
-			AssertEquals(data1, map.Get(a));
-			AssertEquals(data2, map.Get(b));
+			NUnit.Framework.Assert.AreEqual(data1, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(b));
 			NUnit.Framework.Assert.IsFalse(map.Contains(data1), "no note for data1");
 			NUnit.Framework.Assert.IsNull(map.Get(data1), "no note for data1");
 		}
@@ -118,8 +121,8 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.IsNotNull(map, "have map");
 			NUnit.Framework.Assert.IsTrue(map.Contains(a), "has note for a");
 			NUnit.Framework.Assert.IsTrue(map.Contains(b), "has note for b");
-			AssertEquals(data1, map.Get(a));
-			AssertEquals(data2, map.Get(b));
+			NUnit.Framework.Assert.AreEqual(data1, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(b));
 			NUnit.Framework.Assert.IsFalse(map.Contains(data1), "no note for data1");
 			NUnit.Framework.Assert.IsNull(map.Get(data1), "no note for data1");
 		}
@@ -142,8 +145,8 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.IsNotNull(map, "have map");
 			NUnit.Framework.Assert.IsTrue(map.Contains(a), "has note for a");
 			NUnit.Framework.Assert.IsTrue(map.Contains(b), "has note for b");
-			AssertEquals(data1, map.Get(a));
-			AssertEquals(data2, map.Get(b));
+			NUnit.Framework.Assert.AreEqual(data1, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(b));
 			NUnit.Framework.Assert.IsFalse(map.Contains(data1), "no note for data1");
 			NUnit.Framework.Assert.IsNull(map.Get(data1), "no note for data1");
 		}
@@ -166,8 +169,8 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.IsNotNull(map, "have map");
 			NUnit.Framework.Assert.IsTrue(map.Contains(a), "has note for a");
 			NUnit.Framework.Assert.IsTrue(map.Contains(b), "has note for b");
-			AssertEquals(data1, map.Get(a));
-			AssertEquals(data2, map.Get(b));
+			NUnit.Framework.Assert.AreEqual(data1, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(b));
 			NUnit.Framework.Assert.IsFalse(map.Contains(data1), "no note for data1");
 			NUnit.Framework.Assert.IsNull(map.Get(data1), "no note for data1");
 		}
@@ -256,14 +259,14 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.IsFalse(map.Contains(b), "no b");
 			map.Set(a, data1);
 			map.Set(b, data2);
-			AssertEquals(data1, map.Get(a));
-			AssertEquals(data2, map.Get(b));
+			NUnit.Framework.Assert.AreEqual(data1, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(b));
 			map.Remove(a);
 			map.Remove(b);
 			NUnit.Framework.Assert.IsFalse(map.Contains(a), "no a");
 			NUnit.Framework.Assert.IsFalse(map.Contains(b), "no b");
 			map.Set(a, "data1", inserter);
-			AssertEquals(data1, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(data1, map.Get(a));
 			map.Set(a, null, inserter);
 			NUnit.Framework.Assert.IsFalse(map.Contains(a), "no a");
 		}
@@ -289,8 +292,8 @@ namespace NGit.Notes
 			map.Set(b, null);
 			map.Set(data1, b);
 			map.Set(data2, null);
-			AssertEquals(data2, map.Get(a));
-			AssertEquals(b, map.Get(data1));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(b, map.Get(data1));
 			NUnit.Framework.Assert.IsFalse(map.Contains(b), "no b");
 			NUnit.Framework.Assert.IsFalse(map.Contains(data2), "no data2");
 			MutableObjectId id = new MutableObjectId();
@@ -306,12 +309,12 @@ namespace NGit.Notes
 			}
 			RevCommit n = CommitNoteMap(map);
 			map = NoteMap.Read(reader, n);
-			AssertEquals(data2, map.Get(a));
-			AssertEquals(b, map.Get(data1));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(b, map.Get(data1));
 			NUnit.Framework.Assert.IsFalse(map.Contains(b), "no b");
 			NUnit.Framework.Assert.IsFalse(map.Contains(data2), "no data2");
-			AssertEquals(b, TreeWalk.ForPath(reader, "zoo-animals.txt", n.Tree).GetObjectId(0
-				));
+			NUnit.Framework.Assert.AreEqual(b, TreeWalk.ForPath(reader, "zoo-animals.txt", n.
+				Tree).GetObjectId(0));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -335,8 +338,8 @@ namespace NGit.Notes
 			map.Set(b, null);
 			map.Set(data1, b);
 			map.Set(data2, null);
-			AssertEquals(data2, map.Get(a));
-			AssertEquals(b, map.Get(data1));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(b, map.Get(data1));
 			NUnit.Framework.Assert.IsFalse(map.Contains(b), "no b");
 			NUnit.Framework.Assert.IsFalse(map.Contains(data2), "no data2");
 			RevCommit n = CommitNoteMap(map);
@@ -345,12 +348,12 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.IsFalse(map.Contains(a), "no a");
 			NUnit.Framework.Assert.IsFalse(map.Contains(data1), "no data1");
 			map = NoteMap.Read(reader, n);
-			AssertEquals(data2, map.Get(a));
-			AssertEquals(b, map.Get(data1));
+			NUnit.Framework.Assert.AreEqual(data2, map.Get(a));
+			NUnit.Framework.Assert.AreEqual(b, map.Get(data1));
 			NUnit.Framework.Assert.IsFalse(map.Contains(b), "no b");
 			NUnit.Framework.Assert.IsFalse(map.Contains(data2), "no data2");
-			AssertEquals(b, TreeWalk.ForPath(reader, "zoo-animals.txt", n.Tree).GetObjectId(0
-				));
+			NUnit.Framework.Assert.AreEqual(b, TreeWalk.ForPath(reader, "zoo-animals.txt", n.
+				Tree).GetObjectId(0));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -411,6 +414,88 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.AreEqual(empty, n.Tree, "empty tree");
 		}
 
+		public virtual void TestIteratorEmptyMap()
+		{
+			Iterator<Note> it = NoteMap.NewEmptyMap().Iterator();
+			NUnit.Framework.Assert.IsFalse(it.HasNext());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestIteratorFlatTree()
+		{
+			RevBlob a = tr.Blob("a");
+			RevBlob b = tr.Blob("b");
+			RevBlob data1 = tr.Blob("data1");
+			RevBlob data2 = tr.Blob("data2");
+			RevBlob nonNote = tr.Blob("non note");
+			RevCommit r = tr.Commit().Add(a.Name, data1).Add(b.Name, data2).Add("nonNote", nonNote
+				).Create();
+			//
+			//
+			//
+			//
+			tr.ParseBody(r);
+			Iterator it = NoteMap.Read(reader, r).Iterator();
+			NUnit.Framework.Assert.AreEqual(2, Count(it));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestIteratorFanoutTree2_38()
+		{
+			RevBlob a = tr.Blob("a");
+			RevBlob b = tr.Blob("b");
+			RevBlob data1 = tr.Blob("data1");
+			RevBlob data2 = tr.Blob("data2");
+			RevBlob nonNote = tr.Blob("non note");
+			RevCommit r = tr.Commit().Add(Fanout(2, a.Name), data1).Add(Fanout(2, b.Name), data2
+				).Add("nonNote", nonNote).Create();
+			//
+			//
+			//
+			//
+			tr.ParseBody(r);
+			Iterator it = NoteMap.Read(reader, r).Iterator();
+			NUnit.Framework.Assert.AreEqual(2, Count(it));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestIteratorFanoutTree2_2_36()
+		{
+			RevBlob a = tr.Blob("a");
+			RevBlob b = tr.Blob("b");
+			RevBlob data1 = tr.Blob("data1");
+			RevBlob data2 = tr.Blob("data2");
+			RevBlob nonNote = tr.Blob("non note");
+			RevCommit r = tr.Commit().Add(Fanout(4, a.Name), data1).Add(Fanout(4, b.Name), data2
+				).Add("nonNote", nonNote).Create();
+			//
+			//
+			//
+			//
+			tr.ParseBody(r);
+			Iterator it = NoteMap.Read(reader, r).Iterator();
+			NUnit.Framework.Assert.AreEqual(2, Count(it));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestIteratorFullyFannedOut()
+		{
+			RevBlob a = tr.Blob("a");
+			RevBlob b = tr.Blob("b");
+			RevBlob data1 = tr.Blob("data1");
+			RevBlob data2 = tr.Blob("data2");
+			RevBlob nonNote = tr.Blob("non note");
+			RevCommit r = tr.Commit().Add(Fanout(38, a.Name), data1).Add(Fanout(38, b.Name), 
+				data2).Add("nonNote", nonNote).Create();
+			//
+			//
+			//
+			//
+			tr.ParseBody(r);
+			Iterator it = NoteMap.Read(reader, r).Iterator();
+			NUnit.Framework.Assert.AreEqual(2, Count(it));
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private RevCommit CommitNoteMap(NoteMap map)
 		{
@@ -443,6 +528,17 @@ namespace NGit.Notes
 				r.Append(Sharpen.Runtime.Substring(name, i));
 			}
 			return r.ToString();
+		}
+
+		private static int Count(Iterator it)
+		{
+			int c = 0;
+			while (it.HasNext())
+			{
+				c++;
+				it.Next();
+			}
+			return c;
 		}
 	}
 }

@@ -52,6 +52,7 @@ namespace NGit
 	/// Misc tests for refs. A lot of things are tested elsewhere so not having a
 	/// test for a ref related method, does not mean it is untested.
 	/// </remarks>
+	[NUnit.Framework.TestFixture]
 	public class RefTest : SampleDataRepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
@@ -86,15 +87,15 @@ namespace NGit
 			updateRef.Update();
 			WriteSymref("refs/remotes/origin/HEAD", "refs/remotes/origin/master");
 			ObjectId r = db.Resolve("refs/remotes/origin/HEAD");
-			AssertEquals(masterId, r);
+			NUnit.Framework.Assert.AreEqual(masterId, r);
 			IDictionary<string, Ref> allRefs = db.GetAllRefs();
 			Ref refHEAD = allRefs.Get("refs/remotes/origin/HEAD");
 			NUnit.Framework.Assert.IsNotNull(refHEAD);
-			AssertEquals(masterId, refHEAD.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(masterId, refHEAD.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(refHEAD.IsPeeled());
 			NUnit.Framework.Assert.IsNull(refHEAD.GetPeeledObjectId());
 			Ref refmaster = allRefs.Get("refs/remotes/origin/master");
-			AssertEquals(masterId, refmaster.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(masterId, refmaster.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(refmaster.IsPeeled());
 			NUnit.Framework.Assert.IsNull(refmaster.GetPeeledObjectId());
 		}

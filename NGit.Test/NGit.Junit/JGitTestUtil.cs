@@ -43,97 +43,95 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Reflection;
-using System.Security;
+using NGit.Junit;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
+using System.IO;
 
-namespace NGit.Util
+namespace NGit.Junit
 {
-	internal class FS_POSIX_Java6 : FS_POSIX
+	public abstract class JGitTestUtil
 	{
-		private static readonly MethodInfo canExecute;
+		public static readonly string CLASSPATH_TO_RESOURCES = "org/eclipse/jgit/test/resources/";
 
-		private static readonly MethodInfo setExecute;
-
-		static FS_POSIX_Java6()
+		public JGitTestUtil()
 		{
-			canExecute = NeedMethod(typeof(FilePath), "canExecute");
-			setExecute = NeedMethod(typeof(FilePath), "setExecutable", typeof(bool));
+			throw new NotSupportedException();
 		}
 
-		internal static bool Detect()
-		{
-			return canExecute != null && setExecute != null;
-		}
+/* Implemented in Sharpen.Extensions
 
-		private static MethodInfo NeedMethod(Type on, string name, params Type[]
-			 args)
+		public static string GetName()
 		{
+			JGitTestUtil.GatherStackTrace stack;
 			try
 			{
-				return on.GetMethod(name, args);
+				throw new JGitTestUtil.GatherStackTrace();
 			}
-			catch (SecurityException)
+			catch (JGitTestUtil.GatherStackTrace wanted)
+			{
+				stack = wanted;
+			}
+			try
+			{
+				foreach (StackTraceElement stackTrace in stack.GetStackTrace())
+				{
+					string className = stackTrace.GetClassName();
+					string methodName = stackTrace.GetMethodName();
+					MethodInfo method;
+					try
+					{
+						method = Sharpen.Runtime.GetType(className).GetMethod(methodName, (Type[])null);
+					}
+					catch (NoSuchMethodException)
+					{
+						//
+						// could be private, i.e. not a test method
+						// could have arguments, not handled
+						continue;
+					}
+					NUnit.Framework.Test annotation = ((NUnit.Framework.Test)method.GetAnnotation<NUnit.Framework.Test
+						>());
+					if (annotation != null)
+					{
+						return methodName;
+					}
+				}
+			}
+			catch (TypeLoadException)
+			{
+			}
+			// Fall through and crash.
+			throw new Exception("Cannot determine name of current test");
+		}
+		 */
+		
+		[System.Serializable]
+		private class GatherStackTrace : Exception
+		{
+			// Thrown above to collect the stack frame.
+		}
+
+		public static void AssertEquals(byte[] exp, byte[] act)
+		{
+			NUnit.Framework.Assert.AreEqual(S(exp), S(act));
+		}
+
+		private static string S(byte[] raw)
+		{
+			return RawParseUtils.Decode(raw);
+		}
+
+		public static FilePath GetTestResourceFile(string fileName)
+		{
+			if (fileName == null || fileName.Length <= 0)
 			{
 				return null;
 			}
-			catch (NoSuchMethodException)
-			{
-				return null;
-			}
-		}
-
-		public override bool SupportsExecute()
-		{
-			return true;
-		}
-
-		public override bool CanExecute(FilePath f)
-		{
-			try
-			{
-				object r = canExecute.Invoke(f, (object[])null);
-				return ((bool)r);
-			}
-			catch (ArgumentException e)
-			{
-				throw new Error(e);
-			}
-			catch (MemberAccessException e)
-			{
-				throw new Error(e);
-			}
-			catch (TargetInvocationException e)
-			{
-				throw new Error(e);
-			}
-		}
-
-		public override bool SetExecute(FilePath f, bool canExec)
-		{
-			try
-			{
-				object r;
-				r = setExecute.Invoke(f, new object[] { Sharpen.Extensions.ValueOf(canExec) });
-				return ((bool)r);
-			}
-			catch (ArgumentException e)
-			{
-				throw new Error(e);
-			}
-			catch (MemberAccessException e)
-			{
-				throw new Error(e);
-			}
-			catch (TargetInvocationException e)
-			{
-				throw new Error(e);
-			}
-		}
-
-		public override bool RetryFailedLockFileCommit()
-		{
-			return false;
+			string path = Path.Combine (AppDomain.CurrentDomain.BaseDirectory, "resources");
+			path = Path.Combine (path, "global");
+			return new FilePath (Path.Combine (path, fileName));
 		}
 	}
 }

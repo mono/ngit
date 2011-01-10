@@ -51,6 +51,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class PushCommandTest : RepositoryTestCase
 	{
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
@@ -84,8 +85,9 @@ namespace NGit.Api
 			// we should get here
 			RefSpec spec = new RefSpec("refs/heads/master:refs/heads/x");
 			git1.Push().SetRemote("test").SetRefSpecs(spec).Call();
-			AssertEquals(commit.Id, db2.Resolve(commit.Id.GetName() + "^{commit}"));
-			AssertEquals(tag.Id, db2.Resolve(tag.Id.GetName()));
+			NUnit.Framework.Assert.AreEqual(commit.Id, db2.Resolve(commit.Id.GetName() + "^{commit}"
+				));
+			NUnit.Framework.Assert.AreEqual(tag.Id, db2.Resolve(tag.Id.GetName()));
 		}
 	}
 }

@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class RevTagParseTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
@@ -95,7 +96,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsNull(c.GetTagName());
 			c.ParseCanonical(rw, Sharpen.Runtime.GetBytesForString(b.ToString(), "UTF-8"));
 			NUnit.Framework.Assert.IsNotNull(c.GetObject());
-			AssertEquals(id, c.GetObject().Id);
+			NUnit.Framework.Assert.AreEqual(id, c.GetObject().Id);
 			NUnit.Framework.Assert.AreSame(rw.LookupAny(id, typeCode), c.GetObject());
 		}
 
@@ -131,7 +132,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsNull(c.GetTagName());
 			c.ParseCanonical(rw, Sharpen.Runtime.GetBytesForString(body.ToString(), "UTF-8"));
 			NUnit.Framework.Assert.IsNotNull(c.GetObject());
-			AssertEquals(treeId, c.GetObject().Id);
+			NUnit.Framework.Assert.AreEqual(treeId, c.GetObject().Id);
 			NUnit.Framework.Assert.AreSame(rw.LookupTree(treeId), c.GetObject());
 			NUnit.Framework.Assert.IsNotNull(c.GetTagName());
 			NUnit.Framework.Assert.AreEqual(name, c.GetTagName());
@@ -173,7 +174,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsNull(c.GetTagName());
 			c.ParseCanonical(rw, Sharpen.Runtime.GetBytesForString(body.ToString(), "UTF-8"));
 			NUnit.Framework.Assert.IsNotNull(c.GetObject());
-			AssertEquals(treeId, c.GetObject().Id);
+			NUnit.Framework.Assert.AreEqual(treeId, c.GetObject().Id);
 			NUnit.Framework.Assert.AreSame(rw.LookupTree(treeId), c.GetObject());
 			NUnit.Framework.Assert.IsNotNull(c.GetTagName());
 			NUnit.Framework.Assert.AreEqual(name, c.GetTagName());
@@ -423,7 +424,7 @@ namespace NGit.Revwalk
 			src.SetTag("a.test");
 			src.SetMessage("Test tag\n\nThis is a test.\n");
 			RevTag p = RevTag.Parse(src.Build());
-			AssertEquals(src.GetObjectId(), p.GetObject());
+			NUnit.Framework.Assert.AreEqual(src.GetObjectId(), p.GetObject());
 			NUnit.Framework.Assert.AreEqual(committer, p.GetTaggerIdent());
 			NUnit.Framework.Assert.AreEqual("a.test", p.GetTagName());
 			NUnit.Framework.Assert.AreEqual("Test tag", p.GetShortMessage());

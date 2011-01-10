@@ -76,7 +76,7 @@ namespace NGit.Util
 		public virtual void TestOneByte()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte test = unchecked((byte)new TestRng(Sharpen.Extensions.GetTestName(this)).NextInt
+			byte test = unchecked((byte)new TestRng(Sharpen.Extensions.GetTestName()).NextInt
 				());
 			try
 			{
@@ -109,7 +109,7 @@ namespace NGit.Util
 		public virtual void TestOneBlock_BulkWrite()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte[] test = new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer.Block
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer.Block
 				.SZ);
 			try
 			{
@@ -145,7 +145,7 @@ namespace NGit.Util
 		public virtual void TestOneBlockAndHalf_BulkWrite()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte[] test = new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer.Block
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer.Block
 				.SZ * 3 / 2);
 			try
 			{
@@ -181,7 +181,7 @@ namespace NGit.Util
 		public virtual void TestOneBlockAndHalf_SingleWrite()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte[] test = new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer.Block
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer.Block
 				.SZ * 3 / 2);
 			try
 			{
@@ -217,7 +217,7 @@ namespace NGit.Util
 		public virtual void TestOneBlockAndHalf_Copy()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte[] test = new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer.Block
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer.Block
 				.SZ * 3 / 2);
 			try
 			{
@@ -252,7 +252,7 @@ namespace NGit.Util
 		public virtual void TestLarge_SingleWrite()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte[] test = new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer
 				.DEFAULT_IN_CORE_LIMIT * 3);
 			try
 			{
@@ -285,7 +285,7 @@ namespace NGit.Util
 		public virtual void TestInCoreLimit_SwitchOnAppendByte()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte[] test = new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer
 				.DEFAULT_IN_CORE_LIMIT + 1);
 			try
 			{
@@ -319,7 +319,7 @@ namespace NGit.Util
 		public virtual void TestInCoreLimit_SwitchBeforeAppendByte()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte[] test = new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer
 				.DEFAULT_IN_CORE_LIMIT * 3);
 			try
 			{
@@ -353,7 +353,7 @@ namespace NGit.Util
 		public virtual void TestInCoreLimit_SwitchOnCopy()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			byte[] test = new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer
 				.DEFAULT_IN_CORE_LIMIT * 2);
 			try
 			{
@@ -391,8 +391,8 @@ namespace NGit.Util
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
 			try
 			{
-				b.Write(new TestRng(Sharpen.Extensions.GetTestName(this)).NextBytes(TemporaryBuffer
-					.DEFAULT_IN_CORE_LIMIT * 2));
+				b.Write(new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(TemporaryBuffer.DEFAULT_IN_CORE_LIMIT
+					 * 2));
 			}
 			finally
 			{
@@ -405,7 +405,7 @@ namespace NGit.Util
 		public virtual void TestRandomWrites()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();
-			TestRng rng = new TestRng(Sharpen.Extensions.GetTestName(this));
+			TestRng rng = new TestRng(Sharpen.Extensions.GetTestName());
 			int max = TemporaryBuffer.DEFAULT_IN_CORE_LIMIT * 2;
 			byte[] expect = new byte[max];
 			try

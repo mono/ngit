@@ -628,6 +628,11 @@ namespace Sharpen
 		
 		public static string GetTestName (object obj)
 		{
+			return GetTestName ();
+		}
+		
+		public static string GetTestName ()
+		{
 			MethodBase met;
 			int n = 0;
 			do {

@@ -536,19 +536,15 @@ namespace NGit.Transport
 		/// <exception cref="System.IO.IOException"></exception>
 		private void ResolveDeltas(PackedObjectInfo oe)
 		{
-			int oldCRC = oe.GetCRC();
-			if (baseById.Get(oe) != null || baseByPos.ContainsKey(oe.GetOffset()))
+			IndexPack.UnresolvedDelta children = FirstChildOf(oe);
+			if (children == null)
 			{
-				ResolveDeltas(oe.GetOffset(), oldCRC, Constants.OBJ_BAD, null, oe);
+				return;
 			}
-		}
-
-		/// <exception cref="System.IO.IOException"></exception>
-		private void ResolveDeltas(long pos, int oldCRC, int type, byte[] data, PackedObjectInfo
-			 oe)
-		{
+			IndexPack.DeltaVisit visit = new IndexPack.DeltaVisit();
+			visit.nextChild = children;
 			crc.Reset();
-			Position(pos);
+			Position(oe.GetOffset());
 			int c = ReadFrom(IndexPack.Source.FILE);
 			int typeCode = (c >> 4) & 7;
 			long sz = c & 15;
@@ -566,27 +562,7 @@ namespace NGit.Transport
 				case Constants.OBJ_BLOB:
 				case Constants.OBJ_TAG:
 				{
-					type = typeCode;
-					data = InflateAndReturn(IndexPack.Source.FILE, sz);
-					break;
-				}
-
-				case Constants.OBJ_OFS_DELTA:
-				{
-					c = ReadFrom(IndexPack.Source.FILE) & unchecked((int)(0xff));
-					while ((c & 128) != 0)
-					{
-						c = ReadFrom(IndexPack.Source.FILE) & unchecked((int)(0xff));
-					}
-					data = BinaryDelta.Apply(data, InflateAndReturn(IndexPack.Source.FILE, sz));
-					break;
-				}
-
-				case Constants.OBJ_REF_DELTA:
-				{
-					crc.Update(buf, Fill(IndexPack.Source.FILE, 20), 20);
-					Use(20);
-					data = BinaryDelta.Apply(data, InflateAndReturn(IndexPack.Source.FILE, sz));
+					visit.data = InflateAndReturn(IndexPack.Source.FILE, sz);
 					break;
 				}
 
@@ -596,25 +572,81 @@ namespace NGit.Transport
 						));
 				}
 			}
-			int crc32 = (int)crc.GetValue();
-			if (oldCRC != crc32)
+			if (oe.GetCRC() != (int)crc.GetValue())
 			{
 				throw new IOException(MessageFormat.Format(JGitText.Get().corruptionDetectedReReadingAt
-					, pos));
+					, oe.GetOffset()));
 			}
-			if (oe == null)
+			ResolveDeltas(visit.Next(), typeCode);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void ResolveDeltas(IndexPack.DeltaVisit visit, int type)
+		{
+			do
 			{
+				long pos = visit.delta.position;
+				crc.Reset();
+				Position(pos);
+				int c = ReadFrom(IndexPack.Source.FILE);
+				int typeCode = (c >> 4) & 7;
+				long sz = c & 15;
+				int shift = 4;
+				while ((c & unchecked((int)(0x80))) != 0)
+				{
+					c = ReadFrom(IndexPack.Source.FILE);
+					sz += (c & unchecked((int)(0x7f))) << shift;
+					shift += 7;
+				}
+				switch (typeCode)
+				{
+					case Constants.OBJ_OFS_DELTA:
+					{
+						c = ReadFrom(IndexPack.Source.FILE) & unchecked((int)(0xff));
+						while ((c & 128) != 0)
+						{
+							c = ReadFrom(IndexPack.Source.FILE) & unchecked((int)(0xff));
+						}
+						visit.data = BinaryDelta.Apply(visit.parent.data, InflateAndReturn(IndexPack.Source
+							.FILE, sz));
+						break;
+					}
+
+					case Constants.OBJ_REF_DELTA:
+					{
+						crc.Update(buf, Fill(IndexPack.Source.FILE, 20), 20);
+						Use(20);
+						visit.data = BinaryDelta.Apply(visit.parent.data, InflateAndReturn(IndexPack.Source
+							.FILE, sz));
+						break;
+					}
+
+					default:
+					{
+						throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, typeCode
+							));
+					}
+				}
+				int crc32 = (int)crc.GetValue();
+				if (visit.delta.crc != crc32)
+				{
+					throw new IOException(MessageFormat.Format(JGitText.Get().corruptionDetectedReReadingAt
+						, pos));
+				}
 				objectDigest.Update(Constants.EncodedTypeString(type));
 				objectDigest.Update(unchecked((byte)' '));
-				objectDigest.Update(Constants.EncodeASCII(data.Length));
+				objectDigest.Update(Constants.EncodeASCII(visit.data.Length));
 				objectDigest.Update(unchecked((byte)0));
-				objectDigest.Update(data);
+				objectDigest.Update(visit.data);
 				tempObjectId.FromRaw(objectDigest.Digest(), 0);
-				VerifySafeObject(tempObjectId, type, data);
+				VerifySafeObject(tempObjectId, type, visit.data);
+				PackedObjectInfo oe;
 				oe = new PackedObjectInfo(pos, crc32, tempObjectId);
 				AddObjectAndTrack(oe);
+				visit.nextChild = FirstChildOf(oe);
+				visit = visit.Next();
 			}
-			ResolveChildDeltas(pos, type, data, oe);
+			while (visit != null);
 		}
 
 		private IndexPack.UnresolvedDelta RemoveBaseById(AnyObjectId id)
@@ -636,38 +668,45 @@ namespace NGit.Transport
 			return tail;
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
-		private void ResolveChildDeltas(long pos, int type, byte[] data, PackedObjectInfo
-			 oe)
+		private IndexPack.UnresolvedDelta FirstChildOf(PackedObjectInfo oe)
 		{
 			IndexPack.UnresolvedDelta a = Reverse(RemoveBaseById(oe));
-			IndexPack.UnresolvedDelta b = Reverse(baseByPos.Remove(pos));
-			while (a != null && b != null)
+			IndexPack.UnresolvedDelta b = Reverse(baseByPos.Remove(oe.GetOffset()));
+			if (a == null)
 			{
-				if (a.position < b.position)
+				return b;
+			}
+			if (b == null)
+			{
+				return a;
+			}
+			IndexPack.UnresolvedDelta first = null;
+			IndexPack.UnresolvedDelta last = null;
+			while (a != null || b != null)
+			{
+				IndexPack.UnresolvedDelta curr;
+				if (b == null || (a != null && a.position < b.position))
 				{
-					ResolveDeltas(a.position, a.crc, type, data, null);
+					curr = a;
 					a = a.next;
 				}
 				else
 				{
-					ResolveDeltas(b.position, b.crc, type, data, null);
+					curr = b;
 					b = b.next;
 				}
+				if (last != null)
+				{
+					last.next = curr;
+				}
+				else
+				{
+					first = curr;
+				}
+				last = curr;
+				curr.next = null;
 			}
-			ResolveChildDeltaChain(type, data, a);
-			ResolveChildDeltaChain(type, data, b);
-		}
-
-		/// <exception cref="System.IO.IOException"></exception>
-		private void ResolveChildDeltaChain(int type, byte[] data, IndexPack.UnresolvedDelta
-			 a)
-		{
-			while (a != null)
-			{
-				ResolveDeltas(a.position, a.crc, type, data, null);
-				a = a.next;
-			}
+			return first;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -703,16 +742,18 @@ namespace NGit.Transport
 					missing.AddItem(baseId);
 					continue;
 				}
-				byte[] data = ldr.GetCachedBytes(int.MaxValue);
+				IndexPack.DeltaVisit visit = new IndexPack.DeltaVisit();
+				visit.data = ldr.GetCachedBytes(int.MaxValue);
 				int typeCode = ldr.GetType();
 				PackedObjectInfo oe;
 				crc.Reset();
 				packOut.Seek(end);
-				WriteWhole(def, typeCode, data);
+				WriteWhole(def, typeCode, visit.data);
 				oe = new PackedObjectInfo(end, (int)crc.GetValue(), baseId);
 				entries[entryCount++] = oe;
 				end = packOut.GetFilePointer();
-				ResolveChildDeltas(oe.GetOffset(), typeCode, data, oe);
+				visit.nextChild = FirstChildOf(oe);
+				ResolveDeltas(visit.Next(), typeCode);
 				if (progress.IsCancelled())
 				{
 					throw new IOException(JGitText.Get().downloadCancelledDuringIndexing);
@@ -1278,6 +1319,51 @@ namespace NGit.Transport
 			{
 				position = headerOffset;
 				crc = crc32;
+			}
+		}
+
+		private class DeltaVisit
+		{
+			internal readonly IndexPack.UnresolvedDelta delta;
+
+			internal byte[] data;
+
+			internal IndexPack.DeltaVisit parent;
+
+			internal IndexPack.UnresolvedDelta nextChild;
+
+			public DeltaVisit()
+			{
+				this.delta = null;
+			}
+
+			internal DeltaVisit(IndexPack.DeltaVisit parent)
+			{
+				// At the root of the stack we have a base.
+				this.parent = parent;
+				this.delta = parent.nextChild;
+				parent.nextChild = delta.next;
+			}
+
+			internal virtual IndexPack.DeltaVisit Next()
+			{
+				// If our parent has no more children, discard it.
+				if (parent != null && parent.nextChild == null)
+				{
+					parent.data = null;
+					parent = parent.parent;
+				}
+				if (nextChild != null)
+				{
+					return new IndexPack.DeltaVisit(this);
+				}
+				// If we have no child ourselves, our parent must (if it exists),
+				// due to the discard rule above. With no parent, we are done.
+				if (parent != null)
+				{
+					return new IndexPack.DeltaVisit(parent);
+				}
+				return null;
 			}
 		}
 

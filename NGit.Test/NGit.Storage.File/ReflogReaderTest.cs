@@ -49,6 +49,7 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class ReflogReaderTest : SampleDataRepositoryTestCase
 	{
 		internal static byte[] oneLine = Sharpen.Runtime.GetBytesForString("da85355dfc525c9f6f3927b876f379f46ccf826e 3e7549db262d1e836d9bf0af7e22355468f1717c A O Thor Too <authortoo@wri.tr> 1243028200 +0200\tcommit: Add a toString for debugging to RemoteRefUpdate\n"
@@ -79,10 +80,10 @@ namespace NGit.Storage.File
 			SetupReflog("logs/refs/heads/master", oneLine);
 			ReflogReader reader = new ReflogReader(db, "refs/heads/master");
 			ReflogReader.Entry e = reader.GetLastEntry();
-			AssertEquals(ObjectId.FromString("da85355dfc525c9f6f3927b876f379f46ccf826e"), e.GetOldId
-				());
-			AssertEquals(ObjectId.FromString("3e7549db262d1e836d9bf0af7e22355468f1717c"), e.GetNewId
-				());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("da85355dfc525c9f6f3927b876f379f46ccf826e"
+				), e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("3e7549db262d1e836d9bf0af7e22355468f1717c"
+				), e.GetNewId());
 			NUnit.Framework.Assert.AreEqual("A O Thor Too", e.GetWho().GetName());
 			NUnit.Framework.Assert.AreEqual("authortoo@wri.tr", e.GetWho().GetEmailAddress());
 			NUnit.Framework.Assert.AreEqual(120, e.GetWho().GetTimeZoneOffset());
@@ -108,10 +109,10 @@ namespace NGit.Storage.File
 			IList<ReflogReader.Entry> reverseEntries = reader.GetReverseEntries();
 			NUnit.Framework.Assert.AreEqual(2, reverseEntries.Count);
 			ReflogReader.Entry e = reverseEntries[0];
-			AssertEquals(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"), e.GetOldId
-				());
-			AssertEquals(ObjectId.FromString("54794942a18a237c57a80719afed44bb78172b10"), e.GetNewId
-				());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"
+				), e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("54794942a18a237c57a80719afed44bb78172b10"
+				), e.GetNewId());
 			NUnit.Framework.Assert.AreEqual("Same A U Thor", e.GetWho().GetName());
 			NUnit.Framework.Assert.AreEqual("same.author@example.com", e.GetWho().GetEmailAddress
 				());
@@ -120,10 +121,10 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual("rebase finished: refs/heads/rr/renamebranch5 onto c6e3b9fe2da0293f11eae202ec35fb343191a82d"
 				, e.GetComment());
 			e = reverseEntries[1];
-			AssertEquals(ObjectId.FromString("0000000000000000000000000000000000000000"), e.GetOldId
-				());
-			AssertEquals(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"), e.GetNewId
-				());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("0000000000000000000000000000000000000000"
+				), e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"
+				), e.GetNewId());
 			NUnit.Framework.Assert.AreEqual("A U Thor", e.GetWho().GetName());
 			NUnit.Framework.Assert.AreEqual("thor@committer.au", e.GetWho().GetEmailAddress()
 				);
@@ -142,10 +143,10 @@ namespace NGit.Storage.File
 			IList<ReflogReader.Entry> reverseEntries = reader.GetReverseEntries();
 			NUnit.Framework.Assert.AreEqual(2, reverseEntries.Count);
 			ReflogReader.Entry e = reverseEntries[0];
-			AssertEquals(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"), e.GetOldId
-				());
-			AssertEquals(ObjectId.FromString("54794942a18a237c57a80719afed44bb78172b10"), e.GetNewId
-				());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"
+				), e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("54794942a18a237c57a80719afed44bb78172b10"
+				), e.GetNewId());
 			NUnit.Framework.Assert.AreEqual("Same A U Thor", e.GetWho().GetName());
 			NUnit.Framework.Assert.AreEqual("same.author@example.com", e.GetWho().GetEmailAddress
 				());

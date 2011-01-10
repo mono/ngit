@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Treewalk.Filter
 {
+	[NUnit.Framework.TestFixture]
 	public class TreeFilterTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>

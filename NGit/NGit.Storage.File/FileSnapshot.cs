@@ -41,7 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
@@ -95,7 +94,7 @@ namespace NGit.Storage.File
 		/// <returns>the snapshot.</returns>
 		public static NGit.Storage.File.FileSnapshot Save(FilePath path)
 		{
-			long read = SystemReader.GetInstance().GetCurrentTime();
+			long read = Runtime.CurrentTimeMillis();
 			long modified = path.LastModified();
 			return new NGit.Storage.File.FileSnapshot(read, modified);
 		}
@@ -129,8 +128,8 @@ namespace NGit.Storage.File
 			return lastModified;
 		}
 
-		/// <summary>Check if the path has been modified since the snapshot was saved.</summary>
-		/// <remarks>Check if the path has been modified since the snapshot was saved.</remarks>
+		/// <summary>Check if the path may have been modified since the snapshot was saved.</summary>
+		/// <remarks>Check if the path may have been modified since the snapshot was saved.</remarks>
 		/// <param name="path">the path the snapshot describes.</param>
 		/// <returns>true if the path needs to be read again.</returns>
 		public virtual bool IsModified(FilePath path)
@@ -230,6 +229,12 @@ namespace NGit.Storage.File
 				// but this thread may not have seen the change. The read
 				// of the volatile field lastRead should have fixed that.
 				//
+				return false;
+			}
+			// Our lastRead flag may be old, refresh and retry
+			lastRead = Runtime.CurrentTimeMillis();
+			if (NotRacyClean(lastRead))
+			{
 				return false;
 			}
 			// We last read this path too close to its last observed

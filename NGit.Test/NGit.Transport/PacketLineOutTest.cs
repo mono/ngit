@@ -60,7 +60,7 @@ namespace NGit.Transport
 		// perl -e 'printf "%4.4x%s\n", 4+length($ARGV[0]),$ARGV[0]'
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			rawOut = new ByteArrayOutputStream();
 			@out = new PacketLineOut(rawOut);
@@ -99,15 +99,15 @@ namespace NGit.Transport
 		public virtual void TestWriteEnd()
 		{
 			int[] flushCnt = new int[1];
-			OutputStream mockout = new _OutputStream_92(this, flushCnt);
+			OutputStream mockout = new _OutputStream_99(this, flushCnt);
 			new PacketLineOut(mockout).End();
 			AssertBuffer("0000");
 			NUnit.Framework.Assert.AreEqual(1, flushCnt[0]);
 		}
 
-		private sealed class _OutputStream_92 : OutputStream
+		private sealed class _OutputStream_99 : OutputStream
 		{
-			public _OutputStream_92(PacketLineOutTest _enclosing, int[] flushCnt)
+			public _OutputStream_99(PacketLineOutTest _enclosing, int[] flushCnt)
 			{
 				this._enclosing = _enclosing;
 				this.flushCnt = flushCnt;
@@ -177,14 +177,14 @@ namespace NGit.Transport
 		public virtual void TestFlush()
 		{
 			int[] flushCnt = new int[1];
-			OutputStream mockout = new _OutputStream_143(flushCnt);
+			OutputStream mockout = new _OutputStream_154(flushCnt);
 			new PacketLineOut(mockout).Flush();
 			NUnit.Framework.Assert.AreEqual(1, flushCnt[0]);
 		}
 
-		private sealed class _OutputStream_143 : OutputStream
+		private sealed class _OutputStream_154 : OutputStream
 		{
-			public _OutputStream_143(int[] flushCnt)
+			public _OutputStream_154(int[] flushCnt)
 			{
 				this.flushCnt = flushCnt;
 			}

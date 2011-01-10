@@ -43,18 +43,21 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System.Collections.Generic;
 using NGit;
+using NGit.Junit;
 using NGit.Storage.File;
 using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class WindowCacheGetTest : SampleDataRepositoryTestCase
 	{
 		private IList<WindowCacheGetTest.TestObject> toLoad;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			toLoad = new AList<WindowCacheGetTest.TestObject>();

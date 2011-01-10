@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class FetchCommandTest : RepositoryTestCase
 	{
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
@@ -75,8 +76,9 @@ namespace NGit.Api
 			Git git1 = new Git(db);
 			RefSpec spec = new RefSpec("refs/heads/master:refs/heads/x");
 			git1.Fetch().SetRemote("test").SetRefSpecs(spec).Call();
-			AssertEquals(commit.Id, db.Resolve(commit.Id.GetName() + "^{commit}"));
-			AssertEquals(tag.Id, db.Resolve(tag.Id.GetName()));
+			NUnit.Framework.Assert.AreEqual(commit.Id, db.Resolve(commit.Id.GetName() + "^{commit}"
+				));
+			NUnit.Framework.Assert.AreEqual(tag.Id, db.Resolve(tag.Id.GetName()));
 		}
 	}
 }

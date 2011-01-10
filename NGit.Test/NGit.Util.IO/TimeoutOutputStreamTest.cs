@@ -68,7 +68,7 @@ namespace NGit.Util.IO
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			@out = new PipedOutputStream();
 			@in = new TimeoutOutputStreamTest.FullPipeInputStream(this, @out);
@@ -79,7 +79,7 @@ namespace NGit.Util.IO
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.TearDown]
-		protected virtual void TearDown()
+		public virtual void TearDown()
 		{
 			timer.Terminate();
 			foreach (Sharpen.Thread t in Active())
@@ -165,15 +165,15 @@ namespace NGit.Util.IO
 		public virtual void TestTimeout_flush_Success()
 		{
 			bool[] called = new bool[1];
-			os = new TimeoutOutputStream(new _OutputStream_142(called), timer);
+			os = new TimeoutOutputStream(new _OutputStream_152(called), timer);
 			os.SetTimeout(timeout);
 			os.Flush();
 			NUnit.Framework.Assert.IsTrue(called[0]);
 		}
 
-		private sealed class _OutputStream_142 : OutputStream
+		private sealed class _OutputStream_152 : OutputStream
 		{
-			public _OutputStream_142(bool[] called)
+			public _OutputStream_152(bool[] called)
 			{
 				this.called = called;
 			}
@@ -198,7 +198,7 @@ namespace NGit.Util.IO
 		public virtual void TestTimeout_flush_Timeout()
 		{
 			bool[] called = new bool[1];
-			os = new TimeoutOutputStream(new _OutputStream_160(called), timer);
+			os = new TimeoutOutputStream(new _OutputStream_171(called), timer);
 			os.SetTimeout(timeout);
 			BeginWrite();
 			try
@@ -214,9 +214,9 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.IsTrue(called[0]);
 		}
 
-		private sealed class _OutputStream_160 : OutputStream
+		private sealed class _OutputStream_171 : OutputStream
 		{
-			public _OutputStream_160(bool[] called)
+			public _OutputStream_171(bool[] called)
 			{
 				this.called = called;
 			}
@@ -252,15 +252,15 @@ namespace NGit.Util.IO
 		public virtual void TestTimeout_close_Success()
 		{
 			bool[] called = new bool[1];
-			os = new TimeoutOutputStream(new _OutputStream_193(called), timer);
+			os = new TimeoutOutputStream(new _OutputStream_205(called), timer);
 			os.SetTimeout(timeout);
 			os.Close();
 			NUnit.Framework.Assert.IsTrue(called[0]);
 		}
 
-		private sealed class _OutputStream_193 : OutputStream
+		private sealed class _OutputStream_205 : OutputStream
 		{
-			public _OutputStream_193(bool[] called)
+			public _OutputStream_205(bool[] called)
 			{
 				this.called = called;
 			}
@@ -285,7 +285,7 @@ namespace NGit.Util.IO
 		public virtual void TestTimeout_close_Timeout()
 		{
 			bool[] called = new bool[1];
-			os = new TimeoutOutputStream(new _OutputStream_211(called), timer);
+			os = new TimeoutOutputStream(new _OutputStream_224(called), timer);
 			os.SetTimeout(timeout);
 			BeginWrite();
 			try
@@ -301,9 +301,9 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.IsTrue(called[0]);
 		}
 
-		private sealed class _OutputStream_211 : OutputStream
+		private sealed class _OutputStream_224 : OutputStream
 		{
-			public _OutputStream_211(bool[] called)
+			public _OutputStream_224(bool[] called)
 			{
 				this.called = called;
 			}

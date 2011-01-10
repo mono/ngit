@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Events
 {
+	[NUnit.Framework.TestFixture]
 	public class ConfigChangeEventTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
@@ -55,7 +56,7 @@ namespace NGit.Events
 		public virtual void TestFileRepository_ChangeEventsOnlyOnSave()
 		{
 			ConfigChangedEvent[] events = new ConfigChangedEvent[1];
-			db.Listeners.AddConfigChangedListener(new _ConfigChangedListener_52(events));
+			db.Listeners.AddConfigChangedListener(new _ConfigChangedListener_58(events));
 			FileBasedConfig config = ((FileBasedConfig)db.GetConfig());
 			NUnit.Framework.Assert.IsNull(events[0]);
 			// set a value to some arbitrary key
@@ -78,9 +79,9 @@ namespace NGit.Events
 			NUnit.Framework.Assert.AreEqual(events[0].GetRepository(), db);
 		}
 
-		private sealed class _ConfigChangedListener_52 : ConfigChangedListener
+		private sealed class _ConfigChangedListener_58 : ConfigChangedListener
 		{
-			public _ConfigChangedListener_52(ConfigChangedEvent[] events)
+			public _ConfigChangedListener_58(ConfigChangedEvent[] events)
 			{
 				this.events = events;
 			}

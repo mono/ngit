@@ -56,6 +56,7 @@ using Sharpen;
 
 namespace NGit.Transport
 {
+	[NUnit.Framework.TestFixture]
 	public class ReceivePackRefFilterTest : LocalDiskRepositoryTestCase
 	{
 		private static readonly NullProgressMonitor PM = NullProgressMonitor.INSTANCE;
@@ -79,7 +80,8 @@ namespace NGit.Transport
 		private RevBlob b;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			src = CreateBareRepository();
@@ -97,7 +99,7 @@ namespace NGit.Transport
 			try
 			{
 				t.Fetch(PM, Collections.Singleton(new RefSpec("+refs/*:refs/*")));
-				AssertEquals(B, src.Resolve(R_MASTER));
+				NUnit.Framework.Assert.AreEqual(B, src.Resolve(R_MASTER));
 			}
 			finally
 			{
@@ -111,7 +113,8 @@ namespace NGit.Transport
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			if (src != null)
 			{
@@ -129,7 +132,7 @@ namespace NGit.Transport
 		public virtual void TestFilterHidesPrivate()
 		{
 			IDictionary<string, Ref> refs;
-			TransportLocal t = new _TransportLocal_131(this, src, UriOf(dst));
+			TransportLocal t = new _TransportLocal_145(this, src, UriOf(dst));
 			try
 			{
 				PushConnection c = t.OpenPush();
@@ -152,12 +155,12 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(1, refs.Count);
 			Ref master = refs.Get(R_MASTER);
 			NUnit.Framework.Assert.IsNotNull(master, "has master");
-			AssertEquals(B, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, master.GetObjectId());
 		}
 
-		private sealed class _TransportLocal_131 : TransportLocal
+		private sealed class _TransportLocal_145 : TransportLocal
 		{
-			public _TransportLocal_131(ReceivePackRefFilterTest _enclosing, Repository baseArg1
+			public _TransportLocal_145(ReceivePackRefFilterTest _enclosing, Repository baseArg1
 				, URIish baseArg2) : base(baseArg1, baseArg2)
 			{
 				this._enclosing = _enclosing;
@@ -203,7 +206,7 @@ namespace NGit.Transport
 			s.Update(R_MASTER, N);
 			// Push this new content to the remote, doing strict validation.
 			//
-			TransportLocal t = new _TransportLocal_193(this, src, UriOf(dst));
+			TransportLocal t = new _TransportLocal_208(this, src, UriOf(dst));
 			RemoteRefUpdate u = new RemoteRefUpdate(src, R_MASTER, R_MASTER, false, null, null
 				);
 			//
@@ -228,12 +231,12 @@ namespace NGit.Transport
 				);
 			NUnit.Framework.Assert.AreEqual(RemoteRefUpdate.Status.OK, u.GetStatus(), "master updated"
 				);
-			AssertEquals(N, dst.Resolve(R_MASTER));
+			NUnit.Framework.Assert.AreEqual(N, dst.Resolve(R_MASTER));
 		}
 
-		private sealed class _TransportLocal_193 : TransportLocal
+		private sealed class _TransportLocal_208 : TransportLocal
 		{
-			public _TransportLocal_193(ReceivePackRefFilterTest _enclosing, Repository baseArg1
+			public _TransportLocal_208(ReceivePackRefFilterTest _enclosing, Repository baseArg1
 				, URIish baseArg2) : base(baseArg1, baseArg2)
 			{
 				this._enclosing = _enclosing;
@@ -281,7 +284,7 @@ namespace NGit.Transport
 				Exception err = failed.InnerException;
 				NUnit.Framework.Assert.IsTrue(err is MissingObjectException);
 				MissingObjectException moe = (MissingObjectException)err;
-				AssertEquals(P, moe.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(P, moe.GetObjectId());
 			}
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
@@ -342,7 +345,7 @@ namespace NGit.Transport
 				Exception err = failed.InnerException;
 				NUnit.Framework.Assert.IsTrue(err is MissingObjectException);
 				MissingObjectException moe = (MissingObjectException)err;
-				AssertEquals(b, moe.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(b, moe.GetObjectId());
 			}
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
@@ -394,7 +397,7 @@ namespace NGit.Transport
 				Exception err = failed.InnerException;
 				NUnit.Framework.Assert.IsTrue(err is MissingObjectException);
 				MissingObjectException moe = (MissingObjectException)err;
-				AssertEquals(b, moe.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(b, moe.GetObjectId());
 			}
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
@@ -447,7 +450,7 @@ namespace NGit.Transport
 				Exception err = failed.InnerException;
 				NUnit.Framework.Assert.IsTrue(err is MissingObjectException);
 				MissingObjectException moe = (MissingObjectException)err;
-				AssertEquals(n, moe.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(n, moe.GetObjectId());
 			}
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();
@@ -497,7 +500,7 @@ namespace NGit.Transport
 				Exception err = failed.InnerException;
 				NUnit.Framework.Assert.IsTrue(err is MissingObjectException);
 				MissingObjectException moe = (MissingObjectException)err;
-				AssertEquals(t, moe.GetObjectId());
+				NUnit.Framework.Assert.AreEqual(t, moe.GetObjectId());
 			}
 			PacketLineIn r = AsPacketLineIn(outBuf);
 			string master = r.ReadString();

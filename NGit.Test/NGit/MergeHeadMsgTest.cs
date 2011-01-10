@@ -46,6 +46,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class MergeHeadMsgTest : RepositoryTestCase
 	{
 		private static readonly string mergeMsg = "merge a and b";
@@ -61,8 +62,9 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(Read(new FilePath(db.Directory, "MERGE_HEAD")), "0000000000000000000000000000000000000000\n1c6db447abdbb291b25f07be38ea0b1bf94947c5\n"
 				);
 			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads().Count, 2);
-			AssertEquals(db.ReadMergeHeads()[0], ObjectId.ZeroId);
-			AssertEquals(db.ReadMergeHeads()[1], ObjectId.FromString(sampleId));
+			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads()[0], ObjectId.ZeroId);
+			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads()[1], ObjectId.FromString(sampleId
+				));
 			// same test again, this time with lower-level io
 			FileOutputStream fos = new FileOutputStream(new FilePath(db.Directory, "MERGE_HEAD"
 				));
@@ -76,8 +78,9 @@ namespace NGit
 				fos.Close();
 			}
 			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads().Count, 2);
-			AssertEquals(db.ReadMergeHeads()[0], ObjectId.ZeroId);
-			AssertEquals(db.ReadMergeHeads()[1], ObjectId.FromString(sampleId));
+			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads()[0], ObjectId.ZeroId);
+			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads()[1], ObjectId.FromString(sampleId
+				));
 			db.WriteMergeHeads(Collections.EmptyList<ObjectId> ());
 			NUnit.Framework.Assert.AreEqual(Read(new FilePath(db.Directory, "MERGE_HEAD")), string.Empty
 				);
@@ -93,7 +96,8 @@ namespace NGit
 				fos.Close();
 			}
 			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads().Count, 1);
-			AssertEquals(db.ReadMergeHeads()[0], ObjectId.FromString(sampleId));
+			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads()[0], ObjectId.FromString(sampleId
+				));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

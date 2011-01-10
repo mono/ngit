@@ -46,6 +46,7 @@ using Sharpen;
 
 namespace NGit
 {
+	[NUnit.Framework.TestFixture]
 	public class TreeIteratorLeafOnlyTest : RepositoryTestCase
 	{
 		/// <summary>Empty tree</summary>

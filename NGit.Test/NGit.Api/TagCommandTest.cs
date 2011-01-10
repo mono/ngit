@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class TagCommandTest : RepositoryTestCase
 	{
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
@@ -65,7 +66,7 @@ namespace NGit.Api
 			Git git = new Git(db);
 			RevCommit commit = git.Commit().SetMessage("initial commit").Call();
 			RevTag tag = git.Tag().SetName("tag").Call();
-			AssertEquals(commit.Id, tag.GetObject().Id);
+			NUnit.Framework.Assert.AreEqual(commit.Id, tag.GetObject().Id);
 		}
 
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
@@ -83,7 +84,7 @@ namespace NGit.Api
 			RevCommit commit = git.Commit().SetMessage("second commit").Call();
 			git.Commit().SetMessage("third commit").Call();
 			RevTag tag = git.Tag().SetObjectId(commit).SetName("tag").Call();
-			AssertEquals(commit.Id, tag.GetObject().Id);
+			NUnit.Framework.Assert.AreEqual(commit.Id, tag.GetObject().Id);
 		}
 
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>

@@ -145,8 +145,6 @@
     <Compile Include="NGit.Storage.File\RefUpdateTest.cs" />
     <Compile Include="NGit.Storage.File\ReflogReaderTest.cs" />
     <Compile Include="NGit.Storage.File\RepositorySetupWorkDirTest.cs" />
-    <Compile Include="NGit.Storage.File\T0003_Basic.cs" />
-    <Compile Include="NGit.Storage.File\T0004_PackReader.cs" />
     <Compile Include="NGit.Storage.File\UnpackedObjectTest.cs" />
     <Compile Include="NGit.Storage.File\WindowCacheGetTest.cs" />
     <Compile Include="NGit.Storage.File\WindowCacheReconfigureTest.cs" />
@@ -167,7 +165,6 @@
     <Compile Include="NGit.Treewalk.Filter\TreeFilterTest.cs" />
     <Compile Include="NGit.Util\ChangeIdUtilTest.cs" />
     <Compile Include="NGit.Util\IntListTest.cs" />
-    <Compile Include="NGit.Util\JGitTestUtil.cs" />
     <Compile Include="NGit.Util\NBTest.cs" />
     <Compile Include="NGit.Util\QuotedStringBourneStyleTest.cs" />
     <Compile Include="NGit.Util\QuotedStringBourneUserPathStyleTest.cs" />
@@ -200,6 +197,9 @@
     <Compile Include="NGit.Api\RmCommandTest.cs" />
     <Compile Include="NGit.Notes\LeafBucketTest.cs" />
     <Compile Include="NGit.Notes\NoteMapTest.cs" />
+    <Compile Include="NGit.Junit\JGitTestUtil.cs" />
+    <Compile Include="NGit.Storage.File\T0003_BasicTest.cs" />
+    <Compile Include="NGit.Storage.File\T0004_PackReaderTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

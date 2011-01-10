@@ -49,7 +49,7 @@ namespace NGit.Notes
 	/// <summary>In-memory representation of a single note attached to one object.</summary>
 	/// <remarks>In-memory representation of a single note attached to one object.</remarks>
 	[System.Serializable]
-	internal class Note : ObjectId
+	public class Note : ObjectId
 	{
 		private ObjectId data;
 
@@ -65,7 +65,8 @@ namespace NGit.Notes
 			data = noteData;
 		}
 
-		internal virtual ObjectId GetData()
+		/// <returns>the note content</returns>
+		public virtual ObjectId GetData()
 		{
 			return data;
 		}

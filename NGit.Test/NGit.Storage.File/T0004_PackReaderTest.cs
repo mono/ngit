@@ -42,34 +42,50 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
-using NGit.Notes;
+using NGit.Junit;
+using NGit.Storage.File;
 using Sharpen;
 
-namespace NGit.Notes
+namespace NGit.Storage.File
 {
-	/// <summary>A tree that stores note objects.</summary>
-	/// <remarks>A tree that stores note objects.</remarks>
-	/// <seealso cref="FanoutBucket">FanoutBucket</seealso>
-	/// <seealso cref="LeafBucket">LeafBucket</seealso>
-	internal abstract class NoteBucket
+	[NUnit.Framework.TestFixture]
+	public class T0004_PackReaderTest : SampleDataRepositoryTestCase
 	{
-		/// <exception cref="System.IO.IOException"></exception>
-		internal abstract ObjectId Get(AnyObjectId objId, ObjectReader reader);
+		private static readonly string PACK_NAME = "pack-34be9032ac282b11fa9babdc2b2a93ca996c9c2f";
+
+		private static readonly FilePath TEST_PACK = JGitTestUtil.GetTestResourceFile(PACK_NAME
+			 + ".pack");
+
+		private static readonly FilePath TEST_IDX = JGitTestUtil.GetTestResourceFile(PACK_NAME
+			 + ".idx");
 
 		/// <exception cref="System.IO.IOException"></exception>
-		internal abstract Sharpen.Iterator<Note> Iterator(AnyObjectId objId, ObjectReader
-			 reader);
+		[NUnit.Framework.Test]
+		public virtual void Test003_lookupCompressedObject()
+		{
+			PackFile pr;
+			ObjectId id;
+			ObjectLoader or;
+			id = ObjectId.FromString("902d5476fa249b7abc9d84c611577a81381f0327");
+			pr = new PackFile(TEST_IDX, TEST_PACK);
+			or = pr.Get(new WindowCursor(null), id);
+			NUnit.Framework.Assert.IsNotNull(or);
+			NUnit.Framework.Assert.AreEqual(Constants.OBJ_TREE, or.GetType());
+			NUnit.Framework.Assert.AreEqual(35, or.GetSize());
+			pr.Close();
+		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		internal abstract int EstimateSize(AnyObjectId noteOn, ObjectReader or);
-
-		/// <exception cref="System.IO.IOException"></exception>
-		internal abstract InMemoryNoteBucket Set(AnyObjectId noteOn, AnyObjectId noteData
-			, ObjectReader reader);
-
-		/// <exception cref="System.IO.IOException"></exception>
-		internal abstract ObjectId WriteTree(ObjectInserter inserter);
-
-		internal abstract ObjectId GetTreeId();
+		[NUnit.Framework.Test]
+		public virtual void Test004_lookupDeltifiedObject()
+		{
+			ObjectId id;
+			ObjectLoader or;
+			id = ObjectId.FromString("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259");
+			or = db.Open(id);
+			NUnit.Framework.Assert.IsNotNull(or);
+			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, or.GetType());
+			NUnit.Framework.Assert.AreEqual(18009, or.GetSize());
+		}
 	}
 }

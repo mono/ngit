@@ -51,6 +51,7 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class RefDirectoryTest : LocalDiskRepositoryTestCase
 	{
 		private Repository diskRepo;
@@ -66,7 +67,8 @@ namespace NGit.Storage.File
 		private RevTag v1_0;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			diskRepo = CreateBareRepository();
@@ -137,7 +139,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", master.GetName());
 			NUnit.Framework.Assert.IsFalse(master.IsSymbolic());
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, master.GetStorage());
-			AssertEquals(A, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, master.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -155,7 +157,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(Constants.HEAD, head.GetName());
 			NUnit.Framework.Assert.IsFalse(head.IsSymbolic());
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, head.GetStorage());
-			AssertEquals(A, head.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, head.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -175,11 +177,11 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(Constants.HEAD, head.GetName());
 			NUnit.Framework.Assert.IsFalse(head.IsSymbolic());
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, head.GetStorage());
-			AssertEquals(A, head.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, head.GetObjectId());
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", master.GetName());
 			NUnit.Framework.Assert.IsFalse(master.IsSymbolic());
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, master.GetStorage());
-			AssertEquals(B, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, master.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -196,7 +198,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(name, r.GetName());
 			NUnit.Framework.Assert.IsFalse(r.IsSymbolic());
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, r.GetStorage());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -213,8 +215,8 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsFalse(all.ContainsKey(Constants.HEAD), "no HEAD");
 			a = all.Get("refs/heads/A");
 			b = all.Get("refs/heads/B");
-			AssertEquals(A, a.GetObjectId());
-			AssertEquals(B, b.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, b.GetObjectId());
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
 			NUnit.Framework.Assert.AreEqual("refs/heads/B", b.GetName());
 		}
@@ -231,7 +233,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(1, heads.Count);
 			a = heads.Get("master");
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", a.GetName());
-			AssertEquals(B, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, a.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -246,7 +248,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(1, heads.Count);
 			a = heads.Get("refs/heads/A");
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
-			AssertEquals(A, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, a.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -261,7 +263,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(1, heads.Count);
 			a = heads.Get("refs/heads/A");
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
-			AssertEquals(A, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, a.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -276,7 +278,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(1, heads.Count);
 			a = heads.Get("refs/heads/A");
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
-			AssertEquals(A, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, a.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -303,10 +305,10 @@ namespace NGit.Storage.File
 			b = heads.Get("refs/heads/B");
 			c = heads.Get("refs/heads/C");
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
-			AssertEquals(A, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, a.GetObjectId());
 			NUnit.Framework.Assert.IsNull(b, "no refs/heads/B");
 			NUnit.Framework.Assert.AreEqual("refs/heads/C", c.GetName());
-			AssertEquals(A, c.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, c.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -338,8 +340,8 @@ namespace NGit.Storage.File
 			b = heads.Get("B");
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
 			NUnit.Framework.Assert.AreEqual("refs/heads/B", b.GetName());
-			AssertEquals(A, a.GetObjectId());
-			AssertEquals(B, b.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, b.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -354,7 +356,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(1, heads.Count);
 			a = heads.Get("A");
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
-			AssertEquals(A, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, a.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -371,9 +373,9 @@ namespace NGit.Storage.File
 			master = heads.Get("master");
 			other = heads.Get("other");
 			NUnit.Framework.Assert.AreEqual("refs/heads/master", master.GetName());
-			AssertEquals(A, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, master.GetObjectId());
 			NUnit.Framework.Assert.AreEqual("refs/heads/other", other.GetName());
-			AssertEquals(A, other.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, other.GetObjectId());
 			NUnit.Framework.Assert.AreSame(master, other.GetTarget());
 		}
 
@@ -393,8 +395,8 @@ namespace NGit.Storage.File
 			b = heads.Get("B");
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", a.GetName());
 			NUnit.Framework.Assert.AreEqual("refs/heads/B", b.GetName());
-			AssertEquals(A, a.GetObjectId());
-			AssertEquals(B, b.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, b.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -409,7 +411,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(1, tags.Count);
 			a = tags.Get("v1.0");
 			NUnit.Framework.Assert.AreEqual("refs/tags/v1.0", a.GetName());
-			AssertEquals(v1_0, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, a.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -424,7 +426,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(1, tags.Count);
 			a = tags.Get("v1.0");
 			NUnit.Framework.Assert.AreEqual("refs/tags/v1.0", a.GetName());
-			AssertEquals(v1_0, a.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, a.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -445,7 +447,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsTrue(next.ContainsKey("refs/heads/next"));
 			orig_r = orig.Get("refs/heads/master");
 			next_r = next.Get("refs/heads/master");
-			AssertEquals(A, orig_r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, orig_r.GetObjectId());
 			NUnit.Framework.Assert.AreSame(orig_r, next_r, "uses cached instance");
 			NUnit.Framework.Assert.AreSame(orig_r, orig.Get(Constants.HEAD).GetTarget(), "same HEAD"
 				);
@@ -453,7 +455,7 @@ namespace NGit.Storage.File
 				);
 			next_r = next.Get("refs/heads/next");
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, next_r.GetStorage());
-			AssertEquals(B, next_r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, next_r.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -486,11 +488,11 @@ namespace NGit.Storage.File
 			IDictionary<string, Ref> all;
 			WriteLooseRef("refs/heads/master", A);
 			all = refdir.GetRefs(RefDatabase.ALL);
-			AssertEquals(A, all.Get(Constants.HEAD).GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, all.Get(Constants.HEAD).GetObjectId());
 			WriteLooseRef("refs/heads/master", B);
 			BUG_WorkAroundRacyGitIssues("refs/heads/master");
 			all = refdir.GetRefs(RefDatabase.ALL);
-			AssertEquals(B, all.Get(Constants.HEAD).GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, all.Get(Constants.HEAD).GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -500,11 +502,11 @@ namespace NGit.Storage.File
 			IDictionary<string, Ref> all;
 			WriteLooseRef("refs/heads/master", A);
 			all = refdir.GetRefs(RefDatabase.ALL);
-			AssertEquals(A, all.Get(Constants.HEAD).GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, all.Get(Constants.HEAD).GetObjectId());
 			WriteLooseRef("refs/heads/master", B);
 			BUG_WorkAroundRacyGitIssues("refs/heads/master");
 			Ref master = refdir.GetRef("refs/heads/master");
-			AssertEquals(B, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, master.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -526,7 +528,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsFalse(next.ContainsKey("refs/heads/B"));
 			orig_r = orig.Get("refs/heads/master");
 			next_r = next.Get("refs/heads/master");
-			AssertEquals(A, orig_r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, orig_r.GetObjectId());
 			NUnit.Framework.Assert.AreSame(orig_r, next_r, "uses cached instance");
 			NUnit.Framework.Assert.AreSame(orig_r, orig.Get(Constants.HEAD).GetTarget(), "same HEAD"
 				);
@@ -534,7 +536,7 @@ namespace NGit.Storage.File
 				);
 			orig_r = orig.Get("refs/heads/B");
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, orig_r.GetStorage());
-			AssertEquals(B, orig_r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, orig_r.GetObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -544,7 +546,7 @@ namespace NGit.Storage.File
 			IDictionary<string, Ref> all;
 			WriteLooseRef("refs/heads/master", A);
 			all = refdir.GetRefs(RefDatabase.ALL);
-			AssertEquals(A, all.Get(Constants.HEAD).GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, all.Get(Constants.HEAD).GetObjectId());
 			DeleteLooseRef("refs/heads/master");
 			NUnit.Framework.Assert.IsNull(refdir.GetRef("refs/heads/master"));
 			NUnit.Framework.Assert.IsTrue(refdir.GetRefs(RefDatabase.ALL).IsEmpty());
@@ -610,7 +612,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsFalse(next.ContainsKey("master"));
 			orig_r = orig.Get("refs/heads/B");
 			next_r = next.Get("B");
-			AssertEquals(B, orig_r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, orig_r.GetObjectId());
 			NUnit.Framework.Assert.AreSame(orig_r, next_r, "uses cached instance");
 		}
 
@@ -664,27 +666,27 @@ namespace NGit.Storage.File
 			r = all.Get("refs/1");
 			NUnit.Framework.Assert.IsNotNull(r, "has 1");
 			NUnit.Framework.Assert.AreEqual("refs/1", r.GetName());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(r.IsSymbolic());
 			r = r.GetTarget();
 			NUnit.Framework.Assert.AreEqual("refs/2", r.GetName());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(r.IsSymbolic());
 			r = r.GetTarget();
 			NUnit.Framework.Assert.AreEqual("refs/3", r.GetName());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(r.IsSymbolic());
 			r = r.GetTarget();
 			NUnit.Framework.Assert.AreEqual("refs/4", r.GetName());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(r.IsSymbolic());
 			r = r.GetTarget();
 			NUnit.Framework.Assert.AreEqual("refs/5", r.GetName());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(r.IsSymbolic());
 			r = r.GetTarget();
 			NUnit.Framework.Assert.AreEqual("refs/end", r.GetName());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(r.IsSymbolic());
 			WriteLooseRef("refs/5", "ref: refs/6\n");
 			WriteLooseRef("refs/6", "ref: refs/end\n");
@@ -710,17 +712,17 @@ namespace NGit.Storage.File
 			Ref master = all.Get("refs/heads/master");
 			Ref other = all.Get("refs/heads/other");
 			Ref tag = all.Get("refs/tags/v1.0");
-			AssertEquals(A, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, master.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(master.IsPeeled());
 			NUnit.Framework.Assert.IsNull(master.GetPeeledObjectId());
-			AssertEquals(B, other.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, other.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(other.IsPeeled());
 			NUnit.Framework.Assert.IsNull(other.GetPeeledObjectId());
 			NUnit.Framework.Assert.AreSame(master, head.GetTarget());
-			AssertEquals(A, head.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, head.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(head.IsPeeled());
 			NUnit.Framework.Assert.IsNull(head.GetPeeledObjectId());
-			AssertEquals(v1_0, tag.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, tag.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(tag.IsPeeled());
 			NUnit.Framework.Assert.IsNull(tag.GetPeeledObjectId());
 		}
@@ -738,17 +740,17 @@ namespace NGit.Storage.File
 			Ref master = refdir.GetRef("refs/heads/master");
 			Ref other = refdir.GetRef("refs/heads/other");
 			Ref tag = refdir.GetRef("refs/tags/v1.0");
-			AssertEquals(A, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, master.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(master.IsPeeled());
 			NUnit.Framework.Assert.IsNull(master.GetPeeledObjectId());
-			AssertEquals(B, other.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, other.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(other.IsPeeled());
 			NUnit.Framework.Assert.IsNull(other.GetPeeledObjectId());
 			NUnit.Framework.Assert.AreSame(master, head.GetTarget());
-			AssertEquals(A, head.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, head.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(head.IsPeeled());
 			NUnit.Framework.Assert.IsNull(head.GetPeeledObjectId());
-			AssertEquals(v1_0, tag.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, tag.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(tag.IsPeeled());
 			NUnit.Framework.Assert.IsNull(tag.GetPeeledObjectId());
 		}
@@ -771,19 +773,19 @@ namespace NGit.Storage.File
 			Ref master = all.Get("refs/heads/master");
 			Ref other = all.Get("refs/heads/other");
 			Ref tag = all.Get("refs/tags/v1.0");
-			AssertEquals(A, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, master.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(master.IsPeeled());
 			NUnit.Framework.Assert.IsNull(master.GetPeeledObjectId());
-			AssertEquals(B, other.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, other.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(other.IsPeeled());
 			NUnit.Framework.Assert.IsNull(other.GetPeeledObjectId());
 			NUnit.Framework.Assert.AreSame(master, head.GetTarget());
-			AssertEquals(A, head.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, head.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(head.IsPeeled());
 			NUnit.Framework.Assert.IsNull(head.GetPeeledObjectId());
-			AssertEquals(v1_0, tag.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, tag.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(tag.IsPeeled());
-			AssertEquals(v1_0.GetObject(), tag.GetPeeledObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0.GetObject(), tag.GetPeeledObjectId());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -816,7 +818,7 @@ namespace NGit.Storage.File
 				+ "\tbranch 'master' of git://egit.eclipse.org/jgit\n");
 			Ref r = refdir.GetRef("FETCH_HEAD");
 			NUnit.Framework.Assert.IsFalse(r.IsSymbolic());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 			NUnit.Framework.Assert.AreEqual("FETCH_HEAD", r.GetName());
 			NUnit.Framework.Assert.IsFalse(r.IsPeeled());
 			NUnit.Framework.Assert.IsNull(r.GetPeeledObjectId());
@@ -830,7 +832,7 @@ namespace NGit.Storage.File
 				 + "#and even more junk\n");
 			Ref r = refdir.GetRef("refs/heads/A");
 			NUnit.Framework.Assert.IsFalse(r.IsSymbolic());
-			AssertEquals(A, r.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, r.GetObjectId());
 			NUnit.Framework.Assert.AreEqual("refs/heads/A", r.GetName());
 			NUnit.Framework.Assert.IsFalse(r.IsPeeled());
 			NUnit.Framework.Assert.IsNull(r.GetPeeledObjectId());
@@ -920,11 +922,11 @@ namespace NGit.Storage.File
 			WriteLooseRef("refs/tags/current", "ref: refs/tags/v1_0\n");
 			Ref tag = refdir.GetRef("refs/tags/v1_0");
 			Ref cur = refdir.GetRef("refs/tags/current");
-			AssertEquals(v1_0, tag.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, tag.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(tag.IsSymbolic());
 			NUnit.Framework.Assert.IsFalse(tag.IsPeeled());
 			NUnit.Framework.Assert.IsNull(tag.GetPeeledObjectId());
-			AssertEquals(v1_0, cur.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, cur.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(cur.IsSymbolic());
 			NUnit.Framework.Assert.IsFalse(cur.IsPeeled());
 			NUnit.Framework.Assert.IsNull(cur.GetPeeledObjectId());
@@ -933,23 +935,23 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreNotSame(tag, tag_p);
 			NUnit.Framework.Assert.IsFalse(tag_p.IsSymbolic());
 			NUnit.Framework.Assert.IsTrue(tag_p.IsPeeled());
-			AssertEquals(v1_0, tag_p.GetObjectId());
-			AssertEquals(v1_0.GetObject(), tag_p.GetPeeledObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, tag_p.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0.GetObject(), tag_p.GetPeeledObjectId());
 			NUnit.Framework.Assert.AreSame(tag_p, refdir.Peel(tag_p));
 			NUnit.Framework.Assert.AreNotSame(cur, cur_p);
 			NUnit.Framework.Assert.AreEqual("refs/tags/current", cur_p.GetName());
 			NUnit.Framework.Assert.IsTrue(cur_p.IsSymbolic());
 			NUnit.Framework.Assert.AreEqual("refs/tags/v1_0", cur_p.GetTarget().GetName());
 			NUnit.Framework.Assert.IsTrue(cur_p.IsPeeled());
-			AssertEquals(v1_0, cur_p.GetObjectId());
-			AssertEquals(v1_0.GetObject(), cur_p.GetPeeledObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, cur_p.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0.GetObject(), cur_p.GetPeeledObjectId());
 			// reuses cached peeling later, but not immediately due to
 			// the implementation so we have to fetch it once.
 			Ref tag_p2 = refdir.GetRef("refs/tags/v1_0");
 			NUnit.Framework.Assert.IsFalse(tag_p2.IsSymbolic());
 			NUnit.Framework.Assert.IsTrue(tag_p2.IsPeeled());
-			AssertEquals(v1_0, tag_p2.GetObjectId());
-			AssertEquals(v1_0.GetObject(), tag_p2.GetPeeledObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0, tag_p2.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(v1_0.GetObject(), tag_p2.GetPeeledObjectId());
 			NUnit.Framework.Assert.AreSame(tag_p2, refdir.GetRef("refs/tags/v1_0"));
 			NUnit.Framework.Assert.AreSame(tag_p2, refdir.GetRef("refs/tags/current").GetTarget
 				());
@@ -962,19 +964,19 @@ namespace NGit.Storage.File
 		{
 			WriteLooseRef("refs/heads/master", A);
 			Ref master = refdir.GetRef("refs/heads/master");
-			AssertEquals(A, master.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, master.GetObjectId());
 			NUnit.Framework.Assert.IsFalse(master.IsPeeled());
 			NUnit.Framework.Assert.IsNull(master.GetPeeledObjectId());
 			Ref master_p = refdir.Peel(master);
 			NUnit.Framework.Assert.AreNotSame(master, master_p);
-			AssertEquals(A, master_p.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, master_p.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(master_p.IsPeeled());
 			NUnit.Framework.Assert.IsNull(master_p.GetPeeledObjectId());
 			// reuses cached peeling later, but not immediately due to
 			// the implementation so we have to fetch it once.
 			Ref master_p2 = refdir.GetRef("refs/heads/master");
 			NUnit.Framework.Assert.AreNotSame(master, master_p2);
-			AssertEquals(A, master_p2.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(A, master_p2.GetObjectId());
 			NUnit.Framework.Assert.IsTrue(master_p2.IsPeeled());
 			NUnit.Framework.Assert.IsNull(master_p2.GetPeeledObjectId());
 			NUnit.Framework.Assert.AreSame(master_p2, refdir.Peel(master_p2));

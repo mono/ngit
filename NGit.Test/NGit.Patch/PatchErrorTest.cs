@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using NGit.Junit;
 using NGit.Patch;
 using Sharpen;
 
@@ -179,7 +180,7 @@ namespace NGit.Patch
 		/// <exception cref="System.IO.IOException"></exception>
 		private NGit.Patch.Patch ParseTestPatchFile()
 		{
-			string patchFile = Sharpen.Extensions.GetTestName(this) + ".patch";
+			string patchFile = Sharpen.Extensions.GetTestName() + ".patch";
 			InputStream @in = GetType().GetResourceAsStream(patchFile);
 			if (@in == null)
 			{

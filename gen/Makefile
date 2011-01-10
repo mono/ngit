@@ -128,6 +128,7 @@ convert: validate-pull
 	@echo -e "$(SB)Prepare git directories$(EB)"
 	$(NGIT_GIT) reset --hard
 	$(JGIT_GIT) checkout merged
+	rm -rf source/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java
 	$(NGIT_GIT) reset --hard
 	$(NGIT_GIT) checkout master
 	$(NGIT_GIT) branch -D last 2> /dev/null || true

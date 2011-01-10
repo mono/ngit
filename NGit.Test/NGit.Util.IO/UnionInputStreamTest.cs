@@ -146,14 +146,14 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.AreEqual(1, u.Skip(5));
 			NUnit.Framework.Assert.AreEqual(0, u.Skip(5));
 			NUnit.Framework.Assert.AreEqual(-1, u.Read());
-			u.Add(new _ByteArrayInputStream_141(new byte[] { 20, 30 }));
+			u.Add(new _ByteArrayInputStream_152(new byte[] { 20, 30 }));
 			NUnit.Framework.Assert.AreEqual(2, u.Skip(8));
 			NUnit.Framework.Assert.AreEqual(-1, u.Read());
 		}
 
-		private sealed class _ByteArrayInputStream_141 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_152 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_141(byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_152(byte[] baseArg1) : base(baseArg1)
 			{
 			}
 
@@ -169,8 +169,8 @@ namespace NGit.Util.IO
 		{
 			UnionInputStream u = new UnionInputStream();
 			bool[] closed = new bool[2];
-			u.Add(new _ByteArrayInputStream_153(closed, new byte[] { 1 }));
-			u.Add(new _ByteArrayInputStream_158(closed, new byte[] { 2 }));
+			u.Add(new _ByteArrayInputStream_165(closed, new byte[] { 1 }));
+			u.Add(new _ByteArrayInputStream_170(closed, new byte[] { 2 }));
 			NUnit.Framework.Assert.IsFalse(closed[0]);
 			NUnit.Framework.Assert.IsFalse(closed[1]);
 			NUnit.Framework.Assert.AreEqual(1, u.Read());
@@ -184,9 +184,9 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.IsTrue(closed[1]);
 		}
 
-		private sealed class _ByteArrayInputStream_153 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_165 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_153(bool[] closed, byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_165(bool[] closed, byte[] baseArg1) : base(baseArg1)
 			{
 				this.closed = closed;
 			}
@@ -199,9 +199,9 @@ namespace NGit.Util.IO
 			private readonly bool[] closed;
 		}
 
-		private sealed class _ByteArrayInputStream_158 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_170 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_158(bool[] closed, byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_170(bool[] closed, byte[] baseArg1) : base(baseArg1)
 			{
 				this.closed = closed;
 			}
@@ -220,8 +220,8 @@ namespace NGit.Util.IO
 		{
 			UnionInputStream u = new UnionInputStream();
 			bool[] closed = new bool[2];
-			u.Add(new _ByteArrayInputStream_183(closed, new byte[] { 1 }));
-			u.Add(new _ByteArrayInputStream_188(closed, new byte[] { 2 }));
+			u.Add(new _ByteArrayInputStream_196(closed, new byte[] { 1 }));
+			u.Add(new _ByteArrayInputStream_201(closed, new byte[] { 2 }));
 			NUnit.Framework.Assert.IsFalse(closed[0]);
 			NUnit.Framework.Assert.IsFalse(closed[1]);
 			u.Close();
@@ -229,9 +229,9 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.IsTrue(closed[1]);
 		}
 
-		private sealed class _ByteArrayInputStream_183 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_196 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_183(bool[] closed, byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_196(bool[] closed, byte[] baseArg1) : base(baseArg1)
 			{
 				this.closed = closed;
 			}
@@ -244,9 +244,9 @@ namespace NGit.Util.IO
 			private readonly bool[] closed;
 		}
 
-		private sealed class _ByteArrayInputStream_188 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_201 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_188(bool[] closed, byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_201(bool[] closed, byte[] baseArg1) : base(baseArg1)
 			{
 				this.closed = closed;
 			}
@@ -263,7 +263,7 @@ namespace NGit.Util.IO
 		public virtual void TestExceptionDuringClose()
 		{
 			UnionInputStream u = new UnionInputStream();
-			u.Add(new _ByteArrayInputStream_205(new byte[] { 1 }));
+			u.Add(new _ByteArrayInputStream_219(new byte[] { 1 }));
 			try
 			{
 				u.Close();
@@ -275,9 +275,9 @@ namespace NGit.Util.IO
 			}
 		}
 
-		private sealed class _ByteArrayInputStream_205 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_219 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_205(byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_219(byte[] baseArg1) : base(baseArg1)
 			{
 			}
 

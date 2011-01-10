@@ -52,6 +52,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class RebaseCommandTest : RepositoryTestCase
 	{
 		private static readonly string FILE1 = "file1";
@@ -59,7 +60,8 @@ namespace NGit.Api
 		protected internal Git git;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			this.git = new Git(db);
@@ -192,8 +194,8 @@ namespace NGit.Api
 			CheckFile(theFile, "1master\n2\n3\ntopic\n");
 			// our old branch should be checked out again
 			NUnit.Framework.Assert.AreEqual("refs/heads/topic", db.GetFullBranch());
-			AssertEquals(lastMasterChange, new RevWalk(db).ParseCommit(db.Resolve(Constants.HEAD
-				)).GetParent(0));
+			NUnit.Framework.Assert.AreEqual(lastMasterChange, new RevWalk(db).ParseCommit(db.
+				Resolve(Constants.HEAD)).GetParent(0));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -227,8 +229,8 @@ namespace NGit.Api
 			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.OK, res.GetStatus());
 			CheckFile(theFile, "1master\n2\n3\ntopic\n");
-			AssertEquals(lastMasterChange, new RevWalk(db).ParseCommit(db.Resolve(Constants.HEAD
-				)).GetParent(0));
+			NUnit.Framework.Assert.AreEqual(lastMasterChange, new RevWalk(db).ParseCommit(db.
+				Resolve(Constants.HEAD)).GetParent(0));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -261,8 +263,8 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file3").Exists());
 			// our old branch should be checked out again
 			NUnit.Framework.Assert.AreEqual("refs/heads/file3", db.GetFullBranch());
-			AssertEquals(addFile2, new RevWalk(db).ParseCommit(db.Resolve(Constants.HEAD)).GetParent
-				(0));
+			NUnit.Framework.Assert.AreEqual(addFile2, new RevWalk(db).ParseCommit(db.Resolve(
+				Constants.HEAD)).GetParent(0));
 			CheckoutBranch("refs/heads/file2");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, FILE1).Exists());
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
@@ -293,7 +295,7 @@ namespace NGit.Api
 				, "1topic", "2", "3", "topic4");
 			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
-			AssertEquals(conflicting, res.GetCurrentCommit());
+			NUnit.Framework.Assert.AreEqual(conflicting, res.GetCurrentCommit());
 			CheckFile(FILE1, "<<<<<<< OURS\n1master\n=======\n1topic\n>>>>>>> THEIRS\n2\n3\ntopic4"
 				);
 			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, db.GetRepositoryState
@@ -319,7 +321,8 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("refs/heads/topic", db.GetFullBranch());
 			CheckFile(FILE1, "1topic", "2", "3", "topic4");
 			RevWalk rw = new RevWalk(db);
-			AssertEquals(lastTopicCommit, rw.ParseCommit(db.Resolve(Constants.HEAD)));
+			NUnit.Framework.Assert.AreEqual(lastTopicCommit, rw.ParseCommit(db.Resolve(Constants
+				.HEAD)));
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
 			// rebase- dir in .git must be deleted
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, "rebase-merge").Exists(
@@ -701,7 +704,7 @@ namespace NGit.Api
 				).Call();
 			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
-			AssertEquals(conflicting, res.GetCurrentCommit());
+			NUnit.Framework.Assert.AreEqual(conflicting, res.GetCurrentCommit());
 			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, db.GetRepositoryState
 				());
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "rebase-merge").Exists()
@@ -719,7 +722,8 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(res.GetStatus(), RebaseResult.Status.ABORTED);
 			NUnit.Framework.Assert.AreEqual("refs/heads/topic", db.GetFullBranch());
 			RevWalk rw = new RevWalk(db);
-			AssertEquals(conflicting, rw.ParseCommit(db.Resolve(Constants.HEAD)));
+			NUnit.Framework.Assert.AreEqual(conflicting, rw.ParseCommit(db.Resolve(Constants.
+				HEAD)));
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
 			// rebase- dir in .git must be deleted
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, "rebase-merge").Exists(

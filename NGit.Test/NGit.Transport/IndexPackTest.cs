@@ -59,6 +59,7 @@ namespace NGit.Transport
 	/// to make sure they contain the expected objects (well we don't test
 	/// for all of them unless the packs are very small).
 	/// </remarks>
+	[NUnit.Framework.TestFixture]
 	public class IndexPackTest : RepositoryTestCase
 	{
 		/// <summary>Test indexing one of the test packs in the egit repo.</summary>

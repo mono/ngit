@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Revplot
 {
+	[NUnit.Framework.TestFixture]
 	public class PlotCommitListTest : RevWalkTestCase
 	{
 		internal class CommitListAssert

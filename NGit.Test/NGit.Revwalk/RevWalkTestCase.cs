@@ -62,7 +62,7 @@ namespace NGit.Revwalk
 		protected internal RevWalk rw;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		public override void SetUp()
 		{
 			base.SetUp();
 			util = new TestRepository<Repository>(db, CreateRevWalk());

@@ -50,6 +50,7 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
+	[NUnit.Framework.TestFixture]
 	public class UnpackedObjectTest : LocalDiskRepositoryTestCase
 	{
 		private int streamThreshold = 16 * 1024;
@@ -60,20 +61,30 @@ namespace NGit.Storage.File
 
 		private WindowCursor wc;
 
+		private TestRng GetRng()
+		{
+			if (rng == null)
+			{
+				rng = new TestRng(Sharpen.Extensions.GetTestName());
+			}
+			return rng;
+		}
+
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			WindowCacheConfig cfg = new WindowCacheConfig();
 			cfg.SetStreamFileThreshold(streamThreshold);
 			WindowCache.Reconfigure(cfg);
-			rng = new TestRng(Sharpen.Extensions.GetTestName(this));
 			repo = CreateBareRepository();
 			wc = (WindowCursor)repo.NewObjectReader();
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void TearDown()
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
 		{
 			if (wc != null)
 			{
@@ -88,7 +99,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_SmallObject()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			byte[] gz = CompressStandardFormat(type, data);
 			ObjectId id = ObjectId.ZeroId;
 			ObjectLoader ol = UnpackedObject.Open(new ByteArrayInputStream(gz), Path(id), id, 
@@ -115,7 +126,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_LargeObject()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(streamThreshold + 5);
+			byte[] data = GetRng().NextBytes(streamThreshold + 5);
 			ObjectId id = new ObjectInserter.Formatter().IdFor(type, data);
 			Write(id, CompressStandardFormat(type, data));
 			ObjectLoader ol;
@@ -160,7 +171,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_NegativeSize()
 		{
 			ObjectId id = ObjectId.ZeroId;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			try
 			{
 				byte[] gz = CompressStandardFormat("blob", "-1", data);
@@ -179,7 +190,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_InvalidType()
 		{
 			ObjectId id = ObjectId.ZeroId;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			try
 			{
 				byte[] gz = CompressStandardFormat("not.a.type", "1", data);
@@ -217,7 +228,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_GarbageAfterSize()
 		{
 			ObjectId id = ObjectId.ZeroId;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			try
 			{
 				byte[] gz = CompressStandardFormat("blob", "1foo", data);
@@ -236,7 +247,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_SmallObject_CorruptZLibStream()
 		{
 			ObjectId id = ObjectId.ZeroId;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			try
 			{
 				byte[] gz = CompressStandardFormat(Constants.OBJ_BLOB, data);
@@ -259,7 +270,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_SmallObject_TruncatedZLibStream()
 		{
 			ObjectId id = ObjectId.ZeroId;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			try
 			{
 				byte[] gz = CompressStandardFormat(Constants.OBJ_BLOB, data);
@@ -280,7 +291,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_SmallObject_TrailingGarbage()
 		{
 			ObjectId id = ObjectId.ZeroId;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			try
 			{
 				byte[] gz = CompressStandardFormat(Constants.OBJ_BLOB, data);
@@ -301,7 +312,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_LargeObject_CorruptZLibStream()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(streamThreshold + 5);
+			byte[] data = GetRng().NextBytes(streamThreshold + 5);
 			ObjectId id = new ObjectInserter.Formatter().IdFor(type, data);
 			byte[] gz = CompressStandardFormat(type, data);
 			gz[gz.Length - 1] = 0;
@@ -345,7 +356,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_LargeObject_TruncatedZLibStream()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(streamThreshold + 5);
+			byte[] data = GetRng().NextBytes(streamThreshold + 5);
 			ObjectId id = new ObjectInserter.Formatter().IdFor(type, data);
 			byte[] gz = CompressStandardFormat(type, data);
 			byte[] tr = new byte[gz.Length - 1];
@@ -383,7 +394,7 @@ namespace NGit.Storage.File
 		public virtual void TestStandardFormat_LargeObject_TrailingGarbage()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(streamThreshold + 5);
+			byte[] data = GetRng().NextBytes(streamThreshold + 5);
 			ObjectId id = new ObjectInserter.Formatter().IdFor(type, data);
 			byte[] gz = CompressStandardFormat(type, data);
 			byte[] tr = new byte[gz.Length + 1];
@@ -421,7 +432,7 @@ namespace NGit.Storage.File
 		public virtual void TestPackFormat_SmallObject()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			byte[] gz = CompressPackFormat(type, data);
 			ObjectId id = ObjectId.ZeroId;
 			ObjectLoader ol = UnpackedObject.Open(new ByteArrayInputStream(gz), Path(id), id, 
@@ -448,7 +459,7 @@ namespace NGit.Storage.File
 		public virtual void TestPackFormat_LargeObject()
 		{
 			int type = Constants.OBJ_BLOB;
-			byte[] data = rng.NextBytes(streamThreshold + 5);
+			byte[] data = GetRng().NextBytes(streamThreshold + 5);
 			ObjectId id = new ObjectInserter.Formatter().IdFor(type, data);
 			Write(id, CompressPackFormat(type, data));
 			ObjectLoader ol;
@@ -493,7 +504,7 @@ namespace NGit.Storage.File
 		public virtual void TestPackFormat_DeltaNotAllowed()
 		{
 			ObjectId id = ObjectId.ZeroId;
-			byte[] data = rng.NextBytes(300);
+			byte[] data = GetRng().NextBytes(300);
 			try
 			{
 				byte[] gz = CompressPackFormat(Constants.OBJ_OFS_DELTA, data);

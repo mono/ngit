@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System.Collections.Generic;
 using System.Text;
+using NGit.Junit;
 using NGit.Patch;
 using Sharpen;
 
@@ -122,7 +123,7 @@ namespace NGit.Patch
 		/// <exception cref="System.IO.IOException"></exception>
 		private NGit.Patch.Patch ParseTestPatchFile()
 		{
-			string patchFile = Sharpen.Extensions.GetTestName(this) + ".patch";
+			string patchFile = Sharpen.Extensions.GetTestName() + ".patch";
 			InputStream @in = GetType().GetResourceAsStream(patchFile);
 			if (@in == null)
 			{
@@ -145,7 +146,7 @@ namespace NGit.Patch
 		/// <exception cref="System.IO.IOException"></exception>
 		private string ReadTestPatchFile(Encoding cs)
 		{
-			string patchFile = Sharpen.Extensions.GetTestName(this) + ".patch";
+			string patchFile = Sharpen.Extensions.GetTestName() + ".patch";
 			InputStream @in = GetType().GetResourceAsStream(patchFile);
 			if (@in == null)
 			{

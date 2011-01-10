@@ -52,6 +52,7 @@ namespace NGit.Ignore
 {
 	/// <summary>Tests ignore node behavior on the local filesystem.</summary>
 	/// <remarks>Tests ignore node behavior on the local filesystem.</remarks>
+	[NUnit.Framework.TestFixture]
 	public class IgnoreNodeTest : RepositoryTestCase
 	{
 		private static readonly FileMode D = FileMode.TREE;

@@ -119,15 +119,25 @@ namespace NGit.Notes
 			return 0 <= idx ? notes[idx].GetData() : null;
 		}
 
+		internal virtual Note Get(int index)
+		{
+			return notes[index];
+		}
+
+		internal virtual int Size()
+		{
+			return cnt;
+		}
+
 		internal override Sharpen.Iterator<Note> Iterator(AnyObjectId objId, ObjectReader
 			 reader)
 		{
-			return new _Iterator_112(this);
+			return new _Iterator_120(this);
 		}
 
-		private sealed class _Iterator_112 : Sharpen.Iterator<Note>
+		private sealed class _Iterator_120 : Sharpen.Iterator<Note>
 		{
-			public _Iterator_112(LeafBucket _enclosing)
+			public _Iterator_120(LeafBucket _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -215,6 +225,16 @@ namespace NGit.Notes
 		/// <exception cref="System.IO.IOException"></exception>
 		internal override ObjectId WriteTree(ObjectInserter inserter)
 		{
+			return inserter.Insert(Build());
+		}
+
+		internal override ObjectId GetTreeId()
+		{
+			return new ObjectInserter.Formatter().IdFor(Build());
+		}
+
+		private TreeFormatter Build()
+		{
 			byte[] nameBuf = new byte[Constants.OBJECT_ID_STRING_LENGTH];
 			int nameLen = Constants.OBJECT_ID_STRING_LENGTH - prefixLen;
 			TreeFormatter fmt = new TreeFormatter(TreeSize(nameLen));
@@ -235,7 +255,7 @@ namespace NGit.Notes
 			{
 				e.Format(fmt);
 			}
-			return inserter.Insert(fmt);
+			return fmt;
 		}
 
 		private int TreeSize(int nameLen)
@@ -283,7 +303,7 @@ namespace NGit.Notes
 			return MAX_SIZE <= cnt && prefixLen + 2 < Constants.OBJECT_ID_STRING_LENGTH;
 		}
 
-		private InMemoryNoteBucket Split()
+		internal virtual FanoutBucket Split()
 		{
 			FanoutBucket n = new FanoutBucket(prefixLen);
 			for (int i = 0; i < cnt; i++)

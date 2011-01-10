@@ -48,6 +48,7 @@ using Sharpen;
 
 namespace NGit.Treewalk
 {
+	[NUnit.Framework.TestFixture]
 	public class TreeWalkBasicDiffTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
@@ -106,14 +107,14 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.AreEqual("sub-b/empty", tw.PathString);
 			NUnit.Framework.Assert.AreEqual(FileMode.MISSING, tw.GetFileMode(0));
 			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE, tw.GetFileMode(1));
-			AssertEquals(ObjectId.ZeroId, tw.GetObjectId(0));
-			AssertEquals(bFileId, tw.GetObjectId(1));
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, tw.GetObjectId(0));
+			NUnit.Framework.Assert.AreEqual(bFileId, tw.GetObjectId(1));
 			NUnit.Framework.Assert.IsTrue(tw.Next());
 			NUnit.Framework.Assert.AreEqual("sub-c/empty", tw.PathString);
 			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE, tw.GetFileMode(0));
 			NUnit.Framework.Assert.AreEqual(FileMode.REGULAR_FILE, tw.GetFileMode(1));
-			AssertEquals(cFileId1, tw.GetObjectId(0));
-			AssertEquals(cFileId2, tw.GetObjectId(1));
+			NUnit.Framework.Assert.AreEqual(cFileId1, tw.GetObjectId(0));
+			NUnit.Framework.Assert.AreEqual(cFileId2, tw.GetObjectId(1));
 			NUnit.Framework.Assert.IsFalse(tw.Next());
 		}
 	}

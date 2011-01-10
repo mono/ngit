@@ -65,11 +65,19 @@ namespace NGit.Storage.Pack
 
 		private ByteArrayOutputStream dstBuf;
 
+		private TestRng GetRng()
+		{
+			if (rng == null)
+			{
+				rng = new TestRng(Sharpen.Extensions.GetTestName());
+			}
+			return rng;
+		}
+
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
-			rng = new TestRng(Sharpen.Extensions.GetTestName(this));
 			actDeltaBuf = new ByteArrayOutputStream();
 			expDeltaBuf = new ByteArrayOutputStream();
 			expDeltaEnc = new DeltaEncoder(expDeltaBuf, 0, 0);
@@ -80,7 +88,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestInsertWholeObject_Length12()
 		{
-			src = rng.NextBytes(12);
+			src = GetRng().NextBytes(12);
 			Insert(src);
 			DoTest();
 		}
@@ -89,7 +97,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestCopyWholeObject_Length128()
 		{
-			src = rng.NextBytes(128);
+			src = GetRng().NextBytes(128);
 			Copy(0, 128);
 			DoTest();
 		}
@@ -98,7 +106,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestCopyWholeObject_Length123()
 		{
-			src = rng.NextBytes(123);
+			src = GetRng().NextBytes(123);
 			Copy(0, 123);
 			DoTest();
 		}
@@ -121,7 +129,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestShuffleSegments()
 		{
-			src = rng.NextBytes(128);
+			src = GetRng().NextBytes(128);
 			Copy(64, 64);
 			Copy(0, 64);
 			DoTest();
@@ -131,7 +139,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestInsertHeadMiddle()
 		{
-			src = rng.NextBytes(1024);
+			src = GetRng().NextBytes(1024);
 			Insert("foo");
 			Copy(0, 512);
 			Insert("yet more fooery");
@@ -143,7 +151,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestInsertTail()
 		{
-			src = rng.NextBytes(1024);
+			src = GetRng().NextBytes(1024);
 			Copy(0, 512);
 			Insert("bar");
 			DoTest();
@@ -152,7 +160,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestIndexSize()
 		{
-			src = rng.NextBytes(1024);
+			src = GetRng().NextBytes(1024);
 			DeltaIndex di = new DeltaIndex(src);
 			NUnit.Framework.Assert.AreEqual(1860, di.GetIndexSize());
 			NUnit.Framework.Assert.AreEqual("DeltaIndex[2 KiB]", di.ToString());
@@ -162,7 +170,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_Length12InsertFails()
 		{
-			src = rng.NextBytes(12);
+			src = GetRng().NextBytes(12);
 			dst = src;
 			DeltaIndex di = new DeltaIndex(src);
 			NUnit.Framework.Assert.IsFalse(di.Encode(actDeltaBuf, dst, src.Length));
@@ -172,8 +180,8 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_Length130InsertFails()
 		{
-			src = rng.NextBytes(130);
-			dst = rng.NextBytes(130);
+			src = GetRng().NextBytes(130);
+			dst = GetRng().NextBytes(130);
 			DeltaIndex di = new DeltaIndex(src);
 			NUnit.Framework.Assert.IsFalse(di.Encode(actDeltaBuf, dst, src.Length));
 		}
@@ -182,7 +190,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_Length130CopyOk()
 		{
-			src = rng.NextBytes(130);
+			src = GetRng().NextBytes(130);
 			Copy(0, 130);
 			dst = dstBuf.ToByteArray();
 			DeltaIndex di = new DeltaIndex(src);
@@ -198,7 +206,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_Length130CopyFails()
 		{
-			src = rng.NextBytes(130);
+			src = GetRng().NextBytes(130);
 			Copy(0, 130);
 			dst = dstBuf.ToByteArray();
 			// The header requires 4 bytes for these objects, so a target length
@@ -213,7 +221,7 @@ namespace NGit.Storage.Pack
 		[NUnit.Framework.Test]
 		public virtual void TestLimitObjectSize_InsertFrontFails()
 		{
-			src = rng.NextBytes(130);
+			src = GetRng().NextBytes(130);
 			Insert("eight");
 			Copy(0, 130);
 			dst = dstBuf.ToByteArray();

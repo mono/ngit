@@ -54,11 +54,13 @@ namespace NGit
 	{
 		private TestRng rng;
 
-		/// <exception cref="System.Exception"></exception>
-		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		private TestRng GetRng()
 		{
-			rng = new TestRng(Sharpen.Extensions.GetTestName(this));
+			if (rng == null)
+			{
+				rng = new TestRng(Sharpen.Extensions.GetTestName());
+			}
+			return rng;
 		}
 
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
@@ -66,7 +68,7 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestSmallObjectLoader()
 		{
-			byte[] act = rng.NextBytes(512);
+			byte[] act = GetRng().NextBytes(512);
 			ObjectLoader ldr = new ObjectLoader.SmallObject(Constants.OBJ_BLOB, act);
 			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, ldr.GetType());
 			NUnit.Framework.Assert.AreEqual(act.Length, ldr.GetSize());
@@ -106,8 +108,8 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestLargeObjectLoader()
 		{
-			byte[] act = rng.NextBytes(512);
-			ObjectLoader ldr = new _ObjectLoader_112(act);
+			byte[] act = GetRng().NextBytes(512);
+			ObjectLoader ldr = new _ObjectLoader_122(act);
 			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, ldr.GetType());
 			NUnit.Framework.Assert.AreEqual(act.Length, ldr.GetSize());
 			NUnit.Framework.Assert.IsTrue(ldr.IsLarge(), "is large");
@@ -158,9 +160,9 @@ namespace NGit
 				);
 		}
 
-		private sealed class _ObjectLoader_112 : ObjectLoader
+		private sealed class _ObjectLoader_122 : ObjectLoader
 		{
-			public _ObjectLoader_112(byte[] act)
+			public _ObjectLoader_122(byte[] act)
 			{
 				this.act = act;
 			}
@@ -198,8 +200,8 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestLimitedGetCachedBytes()
 		{
-			byte[] act = rng.NextBytes(512);
-			ObjectLoader ldr = new _SmallObject_185(Constants.OBJ_BLOB, act);
+			byte[] act = GetRng().NextBytes(512);
+			ObjectLoader ldr = new _SmallObject_196(Constants.OBJ_BLOB, act);
 			NUnit.Framework.Assert.IsTrue(ldr.IsLarge(), "is large");
 			try
 			{
@@ -218,9 +220,9 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(Arrays.Equals(act, copy), "same content");
 		}
 
-		private sealed class _SmallObject_185 : ObjectLoader.SmallObject
+		private sealed class _SmallObject_196 : ObjectLoader.SmallObject
 		{
-			public _SmallObject_185(int baseArg1, byte[] baseArg2) : base(baseArg1, baseArg2)
+			public _SmallObject_196(int baseArg1, byte[] baseArg2) : base(baseArg1, baseArg2)
 			{
 			}
 
@@ -236,7 +238,7 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestLimitedGetCachedBytesExceedsJavaLimits()
 		{
-			ObjectLoader ldr = new _ObjectLoader_211();
+			ObjectLoader ldr = new _ObjectLoader_223();
 			NUnit.Framework.Assert.IsTrue(ldr.IsLarge(), "is large");
 			try
 			{
@@ -257,9 +259,9 @@ namespace NGit
 			}
 		}
 
-		private sealed class _ObjectLoader_211 : ObjectLoader
+		private sealed class _ObjectLoader_223 : ObjectLoader
 		{
-			public _ObjectLoader_211()
+			public _ObjectLoader_223()
 			{
 			}
 
@@ -288,12 +290,12 @@ namespace NGit
 			/// <exception cref="System.IO.IOException"></exception>
 			public override ObjectStream OpenStream()
 			{
-				return new _ObjectStream_235();
+				return new _ObjectStream_247();
 			}
 
-			private sealed class _ObjectStream_235 : ObjectStream
+			private sealed class _ObjectStream_247 : ObjectStream
 			{
-				public _ObjectStream_235()
+				public _ObjectStream_247()
 				{
 				}
 

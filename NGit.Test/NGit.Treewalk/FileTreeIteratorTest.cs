@@ -51,6 +51,7 @@ using Sharpen;
 
 namespace NGit.Treewalk
 {
+	[NUnit.Framework.TestFixture]
 	public class FileTreeIteratorTest : RepositoryTestCase
 	{
 		private readonly string[] paths = new string[] { "a,", "a,b", "a/b", "a0b" };
@@ -58,7 +59,8 @@ namespace NGit.Treewalk
 		private long[] mtime;
 
 		/// <exception cref="System.Exception"></exception>
-		protected override void SetUp()
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
 		{
 			base.SetUp();
 			// We build the entries backwards so that on POSIX systems we
@@ -172,11 +174,11 @@ namespace NGit.Treewalk
 			md.Update(unchecked((byte)0));
 			md.Update(Constants.Encode(paths[0]));
 			ObjectId expect = ObjectId.FromRaw(md.Digest());
-			AssertEquals(expect, top.EntryObjectId);
+			NUnit.Framework.Assert.AreEqual(expect, top.EntryObjectId);
 			// Verify it was cached by removing the file and getting it again.
 			//
 			FileUtils.Delete(new FilePath(trash, paths[0]));
-			AssertEquals(expect, top.EntryObjectId);
+			NUnit.Framework.Assert.AreEqual(expect, top.EntryObjectId);
 		}
 
 		/// <exception cref="System.Exception"></exception>

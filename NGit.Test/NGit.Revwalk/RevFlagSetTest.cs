@@ -46,6 +46,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class RevFlagSetTest : RevWalkTestCase
 	{
 		[NUnit.Framework.Test]

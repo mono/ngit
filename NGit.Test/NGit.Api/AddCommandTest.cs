@@ -51,6 +51,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
+	[NUnit.Framework.TestFixture]
 	public class AddCommandTest : RepositoryTestCase
 	{
 		[NUnit.Framework.Test]

@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit.Treewalk
 {
+	[NUnit.Framework.TestFixture]
 	public class EmptyTreeIteratorTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
@@ -79,7 +80,7 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.AreSame(ObjectId.ZeroId, etp.EntryObjectId);
 			NUnit.Framework.Assert.IsNotNull(etp.IdBuffer);
 			NUnit.Framework.Assert.AreEqual(0, etp.IdOffset);
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -90,11 +91,11 @@ namespace NGit.Treewalk
 			etp.Next(1);
 			NUnit.Framework.Assert.IsTrue(etp.First);
 			NUnit.Framework.Assert.IsTrue(etp.Eof);
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 			etp.Next(1);
 			NUnit.Framework.Assert.IsTrue(etp.First);
 			NUnit.Framework.Assert.IsTrue(etp.Eof);
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -105,11 +106,11 @@ namespace NGit.Treewalk
 			etp.Back(1);
 			NUnit.Framework.Assert.IsTrue(etp.First);
 			NUnit.Framework.Assert.IsTrue(etp.Eof);
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 			etp.Back(1);
 			NUnit.Framework.Assert.IsTrue(etp.First);
 			NUnit.Framework.Assert.IsTrue(etp.Eof);
-			AssertEquals(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, ObjectId.FromRaw(etp.IdBuffer));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -118,15 +119,15 @@ namespace NGit.Treewalk
 		{
 			bool[] called = new bool[1];
 			NUnit.Framework.Assert.IsFalse(called[0]);
-			EmptyTreeIterator parent = new _EmptyTreeIterator_105(called);
+			EmptyTreeIterator parent = new _EmptyTreeIterator_118(called);
 			ObjectReader reader = db.NewObjectReader();
 			parent.CreateSubtreeIterator(reader).StopWalk();
 			NUnit.Framework.Assert.IsTrue(called[0]);
 		}
 
-		private sealed class _EmptyTreeIterator_105 : EmptyTreeIterator
+		private sealed class _EmptyTreeIterator_118 : EmptyTreeIterator
 		{
-			public _EmptyTreeIterator_105(bool[] called)
+			public _EmptyTreeIterator_118(bool[] called)
 			{
 				this.called = called;
 			}

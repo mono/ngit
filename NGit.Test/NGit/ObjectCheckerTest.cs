@@ -55,7 +55,7 @@ namespace NGit
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			checker = new ObjectChecker();
 		}

@@ -50,7 +50,8 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
-	public class T0003_Basic : SampleDataRepositoryTestCase
+	[NUnit.Framework.TestFixture]
+	public class T0003_BasicTest : SampleDataRepositoryTestCase
 	{
 		[NUnit.Framework.Test]
 		public virtual void Test001_Initalize()
@@ -69,7 +70,7 @@ namespace NGit.Storage.File
 				);
 			NUnit.Framework.Assert.IsTrue(objects_info.IsDirectory(), "Exists " + objects_info
 				);
-			NUnit.Framework.Assert.AreEqual(2, objects.ListFiles().Length);
+			NUnit.Framework.Assert.AreEqual(2L, objects.ListFiles().Length);
 			NUnit.Framework.Assert.IsTrue(refs.IsDirectory(), "Exists " + refs);
 			NUnit.Framework.Assert.IsTrue(refs_heads.IsDirectory(), "Exists " + refs_heads);
 			NUnit.Framework.Assert.IsTrue(refs_tags.IsDirectory(), "Exists " + refs_tags);
@@ -367,10 +368,10 @@ namespace NGit.Storage.File
 			c.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c.Message = "A Commit\n";
 			c.TreeId = treeId;
-			AssertEquals(treeId, c.TreeId);
+			NUnit.Framework.Assert.AreEqual(treeId, c.TreeId);
 			ObjectId actid = InsertCommit(c);
 			ObjectId cmtid = ObjectId.FromString("9208b2459ea6609a5af68627cc031796d0d9329b");
-			AssertEquals(cmtid, actid);
+			NUnit.Framework.Assert.AreEqual(cmtid, actid);
 			// Verify the commit we just wrote is in the correct format.
 			ObjectDatabase odb = ((ObjectDirectory)db.ObjectDatabase);
 			NUnit.Framework.Assert.IsTrue(odb is ObjectDirectory, "is ObjectDirectory");
@@ -390,7 +391,7 @@ namespace NGit.Storage.File
 			RevCommit c2 = ParseCommit(actid);
 			NUnit.Framework.Assert.IsNotNull(c2);
 			NUnit.Framework.Assert.AreEqual(c.Message, c2.GetFullMessage());
-			AssertEquals(c.TreeId, c2.Tree);
+			NUnit.Framework.Assert.AreEqual(c.TreeId, c2.Tree);
 			NUnit.Framework.Assert.AreEqual(c.Author, c2.GetAuthorIdent());
 			NUnit.Framework.Assert.AreEqual(c.Committer, c2.GetCommitterIdent());
 		}
@@ -413,8 +414,8 @@ namespace NGit.Storage.File
 			e4.SetId(emptyBlob);
 			Tree a = (Tree)t.FindTreeMember("a");
 			a.SetId(InsertTree(a));
-			AssertEquals(ObjectId.FromString("b47a8f0a4190f7572e11212769090523e23eb1ea"), InsertTree
-				(t));
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("b47a8f0a4190f7572e11212769090523e23eb1ea"
+				), InsertTree(t));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -574,80 +575,80 @@ namespace NGit.Storage.File
 			{
 				oi.Release();
 			}
-			AssertEquals(ObjectId.FromString("00b1f73724f493096d1ffa0b0f1f1482dbb8c936"), treeId
-				);
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("00b1f73724f493096d1ffa0b0f1f1482dbb8c936"
+				), treeId);
 			NGit.CommitBuilder c1 = new NGit.CommitBuilder();
 			c1.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c1.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c1.Message = "A Commit\n";
 			c1.TreeId = treeId;
-			AssertEquals(treeId, c1.TreeId);
+			NUnit.Framework.Assert.AreEqual(treeId, c1.TreeId);
 			ObjectId actid1 = InsertCommit(c1);
 			ObjectId cmtid1 = ObjectId.FromString("803aec4aba175e8ab1d666873c984c0308179099");
-			AssertEquals(cmtid1, actid1);
+			NUnit.Framework.Assert.AreEqual(cmtid1, actid1);
 			NGit.CommitBuilder c2 = new NGit.CommitBuilder();
 			c2.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c2.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c2.Message = "A Commit 2\n";
 			c2.TreeId = treeId;
-			AssertEquals(treeId, c2.TreeId);
+			NUnit.Framework.Assert.AreEqual(treeId, c2.TreeId);
 			c2.SetParentIds(actid1);
 			ObjectId actid2 = InsertCommit(c2);
 			ObjectId cmtid2 = ObjectId.FromString("95d068687c91c5c044fb8c77c5154d5247901553");
-			AssertEquals(cmtid2, actid2);
+			NUnit.Framework.Assert.AreEqual(cmtid2, actid2);
 			RevCommit rm2 = ParseCommit(cmtid2);
 			NUnit.Framework.Assert.AreNotSame(c2, rm2);
 			// assert the parsed objects is not from the
 			// cache
 			NUnit.Framework.Assert.AreEqual(c2.Author, rm2.GetAuthorIdent());
-			AssertEquals(actid2, rm2.Id);
+			NUnit.Framework.Assert.AreEqual(actid2, rm2.Id);
 			NUnit.Framework.Assert.AreEqual(c2.Message, rm2.GetFullMessage());
-			AssertEquals(c2.TreeId, rm2.Tree.Id);
+			NUnit.Framework.Assert.AreEqual(c2.TreeId, rm2.Tree.Id);
 			NUnit.Framework.Assert.AreEqual(1, rm2.ParentCount);
-			AssertEquals(actid1, rm2.GetParent(0));
+			NUnit.Framework.Assert.AreEqual(actid1, rm2.GetParent(0));
 			NGit.CommitBuilder c3 = new NGit.CommitBuilder();
 			c3.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c3.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c3.Message = "A Commit 3\n";
 			c3.TreeId = treeId;
-			AssertEquals(treeId, c3.TreeId);
+			NUnit.Framework.Assert.AreEqual(treeId, c3.TreeId);
 			c3.SetParentIds(actid1, actid2);
 			ObjectId actid3 = InsertCommit(c3);
 			ObjectId cmtid3 = ObjectId.FromString("ce6e1ce48fbeeb15a83f628dc8dc2debefa066f4");
-			AssertEquals(cmtid3, actid3);
+			NUnit.Framework.Assert.AreEqual(cmtid3, actid3);
 			RevCommit rm3 = ParseCommit(cmtid3);
 			NUnit.Framework.Assert.AreNotSame(c3, rm3);
 			// assert the parsed objects is not from the
 			// cache
 			NUnit.Framework.Assert.AreEqual(c3.Author, rm3.GetAuthorIdent());
-			AssertEquals(actid3, rm3.Id);
+			NUnit.Framework.Assert.AreEqual(actid3, rm3.Id);
 			NUnit.Framework.Assert.AreEqual(c3.Message, rm3.GetFullMessage());
-			AssertEquals(c3.TreeId, rm3.Tree.Id);
+			NUnit.Framework.Assert.AreEqual(c3.TreeId, rm3.Tree.Id);
 			NUnit.Framework.Assert.AreEqual(2, rm3.ParentCount);
-			AssertEquals(actid1, rm3.GetParent(0));
-			AssertEquals(actid2, rm3.GetParent(1));
+			NUnit.Framework.Assert.AreEqual(actid1, rm3.GetParent(0));
+			NUnit.Framework.Assert.AreEqual(actid2, rm3.GetParent(1));
 			NGit.CommitBuilder c4 = new NGit.CommitBuilder();
 			c4.Author = new PersonIdent(author, 1154236443000L, -4 * 60);
 			c4.Committer = new PersonIdent(committer, 1154236443000L, -4 * 60);
 			c4.Message = "A Commit 4\n";
 			c4.TreeId = treeId;
-			AssertEquals(treeId, c3.TreeId);
+			NUnit.Framework.Assert.AreEqual(treeId, c3.TreeId);
 			c4.SetParentIds(actid1, actid2, actid3);
 			ObjectId actid4 = InsertCommit(c4);
 			ObjectId cmtid4 = ObjectId.FromString("d1fca9fe3fef54e5212eb67902c8ed3e79736e27");
-			AssertEquals(cmtid4, actid4);
+			NUnit.Framework.Assert.AreEqual(cmtid4, actid4);
 			RevCommit rm4 = ParseCommit(cmtid4);
 			NUnit.Framework.Assert.AreNotSame(c4, rm3);
 			// assert the parsed objects is not from the
 			// cache
 			NUnit.Framework.Assert.AreEqual(c4.Author, rm4.GetAuthorIdent());
-			AssertEquals(actid4, rm4.Id);
+			NUnit.Framework.Assert.AreEqual(actid4, rm4.Id);
 			NUnit.Framework.Assert.AreEqual(c4.Message, rm4.GetFullMessage());
-			AssertEquals(c4.TreeId, rm4.Tree.Id);
+			NUnit.Framework.Assert.AreEqual(c4.TreeId, rm4.Tree.Id);
 			NUnit.Framework.Assert.AreEqual(3, rm4.ParentCount);
-			AssertEquals(actid1, rm4.GetParent(0));
-			AssertEquals(actid2, rm4.GetParent(1));
-			AssertEquals(actid3, rm4.GetParent(2));
+			NUnit.Framework.Assert.AreEqual(actid1, rm4.GetParent(0));
+			NUnit.Framework.Assert.AreEqual(actid2, rm4.GetParent(1));
+			NUnit.Framework.Assert.AreEqual(actid3, rm4.GetParent(2));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -678,7 +679,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, lockRef.ForceUpdate());
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "refs/heads/foobar").Exists
 				());
-			AssertEquals(newId, db.Resolve("refs/heads/foobar"));
+			NUnit.Framework.Assert.AreEqual(newId, db.Resolve("refs/heads/foobar"));
 			// Again. The ref already exists
 			RefUpdate lockRef2 = db.UpdateRef("HEAD");
 			ObjectId newId2 = ObjectId.FromString("7f822839a2fe9760f386cbbbcb3f92c5fe81def7");
@@ -686,7 +687,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, lockRef2.ForceUpdate());
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "refs/heads/foobar").Exists
 				());
-			AssertEquals(newId2, db.Resolve("refs/heads/foobar"));
+			NUnit.Framework.Assert.AreEqual(newId2, db.Resolve("refs/heads/foobar"));
 		}
 
 		[NUnit.Framework.Test]

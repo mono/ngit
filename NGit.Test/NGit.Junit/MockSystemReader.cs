@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Collections.Generic;
 using NGit;
+using NGit.Junit;
 using NGit.Storage.File;
 using NGit.Util;
 using Sharpen;
@@ -52,26 +53,12 @@ namespace NGit.Junit
 {
 	public class MockSystemReader : SystemReader
 	{
-		internal readonly IDictionary<string, string> values = new Dictionary<string, string
-			>();
-
-		internal FileBasedConfig userGitConfig;
-
-		public MockSystemReader()
+		private sealed class MockConfig : FileBasedConfig
 		{
-			Init(Constants.OS_USER_NAME_KEY);
-			Init(Constants.GIT_AUTHOR_NAME_KEY);
-			Init(Constants.GIT_AUTHOR_EMAIL_KEY);
-			Init(Constants.GIT_COMMITTER_NAME_KEY);
-			Init(Constants.GIT_COMMITTER_EMAIL_KEY);
-			userGitConfig = new _FileBasedConfig_70(null, null);
-		}
-
-		private sealed class _FileBasedConfig_70 : FileBasedConfig
-		{
-			public _FileBasedConfig_70(FilePath baseArg1, FS baseArg2) : base(baseArg1, baseArg2
-				)
+			public MockConfig(MockSystemReader _enclosing, FilePath cfgLocation, FS fs) : base
+				(cfgLocation, fs)
 			{
+				this._enclosing = _enclosing;
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
@@ -85,6 +72,26 @@ namespace NGit.Junit
 			{
 				return false;
 			}
+
+			private readonly MockSystemReader _enclosing;
+		}
+
+		internal readonly IDictionary<string, string> values = new Dictionary<string, string
+			>();
+
+		internal FileBasedConfig userGitConfig;
+
+		internal FileBasedConfig systemGitConfig;
+
+		public MockSystemReader()
+		{
+			Init(Constants.OS_USER_NAME_KEY);
+			Init(Constants.GIT_AUTHOR_NAME_KEY);
+			Init(Constants.GIT_AUTHOR_EMAIL_KEY);
+			Init(Constants.GIT_COMMITTER_NAME_KEY);
+			Init(Constants.GIT_COMMITTER_EMAIL_KEY);
+			userGitConfig = new MockSystemReader.MockConfig(this, null, null);
+			systemGitConfig = new MockSystemReader.MockConfig(this, null, null);
 		}
 
 		private void Init(string n)
@@ -112,9 +119,14 @@ namespace NGit.Junit
 			return values.Get(key);
 		}
 
-		public override FileBasedConfig OpenUserConfig(FS fs)
+		public override FileBasedConfig OpenUserConfig(Config parent, FS fs)
 		{
 			return userGitConfig;
+		}
+
+		public override FileBasedConfig OpenSystemConfig(Config parent, FS fs)
+		{
+			return systemGitConfig;
 		}
 
 		public override string GetHostname()

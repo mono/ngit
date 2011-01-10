@@ -47,6 +47,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class AlwaysEmptyRevQueueTest : RevWalkTestCase
 	{
 		private readonly AbstractRevQueue q = AbstractRevQueue.EMPTY_QUEUE;

@@ -49,6 +49,7 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
+	[NUnit.Framework.TestFixture]
 	public class RevCommitParseTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>
@@ -94,7 +95,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.IsNull(c.parents);
 			c.ParseCanonical(rw, Sharpen.Runtime.GetBytesForString(body.ToString(), "UTF-8"));
 			NUnit.Framework.Assert.IsNotNull(c.Tree);
-			AssertEquals(treeId, c.Tree.Id);
+			NUnit.Framework.Assert.AreEqual(treeId, c.Tree.Id);
 			NUnit.Framework.Assert.AreSame(rw.LookupTree(treeId), c.Tree);
 			NUnit.Framework.Assert.IsNotNull(c.parents);
 			NUnit.Framework.Assert.AreEqual(0, c.parents.Length);
@@ -381,7 +382,7 @@ namespace NGit.Revwalk
 			src.Committer = committer;
 			src.Message = "Test commit\n\nThis is a test.\n";
 			RevCommit p = RevCommit.Parse(src.Build());
-			AssertEquals(src.TreeId, p.Tree);
+			NUnit.Framework.Assert.AreEqual(src.TreeId, p.Tree);
 			NUnit.Framework.Assert.AreEqual(0, p.ParentCount);
 			NUnit.Framework.Assert.AreEqual(author, p.GetAuthorIdent());
 			NUnit.Framework.Assert.AreEqual(committer, p.GetCommitterIdent());

@@ -49,6 +49,7 @@ using Sharpen;
 
 namespace NGit.Merge
 {
+	[NUnit.Framework.TestFixture]
 	public class SimpleMergeTest : SampleDataRepositoryTestCase
 	{
 		/// <exception cref="System.IO.IOException"></exception>
@@ -58,7 +59,8 @@ namespace NGit.Merge
 			Merger ourMerger = MergeStrategy.OURS.NewMerger(db);
 			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a"), db.Resolve("c") });
 			NUnit.Framework.Assert.IsTrue(merge);
-			AssertEquals(db.MapTree("a").GetId(), ourMerger.GetResultTreeId());
+			NUnit.Framework.Assert.AreEqual(db.MapTree("a").GetId(), ourMerger.GetResultTreeId
+				());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -68,7 +70,8 @@ namespace NGit.Merge
 			Merger ourMerger = MergeStrategy.THEIRS.NewMerger(db);
 			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a"), db.Resolve("c") });
 			NUnit.Framework.Assert.IsTrue(merge);
-			AssertEquals(db.MapTree("c").GetId(), ourMerger.GetResultTreeId());
+			NUnit.Framework.Assert.AreEqual(db.MapTree("c").GetId(), ourMerger.GetResultTreeId
+				());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -105,7 +108,8 @@ namespace NGit.Merge
 			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a^0^0^0"), db.Resolve("a^0^0^1"
 				) });
 			NUnit.Framework.Assert.IsTrue(merge);
-			AssertEquals(db.MapTree("a^0^0").GetId(), ourMerger.GetResultTreeId());
+			NUnit.Framework.Assert.AreEqual(db.MapTree("a^0^0").GetId(), ourMerger.GetResultTreeId
+				());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -353,7 +357,8 @@ namespace NGit.Merge
 
 		private void AssertCorrectId(DirCache treeT, TreeWalk tw)
 		{
-			AssertEquals(treeT.GetEntry(tw.PathString).GetObjectId(), tw.GetObjectId(0));
+			NUnit.Framework.Assert.AreEqual(treeT.GetEntry(tw.PathString).GetObjectId(), tw.GetObjectId
+				(0));
 		}
 
 		/// <exception cref="System.Exception"></exception>

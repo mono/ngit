@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Dircache;
+using NGit.Junit;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
 using NGit.Util;
@@ -50,6 +51,7 @@ using Sharpen;
 
 namespace NGit.Dircache
 {
+	[NUnit.Framework.TestFixture]
 	public class DirCacheIteratorTest : RepositoryTestCase
 	{
 		/// <exception cref="System.Exception"></exception>

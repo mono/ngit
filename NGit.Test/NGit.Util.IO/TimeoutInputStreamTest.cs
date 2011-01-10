@@ -66,7 +66,7 @@ namespace NGit.Util.IO
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
-		protected virtual void SetUp()
+		public virtual void SetUp()
 		{
 			@out = new PipedOutputStream();
 			@in = new PipedInputStream(@out);
@@ -77,7 +77,7 @@ namespace NGit.Util.IO
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.TearDown]
-		protected virtual void TearDown()
+		public virtual void TearDown()
 		{
 			timer.Terminate();
 			foreach (Sharpen.Thread t in Active())
