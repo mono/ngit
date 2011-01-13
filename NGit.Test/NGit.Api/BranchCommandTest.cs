@@ -171,6 +171,14 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestListAllBranchesShouldNotDie()
+		{
+			Git git = SetUpRepoWithRemote();
+			git.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call();
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCreateFromCommit()
 		{
 			Ref branch = git.BranchCreate().SetName("FromInitial").SetStartPoint(initialCommit

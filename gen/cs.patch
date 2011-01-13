@@ -1,8 +1,8 @@
 diff --git a/NGit.Test/NGit.Api/BranchCommandTest.cs b/NGit.Test/NGit.Api/BranchCommandTest.cs
-index 0374789..e132d64 100644
+index 2bb9439..cac7103 100644
 --- a/NGit.Test/NGit.Api/BranchCommandTest.cs
 +++ b/NGit.Test/NGit.Api/BranchCommandTest.cs
-@@ -471,13 +471,13 @@ namespace NGit.Api
+@@ -479,13 +479,13 @@ namespace NGit.Api
  		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
  		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
  		public virtual Ref CreateBranch(Git actGit, string name, bool force, string startPoint
@@ -357,48 +357,40 @@ index 45aa835..7cfdd3d 100644
  				), RT(ours), RT(theirs));
  			ByteArrayOutputStream bo = new ByteArrayOutputStream(50);
  			fmt.FormatMerge(bo, r, "B", "O", "T", Constants.CHARACTER_ENCODING);
-diff --git a/NGit.Test/NGit.Nls/TestNLS.cs b/NGit.Test/NGit.Nls/TestNLS.cs
-index 2140d47..9a6f133 100644
---- a/NGit.Test/NGit.Nls/TestNLS.cs
-+++ b/NGit.Test/NGit.Nls/TestNLS.cs
-@@ -118,8 +118,8 @@ namespace NGit.Nls
+diff --git a/NGit.Test/NGit.Nls/NLSTest.cs b/NGit.Test/NGit.Nls/NLSTest.cs
+index b7e4df5..b20ce62 100644
+--- a/NGit.Test/NGit.Nls/NLSTest.cs
++++ b/NGit.Test/NGit.Nls/NLSTest.cs
+@@ -121,10 +121,10 @@ namespace NGit.Nls
+ 			ExecutorService pool = Executors.NewFixedThreadPool(2);
+ 			try
+ 			{
+-				Future<TranslationBundle> root = pool.Submit(new _T879158014(this, NLS.ROOT_LOCALE
+-					));
+-				Future<TranslationBundle> german = pool.Submit(new _T879158014(this, Sharpen.Extensions.GetGermanCulture()
+-					));
++				Future<TranslationBundle> root = pool.Submit(new _T879158014(this, NLS.ROOT_LOCALE,
++					barrier));
++				Future<TranslationBundle> german = pool.Submit(new _T879158014(this, Sharpen.Extensions.GetGermanCulture(),
++					barrier));
+ 				NUnit.Framework.Assert.AreEqual(NLS.ROOT_LOCALE, root.Get().EffectiveLocale());
+ 				NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.GetGermanCulture(), german.Get
+ 					().EffectiveLocale());
+@@ -139,11 +139,13 @@ namespace NGit.Nls
+ 		internal class _T879158014 : Callable<TranslationBundle>
  		{
- 			CyclicBarrier barrier = new CyclicBarrier(2);
- 			// wait for the other thread to set its locale
--			_T1972088541 t1 = new _T1972088541(this, NLS.ROOT_LOCALE);
--			_T1972088541 t2 = new _T1972088541(this, Sharpen.Extensions.GetGermanCulture());
-+			_T1972088541 t1 = new _T1972088541(this, NLS.ROOT_LOCALE, barrier);
-+			_T1972088541 t2 = new _T1972088541(this, Sharpen.Extensions.GetGermanCulture(), barrier);
- 			t1.Start();
- 			t2.Start();
- 			t1.Join();
-@@ -138,11 +138,14 @@ namespace NGit.Nls
- 			internal GermanTranslatedBundle bundle;
- 
- 			internal Exception e;
-+			
+ 			private CultureInfo locale;
 +			CyclicBarrier barrier;
  
--			internal _T1972088541(TestNLS _enclosing, CultureInfo locale)
-+			internal _T1972088541(TestNLS _enclosing, CultureInfo locale, CyclicBarrier barrier)
+-			internal _T879158014(NLSTest _enclosing, CultureInfo locale)
++			internal _T879158014(NLSTest _enclosing, CultureInfo locale, CyclicBarrier barrier)
  			{
  				this._enclosing = _enclosing;
  				this.locale = locale;
 +				this.barrier = barrier;
  			}
  
- 			public override void Run()
-@@ -157,10 +160,6 @@ namespace NGit.Nls
- 				{
- 					this.e = e;
- 				}
--				catch (BrokenBarrierException e)
--				{
--					this.e = e;
--				}
- 			}
- 
- 			private readonly TestNLS _enclosing;
+ 			/// <exception cref="System.Exception"></exception>
 diff --git a/NGit.Test/NGit.Patch/PatchCcTest.cs b/NGit.Test/NGit.Patch/PatchCcTest.cs
 index 2fca3a6..64402b0 100644
 --- a/NGit.Test/NGit.Patch/PatchCcTest.cs
@@ -566,6 +558,44 @@ index 08446d0..11b8c58 100644
  		}
  
  		/// <exception cref="System.IO.IOException"></exception>
+diff --git a/NGit.Test/NGit.Util/Base64Test.cs b/NGit.Test/NGit.Util/Base64Test.cs
+index 198f581..8cde1df 100644
+--- a/NGit.Test/NGit.Util/Base64Test.cs
++++ b/NGit.Test/NGit.Util/Base64Test.cs
+@@ -63,11 +63,11 @@ namespace NGit.Util
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestDecode()
+ 		{
+-			JGitTestUtil.AssertEquals(B("hi\n"), DecodeBytes("aGkK"));
+-			JGitTestUtil.AssertEquals(B("\x0\x1\x2\r\n\tq"), DecodeBytes("AAECDQoJcQ=="));
+-			JGitTestUtil.AssertEquals(B("\x0\x1\x2\r\n\tq"), DecodeBytes("A A E\tC D\rQ o\nJ c Q=="
++			JGitTestUtil.AssertEquals(B("hi\n"), Base64.DecodeBytes("aGkK"));
++			JGitTestUtil.AssertEquals(B("\x0\x1\x2\r\n\tq"), Base64.DecodeBytes("AAECDQoJcQ=="));
++			JGitTestUtil.AssertEquals(B("\x0\x1\x2\r\n\tq"), Base64.DecodeBytes("A A E\tC D\rQ o\nJ c Q=="
+ 				));
+-			JGitTestUtil.AssertEquals(B("\u000EB"), DecodeBytes("DkL="));
++			JGitTestUtil.AssertEquals(B("\u000EB"), Base64.DecodeBytes("DkL="));
+ 		}
+ 
+ 		[NUnit.Framework.Test]
+@@ -75,7 +75,7 @@ namespace NGit.Util
+ 		{
+ 			try
+ 			{
+-				DecodeBytes("! a bad base64 string !");
++				Base64.DecodeBytes("! a bad base64 string !");
+ 				NUnit.Framework.Assert.Fail("Accepted bad string in decode");
+ 			}
+ 			catch (ArgumentException)
+@@ -96,7 +96,7 @@ namespace NGit.Util
+ 			//
+ 			foreach (string e in testStrings)
+ 			{
+-				JGitTestUtil.AssertEquals(B(e), DecodeBytes(Base64.EncodeBytes(B(e))));
++				JGitTestUtil.AssertEquals(B(e), Base64.DecodeBytes(Base64.EncodeBytes(B(e))));
+ 			}
+ 		}
+ 
 diff --git a/NGit.Test/NGit.Util/ChangeIdUtilTest.cs b/NGit.Test/NGit.Util/ChangeIdUtilTest.cs
 index e218546..8dd8998 100644
 --- a/NGit.Test/NGit.Util/ChangeIdUtilTest.cs
@@ -631,48 +661,6 @@ index e218546..8dd8998 100644
  			tz = new MockSystemReader().GetTimezone(when);
  			{
  				author = new PersonIdent(author, when, tz);
-diff --git a/NGit.Test/NGit.Util/JGitTestUtil.cs b/NGit.Test/NGit.Util/JGitTestUtil.cs
-index a6ac558..50892c2 100644
---- a/NGit.Test/NGit.Util/JGitTestUtil.cs
-+++ b/NGit.Test/NGit.Util/JGitTestUtil.cs
-@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
- 
- using System;
-+using System.IO;
- using Sharpen;
- 
- namespace NGit.Util
-@@ -61,26 +62,9 @@ namespace NGit.Util
- 			{
- 				return null;
- 			}
--			Uri url = Cl().GetResource(CLASSPATH_TO_RESOURCES + fileName);
--			if (url == null)
--			{
--				// If URL is null then try to load it as it was being
--				// loaded previously
--				return new FilePath("tst", fileName);
--			}
--			try
--			{
--				return new FilePath(url.ToURI());
--			}
--			catch (URISyntaxException)
--			{
--				return new FilePath(url.AbsolutePath);
--			}
--		}
--
--		private static ClassLoader Cl()
--		{
--			return typeof(NGit.Util.JGitTestUtil).GetClassLoader();
-+			string path = Path.Combine (AppDomain.CurrentDomain.BaseDirectory, "resources");
-+			path = Path.Combine (path, "global");
-+			return new FilePath (Path.Combine (path, fileName));
- 		}
- 	}
- }
 diff --git a/NGit.Test/NGit.Util/RefListTest.cs b/NGit.Test/NGit.Util/RefListTest.cs
 index 8375f53..2f215fa 100644
 --- a/NGit.Test/NGit.Util/RefListTest.cs
@@ -1331,6 +1319,19 @@ index 02d0040..b8bc1de 100644
  			{
  				AbbreviatedObjectId p = prefix.Abbreviate(this._enclosing.prefixLen + 2);
  				InMemoryNoteBucket self = NoteParser.Parse(p, this.treeId, or);
+diff --git a/NGit/NGit.Notes/NotesMergeConflictException.cs b/NGit/NGit.Notes/NotesMergeConflictException.cs
+index 7184833..00cae4e 100644
+--- a/NGit/NGit.Notes/NotesMergeConflictException.cs
++++ b/NGit/NGit.Notes/NotesMergeConflictException.cs
+@@ -87,7 +87,7 @@ namespace NGit.Notes
+ 		/// <param name="base">version of the root note tree</param>
+ 		/// <param name="ours">version of the root note tree</param>
+ 		/// <param name="theirs">version of the root note tree</param>
+-		public NotesMergeConflictException(NonNoteEntry @base, NonNoteEntry ours, NonNoteEntry
++		internal NotesMergeConflictException(NonNoteEntry @base, NonNoteEntry ours, NonNoteEntry
+ 			 theirs) : base(MessageFormat.Format(JGitText.Get().mergeConflictOnNonNoteEntries
+ 			, Name(@base), Name(ours), Name(theirs)))
+ 		{
 diff --git a/NGit/NGit.Patch/CombinedFileHeader.cs b/NGit/NGit.Patch/CombinedFileHeader.cs
 index 130f172..3d13754 100644
 --- a/NGit/NGit.Patch/CombinedFileHeader.cs

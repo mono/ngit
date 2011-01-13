@@ -109,5 +109,26 @@ namespace NGit.Util
 			}
 			return null;
 		}
+
+		protected internal override FilePath UserHomeImpl()
+		{
+			string home = SystemReader.GetInstance().Getenv("HOME");
+			if (home != null)
+			{
+				return Resolve(null, home);
+			}
+			string homeDrive = SystemReader.GetInstance().Getenv("HOMEDRIVE");
+			if (homeDrive != null)
+			{
+				string homePath = SystemReader.GetInstance().Getenv("HOMEPATH");
+				return new FilePath(homeDrive, homePath);
+			}
+			string homeShare = SystemReader.GetInstance().Getenv("HOMESHARE");
+			if (homeShare != null)
+			{
+				return new FilePath(homeShare);
+			}
+			return base.UserHomeImpl();
+		}
 	}
 }

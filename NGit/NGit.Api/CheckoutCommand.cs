@@ -137,7 +137,7 @@ namespace NGit.Api
 				}
 				RefUpdate refUpdate = repo.UpdateRef(Constants.HEAD, @ref == null);
 				refUpdate.SetForceUpdate(force);
-				refUpdate.SetRefLogMessage(refLogMessage + "to " + newCommit.GetName(), false);
+				refUpdate.SetRefLogMessage(refLogMessage + " to " + newCommit.GetName(), false);
 				RefUpdate.Result updateResult;
 				if (@ref != null)
 				{

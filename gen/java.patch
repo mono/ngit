@@ -1,33 +1,3 @@
-diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/NLSTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/NLSTest.java
-index 6d81f86..8eb2abc 100644
---- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/NLSTest.java
-+++ b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/NLSTest.java
-@@ -110,12 +110,12 @@ public void testParallelThreadsWithDifferentLocales() throws InterruptedExceptio
- 
- 		final CyclicBarrier barrier = new CyclicBarrier(2);
- 
--		class T extends Thread {
-+		class TT extends Thread {
- 			Locale locale;
- 			GermanTranslatedBundle bundle;
- 			Exception e;
- 
--			T(Locale locale) {
-+			TT(Locale locale) {
- 				this.locale = locale;
- 			}
- 
-@@ -133,8 +133,8 @@ public void run() {
- 			}
- 		}
- 
--		T t1 = new T(NLS.ROOT_LOCALE);
--		T t2 = new T(Locale.GERMAN);
-+		TT t1 = new TT(NLS.ROOT_LOCALE);
-+		TT t2 = new TT(Locale.GERMAN);
- 		t1.start();
- 		t2.start();
- 		t1.join();
 diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java
 deleted file mode 100644
 index 201f03b..0000000
