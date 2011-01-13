@@ -47,7 +47,8 @@ using Sharpen;
 
 namespace NGit
 {
-	public class T0002_Tree : SampleDataRepositoryTestCase
+	[NUnit.Framework.TestFixture]
+	public class T0002_TreeTest : SampleDataRepositoryTestCase
 	{
 		private static readonly ObjectId SOME_FAKE_ID = ObjectId.FromString("0123456789abcdef0123456789abcdef01234567"
 			);

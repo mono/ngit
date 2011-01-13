@@ -56,9 +56,6 @@
     <Compile Include="NGit\RepositoryTestCase.cs" />
     <Compile Include="NGit\SampleDataRepositoryTestCase.cs" />
     <Compile Include="NGit\SymbolicRefTest.cs" />
-    <Compile Include="NGit\T0001_ObjectId.cs" />
-    <Compile Include="NGit\T0001_PersonIdent.cs" />
-    <Compile Include="NGit\T0002_Tree.cs" />
     <Compile Include="NGit\TreeIteratorLeafOnlyTest.cs" />
     <Compile Include="NGit\TreeIteratorPostOrderTest.cs" />
     <Compile Include="NGit\TreeIteratorPreOrderTest.cs" />
@@ -71,7 +68,6 @@
     <Compile Include="NGit.Api\TagCommandTest.cs" />
     <Compile Include="NGit.Diff\DiffFormatterReflowTest.cs" />
     <Compile Include="NGit.Diff\DiffFormatterTest.cs" />
-    <Compile Include="NGit.Diff\DiffTestDataGenerator.cs" />
     <Compile Include="NGit.Diff\EditListTest.cs" />
     <Compile Include="NGit.Diff\EditTest.cs" />
     <Compile Include="NGit.Diff\MyersDiffTest.cs" />
@@ -106,8 +102,6 @@
     <Compile Include="NGit.Nls\MissingPropertyBundle.cs" />
     <Compile Include="NGit.Nls\NoPropertiesBundle.cs" />
     <Compile Include="NGit.Nls\NonTranslatedBundle.cs" />
-    <Compile Include="NGit.Nls\TestNLS.cs" />
-    <Compile Include="NGit.Nls\TestTranslationBundle.cs" />
     <Compile Include="NGit.Patch\EditListTest.cs" />
     <Compile Include="NGit.Patch\FileHeaderTest.cs" />
     <Compile Include="NGit.Patch\GetTextTest.cs" />
@@ -185,7 +179,6 @@
     <Compile Include="NGit.Util.IO\UnionInputStreamTest.cs" />
     <Compile Include="NGit.Diff\AbstractDiffTestCase.cs" />
     <Compile Include="NGit.Diff\HistogramDiffTest.cs" />
-    <Compile Include="NGit.Diff\DiffPerformanceTest.cs" />
     <Compile Include="NGit.Api\BranchCommandTest.cs" />
     <Compile Include="NGit.Api\FetchCommandTest.cs" />
     <Compile Include="NGit.Api\PullCommandTest.cs" />
@@ -200,6 +193,23 @@
     <Compile Include="NGit.Junit\JGitTestUtil.cs" />
     <Compile Include="NGit.Storage.File\T0003_BasicTest.cs" />
     <Compile Include="NGit.Storage.File\T0004_PackReaderTest.cs" />
+    <Compile Include="NGit.Nls\NLSTest.cs" />
+    <Compile Include="NGit.Nls\TranslationBundleTest.cs" />
+    <Compile Include="NGit\ObjectIdTest.cs" />
+    <Compile Include="NGit\T0001_PersonIdentTest.cs" />
+    <Compile Include="NGit\T0002_TreeTest.cs" />
+    <Compile Include="NGit\ThreadSafeProgressMonitorTest.cs" />
+    <Compile Include="NGit.Api\InitCommandTest.cs" />
+    <Compile Include="NGit.Api\RevertCommandTest.cs" />
+    <Compile Include="NGit.Merge\MergeMessageFormatterTest.cs" />
+    <Compile Include="NGit.Notes\DefaultNoteMergerTest.cs" />
+    <Compile Include="NGit.Notes\NoteMapMergerTest.cs" />
+    <Compile Include="NGit.Storage.File\FileRepositoryBuilderTest.cs" />
+    <Compile Include="NGit.Storage.File\FileSnapshotTest.cs" />
+    <Compile Include="NGit.Treewalk.Filter\IndexDiffFilterTest.cs" />
+    <Compile Include="NGit.Treewalk.Filter\PathSuffixFilterTest.cs" />
+    <Compile Include="NGit.Util\Base64Test.cs" />
+    <Compile Include="NGit.Util\FileUtilTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

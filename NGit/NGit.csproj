@@ -485,6 +485,11 @@
     <Compile Include="NGit.Api\CheckoutResult.cs" />
     <Compile Include="NGit.Util\FS_POSIX.cs" />
     <Compile Include="NGit.Api\RevertCommand.cs" />
+    <Compile Include="NGit.Notes\DefaultNoteMerger.cs" />
+    <Compile Include="NGit.Notes\NoteMapMerger.cs" />
+    <Compile Include="NGit.Notes\NoteMerger.cs" />
+    <Compile Include="NGit.Notes\NotesMergeConflictException.cs" />
+    <Compile Include="NGit.Transport\TransferConfig.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

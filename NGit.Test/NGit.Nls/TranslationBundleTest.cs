@@ -48,7 +48,7 @@ using Sharpen;
 namespace NGit.Nls
 {
 	[NUnit.Framework.TestFixture]
-	public class TestTranslationBundle
+	public class TranslationBundleTest
 	{
 		[NUnit.Framework.Test]
 		public virtual void TestMissingPropertiesFile()

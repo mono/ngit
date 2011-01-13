@@ -41,37 +41,45 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using NGit;
+using NGit.Notes;
 using Sharpen;
 
-namespace NGit
+namespace NGit.Notes
 {
-	[NUnit.Framework.TestFixture]
-	public class T0001_PersonIdent
+	/// <summary>Three-way note merge operation.</summary>
+	/// <remarks>
+	/// Three-way note merge operation.
+	/// <p>
+	/// This operation takes three versions of a note: base, ours and theirs,
+	/// performs the three-way merge and returns the merge result.
+	/// </remarks>
+	public interface NoteMerger
 	{
-		[NUnit.Framework.Test]
-		public virtual void Test001_NewIdent()
-		{
-			PersonIdent p = new PersonIdent("A U Thor", "author@example.com", Sharpen.Extensions.CreateDate
-				(1142878501000L), Sharpen.Extensions.GetTimeZone("EST"));
-			NUnit.Framework.Assert.AreEqual("A U Thor", p.GetName());
-			NUnit.Framework.Assert.AreEqual("author@example.com", p.GetEmailAddress());
-			NUnit.Framework.Assert.AreEqual(1142878501000L, p.GetWhen().GetTime());
-			NUnit.Framework.Assert.AreEqual("A U Thor <author@example.com> 1142878501 -0500", 
-				p.ToExternalString());
-		}
-
-		[NUnit.Framework.Test]
-		public virtual void Test002_NewIdent()
-		{
-			PersonIdent p = new PersonIdent("A U Thor", "author@example.com", Sharpen.Extensions.CreateDate
-				(1142878501000L), Sharpen.Extensions.GetTimeZone("GMT+0230"));
-			NUnit.Framework.Assert.AreEqual("A U Thor", p.GetName());
-			NUnit.Framework.Assert.AreEqual("author@example.com", p.GetEmailAddress());
-			NUnit.Framework.Assert.AreEqual(1142878501000L, p.GetWhen().GetTime());
-			NUnit.Framework.Assert.AreEqual("A U Thor <author@example.com> 1142878501 +0230", 
-				p.ToExternalString());
-		}
+		/// <summary>Merges the conflicting note changes.</summary>
+		/// <remarks>
+		/// Merges the conflicting note changes.
+		/// <p>
+		/// base, ours and their are all notes on the same object.
+		/// </remarks>
+		/// <param name="base">version of the Note</param>
+		/// <param name="ours">version of the Note</param>
+		/// <param name="their">version of the Note</param>
+		/// <param name="reader">the object reader that must be used to read Git objects</param>
+		/// <param name="inserter">the object inserter that must be used to insert Git objects
+		/// 	</param>
+		/// <returns>the merge result</returns>
+		/// <exception cref="NotesMergeConflictException">
+		/// in case there was a merge conflict which this note merger
+		/// couldn't resolve
+		/// </exception>
+		/// <exception cref="System.IO.IOException">
+		/// in case the reader or the inserter would throw an IOException
+		/// the implementor will most likely want to propagate it as it
+		/// can't do much to recover from it
+		/// </exception>
+		/// <exception cref="NGit.Notes.NotesMergeConflictException"></exception>
+		Note Merge(Note @base, Note ours, Note their, ObjectReader reader, ObjectInserter
+			 inserter);
 	}
 }
