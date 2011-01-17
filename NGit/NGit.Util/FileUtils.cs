@@ -266,5 +266,34 @@ namespace NGit.Util
 					()));
 			}
 		}
+
+		/// <summary>
+		/// Atomically creates a new, empty file named by this abstract pathname if
+		/// and only if a file with this name does not yet exist.
+		/// </summary>
+		/// <remarks>
+		/// Atomically creates a new, empty file named by this abstract pathname if
+		/// and only if a file with this name does not yet exist. The check for the
+		/// existence of the file and the creation of the file if it does not exist
+		/// are a single operation that is atomic with respect to all other
+		/// filesystem activities that might affect the file.
+		/// <p>
+		/// Note: this method should not be used for file-locking, as the resulting
+		/// protocol cannot be made to work reliably. The
+		/// <see cref="Sharpen.FileLock">Sharpen.FileLock</see>
+		/// facility
+		/// should be used instead.
+		/// </remarks>
+		/// <param name="f">the file to be created</param>
+		/// <exception cref="System.IO.IOException">if the named file already exists or if an I/O error occurred
+		/// 	</exception>
+		public static void CreateNewFile(FilePath f)
+		{
+			if (!f.CreateNewFile())
+			{
+				throw new IOException(MessageFormat.Format(JGitText.Get().createNewFileFailed, f)
+					);
+			}
+		}
 	}
 }

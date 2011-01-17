@@ -320,6 +320,8 @@ namespace NGit
 
 		public string createBranchUnexpectedResult;
 
+		public string createNewFileFailed;
+
 		public string credentialPassword;
 
 		public string credentialUsername;

@@ -196,5 +196,23 @@ namespace NGit.Util
 			// expected
 			NUnit.Framework.Assert.IsTrue(f.Delete());
 		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public virtual void TestCreateNewFile()
+		{
+			FilePath f = new FilePath(trash, "x");
+			FileUtils.CreateNewFile(f);
+			NUnit.Framework.Assert.IsTrue(f.Exists());
+			try
+			{
+				FileUtils.CreateNewFile(f);
+				NUnit.Framework.Assert.Fail("creation of already existing file must fail");
+			}
+			catch (IOException)
+			{
+			}
+			// expected
+			FileUtils.Delete(f);
+		}
 	}
 }
