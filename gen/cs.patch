@@ -753,7 +753,7 @@ index 005294a..e981e9f 100644
  
  		/// <param name="repo"></param>
 diff --git a/NGit/NGit.Api/MergeCommand.cs b/NGit/NGit.Api/MergeCommand.cs
-index a546406..e83e983 100644
+index 62f10af..11c67e1 100644
 --- a/NGit/NGit.Api/MergeCommand.cs
 +++ b/NGit/NGit.Api/MergeCommand.cs
 @@ -157,7 +157,7 @@ namespace NGit.Api
@@ -1240,7 +1240,7 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index a8ec488..b946077 100644
+index d413e65..b63e483 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
 @@ -534,7 +534,7 @@ namespace NGit.Merge

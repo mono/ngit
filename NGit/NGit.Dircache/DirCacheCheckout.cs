@@ -93,7 +93,7 @@ namespace NGit.Dircache
 
 		private AList<string> toBeDeleted = new AList<string>();
 
-		/// <returns>a list of updated pathes and objectIds</returns>
+		/// <returns>a list of updated paths and objectIds</returns>
 		public virtual IDictionary<string, ObjectId> GetUpdated()
 		{
 			return updated;

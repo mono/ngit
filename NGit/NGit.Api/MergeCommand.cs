@@ -166,7 +166,7 @@ namespace NGit.Api
 							resolveMerger.SetWorkingTreeIterator(new FileTreeIterator(repo));
 							noProblems = merger.Merge(headCommit, srcCommit);
 							lowLevelResults = resolveMerger.GetMergeResults();
-							failingPaths = resolveMerger.GetFailingPathes();
+							failingPaths = resolveMerger.GetFailingPaths();
 						}
 						else
 						{
