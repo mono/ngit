@@ -63,7 +63,7 @@ namespace Sharpen
 			do {
 				dataEvent.WaitOne ();
 				lock (thisLock) {
-					if (closed) {
+					if (closed && Available () == 0) {
 						return -1;
 					}
 					if (start < end) {
