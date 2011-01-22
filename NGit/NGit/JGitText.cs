@@ -898,6 +898,8 @@ namespace NGit
 
 		public string unencodeableFile;
 
+		public string unexpectedCompareResult;
+
 		public string unexpectedEndOfConfigFile;
 
 		public string unexpectedHunkTrailer;

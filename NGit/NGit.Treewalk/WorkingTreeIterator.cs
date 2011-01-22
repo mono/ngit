@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using NGit;
@@ -675,32 +676,47 @@ namespace NGit.Treewalk
 		}
 
 		/// <summary>
-		/// Checks whether this entry differs from a given entry from the
-		/// <see cref="NGit.Dircache.DirCache">NGit.Dircache.DirCache</see>
-		/// .
-		/// File status information is used and if status is same we consider the
-		/// file identical to the state in the working directory. Native git uses
-		/// more stat fields than we have accessible in Java.
+		/// The result of a metadata-comparison between the current entry and a
+		/// <see cref="DirCacheEntry">DirCacheEntry</see>
 		/// </summary>
-		/// <param name="entry">the entry from the dircache we want to compare against</param>
-		/// <param name="forceContentCheck">
-		/// True if the actual file content should be checked if
-		/// modification time differs.
+		public enum MetadataDiff
+		{
+			EQUAL,
+			DIFFER_BY_METADATA,
+			SMUDGED,
+			DIFFER_BY_TIMESTAMP
+		}
+
+		/// <summary>
+		/// Compare the metadata (mode, length, modification-timestamp) of the
+		/// current entry and a
+		/// <see cref="NGit.Dircache.DirCacheEntry">NGit.Dircache.DirCacheEntry</see>
+		/// </summary>
+		/// <param name="entry">
+		/// the
+		/// <see cref="NGit.Dircache.DirCacheEntry">NGit.Dircache.DirCacheEntry</see>
+		/// to compare with
 		/// </param>
-		/// <returns>true if content is most likely different.</returns>
-		public virtual bool IsModified(DirCacheEntry entry, bool forceContentCheck)
+		/// <returns>
+		/// a
+		/// <see cref="MetadataDiff">MetadataDiff</see>
+		/// which tells whether and how the entries
+		/// metadata differ
+		/// </returns>
+		public virtual WorkingTreeIterator.MetadataDiff CompareMetadata(DirCacheEntry entry
+			)
 		{
 			if (entry.IsAssumeValid)
 			{
-				return false;
+				return WorkingTreeIterator.MetadataDiff.EQUAL;
 			}
 			if (entry.IsUpdateNeeded)
 			{
-				return true;
+				return WorkingTreeIterator.MetadataDiff.DIFFER_BY_METADATA;
 			}
 			if (!entry.IsSmudged && (GetEntryLength() != entry.Length))
 			{
-				return true;
+				return WorkingTreeIterator.MetadataDiff.DIFFER_BY_METADATA;
 			}
 			// Determine difference in mode-bits of file and index-entry. In the
 			// bitwise presentation of modeDiff we'll have a '1' when the two modes
@@ -720,7 +736,7 @@ namespace NGit.Treewalk
 				{
 					// Report a modification if the modes still (after potentially
 					// ignoring EXECUTABLE_FILE bits) differ
-					return true;
+					return WorkingTreeIterator.MetadataDiff.DIFFER_BY_METADATA;
 				}
 			}
 			// Git under windows only stores seconds so we round the timestamp
@@ -735,33 +751,78 @@ namespace NGit.Treewalk
 			}
 			if (fileLastModified != cacheLastModified)
 			{
-				// The file is dirty by timestamps
-				if (forceContentCheck)
-				{
-					// But we are told to look at content even though timestamps
-					// tell us about modification
-					return ContentCheck(entry);
-				}
-				else
-				{
-					// We are told to assume a modification if timestamps differs
-					return true;
-				}
+				return WorkingTreeIterator.MetadataDiff.DIFFER_BY_TIMESTAMP;
 			}
 			else
 			{
-				// The file is clean when you look at timestamps.
-				if (entry.IsSmudged)
+				if (!entry.IsSmudged)
+				{
+					// The file is clean when you look at timestamps.
+					return WorkingTreeIterator.MetadataDiff.EQUAL;
+				}
+				else
+				{
+					return WorkingTreeIterator.MetadataDiff.SMUDGED;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Checks whether this entry differs from a given entry from the
+		/// <see cref="NGit.Dircache.DirCache">NGit.Dircache.DirCache</see>
+		/// .
+		/// File status information is used and if status is same we consider the
+		/// file identical to the state in the working directory. Native git uses
+		/// more stat fields than we have accessible in Java.
+		/// </summary>
+		/// <param name="entry">the entry from the dircache we want to compare against</param>
+		/// <param name="forceContentCheck">
+		/// True if the actual file content should be checked if
+		/// modification time differs.
+		/// </param>
+		/// <returns>true if content is most likely different.</returns>
+		public virtual bool IsModified(DirCacheEntry entry, bool forceContentCheck)
+		{
+			WorkingTreeIterator.MetadataDiff diff = CompareMetadata(entry);
+			switch (diff)
+			{
+				case WorkingTreeIterator.MetadataDiff.DIFFER_BY_TIMESTAMP:
+				{
+					if (forceContentCheck)
+					{
+						// But we are told to look at content even though timestamps
+						// tell us about modification
+						return ContentCheck(entry);
+					}
+					else
+					{
+						// We are told to assume a modification if timestamps differs
+						return true;
+					}
+					goto case WorkingTreeIterator.MetadataDiff.SMUDGED;
+				}
+
+				case WorkingTreeIterator.MetadataDiff.SMUDGED:
 				{
 					// The file is clean by timestamps but the entry was smudged.
 					// Lets do a content check
 					return ContentCheck(entry);
 				}
-				else
+
+				case WorkingTreeIterator.MetadataDiff.EQUAL:
 				{
-					// The file is clean by timestamps and the entry is not
-					// smudged: Can't get any cleaner!
 					return false;
+				}
+
+				case WorkingTreeIterator.MetadataDiff.DIFFER_BY_METADATA:
+				{
+					return true;
+				}
+
+				default:
+				{
+					throw new InvalidOperationException(MessageFormat.Format(JGitText.Get().unexpectedCompareResult
+						, diff.ToString()));
 				}
 			}
 		}

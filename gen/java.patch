@@ -878,7 +878,7 @@ index c683308..09a5bf3 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index 69d9b22..48ecfd0 100644
+index 48e6483..fb2d7af 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 @@ -119,6 +119,12 @@
@@ -926,7 +926,7 @@ index 69d9b22..48ecfd0 100644
  		return false;
  	}
  
-@@ -575,8 +588,10 @@ public boolean isModified(DirCacheEntry entry, boolean forceContentCheck) {
+@@ -597,8 +610,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();
@@ -936,8 +936,8 @@ index 69d9b22..48ecfd0 100644
  			fileLastModified = fileLastModified - fileLastModified % 1000;
 +		}
  
- 		if (fileLastModified != cacheLastModified) {
- 			// The file is dirty by timestamps
+ 		if (fileLastModified != cacheLastModified)
+ 			return MetadataDiff.DIFFER_BY_TIMESTAMP;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java
 index acc1ae6..686d65a 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/filter/TreeFilter.java

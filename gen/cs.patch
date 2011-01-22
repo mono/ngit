@@ -2500,10 +2500,10 @@ index 4557681..024be0c 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index 09b1eb3..868e032 100644
+index 46cb16c..43d5e6c 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-@@ -863,7 +863,7 @@ namespace NGit.Treewalk
+@@ -924,7 +924,7 @@ namespace NGit.Treewalk
  
  		/// <summary>A single entry within a working directory tree.</summary>
  		/// <remarks>A single entry within a working directory tree.</remarks>
