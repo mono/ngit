@@ -82,6 +82,8 @@ namespace NGit.Api
 
 		private int timeout;
 
+		private CredentialsProvider credentialsProvider;
+
 		/// <param name="repo"></param>
 		protected internal PushCommand(Repository repo) : base(repo)
 		{
@@ -141,6 +143,7 @@ namespace NGit.Api
 						transport.SetOptionReceivePack(receivePack);
 					}
 					transport.SetDryRun(dryRun);
+					transport.SetCredentialsProvider(credentialsProvider);
 					ICollection<RemoteRefUpdate> toPush = transport.FindRemoteRefUpdatesFor(refSpecs);
 					try
 					{
@@ -365,6 +368,18 @@ namespace NGit.Api
 			CheckCallable();
 			this.force = force;
 			return this;
+		}
+
+		/// <param name="credentialsProvider">
+		/// the
+		/// <see cref="NGit.Transport.CredentialsProvider">NGit.Transport.CredentialsProvider
+		/// 	</see>
+		/// to use
+		/// </param>
+		public virtual void SetCredentialsProvider(CredentialsProvider credentialsProvider
+			)
+		{
+			this.credentialsProvider = credentialsProvider;
 		}
 	}
 }

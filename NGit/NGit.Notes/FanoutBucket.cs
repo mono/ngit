@@ -120,10 +120,10 @@ namespace NGit.Notes
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		internal override ObjectId Get(AnyObjectId objId, ObjectReader or)
+		internal override Note GetNote(AnyObjectId objId, ObjectReader or)
 		{
 			NoteBucket b = table[Cell(objId)];
-			return b != null ? b.Get(objId, or) : null;
+			return b != null ? b.GetNote(objId, or) : null;
 		}
 
 		internal virtual NoteBucket GetBucket(int cell)
@@ -152,12 +152,12 @@ namespace NGit.Notes
 		{
 			MutableObjectId id = new MutableObjectId();
 			id.FromObjectId(objId);
-			return new _Iterator_137(this, id, reader);
+			return new _Iterator_138(this, id, reader);
 		}
 
-		private sealed class _Iterator_137 : Sharpen.Iterator<Note>
+		private sealed class _Iterator_138 : Sharpen.Iterator<Note>
 		{
-			public _Iterator_137(FanoutBucket _enclosing, MutableObjectId id, ObjectReader reader
+			public _Iterator_138(FanoutBucket _enclosing, MutableObjectId id, ObjectReader reader
 				)
 			{
 				this._enclosing = _enclosing;
@@ -423,9 +423,9 @@ namespace NGit.Notes
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			internal override ObjectId Get(AnyObjectId objId, ObjectReader or)
+			internal override Note GetNote(AnyObjectId objId, ObjectReader or)
 			{
-				return this.Load(objId, or).Get(objId, or);
+				return this.Load(objId, or).GetNote(objId, or);
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>

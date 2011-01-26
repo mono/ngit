@@ -142,7 +142,7 @@ namespace NGit.Transport
 
 		private TextWriter msgs;
 
-		private IndexPack ip;
+		private PackParser parser;
 
 		/// <summary>The refs we advertised as existing at the start of the connection.</summary>
 		/// <remarks>The refs we advertised as existing at the start of the connection.</remarks>
@@ -206,10 +206,10 @@ namespace NGit.Transport
 
 		private class ReceiveConfig
 		{
-			private sealed class _SectionParser_214 : Config.SectionParser<ReceivePack.ReceiveConfig
+			private sealed class _SectionParser_215 : Config.SectionParser<ReceivePack.ReceiveConfig
 				>
 			{
-				public _SectionParser_214()
+				public _SectionParser_215()
 				{
 				}
 
@@ -220,7 +220,7 @@ namespace NGit.Transport
 			}
 
 			internal static readonly Config.SectionParser<ReceivePack.ReceiveConfig> KEY = new 
-				_SectionParser_214();
+				_SectionParser_215();
 
 			internal readonly bool checkReceivedObjects;
 
@@ -715,7 +715,7 @@ namespace NGit.Transport
 						{
 							CheckConnectivity();
 						}
-						ip = null;
+						parser = null;
 						unpackError = null;
 					}
 					catch (IOException err)
@@ -739,14 +739,14 @@ namespace NGit.Transport
 				UnlockPack();
 				if (reportStatus)
 				{
-					SendStatusReport(true, new _Reporter_651(this));
+					SendStatusReport(true, new _Reporter_652(this));
 					pckOut.End();
 				}
 				else
 				{
 					if (msgs != null)
 					{
-						SendStatusReport(false, new _Reporter_658(this));
+						SendStatusReport(false, new _Reporter_659(this));
 					}
 				}
 				postReceive.OnPostReceive(this, FilterCommands(ReceiveCommand.Result.OK));
@@ -757,9 +757,9 @@ namespace NGit.Transport
 			}
 		}
 
-		private sealed class _Reporter_651 : ReceivePack.Reporter
+		private sealed class _Reporter_652 : ReceivePack.Reporter
 		{
-			public _Reporter_651(ReceivePack _enclosing)
+			public _Reporter_652(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -773,9 +773,9 @@ namespace NGit.Transport
 			private readonly ReceivePack _enclosing;
 		}
 
-		private sealed class _Reporter_658 : ReceivePack.Reporter
+		private sealed class _Reporter_659 : ReceivePack.Reporter
 		{
-			public _Reporter_658(ReceivePack _enclosing)
+			public _Reporter_659(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -931,18 +931,27 @@ namespace NGit.Transport
 			{
 				timeoutIn.SetTimeout(10 * timeout * 1000);
 			}
-			ip = IndexPack.Create(db, rawIn);
-			ip.SetFixThin(true);
-			ip.SetNeedNewObjectIds(checkReferencedIsReachable);
-			ip.SetNeedBaseObjectIds(checkReferencedIsReachable);
-			ip.SetObjectChecking(IsCheckReceivedObjects());
-			ip.Index(NullProgressMonitor.INSTANCE);
-			string lockMsg = "jgit receive-pack";
-			if (GetRefLogIdent() != null)
+			ObjectInserter ins = db.NewObjectInserter();
+			try
 			{
-				lockMsg += " from " + GetRefLogIdent().ToExternalString();
+				string lockMsg = "jgit receive-pack";
+				if (GetRefLogIdent() != null)
+				{
+					lockMsg += " from " + GetRefLogIdent().ToExternalString();
+				}
+				parser = ins.NewPackParser(rawIn);
+				parser.SetAllowThin(true);
+				parser.SetNeedNewObjectIds(checkReferencedIsReachable);
+				parser.SetNeedBaseObjectIds(checkReferencedIsReachable);
+				parser.SetObjectChecking(IsCheckReceivedObjects());
+				parser.SetLockMessage(lockMsg);
+				packLock = parser.Parse(NullProgressMonitor.INSTANCE);
+				ins.Flush();
 			}
-			packLock = ip.RenameAndOpenPack(lockMsg);
+			finally
+			{
+				ins.Release();
+			}
 			if (timeoutIn != null)
 			{
 				timeoutIn.SetTimeout(timeout * 1000);
@@ -961,10 +970,10 @@ namespace NGit.Transport
 			ObjectIdSubclassMap<ObjectId> providedObjects = null;
 			if (checkReferencedIsReachable)
 			{
-				baseObjects = ip.GetBaseObjectIds();
-				providedObjects = ip.GetNewObjectIds();
+				baseObjects = parser.GetBaseObjectIds();
+				providedObjects = parser.GetNewObjectIds();
 			}
-			ip = null;
+			parser = null;
 			ObjectWalk ow = new ObjectWalk(db);
 			ow.SetRetainBody(false);
 			if (checkReferencedIsReachable)

@@ -196,11 +196,9 @@ namespace NGit.Storage.File
 			id2.CopyRawTo(pack);
 			Deflate(pack, delta3);
 			Digest(pack);
-			byte[] raw = pack.ToByteArray();
-			IndexPack ip = IndexPack.Create(repo, new ByteArrayInputStream(raw));
-			ip.SetFixThin(true);
-			ip.Index(NullProgressMonitor.INSTANCE);
-			ip.RenameAndOpenPack();
+			PackParser ip = Index(pack.ToByteArray());
+			ip.SetAllowThin(true);
+			ip.Parse(NullProgressMonitor.INSTANCE);
 			NUnit.Framework.Assert.IsTrue(wc.Has(id3), "has blob");
 			ObjectLoader ol = wc.Open(id3);
 			NUnit.Framework.Assert.IsNotNull(ol, "created loader");
@@ -251,11 +249,9 @@ namespace NGit.Storage.File
 			id2.CopyRawTo(pack);
 			Deflate(pack, delta3);
 			Digest(pack);
-			byte[] raw = pack.ToByteArray();
-			IndexPack ip = IndexPack.Create(repo, new ByteArrayInputStream(raw));
-			ip.SetFixThin(true);
-			ip.Index(NullProgressMonitor.INSTANCE);
-			ip.RenameAndOpenPack();
+			PackParser ip = Index(pack.ToByteArray());
+			ip.SetAllowThin(true);
+			ip.Parse(NullProgressMonitor.INSTANCE);
 			NUnit.Framework.Assert.IsTrue(wc.Has(id3), "has blob");
 			ObjectLoader ol = wc.Open(id3);
 			NUnit.Framework.Assert.IsNotNull(ol, "created loader");
@@ -355,6 +351,27 @@ namespace NGit.Storage.File
 			MessageDigest md = Constants.NewMessageDigest();
 			md.Update(buf.ToByteArray());
 			buf.Write(md.Digest());
+		}
+
+		private ObjectInserter inserter;
+
+		[NUnit.Framework.TearDown]
+		public virtual void Release()
+		{
+			if (inserter != null)
+			{
+				inserter.Release();
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private PackParser Index(byte[] raw)
+		{
+			if (inserter == null)
+			{
+				inserter = repo.NewObjectInserter();
+			}
+			return inserter.NewPackParser(new ByteArrayInputStream(raw));
 		}
 	}
 }

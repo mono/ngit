@@ -113,10 +113,10 @@ namespace NGit.Notes
 			return -(low + 1);
 		}
 
-		internal override ObjectId Get(AnyObjectId objId, ObjectReader or)
+		internal override Note GetNote(AnyObjectId objId, ObjectReader or)
 		{
 			int idx = Search(objId);
-			return 0 <= idx ? notes[idx].GetData() : null;
+			return 0 <= idx ? notes[idx] : null;
 		}
 
 		internal virtual Note Get(int index)
@@ -132,12 +132,12 @@ namespace NGit.Notes
 		internal override Sharpen.Iterator<Note> Iterator(AnyObjectId objId, ObjectReader
 			 reader)
 		{
-			return new _Iterator_120(this);
+			return new _Iterator_121(this);
 		}
 
-		private sealed class _Iterator_120 : Sharpen.Iterator<Note>
+		private sealed class _Iterator_121 : Sharpen.Iterator<Note>
 		{
-			public _Iterator_120(LeafBucket _enclosing)
+			public _Iterator_121(LeafBucket _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}

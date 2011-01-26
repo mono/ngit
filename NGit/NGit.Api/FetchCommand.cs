@@ -81,6 +81,8 @@ namespace NGit.Api
 
 		private int timeout;
 
+		private CredentialsProvider credentialsProvider;
+
 		/// <param name="repo"></param>
 		protected internal FetchCommand(Repository repo) : base(repo)
 		{
@@ -122,6 +124,7 @@ namespace NGit.Api
 				transport.SetTimeout(timeout);
 				transport.SetDryRun(dryRun);
 				transport.SetFetchThin(thin);
+				transport.SetCredentialsProvider(credentialsProvider);
 				try
 				{
 					FetchResult result = transport.Fetch(monitor, refSpecs);
@@ -333,6 +336,18 @@ namespace NGit.Api
 			CheckCallable();
 			this.thin = thin;
 			return this;
+		}
+
+		/// <param name="credentialsProvider">
+		/// the
+		/// <see cref="NGit.Transport.CredentialsProvider">NGit.Transport.CredentialsProvider
+		/// 	</see>
+		/// to use
+		/// </param>
+		public virtual void SetCredentialsProvider(CredentialsProvider credentialsProvider
+			)
+		{
+			this.credentialsProvider = credentialsProvider;
 		}
 	}
 }

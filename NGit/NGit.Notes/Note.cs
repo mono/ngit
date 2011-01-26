@@ -60,7 +60,7 @@ namespace NGit.Notes
 		/// </summary>
 		/// <param name="noteOn">the object that has a note attached to it.</param>
 		/// <param name="noteData">the actual note data contained in this note</param>
-		internal Note(AnyObjectId noteOn, ObjectId noteData) : base(noteOn)
+		public Note(AnyObjectId noteOn, ObjectId noteData) : base(noteOn)
 		{
 			data = noteData;
 		}

@@ -358,7 +358,6 @@
     <Compile Include="NGit.Errors\TransportException.cs" />
     <Compile Include="NGit.Transport\URIish.cs" />
     <Compile Include="NGit.Api\MergeCommandResult.cs" />
-    <Compile Include="NGit.Transport\IndexPack.cs" />
     <Compile Include="NGit.Transport\LongMap.cs" />
     <Compile Include="NGit.Util\IOUtil.cs" />
     <Compile Include="NGit.Transport\RemoteConfig.cs" />
@@ -490,6 +489,8 @@
     <Compile Include="NGit.Notes\NoteMerger.cs" />
     <Compile Include="NGit.Notes\NotesMergeConflictException.cs" />
     <Compile Include="NGit.Transport\TransferConfig.cs" />
+    <Compile Include="NGit.Transport\PackParser.cs" />
+    <Compile Include="NGit.Storage.File\ObjectDirectoryPackParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

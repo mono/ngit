@@ -54,9 +54,9 @@ namespace NGit.Notes
 		public virtual void TestEmpty()
 		{
 			LeafBucket b = new LeafBucket(0);
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x00))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x01))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0xfe))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x00))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x01))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0xfe))), null));
 		}
 
 		[NUnit.Framework.Test]
@@ -68,18 +68,18 @@ namespace NGit.Notes
 			b.ParseOneEntry(Id(unchecked((int)(0x33))), Id(unchecked((int)(0x83))));
 			b.ParseOneEntry(Id(unchecked((int)(0x44))), Id(unchecked((int)(0x84))));
 			b.ParseOneEntry(Id(unchecked((int)(0x55))), Id(unchecked((int)(0x85))));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x01))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.Get(Id(unchecked((int
-				)(0x11))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.Get(Id(unchecked((int
-				)(0x22))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.Get(Id(unchecked((int
-				)(0x33))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.Get(Id(unchecked((int
-				)(0x44))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.Get(Id(unchecked((int
-				)(0x55))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x66))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x01))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.GetNote(Id(unchecked(
+				(int)(0x22))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.GetNote(Id(unchecked(
+				(int)(0x33))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.GetNote(Id(unchecked(
+				(int)(0x44))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.GetNote(Id(unchecked(
+				(int)(0x55))), null).GetData());
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x66))), null));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -97,18 +97,18 @@ namespace NGit.Notes
 				(int)(0x84))), null));
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x55))), Id(unchecked(
 				(int)(0x85))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x01))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.Get(Id(unchecked((int
-				)(0x11))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.Get(Id(unchecked((int
-				)(0x22))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.Get(Id(unchecked((int
-				)(0x33))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.Get(Id(unchecked((int
-				)(0x44))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.Get(Id(unchecked((int
-				)(0x55))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x66))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x01))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.GetNote(Id(unchecked(
+				(int)(0x22))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.GetNote(Id(unchecked(
+				(int)(0x33))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.GetNote(Id(unchecked(
+				(int)(0x44))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.GetNote(Id(unchecked(
+				(int)(0x55))), null).GetData());
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x66))), null));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -126,18 +126,18 @@ namespace NGit.Notes
 				(int)(0x82))), null));
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x11))), Id(unchecked(
 				(int)(0x81))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x01))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.Get(Id(unchecked((int
-				)(0x11))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.Get(Id(unchecked((int
-				)(0x22))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.Get(Id(unchecked((int
-				)(0x33))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.Get(Id(unchecked((int
-				)(0x44))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.Get(Id(unchecked((int
-				)(0x55))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x66))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x01))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.GetNote(Id(unchecked(
+				(int)(0x22))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.GetNote(Id(unchecked(
+				(int)(0x33))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.GetNote(Id(unchecked(
+				(int)(0x44))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.GetNote(Id(unchecked(
+				(int)(0x55))), null).GetData());
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x66))), null));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -155,18 +155,18 @@ namespace NGit.Notes
 				(int)(0x82))), null));
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x44))), Id(unchecked(
 				(int)(0x84))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x01))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.Get(Id(unchecked((int
-				)(0x11))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.Get(Id(unchecked((int
-				)(0x22))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.Get(Id(unchecked((int
-				)(0x33))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.Get(Id(unchecked((int
-				)(0x44))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.Get(Id(unchecked((int
-				)(0x55))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x66))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x01))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.GetNote(Id(unchecked(
+				(int)(0x22))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.GetNote(Id(unchecked(
+				(int)(0x33))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.GetNote(Id(unchecked(
+				(int)(0x44))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.GetNote(Id(unchecked(
+				(int)(0x55))), null).GetData());
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x66))), null));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -176,12 +176,12 @@ namespace NGit.Notes
 			LeafBucket b = new LeafBucket(0);
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x11))), Id(unchecked(
 				(int)(0x81))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.Get(Id(unchecked((int
-				)(0x11))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x11))), Id(unchecked(
 				(int)(0x01))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x01))), b.Get(Id(unchecked((int
-				)(0x11))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x01))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -189,9 +189,9 @@ namespace NGit.Notes
 		public virtual void TestRemoveMissingNote()
 		{
 			LeafBucket b = new LeafBucket(0);
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x11))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x11))), null));
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x11))), null, null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x11))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x11))), null));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -210,17 +210,17 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x55))), Id(unchecked(
 				(int)(0x85))), null));
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x11))), null, null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x01))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x11))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.Get(Id(unchecked((int
-				)(0x22))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.Get(Id(unchecked((int
-				)(0x33))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.Get(Id(unchecked((int
-				)(0x44))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.Get(Id(unchecked((int
-				)(0x55))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x66))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x01))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x11))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.GetNote(Id(unchecked(
+				(int)(0x22))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.GetNote(Id(unchecked(
+				(int)(0x33))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.GetNote(Id(unchecked(
+				(int)(0x44))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.GetNote(Id(unchecked(
+				(int)(0x55))), null).GetData());
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x66))), null));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -239,17 +239,17 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x55))), Id(unchecked(
 				(int)(0x85))), null));
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x33))), null, null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x01))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.Get(Id(unchecked((int
-				)(0x11))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.Get(Id(unchecked((int
-				)(0x22))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x33))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.Get(Id(unchecked((int
-				)(0x44))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.Get(Id(unchecked((int
-				)(0x55))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x66))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x01))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.GetNote(Id(unchecked(
+				(int)(0x22))), null).GetData());
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x33))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.GetNote(Id(unchecked(
+				(int)(0x44))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x85))), b.GetNote(Id(unchecked(
+				(int)(0x55))), null).GetData());
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x66))), null));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -268,17 +268,17 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x55))), Id(unchecked(
 				(int)(0x85))), null));
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x55))), null, null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x01))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.Get(Id(unchecked((int
-				)(0x11))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.Get(Id(unchecked((int
-				)(0x22))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.Get(Id(unchecked((int
-				)(0x33))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.Get(Id(unchecked((int
-				)(0x44))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x55))), null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x66))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x01))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x82))), b.GetNote(Id(unchecked(
+				(int)(0x22))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x83))), b.GetNote(Id(unchecked(
+				(int)(0x33))), null).GetData());
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x84))), b.GetNote(Id(unchecked(
+				(int)(0x44))), null).GetData());
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x55))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x66))), null));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -288,10 +288,10 @@ namespace NGit.Notes
 			LeafBucket b = new LeafBucket(0);
 			NUnit.Framework.Assert.AreSame(b, b.Set(Id(unchecked((int)(0x11))), Id(unchecked(
 				(int)(0x81))), null));
-			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.Get(Id(unchecked((int
-				)(0x11))), null));
+			NUnit.Framework.Assert.AreEqual(Id(unchecked((int)(0x81))), b.GetNote(Id(unchecked(
+				(int)(0x11))), null).GetData());
 			NUnit.Framework.Assert.IsNull(b.Set(Id(unchecked((int)(0x11))), null, null));
-			NUnit.Framework.Assert.IsNull(b.Get(Id(unchecked((int)(0x11))), null));
+			NUnit.Framework.Assert.IsNull(b.GetNote(Id(unchecked((int)(0x11))), null));
 		}
 
 		private static AnyObjectId Id(int first)

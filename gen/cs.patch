@@ -797,10 +797,10 @@ index 01c00a4..9f02842 100644
  				{
  					AddConflict(result.Key, result.Value);
 diff --git a/NGit/NGit.Api/PushCommand.cs b/NGit/NGit.Api/PushCommand.cs
-index 52bba89..cac2d54 100644
+index c6d3841..45c6f40 100644
 --- a/NGit/NGit.Api/PushCommand.cs
 +++ b/NGit/NGit.Api/PushCommand.cs
-@@ -127,7 +127,7 @@ namespace NGit.Api
+@@ -129,7 +129,7 @@ namespace NGit.Api
  					}
  				}
  				IList<NGit.Transport.Transport> transports;
@@ -809,7 +809,7 @@ index 52bba89..cac2d54 100644
  					);
  				foreach (NGit.Transport.Transport transport in transports)
  				{
-@@ -173,7 +173,7 @@ namespace NGit.Api
+@@ -176,7 +176,7 @@ namespace NGit.Api
  				throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfPushCommand
  					, e);
  			}
@@ -1298,7 +1298,7 @@ index d61087f..0c9f48f 100644
  				// lose. Accept defeat and return the winner's instance.
  				TranslationBundle old = map.PutIfAbsent(type, bundle);
 diff --git a/NGit/NGit.Notes/FanoutBucket.cs b/NGit/NGit.Notes/FanoutBucket.cs
-index 02d0040..b8bc1de 100644
+index 6e05e6a..271dc32 100644
 --- a/NGit/NGit.Notes/FanoutBucket.cs
 +++ b/NGit/NGit.Notes/FanoutBucket.cs
 @@ -412,7 +412,7 @@ namespace NGit.Notes
@@ -1654,10 +1654,10 @@ index cf3d447..e2378c8 100644
  		/// <summary>
  		/// True once
 diff --git a/NGit/NGit.Storage.File/ObjectDirectory.cs b/NGit/NGit.Storage.File/ObjectDirectory.cs
-index a91101b..c902e98 100644
+index 593f5e3..849f06b 100644
 --- a/NGit/NGit.Storage.File/ObjectDirectory.cs
 +++ b/NGit/NGit.Storage.File/ObjectDirectory.cs
-@@ -787,9 +787,9 @@ SEARCH_break: ;
+@@ -795,9 +795,9 @@ SEARCH_break: ;
  			string[] nameList = packDirectory.List();
  			if (nameList == null)
  			{
@@ -1864,7 +1864,7 @@ index 14f5150..ee19789 100644
  		private bool startedOperation;
  
 diff --git a/NGit/NGit.Transport/BasePackFetchConnection.cs b/NGit/NGit.Transport/BasePackFetchConnection.cs
-index c347aaa..1c9c1d0 100644
+index ecf07a3..d9fdcba 100644
 --- a/NGit/NGit.Transport/BasePackFetchConnection.cs
 +++ b/NGit/NGit.Transport/BasePackFetchConnection.cs
 @@ -665,7 +665,7 @@ SEND_HAVES_break: ;
@@ -1908,7 +1908,7 @@ index e0ff10d..b752205 100644
  						value = Sharpen.Runtime.Substring(auth, eq + 2, dq);
  						next = dq + 1;
 diff --git a/NGit/NGit.Transport/LongMap.cs b/NGit/NGit.Transport/LongMap.cs
-index 32ad9cc..f75cbcf 100644
+index 87944c9..e689b4a 100644
 --- a/NGit/NGit.Transport/LongMap.cs
 +++ b/NGit/NGit.Transport/LongMap.cs
 @@ -73,7 +73,7 @@ namespace NGit.Transport
@@ -2063,7 +2063,7 @@ index 7cb5ae7..30d4847 100644
  		/// <summary>Get status of remote refs updates.</summary>
  		/// <remarks>
 diff --git a/NGit/NGit.Transport/ReceivePack.cs b/NGit/NGit.Transport/ReceivePack.cs
-index e6c3c33..b1ec3d0 100644
+index 1748707..eae8946 100644
 --- a/NGit/NGit.Transport/ReceivePack.cs
 +++ b/NGit/NGit.Transport/ReceivePack.cs
 @@ -608,7 +608,7 @@ namespace NGit.Transport
@@ -2452,7 +2452,7 @@ index ebf8e63..3547b49 100644
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
 diff --git a/NGit/NGit.Transport/WalkFetchConnection.cs b/NGit/NGit.Transport/WalkFetchConnection.cs
-index f2ef422..d0edc34 100644
+index e3585d5..7864f9e 100644
 --- a/NGit/NGit.Transport/WalkFetchConnection.cs
 +++ b/NGit/NGit.Transport/WalkFetchConnection.cs
 @@ -556,7 +556,7 @@ namespace NGit.Transport

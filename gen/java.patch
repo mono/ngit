@@ -583,12 +583,12 @@ index a95303b..c67652f 100644
  	static final int SORT_COMMIT_TIME_DESC = 1 << 0;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
-index 418c3c0..44d8a6d 100644
+index 22e5412..51a66d9 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
-@@ -57,7 +57,7 @@
- import org.eclipse.jgit.storage.pack.ObjectToPack;
+@@ -58,7 +58,7 @@
  import org.eclipse.jgit.storage.pack.PackWriter;
+ import org.eclipse.jgit.util.FS;
  
 -abstract class FileObjectDatabase extends ObjectDatabase {
 +public abstract class FileObjectDatabase extends ObjectDatabase {
@@ -658,10 +658,10 @@ index 2927cad..52bf920 100644
  	/** The repository this transport fetches into, or pushes out of. */
  	protected final Repository local;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-index 19f5748..53a30b3 100644
+index 2653bad..7753486 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-@@ -137,8 +137,12 @@
+@@ -138,8 +138,12 @@
  
  	static final String OPTION_NO_PROGRESS = "no-progress";
  
@@ -676,7 +676,7 @@ index 19f5748..53a30b3 100644
  	}
  
  	private final RevWalk walk;
-@@ -158,7 +162,7 @@
+@@ -159,7 +163,7 @@
  	/** Marks a commit listed in the advertised refs. */
  	final RevFlag ADVERTISED;
  
@@ -684,26 +684,6 @@ index 19f5748..53a30b3 100644
 +	private int multiAck = MultiAck.OFF;
  
  	private boolean thinPack;
- 
-diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-index f8dc391..02def8b 100644
---- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-+++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/IndexPack.java
-@@ -748,11 +748,11 @@ private void fixHeaderFooter(final byte[] origcsum, final byte[] tailcsum)
- 			if (n < 0)
- 				break;
- 			if (origRemaining != 0) {
--				final int origCnt = (int) Math.min(n, origRemaining);
--				origDigest.update(buf, 0, origCnt);
--				origRemaining -= origCnt;
-+				final int origCnt2 = (int) Math.min(n, origRemaining);
-+				origDigest.update(buf, 0, origCnt2);
-+				origRemaining -= origCnt2;
- 				if (origRemaining == 0)
--					tailDigest.update(buf, origCnt, n - origCnt);
-+					tailDigest.update(buf, origCnt2, n - origCnt2);
- 			} else
- 				tailDigest.update(buf, 0, n);
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
 index 60ebeab..859ca28 100644

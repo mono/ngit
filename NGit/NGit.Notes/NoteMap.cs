@@ -195,7 +195,19 @@ namespace NGit.Notes
 		/// 	</exception>
 		public virtual ObjectId Get(AnyObjectId id)
 		{
-			return root.Get(id, reader);
+			Note n = root.GetNote(id, reader);
+			return n == null ? null : n.GetData();
+		}
+
+		/// <summary>Lookup a note for a specific ObjectId.</summary>
+		/// <remarks>Lookup a note for a specific ObjectId.</remarks>
+		/// <param name="id">the object to look for.</param>
+		/// <returns>the note for the given object id, or null if no note exists.</returns>
+		/// <exception cref="System.IO.IOException">a portion of the note space is not accessible.
+		/// 	</exception>
+		public virtual Note GetNote(AnyObjectId id)
+		{
+			return root.GetNote(id, reader);
 		}
 
 		/// <summary>Determine if a note exists for the specified ObjectId.</summary>

@@ -214,11 +214,12 @@ namespace NGit.Storage.File
 		/// <remarks>Add a single existing pack to the list of available pack files.</remarks>
 		/// <param name="pack">path of the pack file to open.</param>
 		/// <param name="idx">path of the corresponding index file.</param>
+		/// <returns>the pack that was opened and added to the database.</returns>
 		/// <exception cref="System.IO.IOException">
 		/// index file could not be opened, read, or is not recognized as
 		/// a Git pack file index.
 		/// </exception>
-		public virtual void OpenPack(FilePath pack, FilePath idx)
+		internal override PackFile OpenPack(FilePath pack, FilePath idx)
 		{
 			string p = pack.GetName();
 			string i = idx.GetName();
@@ -236,7 +237,9 @@ namespace NGit.Storage.File
 				throw new IOException(MessageFormat.Format(JGitText.Get().packDoesNotMatchIndex, 
 					pack));
 			}
-			InsertPack(new PackFile(idx, pack));
+			PackFile res = new PackFile(idx, pack);
+			InsertPack(res);
+			return res;
 		}
 
 		public override string ToString()
@@ -598,6 +601,11 @@ SEARCH_break: ;
 		internal override Config GetConfig()
 		{
 			return config;
+		}
+
+		internal override FS GetFS()
+		{
+			return fs;
 		}
 
 		private void InsertPack(PackFile pf)

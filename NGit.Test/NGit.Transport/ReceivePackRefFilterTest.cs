@@ -132,7 +132,7 @@ namespace NGit.Transport
 		public virtual void TestFilterHidesPrivate()
 		{
 			IDictionary<string, Ref> refs;
-			TransportLocal t = new _TransportLocal_145(this, src, UriOf(dst));
+			TransportLocal t = new _TransportLocal_146(this, src, UriOf(dst));
 			try
 			{
 				PushConnection c = t.OpenPush();
@@ -158,9 +158,9 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(B, master.GetObjectId());
 		}
 
-		private sealed class _TransportLocal_145 : TransportLocal
+		private sealed class _TransportLocal_146 : TransportLocal
 		{
-			public _TransportLocal_145(ReceivePackRefFilterTest _enclosing, Repository baseArg1
+			public _TransportLocal_146(ReceivePackRefFilterTest _enclosing, Repository baseArg1
 				, URIish baseArg2) : base(baseArg1, baseArg2)
 			{
 				this._enclosing = _enclosing;
@@ -206,7 +206,7 @@ namespace NGit.Transport
 			s.Update(R_MASTER, N);
 			// Push this new content to the remote, doing strict validation.
 			//
-			TransportLocal t = new _TransportLocal_208(this, src, UriOf(dst));
+			TransportLocal t = new _TransportLocal_209(this, src, UriOf(dst));
 			RemoteRefUpdate u = new RemoteRefUpdate(src, R_MASTER, R_MASTER, false, null, null
 				);
 			//
@@ -234,9 +234,9 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(N, dst.Resolve(R_MASTER));
 		}
 
-		private sealed class _TransportLocal_208 : TransportLocal
+		private sealed class _TransportLocal_209 : TransportLocal
 		{
-			public _TransportLocal_208(ReceivePackRefFilterTest _enclosing, Repository baseArg1
+			public _TransportLocal_209(ReceivePackRefFilterTest _enclosing, Repository baseArg1
 				, URIish baseArg2) : base(baseArg1, baseArg2)
 			{
 				this._enclosing = _enclosing;
@@ -574,14 +574,28 @@ namespace NGit.Transport
 			buf.Write(md.Digest());
 		}
 
+		private ObjectInserter inserter;
+
+		[NUnit.Framework.TearDown]
+		public virtual void Release()
+		{
+			if (inserter != null)
+			{
+				inserter.Release();
+			}
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private void OpenPack(TemporaryBuffer.Heap buf)
 		{
+			if (inserter == null)
+			{
+				inserter = src.NewObjectInserter();
+			}
 			byte[] raw = buf.ToByteArray();
-			IndexPack ip = IndexPack.Create(src, new ByteArrayInputStream(raw));
-			ip.SetFixThin(true);
-			ip.Index(PM);
-			ip.RenameAndOpenPack();
+			PackParser p = inserter.NewPackParser(new ByteArrayInputStream(raw));
+			p.SetAllowThin(true);
+			p.Parse(PM);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

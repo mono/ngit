@@ -69,13 +69,11 @@ namespace NGit.Storage.File
 
 		private ByteArrayOutputStream os;
 
-		private FilePath packBase;
-
-		private FilePath packFile;
-
-		private FilePath indexFile;
-
 		private PackFile pack;
+
+		private ObjectInserter inserter;
+
+		private FileRepository dst;
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
@@ -83,10 +81,13 @@ namespace NGit.Storage.File
 		{
 			base.SetUp();
 			os = new ByteArrayOutputStream();
-			packBase = new FilePath(trash, "tmp_pack");
-			packFile = new FilePath(trash, "tmp_pack.pack");
-			indexFile = new FilePath(trash, "tmp_pack.idx");
 			config = new PackConfig(db);
+			dst = CreateBareRepository();
+			FilePath alt = new FilePath(((ObjectDirectory)dst.ObjectDatabase).GetDirectory(), 
+				"info/alternates");
+			alt.GetParentFile().Mkdirs();
+			Write(alt, ((ObjectDirectory)db.ObjectDatabase).GetDirectory().GetAbsolutePath() 
+				+ "\n");
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -96,6 +97,12 @@ namespace NGit.Storage.File
 			if (writer != null)
 			{
 				writer.Release();
+				writer = null;
+			}
+			if (inserter != null)
+			{
+				inserter.Release();
+				inserter = null;
 			}
 			base.TearDown();
 		}
@@ -435,6 +442,10 @@ namespace NGit.Storage.File
 		{
 			config.SetIndexVersion(2);
 			WriteVerifyPack4(false);
+			FilePath packFile = pack.GetPackFile();
+			string name = packFile.GetName();
+			string @base = Sharpen.Runtime.Substring(name, 0, name.LastIndexOf('.'));
+			FilePath indexFile = new FilePath(packFile.GetParentFile(), @base + ".idx");
 			// Validate that IndexPack came up with the right CRC32 value.
 			PackIndex idx1 = PackIndex.Open(indexFile);
 			NUnit.Framework.Assert.IsTrue(idx1 is PackIndexV2);
@@ -575,13 +586,13 @@ namespace NGit.Storage.File
 		/// <exception cref="System.IO.IOException"></exception>
 		private void VerifyOpenPack(bool thin)
 		{
+			byte[] packData = os.ToByteArray();
 			if (thin)
 			{
-				InputStream @is = new ByteArrayInputStream(os.ToByteArray());
-				IndexPack indexer = new IndexPack(db, @is, packBase);
+				PackParser p = Index(packData);
 				try
 				{
-					indexer.Index(new TextProgressMonitor());
+					p.Parse(NullProgressMonitor.INSTANCE);
 					NUnit.Framework.Assert.Fail("indexer should grumble about missing object");
 				}
 				catch (IOException)
@@ -589,13 +600,23 @@ namespace NGit.Storage.File
 				}
 			}
 			// expected
-			InputStream is_1 = new ByteArrayInputStream(os.ToByteArray());
-			IndexPack indexer_1 = new IndexPack(db, is_1, packBase);
-			indexer_1.SetKeepEmpty(true);
-			indexer_1.SetFixThin(thin);
-			indexer_1.SetIndexVersion(2);
-			indexer_1.Index(new TextProgressMonitor());
-			pack = new PackFile(indexFile, packFile);
+			ObjectDirectoryPackParser p_1 = (ObjectDirectoryPackParser)Index(packData);
+			p_1.SetKeepEmpty(true);
+			p_1.SetAllowThin(thin);
+			p_1.SetIndexVersion(2);
+			p_1.Parse(NullProgressMonitor.INSTANCE);
+			pack = p_1.GetPackFile();
+			NUnit.Framework.Assert.IsNotNull(pack, "have PackFile after parsing");
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private PackParser Index(byte[] packData)
+		{
+			if (inserter == null)
+			{
+				inserter = dst.NewObjectInserter();
+			}
+			return inserter.NewPackParser(new ByteArrayInputStream(packData));
 		}
 
 		private void VerifyObjectsOrder(ObjectId[] objectsOrder)
@@ -605,7 +626,7 @@ namespace NGit.Storage.File
 			{
 				entries.AddItem(me.CloneEntry());
 			}
-			entries.Sort(new _IComparer_572());
+			entries.Sort(new _IComparer_591());
 			int i = 0;
 			foreach (PackIndex.MutableEntry me_1 in entries)
 			{
@@ -614,9 +635,9 @@ namespace NGit.Storage.File
 			}
 		}
 
-		private sealed class _IComparer_572 : IComparer<PackIndex.MutableEntry>
+		private sealed class _IComparer_591 : IComparer<PackIndex.MutableEntry>
 		{
-			public _IComparer_572()
+			public _IComparer_591()
 			{
 			}
 
