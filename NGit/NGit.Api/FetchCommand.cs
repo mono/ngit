@@ -83,6 +83,8 @@ namespace NGit.Api
 
 		private CredentialsProvider credentialsProvider;
 
+		private TagOpt tagOption;
+
 		/// <param name="repo"></param>
 		protected internal FetchCommand(Repository repo) : base(repo)
 		{
@@ -123,6 +125,10 @@ namespace NGit.Api
 				transport.SetRemoveDeletedRefs(removeDeletedRefs);
 				transport.SetTimeout(timeout);
 				transport.SetDryRun(dryRun);
+				if (tagOption != null)
+				{
+					transport.SetTagOpt(tagOption);
+				}
 				transport.SetFetchThin(thin);
 				transport.SetCredentialsProvider(credentialsProvider);
 				try
@@ -344,10 +350,29 @@ namespace NGit.Api
 		/// 	</see>
 		/// to use
 		/// </param>
-		public virtual void SetCredentialsProvider(CredentialsProvider credentialsProvider
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.FetchCommand SetCredentialsProvider(CredentialsProvider credentialsProvider
 			)
 		{
+			CheckCallable();
 			this.credentialsProvider = credentialsProvider;
+			return this;
+		}
+
+		/// <summary>Sets the specification of annotated tag behavior during fetch</summary>
+		/// <param name="tagOpt"></param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.FetchCommand SetTagOpt(TagOpt tagOpt)
+		{
+			CheckCallable();
+			this.tagOption = tagOpt;
+			return this;
 		}
 	}
 }

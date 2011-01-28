@@ -46,6 +46,7 @@ using System.IO;
 using NGit;
 using NGit.Revwalk;
 using NGit.Storage.File;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
@@ -181,7 +182,7 @@ namespace NGit.Storage.File
 		{
 			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
 			FilePath workdir = new FilePath(trash.GetParentFile(), "rw");
-			workdir.Mkdir();
+			FileUtils.Mkdir(workdir);
 			FileRepository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants
 				.DOT_GIT));
 			repo1initial.Create();
@@ -206,7 +207,7 @@ namespace NGit.Storage.File
 		{
 			FilePath repo1Parent = new FilePath(trash.GetParentFile(), "r1");
 			FilePath workdir = new FilePath(trash.GetParentFile(), "rw");
-			workdir.Mkdir();
+			FileUtils.Mkdir(workdir);
 			FileRepository repo1initial = new FileRepository(new FilePath(repo1Parent, Constants
 				.DOT_GIT));
 			repo1initial.Create();

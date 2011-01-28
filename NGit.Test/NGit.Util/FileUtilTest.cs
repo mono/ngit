@@ -71,7 +71,7 @@ namespace NGit.Util
 		public virtual void TestDeleteFile()
 		{
 			FilePath f = new FilePath(trash, "test");
-			NUnit.Framework.Assert.IsTrue(f.CreateNewFile());
+			FileUtils.CreateNewFile(f);
 			FileUtils.Delete(f);
 			NUnit.Framework.Assert.IsFalse(f.Exists());
 			try
@@ -99,10 +99,10 @@ namespace NGit.Util
 		public virtual void TestDeleteRecursive()
 		{
 			FilePath f1 = new FilePath(trash, "test/test/a");
-			f1.Mkdirs();
-			f1.CreateNewFile();
+			FileUtils.Mkdirs(f1.GetParentFile());
+			FileUtils.CreateNewFile(f1);
 			FilePath f2 = new FilePath(trash, "test/test/b");
-			f2.CreateNewFile();
+			FileUtils.CreateNewFile(f2);
 			FilePath d = new FilePath(trash, "test");
 			FileUtils.Delete(d, FileUtils.RECURSIVE);
 			NUnit.Framework.Assert.IsFalse(d.Exists());
@@ -147,7 +147,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.IsTrue(d.Exists() && d.IsDirectory());
 			NUnit.Framework.Assert.IsTrue(d.Delete());
 			FilePath f = new FilePath(trash, "test");
-			NUnit.Framework.Assert.IsTrue(f.CreateNewFile());
+			FileUtils.CreateNewFile(f);
 			try
 			{
 				FileUtils.Mkdir(d);
@@ -183,7 +183,7 @@ namespace NGit.Util
 			NUnit.Framework.Assert.IsTrue(d.Exists() && d.IsDirectory());
 			FileUtils.Delete(root, FileUtils.RECURSIVE);
 			FilePath f = new FilePath(trash, "test");
-			NUnit.Framework.Assert.IsTrue(f.CreateNewFile());
+			FileUtils.CreateNewFile(f);
 			try
 			{
 				FileUtils.Mkdirs(d);

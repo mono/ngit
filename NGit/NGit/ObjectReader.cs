@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using NGit;
 using NGit.Errors;
@@ -270,12 +271,12 @@ namespace NGit
 			) where T:ObjectId
 		{
 			Iterator<T> idItr = objectIds.Iterator();
-			return new _AsyncObjectLoaderQueue_272<T>(this, idItr);
+			return new _AsyncObjectLoaderQueue_275<T>(this, idItr);
 		}
 
-		private sealed class _AsyncObjectLoaderQueue_272<T> : AsyncObjectLoaderQueue<T> where T:ObjectId
+		private sealed class _AsyncObjectLoaderQueue_275<T> : AsyncObjectLoaderQueue<T> where T:ObjectId
 		{
-			public _AsyncObjectLoaderQueue_272(ObjectReader _enclosing, Iterator<T> idItr)
+			public _AsyncObjectLoaderQueue_275(ObjectReader _enclosing, Iterator<T> idItr)
 			{
 				this._enclosing = _enclosing;
 				this.idItr = idItr;
@@ -376,12 +377,12 @@ namespace NGit
 			 reportMissing) where T:ObjectId
 		{
 			Iterator<T> idItr = objectIds.Iterator();
-			return new _AsyncObjectSizeQueue_354<T>(this, idItr);
+			return new _AsyncObjectSizeQueue_357<T>(this, idItr);
 		}
 
-		private sealed class _AsyncObjectSizeQueue_354 <T>: AsyncObjectSizeQueue<T> where T:ObjectId
+		private sealed class _AsyncObjectSizeQueue_357<T>: AsyncObjectSizeQueue<T> where T:ObjectId
 		{
-			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
+			public _AsyncObjectSizeQueue_357(ObjectReader _enclosing, Iterator<T> idItr)
 			{
 				this._enclosing = _enclosing;
 				this.idItr = idItr;
@@ -479,6 +480,36 @@ namespace NGit
 		}
 
 		// Do nothing by default, most readers don't want or need advice.
+		/// <summary>Obtain the available pre-computed object reachability lists.</summary>
+		/// <remarks>
+		/// Obtain the available pre-computed object reachability lists.
+		/// <p>
+		/// The lists are indexed by commit ObjectId, so the returned set contains
+		/// the commit ObjectIds naming each set.
+		/// </remarks>
+		/// <returns>set of commit ObjectIds that identify lists.</returns>
+		public virtual ICollection<ObjectId> GetAvailableObjectLists()
+		{
+			return Sharpen.Collections.EmptySet<ObjectId>();
+		}
+
+		/// <summary>Open a pre-computed object list for reading.</summary>
+		/// <remarks>Open a pre-computed object list for reading.</remarks>
+		/// <param name="listName">
+		/// a commit ObjectId previously returned by
+		/// <see cref="GetAvailableObjectLists()">GetAvailableObjectLists()</see>
+		/// .
+		/// </param>
+		/// <param name="walker">the revision pool to use when looking up objects.</param>
+		/// <returns>the list iterator.</returns>
+		/// <exception cref="System.IO.IOException">the reader cannot load the precomputed list.
+		/// 	</exception>
+		public virtual ObjectListIterator OpenObjectList(AnyObjectId listName, ObjectWalk
+			 walker)
+		{
+			throw new NotSupportedException();
+		}
+
 		/// <summary>Release any resources used by this reader.</summary>
 		/// <remarks>
 		/// Release any resources used by this reader.

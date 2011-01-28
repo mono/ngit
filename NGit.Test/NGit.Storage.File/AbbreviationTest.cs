@@ -48,6 +48,7 @@ using NGit.Junit;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Transport;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
@@ -162,7 +163,7 @@ namespace NGit.Storage.File
 				(), "pack");
 			FilePath idxFile = new FilePath(packDir, packName + ".idx");
 			FilePath packFile = new FilePath(packDir, packName + ".pack");
-			packDir.Mkdir();
+			FileUtils.Mkdir(packDir, true);
 			OutputStream dst = new BufferedOutputStream(new FileOutputStream(idxFile));
 			try
 			{

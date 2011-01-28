@@ -549,7 +549,7 @@ namespace NGit.Api
 			}
 			Sharpen.Collections.Reverse(cherryPickList);
 			// create the folder for the meta information
-			rebaseDir.Mkdir();
+			FileUtils.Mkdir(rebaseDir);
 			CreateFile(repo.Directory, Constants.ORIG_HEAD, headId.Name);
 			CreateFile(rebaseDir, REBASE_HEAD, headId.Name);
 			CreateFile(rebaseDir, HEAD_NAME, headName);

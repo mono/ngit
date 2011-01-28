@@ -245,10 +245,10 @@ namespace NGit.Storage.File
 				throw new InvalidOperationException(MessageFormat.Format(JGitText.Get().repositoryAlreadyExists
 					, Directory));
 			}
-			Directory.Mkdirs();
+			FileUtils.Mkdirs(Directory, true);
 			refs.Create();
 			objectDatabase.Create();
-			new FilePath(Directory, "branches").Mkdir();
+			FileUtils.Mkdir(new FilePath(Directory, "branches"));
 			RefUpdate head = UpdateRef(Constants.HEAD);
 			head.DisableRefLog();
 			head.Link(Constants.R_HEADS + Constants.MASTER);
@@ -284,7 +284,7 @@ namespace NGit.Storage.File
 		}
 
 		/// <returns>the directory containing the objects owned by this repository.</returns>
-		public override FilePath ObjectsDirectory
+		public virtual FilePath ObjectsDirectory
 		{
 			get
 			{
@@ -387,7 +387,7 @@ namespace NGit.Storage.File
 		/// index file could not be opened, read, or is not recognized as
 		/// a Git pack file index.
 		/// </exception>
-		public override void OpenPack(FilePath pack, FilePath idx)
+		public virtual void OpenPack(FilePath pack, FilePath idx)
 		{
 			objectDatabase.OpenPack(pack, idx);
 		}

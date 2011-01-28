@@ -65,9 +65,9 @@ namespace NGit.Storage.File
 	{
 		internal static readonly string SUFFIX = ".lock";
 
-		private sealed class _FilenameFilter_78 : FilenameFilter
+		private sealed class _FilenameFilter_79 : FilenameFilter
 		{
-			public _FilenameFilter_78()
+			public _FilenameFilter_79()
 			{
 			}
 
@@ -80,7 +80,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Filter to skip over active lock files when listing a directory.</summary>
 		/// <remarks>Filter to skip over active lock files when listing a directory.</remarks>
-		internal static readonly FilenameFilter FILTER = new _FilenameFilter_78();
+		internal static readonly FilenameFilter FILTER = new _FilenameFilter_79();
 
 		private readonly FilePath @ref;
 
@@ -124,7 +124,7 @@ namespace NGit.Storage.File
 		/// </exception>
 		public virtual bool Lock()
 		{
-			lck.GetParentFile().Mkdirs();
+			FileUtils.Mkdirs(lck.GetParentFile(), true);
 			if (lck.CreateNewFile())
 			{
 				haveLck = true;
@@ -341,12 +341,12 @@ namespace NGit.Storage.File
 			{
 				@out = os;
 			}
-			return new _OutputStream_290(this, @out);
+			return new _OutputStream_291(this, @out);
 		}
 
-		private sealed class _OutputStream_290 : OutputStream
+		private sealed class _OutputStream_291 : OutputStream
 		{
-			public _OutputStream_290(LockFile _enclosing, OutputStream @out)
+			public _OutputStream_291(LockFile _enclosing, OutputStream @out)
 			{
 				this._enclosing = _enclosing;
 				this.@out = @out;

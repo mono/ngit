@@ -84,7 +84,7 @@ namespace NGit.Api
 		public virtual void TestAddExistingSingleFile()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
@@ -99,9 +99,9 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestAddExistingSingleFileInSubDir()
 		{
-			new FilePath(db.WorkTree, "sub").Mkdir();
+			FileUtils.Mkdir(new FilePath(db.WorkTree, "sub"));
 			FilePath file = new FilePath(db.WorkTree, "sub/a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
@@ -117,7 +117,7 @@ namespace NGit.Api
 		public virtual void TestAddExistingSingleFileTwice()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
@@ -137,7 +137,7 @@ namespace NGit.Api
 		public virtual void TestAddExistingSingleFileTwiceWithCommit()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
@@ -158,7 +158,7 @@ namespace NGit.Api
 		public virtual void TestAddRemovedFile()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
@@ -177,7 +177,7 @@ namespace NGit.Api
 		public virtual void TestAddRemovedCommittedFile()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
@@ -198,12 +198,12 @@ namespace NGit.Api
 		{
 			// prepare conflict
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
 			FilePath file2 = new FilePath(db.WorkTree, "b.txt");
-			file2.CreateNewFile();
+			FileUtils.CreateNewFile(file2);
 			writer = new PrintWriter(file2);
 			writer.Write("content b");
 			writer.Close();
@@ -236,12 +236,12 @@ namespace NGit.Api
 		public virtual void TestAddTwoFiles()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
 			FilePath file2 = new FilePath(db.WorkTree, "b.txt");
-			file2.CreateNewFile();
+			FileUtils.CreateNewFile(file2);
 			writer = new PrintWriter(file2);
 			writer.Write("content b");
 			writer.Close();
@@ -255,14 +255,14 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestAddFolder()
 		{
-			new FilePath(db.WorkTree, "sub").Mkdir();
+			FileUtils.Mkdir(new FilePath(db.WorkTree, "sub"));
 			FilePath file = new FilePath(db.WorkTree, "sub/a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
 			FilePath file2 = new FilePath(db.WorkTree, "sub/b.txt");
-			file2.CreateNewFile();
+			FileUtils.CreateNewFile(file2);
 			writer = new PrintWriter(file2);
 			writer.Write("content b");
 			writer.Close();
@@ -276,19 +276,19 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestAddIgnoredFile()
 		{
-			new FilePath(db.WorkTree, "sub").Mkdir();
+			FileUtils.Mkdir(new FilePath(db.WorkTree, "sub"));
 			FilePath file = new FilePath(db.WorkTree, "sub/a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
 			FilePath ignoreFile = new FilePath(db.WorkTree, ".gitignore");
-			ignoreFile.CreateNewFile();
+			FileUtils.CreateNewFile(ignoreFile);
 			writer = new PrintWriter(ignoreFile);
 			writer.Write("sub/b.txt");
 			writer.Close();
 			FilePath file2 = new FilePath(db.WorkTree, "sub/b.txt");
-			file2.CreateNewFile();
+			FileUtils.CreateNewFile(file2);
 			writer = new PrintWriter(file2);
 			writer.Write("content b");
 			writer.Close();
@@ -302,14 +302,14 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestAddWholeRepo()
 		{
-			new FilePath(db.WorkTree, "sub").Mkdir();
+			FileUtils.Mkdir(new FilePath(db.WorkTree, "sub"));
 			FilePath file = new FilePath(db.WorkTree, "sub/a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
 			FilePath file2 = new FilePath(db.WorkTree, "sub/b.txt");
-			file2.CreateNewFile();
+			FileUtils.CreateNewFile(file2);
 			writer = new PrintWriter(file2);
 			writer.Write("content b");
 			writer.Close();
@@ -327,14 +327,14 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestAddWithoutParameterUpdate()
 		{
-			new FilePath(db.WorkTree, "sub").Mkdir();
+			FileUtils.Mkdir(new FilePath(db.WorkTree, "sub"));
 			FilePath file = new FilePath(db.WorkTree, "sub/a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
 			FilePath file2 = new FilePath(db.WorkTree, "sub/b.txt");
-			file2.CreateNewFile();
+			FileUtils.CreateNewFile(file2);
 			writer = new PrintWriter(file2);
 			writer.Write("content b");
 			writer.Close();
@@ -345,7 +345,7 @@ namespace NGit.Api
 			git.Commit().SetMessage("commit").Call();
 			// new unstaged file sub/c.txt
 			FilePath file3 = new FilePath(db.WorkTree, "sub/c.txt");
-			file3.CreateNewFile();
+			FileUtils.CreateNewFile(file3);
 			writer = new PrintWriter(file3);
 			writer.Write("content c");
 			writer.Close();
@@ -371,14 +371,14 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestAddWithParameterUpdate()
 		{
-			new FilePath(db.WorkTree, "sub").Mkdir();
+			FileUtils.Mkdir(new FilePath(db.WorkTree, "sub"));
 			FilePath file = new FilePath(db.WorkTree, "sub/a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();
 			FilePath file2 = new FilePath(db.WorkTree, "sub/b.txt");
-			file2.CreateNewFile();
+			FileUtils.CreateNewFile(file2);
 			writer = new PrintWriter(file2);
 			writer.Write("content b");
 			writer.Close();
@@ -389,7 +389,7 @@ namespace NGit.Api
 			git.Commit().SetMessage("commit").Call();
 			// new unstaged file sub/c.txt
 			FilePath file3 = new FilePath(db.WorkTree, "sub/c.txt");
-			file3.CreateNewFile();
+			FileUtils.CreateNewFile(file3);
 			writer = new PrintWriter(file3);
 			writer.Write("content c");
 			writer.Close();

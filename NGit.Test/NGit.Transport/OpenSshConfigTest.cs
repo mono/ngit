@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Transport;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Transport
@@ -62,9 +63,9 @@ namespace NGit.Transport
 		{
 			base.SetUp();
 			home = new FilePath(trash, "home");
-			home.Mkdir();
+			FileUtils.Mkdir(home);
 			configFile = new FilePath(new FilePath(home, ".ssh"), "config");
-			configFile.GetParentFile().Mkdir();
+			FileUtils.Mkdir(configFile.GetParentFile());
 			Runtime.SetProperty("user.name", "jex_junit");
 			osc = new OpenSshConfig(home, configFile);
 		}

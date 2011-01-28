@@ -152,9 +152,9 @@ namespace NGit.Storage.File
 		/// <exception cref="System.IO.IOException"></exception>
 		public override void Create()
 		{
-			objects.Mkdirs();
-			infoDirectory.Mkdir();
-			packDirectory.Mkdir();
+			FileUtils.Mkdirs(objects);
+			FileUtils.Mkdir(infoDirectory);
+			FileUtils.Mkdir(packDirectory);
 		}
 
 		public override ObjectInserter NewInserter()
@@ -548,7 +548,6 @@ SEARCH_break: ;
 				FileUtils.Delete(tmp);
 				return FileObjectDatabase.InsertLooseObjectResult.EXISTS_PACKED;
 			}
-			tmp.SetReadOnly();
 			FilePath dst = FileFor(id);
 			if (dst.Exists())
 			{
@@ -561,6 +560,7 @@ SEARCH_break: ;
 			}
 			if (tmp.RenameTo(dst))
 			{
+				dst.SetReadOnly();
 				unpackedObjectCache.Add(id);
 				return FileObjectDatabase.InsertLooseObjectResult.INSERTED;
 			}
@@ -568,9 +568,10 @@ SEARCH_break: ;
 			// directories are always lazily created. Note that we
 			// try the rename first as the directory likely does exist.
 			//
-			dst.GetParentFile().Mkdir();
+			FileUtils.Mkdir(dst.GetParentFile());
 			if (tmp.RenameTo(dst))
 			{
+				dst.SetReadOnly();
 				unpackedObjectCache.Add(id);
 				return FileObjectDatabase.InsertLooseObjectResult.INSERTED;
 			}

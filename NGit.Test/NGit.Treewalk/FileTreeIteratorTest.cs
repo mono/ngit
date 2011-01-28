@@ -108,8 +108,7 @@ namespace NGit.Treewalk
 		{
 			FilePath r = new FilePath(trash, "not-existing-file");
 			NUnit.Framework.Assert.IsFalse(r.Exists());
-			r.Mkdir();
-			NUnit.Framework.Assert.IsTrue(r.IsDirectory());
+			FileUtils.Mkdir(r);
 			FileTreeIterator fti = new FileTreeIterator(r, db.FileSystem, ((FileBasedConfig)db
 				.GetConfig()).Get(WorkingTreeOptions.KEY));
 			NUnit.Framework.Assert.IsTrue(fti.First);

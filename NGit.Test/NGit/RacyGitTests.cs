@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Treewalk;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit
@@ -59,7 +60,7 @@ namespace NGit
 			for (int i = 0; i < 10; i++)
 			{
 				lastFile = new FilePath(db.WorkTree, "0." + i);
-				lastFile.CreateNewFile();
+				FileUtils.CreateNewFile(lastFile);
 				if (i == 5)
 				{
 					FsTick(lastFile);
@@ -69,13 +70,13 @@ namespace NGit
 			for (int i_1 = 0; i_1 < 10; i_1++)
 			{
 				lastFile = new FilePath(db.WorkTree, "1." + i_1);
-				lastFile.CreateNewFile();
+				FileUtils.CreateNewFile(lastFile);
 			}
 			modTimes.AddItem(FsTick(lastFile));
 			for (int i_2 = 0; i_2 < 10; i_2++)
 			{
 				lastFile = new FilePath(db.WorkTree, "2." + i_2);
-				lastFile.CreateNewFile();
+				FileUtils.CreateNewFile(lastFile);
 				if (i_2 % 4 == 0)
 				{
 					FsTick(lastFile);

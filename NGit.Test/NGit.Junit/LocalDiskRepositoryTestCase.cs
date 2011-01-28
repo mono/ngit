@@ -106,7 +106,7 @@ namespace NGit.Junit
 			{
 				if (shutdownHook == null)
 				{
-					shutdownHook = new _Thread_119(this);
+					shutdownHook = new _Thread_120(this);
 					// On windows accidentally open files or memory
 					// mapped regions may prevent files from being deleted.
 					// Suggesting a GC increases the likelihood that our
@@ -135,9 +135,9 @@ namespace NGit.Junit
 			WindowCache.Reconfigure(c);
 		}
 
-		private sealed class _Thread_119 : Sharpen.Thread
+		private sealed class _Thread_120 : Sharpen.Thread
 		{
-			public _Thread_119(LocalDiskRepositoryTestCase _enclosing)
+			public _Thread_120(LocalDiskRepositoryTestCase _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -413,7 +413,7 @@ namespace NGit.Junit
 		/// <exception cref="System.IO.IOException">the file could not be written.</exception>
 		protected internal virtual void Write(FilePath f, string body)
 		{
-			f.GetParentFile().Mkdirs();
+			FileUtils.Mkdirs(f.GetParentFile(), true);
 			TextWriter w = new OutputStreamWriter(new FileOutputStream(f), "UTF-8");
 			try
 			{

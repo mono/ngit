@@ -47,6 +47,7 @@ using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Revwalk;
 using NGit.Treewalk;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Api
@@ -185,7 +186,7 @@ namespace NGit.Api
 		public virtual void TestAddUnstagedChanges()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
-			file.CreateNewFile();
+			FileUtils.CreateNewFile(file);
 			PrintWriter writer = new PrintWriter(file);
 			writer.Write("content");
 			writer.Close();

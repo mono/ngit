@@ -129,18 +129,20 @@ namespace NGit
 			git.Add().AddFilepattern(".").SetUpdate(true).Call();
 			RevCommit topic = git.Commit().SetMessage("topic-1").Call();
 			AssertIndex(Mkmap("f", "f()\nside", "G/i", "i()"));
+			WriteTrashFile("untracked", "untracked");
 			ResetHard(master);
 			AssertIndex(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()"));
 			ResetHard(topic);
 			AssertIndex(Mkmap("f", "f()\nside", "G/i", "i()"));
-			AssertWorkDir(Mkmap("f", "f()\nside", "G/i", "i()"));
+			AssertWorkDir(Mkmap("f", "f()\nside", "G/i", "i()", "untracked", "untracked"));
 			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, git.Merge().Include(master
 				).Call().GetMergeStatus());
 			NUnit.Framework.Assert.AreEqual("[E/h, mode:100644][G/i, mode:100644][f, mode:100644, stage:1][f, mode:100644, stage:2][f, mode:100644, stage:3]"
 				, IndexState(0));
 			ResetHard(master);
 			AssertIndex(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()"));
-			AssertWorkDir(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()"));
+			AssertWorkDir(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()", "untracked"
+				, "untracked"));
 		}
 
 		/// <exception cref="NGit.Errors.NoWorkTreeException"></exception>

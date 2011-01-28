@@ -43,7 +43,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
-using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Transport;
 using Sharpen;
@@ -162,11 +161,7 @@ namespace NGit.Api
 			WriteToFile(sourceFile, "Hello world");
 			// and commit it
 			source.Add().AddFilepattern("SomeFile.txt").Call();
-			RevCommit commit = source.Commit().SetMessage("Initial commit for source").Call();
-			// point the master branch to the new commit
-			RefUpdate upd = dbTarget.UpdateRef("refs/heads/master");
-			upd.SetNewObjectId(commit.Id);
-			upd.Update();
+			source.Commit().SetMessage("Initial commit for source").Call();
 			// configure the target repo to connect to the source via "origin"
 			StoredConfig targetConfig = ((FileBasedConfig)dbTarget.GetConfig());
 			targetConfig.SetString("branch", "master", "remote", "origin");
@@ -177,9 +172,9 @@ namespace NGit.Api
 			config.Update(targetConfig);
 			targetConfig.Save();
 			targetFile = new FilePath(dbTarget.WorkTree, "SomeFile.txt");
-			WriteToFile(targetFile, "Hello world");
 			// make sure we have the same content
 			target.Pull().Call();
+			AssertFileContentsEqual(targetFile, "Hello world");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

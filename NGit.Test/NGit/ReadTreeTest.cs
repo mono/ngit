@@ -570,6 +570,37 @@ namespace NGit
 			SetupCase(null, Mk("foo"), null);
 			WriteTrashFile("foo", "foo");
 			Go();
+			// test that we don't overwrite untracked files when there is a HEAD
+			RecursiveDelete(new FilePath(trash, "foo"));
+			SetupCase(Mk("other"), Mkmap("other", "other", "foo", "foo"), Mk("other"));
+			WriteTrashFile("foo", "bar");
+			try
+			{
+				Checkout();
+				NUnit.Framework.Assert.Fail("didn't get the expected exception");
+			}
+			catch (NGit.Errors.CheckoutConflictException)
+			{
+				AssertConflict("foo");
+				AssertWorkDir(Mkmap("foo", "bar", "other", "other"));
+				AssertIndex(Mk("other"));
+			}
+			// test that we don't overwrite untracked files when there is no HEAD
+			RecursiveDelete(new FilePath(trash, "other"));
+			RecursiveDelete(new FilePath(trash, "foo"));
+			SetupCase(null, Mk("foo"), null);
+			WriteTrashFile("foo", "bar");
+			try
+			{
+				Checkout();
+				NUnit.Framework.Assert.Fail("didn't get the expected exception");
+			}
+			catch (NGit.Errors.CheckoutConflictException)
+			{
+				AssertConflict("foo");
+				AssertWorkDir(Mkmap("foo", "bar"));
+				AssertIndex(Mkmap());
+			}
 			// TODO: Why should we expect conflicts here?
 			// H and M are emtpy and according to rule #5 of
 			// the carry-over rules a dirty index is no reason
@@ -579,6 +610,7 @@ namespace NGit
 			// This test would fail in DirCacheCheckoutTest
 			// assertConflict("foo");
 			RecursiveDelete(new FilePath(trash, "foo"));
+			RecursiveDelete(new FilePath(trash, "other"));
 			SetupCase(null, Mk("foo"), null);
 			WriteTrashFile("foo/bar/baz", string.Empty);
 			WriteTrashFile("foo/blahblah", string.Empty);
@@ -790,21 +822,5 @@ namespace NGit
 		public abstract IDictionary<string, ObjectId> GetUpdated();
 
 		public abstract IList<string> GetConflicts();
-	}
-
-	/// <summary>The interface these tests need from a class implementing a checkout</summary>
-	internal interface Checkout
-	{
-		Dictionary<string, ObjectId> Updated();
-
-		AList<string> Conflicts();
-
-		AList<string> Removed();
-
-		/// <exception cref="System.IO.IOException"></exception>
-		void PrescanTwoTrees();
-
-		/// <exception cref="System.IO.IOException"></exception>
-		void Checkout();
 	}
 }

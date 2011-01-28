@@ -199,6 +199,7 @@ namespace NGit.Storage.File
 		}
 
 		// expected
+		/// <exception cref="System.IO.IOException"></exception>
 		private FilePath GetFile(params string[] pathComponents)
 		{
 			string rootPath = new FilePath(new FilePath("target"), "trash").GetPath();
@@ -207,7 +208,7 @@ namespace NGit.Storage.File
 				rootPath = rootPath + FilePath.separatorChar + pathComponent;
 			}
 			FilePath result = new FilePath(rootPath);
-			result.Mkdir();
+			FileUtils.Mkdirs(result, true);
 			return result;
 		}
 

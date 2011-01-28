@@ -376,10 +376,16 @@ namespace NGit.Api
 		/// 	</see>
 		/// to use
 		/// </param>
-		public virtual void SetCredentialsProvider(CredentialsProvider credentialsProvider
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.PushCommand SetCredentialsProvider(CredentialsProvider credentialsProvider
 			)
 		{
+			CheckCallable();
 			this.credentialsProvider = credentialsProvider;
+			return this;
 		}
 	}
 }

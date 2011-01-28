@@ -42,9 +42,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.IO;
 using NGit;
 using NGit.Api;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Api
@@ -100,15 +100,8 @@ namespace NGit.Api
 		{
 			FilePath temp;
 			temp = FilePath.CreateTempFile(name, System.Convert.ToString(Runtime.NanoTime()));
-			if (!(temp.Delete()))
-			{
-				throw new IOException("Could not delete temp file: " + temp.GetAbsolutePath());
-			}
-			if (!(temp.Mkdir()))
-			{
-				throw new IOException("Could not create temp directory: " + temp.GetAbsolutePath(
-					));
-			}
+			FileUtils.Delete(temp);
+			FileUtils.Mkdir(temp);
 			return temp;
 		}
 	}

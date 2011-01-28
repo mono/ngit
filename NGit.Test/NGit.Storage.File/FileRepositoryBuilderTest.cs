@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit.Junit;
 using NGit.Storage.File;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Storage.File
@@ -56,7 +57,7 @@ namespace NGit.Storage.File
 		{
 			FileRepository r = CreateWorkRepository();
 			FilePath d = new FilePath(r.Directory, "sub-dir");
-			d.Mkdir();
+			FileUtils.Mkdir(d);
 			NUnit.Framework.Assert.AreEqual(r.Directory, new FileRepositoryBuilder().FindGitDir
 				(d).GetGitDir());
 		}

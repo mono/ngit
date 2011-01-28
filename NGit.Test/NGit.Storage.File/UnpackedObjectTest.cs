@@ -607,7 +607,7 @@ namespace NGit.Storage.File
 		private void Write(ObjectId id, byte[] data)
 		{
 			FilePath path = Path(id);
-			path.GetParentFile().Mkdirs();
+			FileUtils.Mkdirs(path.GetParentFile());
 			FileOutputStream @out = new FileOutputStream(path);
 			try
 			{

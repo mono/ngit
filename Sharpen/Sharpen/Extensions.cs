@@ -687,7 +687,7 @@ namespace Sharpen
 		
 		public static HttpURLConnection OpenConnection (this Uri uri, Proxy p)
 		{
-			return new HttpURLConnection (uri, p);
+			return new HttpsURLConnection (uri, p);
 		}
 		
 		public static Uri ToURI (this Uri uri)
