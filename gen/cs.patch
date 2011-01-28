@@ -2284,9 +2284,23 @@ index 495a620..cbaba1b 100644
  				this._enclosing = _enclosing;
  				this.conn = conn;
 diff --git a/NGit/NGit.Transport/TransportHttp.cs b/NGit/NGit.Transport/TransportHttp.cs
-index bb7d1c3..791360d 100644
+index bb7d1c3..0649c40 100644
 --- a/NGit/NGit.Transport/TransportHttp.cs
 +++ b/NGit/NGit.Transport/TransportHttp.cs
+@@ -523,11 +523,11 @@ namespace NGit.Transport
+ 			}
+ 			catch (KeyManagementException e)
+ 			{
+-				throw new IOException(e);
++				throw new IOException(e.ToString ());
+ 			}
+ 			catch (NoSuchAlgorithmException e)
+ 			{
+-				throw new IOException(e);
++				throw new IOException(e.ToString ());
+ 			}
+ 		}
+ 
 @@ -629,7 +629,7 @@ namespace NGit.Transport
  			/// <exception cref="System.IO.IOException"></exception>
  			internal override WalkRemoteObjectDatabase OpenAlternate(string location)
