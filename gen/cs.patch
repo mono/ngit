@@ -19,10 +19,10 @@ index 2bb9439..cac7103 100644
  		}
  	}
 diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-index 9c0d573..d084686 100644
+index d3e98ea..cd6d911 100644
 --- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
 +++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-@@ -655,7 +655,7 @@ namespace NGit.Api
+@@ -687,7 +687,7 @@ namespace NGit.Api
  				sb.Append(line);
  				sb.Append('\n');
  			}
@@ -819,10 +819,10 @@ index 5a9f3cd..4b14fe0 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index 2fe267c..fa9c4b8 100644
+index 0e51ec2..2e5d225 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
-@@ -182,6 +182,7 @@ namespace NGit.Api
+@@ -183,6 +183,7 @@ namespace NGit.Api
  						{
  							return res;
  						}
@@ -1829,7 +1829,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 808eaed..dfff24f 100644
+index 26a8f6f..b206037 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1841,7 +1841,7 @@ index 808eaed..dfff24f 100644
  			 + 1];
  
  		private readonly ObjectIdSubclassMap<ObjectToPack> objectsMap = new ObjectIdSubclassMap
-@@ -1220,7 +1220,7 @@ namespace NGit.Storage.Pack
+@@ -1218,7 +1218,7 @@ namespace NGit.Storage.Pack
  			}
  			else
  			{
@@ -1849,7 +1849,7 @@ index 808eaed..dfff24f 100644
 +				not = Sharpen.Collections.EmptySet<ObjectId>();
  			}
  			ObjectWalk walker = new ObjectWalk(reader);
- 			RevFlag hasObjectList = walker.NewFlag("hasObjectList");
+ 			walker.SetRetainBody(false);
 diff --git a/NGit/NGit.Transport/BaseConnection.cs b/NGit/NGit.Transport/BaseConnection.cs
 index 14f5150..ee19789 100644
 --- a/NGit/NGit.Transport/BaseConnection.cs
@@ -2284,23 +2284,9 @@ index 495a620..cbaba1b 100644
  				this._enclosing = _enclosing;
  				this.conn = conn;
 diff --git a/NGit/NGit.Transport/TransportHttp.cs b/NGit/NGit.Transport/TransportHttp.cs
-index bb7d1c3..0649c40 100644
+index af443df..bc47920 100644
 --- a/NGit/NGit.Transport/TransportHttp.cs
 +++ b/NGit/NGit.Transport/TransportHttp.cs
-@@ -523,11 +523,11 @@ namespace NGit.Transport
- 			}
- 			catch (KeyManagementException e)
- 			{
--				throw new IOException(e);
-+				throw new IOException(e.ToString ());
- 			}
- 			catch (NoSuchAlgorithmException e)
- 			{
--				throw new IOException(e);
-+				throw new IOException(e.ToString ());
- 			}
- 		}
- 
 @@ -629,7 +629,7 @@ namespace NGit.Transport
  			/// <exception cref="System.IO.IOException"></exception>
  			internal override WalkRemoteObjectDatabase OpenAlternate(string location)
@@ -3033,10 +3019,10 @@ index b2bd55d..1278569 100644
  			{
  				this._enclosing = _enclosing;
 diff --git a/NGit/NGit/ObjectIdSubclassMap.cs b/NGit/NGit/ObjectIdSubclassMap.cs
-index e3e0f76..130eea7 100644
+index 0b1152e..e202eb2 100644
 --- a/NGit/NGit/ObjectIdSubclassMap.cs
 +++ b/NGit/NGit/ObjectIdSubclassMap.cs
-@@ -230,7 +230,7 @@ namespace NGit
+@@ -285,7 +285,7 @@ namespace NGit
  
  		private V[] CreateArray(int sz)
  		{
@@ -3046,44 +3032,35 @@ index e3e0f76..130eea7 100644
  	}
  }
 diff --git a/NGit/NGit/ObjectReader.cs b/NGit/NGit/ObjectReader.cs
-index 797a568..5df5ff9 100644
+index 8913cf3..3099dbf 100644
 --- a/NGit/NGit/ObjectReader.cs
 +++ b/NGit/NGit/ObjectReader.cs
-@@ -271,10 +271,10 @@ namespace NGit
+@@ -270,10 +270,10 @@ namespace NGit
  			) where T:ObjectId
  		{
  			Iterator<T> idItr = objectIds.Iterator();
--			return new _AsyncObjectLoaderQueue_275(this, idItr);
-+			return new _AsyncObjectLoaderQueue_275<T>(this, idItr);
+-			return new _AsyncObjectLoaderQueue_272(this, idItr);
++			return new _AsyncObjectLoaderQueue_272<T>(this, idItr);
  		}
  
--		private sealed class _AsyncObjectLoaderQueue_275 : AsyncObjectLoaderQueue<T>
-+		private sealed class _AsyncObjectLoaderQueue_275<T> : AsyncObjectLoaderQueue<T> where T:ObjectId
+-		private sealed class _AsyncObjectLoaderQueue_272 : AsyncObjectLoaderQueue<T>
++		private sealed class _AsyncObjectLoaderQueue_272<T> : AsyncObjectLoaderQueue<T> where T:ObjectId
  		{
- 			public _AsyncObjectLoaderQueue_275(ObjectReader _enclosing, Iterator<T> idItr)
+ 			public _AsyncObjectLoaderQueue_272(ObjectReader _enclosing, Iterator<T> idItr)
  			{
-@@ -377,10 +377,10 @@ namespace NGit
+@@ -376,10 +376,10 @@ namespace NGit
  			 reportMissing) where T:ObjectId
  		{
  			Iterator<T> idItr = objectIds.Iterator();
--			return new _AsyncObjectSizeQueue_357(this, idItr);
-+			return new _AsyncObjectSizeQueue_357<T>(this, idItr);
+-			return new _AsyncObjectSizeQueue_354(this, idItr);
++			return new _AsyncObjectSizeQueue_354<T>(this, idItr);
  		}
  
--		private sealed class _AsyncObjectSizeQueue_357 : AsyncObjectSizeQueue<T>
-+		private sealed class _AsyncObjectSizeQueue_357<T>: AsyncObjectSizeQueue<T> where T:ObjectId
+-		private sealed class _AsyncObjectSizeQueue_354 : AsyncObjectSizeQueue<T>
++		private sealed class _AsyncObjectSizeQueue_354<T>: AsyncObjectSizeQueue<T> where T:ObjectId
  		{
- 			public _AsyncObjectSizeQueue_357(ObjectReader _enclosing, Iterator<T> idItr)
+ 			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
-@@ -490,7 +490,7 @@ namespace NGit
- 		/// <returns>set of commit ObjectIds that identify lists.</returns>
- 		public virtual ICollection<ObjectId> GetAvailableObjectLists()
- 		{
--			return Sharpen.Collections.EmptySet();
-+			return Sharpen.Collections.EmptySet<ObjectId>();
- 		}
- 
- 		/// <summary>Open a pre-computed object list for reading.</summary>
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
 index 1ca293c..2ce9dbb 100644
 --- a/NGit/NGit/Repository.cs

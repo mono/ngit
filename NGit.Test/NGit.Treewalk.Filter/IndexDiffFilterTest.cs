@@ -47,6 +47,7 @@ using NGit.Dircache;
 using NGit.Revwalk;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Treewalk.Filter
@@ -654,8 +655,7 @@ namespace NGit.Treewalk.Filter
 		private void CreateEmptyFolder()
 		{
 			FilePath path = new FilePath(db.WorkTree, FOLDER);
-			path.Mkdir();
-			NUnit.Framework.Assert.IsTrue(path.IsDirectory());
+			FileUtils.Mkdir(path);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -669,16 +669,14 @@ namespace NGit.Treewalk.Filter
 		private void CreateEmptyFolderUntracked()
 		{
 			FilePath path = new FilePath(db.WorkTree, UNTRACKED_FOLDER);
-			path.Mkdir();
-			NUnit.Framework.Assert.IsTrue(path.IsDirectory());
+			FileUtils.Mkdir(path);
 		}
 
 		/// <exception cref="System.Exception"></exception>
 		private void CreateEmptyFolderIgnored()
 		{
 			FilePath path = new FilePath(db.WorkTree, IGNORED_FOLDER);
-			path.Mkdir();
-			NUnit.Framework.Assert.IsTrue(path.IsDirectory());
+			FileUtils.Mkdir(path);
 			WriteTrashFile(GITIGNORE, GITIGNORE + "\n" + IGNORED_FOLDER + "/");
 		}
 

@@ -467,7 +467,6 @@ namespace NGit.Dircache
 				{
 				}
 				// ignore
-				file.CreateNewFile();
 				DirCacheEntry entry = dc.GetEntry(path);
 				CheckoutEntry(repo, file, entry);
 			}

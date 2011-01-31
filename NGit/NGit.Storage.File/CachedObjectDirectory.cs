@@ -254,10 +254,7 @@ namespace NGit.Storage.File
 				case FileObjectDatabase.InsertLooseObjectResult.INSERTED:
 				case FileObjectDatabase.InsertLooseObjectResult.EXISTS_LOOSE:
 				{
-					if (!unpackedObjects.Contains(objectId))
-					{
-						unpackedObjects.Add(objectId);
-					}
+					unpackedObjects.AddIfAbsent(objectId);
 					break;
 				}
 

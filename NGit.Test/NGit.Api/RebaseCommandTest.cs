@@ -121,14 +121,46 @@ namespace NGit.Api
 			// create a topic branch
 			CreateBranch(first, "refs/heads/topic");
 			// create file2 on master
-			WriteTrashFile("file2", "file2");
+			FilePath file2 = WriteTrashFile("file2", "file2");
 			git.Add().AddFilepattern("file2").Call();
 			git.Commit().SetMessage("Add file2").Call();
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
 			CheckoutBranch("refs/heads/topic");
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "file2").Exists());
 			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
-			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.UP_TO_DATE, res.GetStatus());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			CheckFile(file2, "file2");
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.FAST_FORWARD, res.GetStatus()
+				);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFastForwardWithMultipleCommits()
+		{
+			// create file1 on master
+			WriteTrashFile(FILE1, FILE1);
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit first = git.Commit().SetMessage("Add file1").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, FILE1).Exists());
+			// create a topic branch
+			CreateBranch(first, "refs/heads/topic");
+			// create file2 on master
+			FilePath file2 = WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("Add file2").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			// write a second commit
+			WriteTrashFile("file2", "file2 new content");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("Change content of file2").Call();
+			CheckoutBranch("refs/heads/topic");
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "file2").Exists());
+			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			CheckFile(file2, "file2 new content");
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.FAST_FORWARD, res.GetStatus()
+				);
 		}
 
 		/// <exception cref="System.Exception"></exception>

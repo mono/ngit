@@ -523,11 +523,11 @@ namespace NGit.Transport
 			}
 			catch (KeyManagementException e)
 			{
-				throw new IOException(e.ToString ());
+				throw new IOException(e.Message);
 			}
 			catch (NoSuchAlgorithmException e)
 			{
-				throw new IOException(e.ToString ());
+				throw new IOException(e.Message);
 			}
 		}
 

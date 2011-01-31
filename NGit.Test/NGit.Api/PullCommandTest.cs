@@ -84,6 +84,11 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(res.GetMergeResult().GetMergeStatus(), MergeStatus
 				.FAST_FORWARD);
 			AssertFileContentsEqual(targetFile, "Another change");
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, target.GetRepository().GetRepositoryState
+				());
+			res = target.Pull().Call();
+			NUnit.Framework.Assert.AreEqual(res.GetMergeResult().GetMergeStatus(), MergeStatus
+				.ALREADY_UP_TO_DATE);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -114,6 +119,8 @@ namespace NGit.Api
 				.CONFLICTING);
 			string result = "<<<<<<< HEAD\nTarget change\n=======\n" + sourceChangeString + "\n";
 			AssertFileContentsEqual(targetFile, result);
+			NUnit.Framework.Assert.AreEqual(RepositoryState.MERGING, target.GetRepository().GetRepositoryState
+				());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -146,6 +153,8 @@ namespace NGit.Api
 				.CONFLICTING);
 			string result = "<<<<<<< HEAD\nSlave change\n=======\n" + sourceChangeString + "\n";
 			AssertFileContentsEqual(targetFile, result);
+			NUnit.Framework.Assert.AreEqual(RepositoryState.MERGING, target.GetRepository().GetRepositoryState
+				());
 		}
 
 		/// <exception cref="System.Exception"></exception>

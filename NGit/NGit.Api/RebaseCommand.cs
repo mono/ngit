@@ -147,6 +147,7 @@ namespace NGit.Api
 		public override RebaseResult Call()
 		{
 			RevCommit newHead = null;
+			bool lastStepWasForward = false;
 			CheckCallable();
 			CheckParameters();
 			try
@@ -215,10 +216,18 @@ namespace NGit.Api
 					}
 					monitor.BeginTask(MessageFormat.Format(JGitText.Get().applyingCommit, commitToPick
 						.GetShortMessage()), ProgressMonitor.UNKNOWN);
-					// TODO if the first parent of commitToPick is the current HEAD,
-					// we should fast-forward instead of cherry-pick to avoid
+					// if the first parent of commitToPick is the current HEAD,
+					// we do a fast-forward instead of cherry-pick to avoid
 					// unnecessary object rewriting
-					newHead = new Git(repo).CherryPick().Include(commitToPick).Call();
+					newHead = TryFastForward(commitToPick);
+					lastStepWasForward = newHead != null;
+					if (!lastStepWasForward)
+					{
+						// TODO if the content of this commit is already merged here
+						// we should skip this step in order to avoid confusing
+						// pseudo-changed
+						newHead = new Git(repo).CherryPick().Include(commitToPick).Call();
+					}
 					monitor.EndTask();
 					if (newHead == null)
 					{
@@ -266,6 +275,10 @@ namespace NGit.Api
 						}
 					}
 					FileUtils.Delete(rebaseDir, FileUtils.RECURSIVE);
+					if (lastStepWasForward)
+					{
+						return new RebaseResult(RebaseResult.Status.FAST_FORWARD);
+					}
 					return new RebaseResult(RebaseResult.Status.OK);
 				}
 				return new RebaseResult(RebaseResult.Status.UP_TO_DATE);
@@ -542,6 +555,26 @@ namespace NGit.Api
 			{
 				cherryPickList.AddItem(commit);
 			}
+			// if the upstream commit is in a direct line to the current head,
+			// the log command will not report any commits; in this case,
+			// we create the cherry-pick list ourselves
+			if (cherryPickList.IsEmpty())
+			{
+				Iterable<RevCommit> parents = new Git(repo).Log().Add(upstreamCommit).Call();
+				foreach (RevCommit parent in parents)
+				{
+					if (parent.Equals(headCommit))
+					{
+						break;
+					}
+					if (parent.ParentCount != 1)
+					{
+						throw new JGitInternalException(JGitText.Get().canOnlyCherryPickCommitsWithOneParent
+							);
+					}
+					cherryPickList.AddItem(parent);
+				}
+			}
 			// nothing to do: return with UP_TO_DATE_RESULT
 			if (cherryPickList.IsEmpty())
 			{
@@ -587,6 +620,104 @@ namespace NGit.Api
 			CheckoutCommit(upstreamCommit);
 			monitor.EndTask();
 			return null;
+		}
+
+		/// <summary>checks if we can fast-forward and returns the new head if it is possible
+		/// 	</summary>
+		/// <param name="newCommit"></param>
+		/// <returns>the new head, or null</returns>
+		/// <exception cref="NGit.Api.Errors.RefNotFoundException">NGit.Api.Errors.RefNotFoundException
+		/// 	</exception>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual RevCommit TryFastForward(RevCommit newCommit)
+		{
+			Ref head = repo.GetRef(Constants.HEAD);
+			if (head == null || head.GetObjectId() == null)
+			{
+				throw new RefNotFoundException(MessageFormat.Format(JGitText.Get().refNotResolved
+					, Constants.HEAD));
+			}
+			ObjectId headId = head.GetObjectId();
+			if (headId == null)
+			{
+				throw new RefNotFoundException(MessageFormat.Format(JGitText.Get().refNotResolved
+					, Constants.HEAD));
+			}
+			RevCommit headCommit = walk.LookupCommit(headId);
+			if (walk.IsMergedInto(newCommit, headCommit))
+			{
+				return newCommit;
+			}
+			string headName;
+			if (head.IsSymbolic())
+			{
+				headName = head.GetTarget().GetName();
+			}
+			else
+			{
+				headName = "detached HEAD";
+			}
+			return TryFastForward(headName, headCommit, newCommit);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		private RevCommit TryFastForward(string headName, RevCommit oldCommit, RevCommit 
+			newCommit)
+		{
+			bool tryRebase = false;
+			foreach (RevCommit parentCommit in newCommit.Parents)
+			{
+				if (parentCommit.Equals(oldCommit))
+				{
+					tryRebase = true;
+				}
+			}
+			if (!tryRebase)
+			{
+				return null;
+			}
+			CheckoutCommand co = new CheckoutCommand(repo);
+			try
+			{
+				co.SetName(newCommit.Name).Call();
+				if (headName.StartsWith(Constants.R_HEADS))
+				{
+					RefUpdate rup = repo.UpdateRef(headName);
+					rup.SetExpectedOldObjectId(oldCommit);
+					rup.SetNewObjectId(newCommit);
+					rup.SetRefLogMessage("Fast-foward from " + oldCommit.Name + " to " + newCommit.Name
+						, false);
+					RefUpdate.Result res = rup.Update(walk);
+					switch (res)
+					{
+						case RefUpdate.Result.FAST_FORWARD:
+						case RefUpdate.Result.NO_CHANGE:
+						case RefUpdate.Result.FORCED:
+						{
+							break;
+						}
+
+						default:
+						{
+							throw new IOException("Could not fast-forward");
+						}
+					}
+				}
+				return newCommit;
+			}
+			catch (RefAlreadyExistsException e)
+			{
+				throw new JGitInternalException(e.Message, e);
+			}
+			catch (RefNotFoundException e)
+			{
+				throw new JGitInternalException(e.Message, e);
+			}
+			catch (InvalidRefNameException e)
+			{
+				throw new JGitInternalException(e.Message, e);
+			}
 		}
 
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
