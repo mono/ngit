@@ -158,17 +158,9 @@ namespace NGit.Api
 			// stored in configuration key branch.<branch name>.merge
 			string remoteBranchName = repoConfig.GetString(ConfigConstants.CONFIG_BRANCH_SECTION
 				, branchName, ConfigConstants.CONFIG_KEY_MERGE);
-			bool doRebase = false;
-			if (remoteBranchName == null)
-			{
-				// check if the branch is configured for pull-rebase
-				remoteBranchName = repoConfig.GetString(ConfigConstants.CONFIG_BRANCH_SECTION, branchName
-					, ConfigConstants.CONFIG_KEY_REBASE);
-				if (remoteBranchName != null)
-				{
-					doRebase = true;
-				}
-			}
+			// check if the branch is configured for pull-rebase
+			bool doRebase = repoConfig.GetBoolean(ConfigConstants.CONFIG_BRANCH_SECTION, branchName
+				, ConfigConstants.CONFIG_KEY_REBASE, false);
 			if (remoteBranchName == null)
 			{
 				string missingKey = ConfigConstants.CONFIG_BRANCH_SECTION + DOT + branchName + DOT
@@ -214,14 +206,51 @@ namespace NGit.Api
 				throw new CanceledException(MessageFormat.Format(JGitText.Get().operationCanceled
 					, JGitText.Get().pullTaskName));
 			}
+			// we check the updates to see which of the updated branches
+			// corresponds
+			// to the remote branch name
+			AnyObjectId commitToMerge;
+			if (isRemote)
+			{
+				Ref r = null;
+				if (fetchRes != null)
+				{
+					r = fetchRes.GetAdvertisedRef(remoteBranchName);
+					if (r == null)
+					{
+						r = fetchRes.GetAdvertisedRef(Constants.R_HEADS + remoteBranchName);
+					}
+				}
+				if (r == null)
+				{
+					throw new JGitInternalException(MessageFormat.Format(JGitText.Get().couldNotGetAdvertisedRef
+						, remoteBranchName));
+				}
+				else
+				{
+					commitToMerge = r.GetObjectId();
+				}
+			}
+			else
+			{
+				try
+				{
+					commitToMerge = repo.Resolve(remoteBranchName);
+				}
+				catch (IOException e)
+				{
+					throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfPullCommand
+						, e);
+				}
+			}
 			PullResult result;
 			if (doRebase)
 			{
 				RebaseCommand rebase = new RebaseCommand(repo);
 				try
 				{
-					RebaseResult rebaseRes = rebase.SetUpstream(remoteBranchName).SetProgressMonitor(
-						monitor).SetOperation(RebaseCommand.Operation.BEGIN).Call();
+					RebaseResult rebaseRes = rebase.SetUpstream(commitToMerge).SetProgressMonitor(monitor
+						).SetOperation(RebaseCommand.Operation.BEGIN).Call();
 					result = new PullResult(fetchRes, remote, rebaseRes);
 				}
 				catch (NoHeadException e)
@@ -243,43 +272,6 @@ namespace NGit.Api
 			}
 			else
 			{
-				// we check the updates to see which of the updated branches
-				// corresponds
-				// to the remote branch name
-				AnyObjectId commitToMerge;
-				if (isRemote)
-				{
-					Ref r = null;
-					if (fetchRes != null)
-					{
-						r = fetchRes.GetAdvertisedRef(remoteBranchName);
-						if (r == null)
-						{
-							r = fetchRes.GetAdvertisedRef(Constants.R_HEADS + remoteBranchName);
-						}
-					}
-					if (r == null)
-					{
-						throw new JGitInternalException(MessageFormat.Format(JGitText.Get().couldNotGetAdvertisedRef
-							, remoteBranchName));
-					}
-					else
-					{
-						commitToMerge = r.GetObjectId();
-					}
-				}
-				else
-				{
-					try
-					{
-						commitToMerge = repo.Resolve(remoteBranchName);
-					}
-					catch (IOException e)
-					{
-						throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfPullCommand
-							, e);
-					}
-				}
 				MergeCommand merge = new MergeCommand(repo);
 				merge.Include("branch \'" + remoteBranchName + "\' of " + remoteUri, commitToMerge
 					);

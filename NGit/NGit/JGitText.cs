@@ -304,6 +304,8 @@ namespace NGit
 
 		public string couldNotReadIndexInOneGo;
 
+		public string couldNotReadObjectWhileParsingCommit;
+
 		public string couldNotRenameDeleteOldIndex;
 
 		public string couldNotRenameTemporaryFile;

@@ -956,6 +956,25 @@ namespace NGit.Api
 			return this;
 		}
 
+		/// <param name="upstream">id of the upstream commit</param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.RebaseCommand SetUpstream(AnyObjectId upstream)
+		{
+			try
+			{
+				this.upstreamCommit = walk.ParseCommit(upstream);
+			}
+			catch (IOException e)
+			{
+				throw new JGitInternalException(MessageFormat.Format(JGitText.Get().couldNotReadObjectWhileParsingCommit
+					, upstream.Name), e);
+			}
+			return this;
+		}
+
 		/// <param name="upstream">the upstream branch</param>
 		/// <returns>
 		/// 

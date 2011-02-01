@@ -819,7 +819,7 @@ index 5a9f3cd..4b14fe0 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index 0e51ec2..2e5d225 100644
+index f81e80f..b6f5b5a 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -183,6 +183,7 @@ namespace NGit.Api
