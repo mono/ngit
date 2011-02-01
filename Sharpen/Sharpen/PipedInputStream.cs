@@ -82,7 +82,7 @@ namespace Sharpen
 							length += i;
 						}
 					}
-					if (start == end) {
+					if (start == end && !closed) {
 						dataEvent.Reset ();
 					}
 					Monitor.PulseAll (thisLock);
