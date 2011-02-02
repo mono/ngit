@@ -1829,7 +1829,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 26a8f6f..b206037 100644
+index 6463d4a..e02d93f 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1841,15 +1841,15 @@ index 26a8f6f..b206037 100644
  			 + 1];
  
  		private readonly ObjectIdSubclassMap<ObjectToPack> objectsMap = new ObjectIdSubclassMap
-@@ -1218,7 +1218,7 @@ namespace NGit.Storage.Pack
- 			}
- 			else
+@@ -1214,7 +1214,7 @@ namespace NGit.Storage.Pack
+ 				);
+ 			if (have == null)
  			{
--				not = Sharpen.Collections.EmptySet();
-+				not = Sharpen.Collections.EmptySet<ObjectId>();
+-				have = Sharpen.Collections.EmptySet();
++				have = Sharpen.Collections.EmptySet<ObjectId>();
  			}
- 			ObjectWalk walker = new ObjectWalk(reader);
- 			walker.SetRetainBody(false);
+ 			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
+ 			Sharpen.Collections.AddAll(all, want);
 diff --git a/NGit/NGit.Transport/BaseConnection.cs b/NGit/NGit.Transport/BaseConnection.cs
 index 14f5150..ee19789 100644
 --- a/NGit/NGit.Transport/BaseConnection.cs
@@ -2063,10 +2063,10 @@ index 7cb5ae7..30d4847 100644
  		/// <summary>Get status of remote refs updates.</summary>
  		/// <remarks>
 diff --git a/NGit/NGit.Transport/ReceivePack.cs b/NGit/NGit.Transport/ReceivePack.cs
-index 1748707..eae8946 100644
+index 698b38d..c9c89fe 100644
 --- a/NGit/NGit.Transport/ReceivePack.cs
 +++ b/NGit/NGit.Transport/ReceivePack.cs
-@@ -608,7 +608,7 @@ namespace NGit.Transport
+@@ -610,7 +610,7 @@ namespace NGit.Transport
  		/// other network connections this should be null.
  		/// </param>
  		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
@@ -2075,7 +2075,7 @@ index 1748707..eae8946 100644
  			messages)
  		{
  			try
-@@ -630,7 +630,7 @@ namespace NGit.Transport
+@@ -632,7 +632,7 @@ namespace NGit.Transport
  				pckOut = new PacketLineOut(rawOut);
  				if (messages != null)
  				{

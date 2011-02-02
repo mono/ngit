@@ -173,5 +173,16 @@ namespace NGit.Merge
 			string message = formatter.Format(Arrays.AsList(a), b);
 			NUnit.Framework.Assert.AreEqual("Merge branch 'a' into b", message);
 		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestIntoSymbolicRefHeadPointingToMaster()
+		{
+			Ref a = db.GetRef("refs/heads/a");
+			Ref master = db.GetRef("refs/heads/master");
+			SymbolicRef head = new SymbolicRef("HEAD", master);
+			string message = formatter.Format(Arrays.AsList(a), head);
+			NUnit.Framework.Assert.AreEqual("Merge branch 'a'", message);
+		}
 	}
 }

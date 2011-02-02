@@ -491,6 +491,9 @@
     <Compile Include="NGit.Transport\PackParser.cs" />
     <Compile Include="NGit.Storage.File\ObjectDirectoryPackParser.cs" />
     <Compile Include="NGit.Revwalk\ObjectListIterator.cs" />
+    <Compile Include="NGit.Api\CloneCommand.cs" />
+    <Compile Include="NGit.Storage.Pack\BaseSearch.cs" />
+    <Compile Include="NGit.Storage.Pack\IntSet.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

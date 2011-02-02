@@ -184,14 +184,15 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		public override PackLock Parse(ProgressMonitor progress)
+		public override PackLock Parse(ProgressMonitor receiving, ProgressMonitor resolving
+			)
 		{
 			tmpPack = FilePath.CreateTempFile("incoming_", ".pack", db.GetDirectory());
 			tmpIdx = new FilePath(db.GetDirectory(), BaseName(tmpPack) + ".idx");
 			try
 			{
 				@out = new RandomAccessFile(tmpPack, "rw");
-				base.Parse(progress);
+				base.Parse(receiving, resolving);
 				@out.Seek(packEnd);
 				@out.Write(packHash);
 				@out.GetChannel().Force(true);

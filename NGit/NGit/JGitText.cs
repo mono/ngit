@@ -820,6 +820,8 @@ namespace NGit
 
 		public string searchForReuse;
 
+		public string searchForSizes;
+
 		public string sequenceTooLargeForDiffAlgorithm;
 
 		public string serviceNotPermitted;

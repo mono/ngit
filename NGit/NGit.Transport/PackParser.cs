@@ -443,13 +443,44 @@ namespace NGit.Transport
 		/// </returns>
 		/// <exception cref="System.IO.IOException">the stream is malformed, or contains corrupt objects.
 		/// 	</exception>
-		public virtual PackLock Parse(ProgressMonitor progress)
+		public PackLock Parse(ProgressMonitor progress)
 		{
-			if (progress == null)
+			return Parse(progress, progress);
+		}
+
+		/// <summary>Parse the pack stream.</summary>
+		/// <remarks>Parse the pack stream.</remarks>
+		/// <param name="receiving">
+		/// receives progress feedback during the initial receiving
+		/// objects phase. If null,
+		/// <see cref="NGit.NullProgressMonitor">NGit.NullProgressMonitor</see>
+		/// will be
+		/// used.
+		/// </param>
+		/// <param name="resolving">receives progress feedback during the resolving objects phase.
+		/// 	</param>
+		/// <returns>
+		/// the pack lock, if one was requested by setting
+		/// <see cref="SetLockMessage(string)">SetLockMessage(string)</see>
+		/// .
+		/// </returns>
+		/// <exception cref="System.IO.IOException">the stream is malformed, or contains corrupt objects.
+		/// 	</exception>
+		public virtual PackLock Parse(ProgressMonitor receiving, ProgressMonitor resolving
+			)
+		{
+			if (receiving == null)
 			{
-				progress = NullProgressMonitor.INSTANCE;
+				receiving = NullProgressMonitor.INSTANCE;
 			}
-			progress.Start(2);
+			if (resolving == null)
+			{
+				resolving = NullProgressMonitor.INSTANCE;
+			}
+			if (receiving == resolving)
+			{
+				receiving.Start(2);
+			}
 			try
 			{
 				ReadPackHeader();
@@ -457,26 +488,32 @@ namespace NGit.Transport
 				baseById = new ObjectIdSubclassMap<PackParser.DeltaChain>();
 				baseByPos = new LongMap<PackParser.UnresolvedDelta>();
 				deferredCheckBlobs = new AList<PackedObjectInfo>();
-				progress.BeginTask(JGitText.Get().receivingObjects, (int)objectCount);
-				for (int done = 0; done < objectCount; done++)
+				receiving.BeginTask(JGitText.Get().receivingObjects, (int)objectCount);
+				try
 				{
-					IndexOneObject();
-					progress.Update(1);
-					if (progress.IsCancelled())
+					for (int done = 0; done < objectCount; done++)
 					{
-						throw new IOException(JGitText.Get().downloadCancelled);
+						IndexOneObject();
+						receiving.Update(1);
+						if (receiving.IsCancelled())
+						{
+							throw new IOException(JGitText.Get().downloadCancelled);
+						}
 					}
+					ReadPackFooter();
+					EndInput();
 				}
-				ReadPackFooter();
-				EndInput();
+				finally
+				{
+					receiving.EndTask();
+				}
 				if (!deferredCheckBlobs.IsEmpty())
 				{
 					DoDeferredCheckBlobs();
 				}
-				progress.EndTask();
 				if (deltaCount > 0)
 				{
-					ResolveDeltas(progress);
+					ResolveDeltas(resolving);
 					if (entryCount < objectCount)
 					{
 						if (!IsAllowThin())
@@ -484,7 +521,7 @@ namespace NGit.Transport
 							throw new IOException(MessageFormat.Format(JGitText.Get().packHasUnresolvedDeltas
 								, (objectCount - entryCount)));
 						}
-						ResolveDeltasWithExternalBases(progress);
+						ResolveDeltasWithExternalBases(resolving);
 						if (entryCount < objectCount)
 						{
 							throw new IOException(MessageFormat.Format(JGitText.Get().packHasUnresolvedDeltas
@@ -518,7 +555,6 @@ namespace NGit.Transport
 					inflater = null;
 					objectDatabase.Close();
 				}
-				progress.EndTask();
 			}
 			return null;
 		}

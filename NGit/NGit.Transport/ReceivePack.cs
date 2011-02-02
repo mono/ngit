@@ -142,6 +142,8 @@ namespace NGit.Transport
 
 		private TextWriter msgs;
 
+		private SideBandOutputStream msgOut;
+
 		private PackParser parser;
 
 		/// <summary>The refs we advertised as existing at the start of the connection.</summary>
@@ -206,10 +208,10 @@ namespace NGit.Transport
 
 		private class ReceiveConfig
 		{
-			private sealed class _SectionParser_215 : Config.SectionParser<ReceivePack.ReceiveConfig
+			private sealed class _SectionParser_218 : Config.SectionParser<ReceivePack.ReceiveConfig
 				>
 			{
-				public _SectionParser_215()
+				public _SectionParser_218()
 				{
 				}
 
@@ -220,7 +222,7 @@ namespace NGit.Transport
 			}
 
 			internal static readonly Config.SectionParser<ReceivePack.ReceiveConfig> KEY = new 
-				_SectionParser_215();
+				_SectionParser_218();
 
 			internal readonly bool checkReceivedObjects;
 
@@ -739,14 +741,14 @@ namespace NGit.Transport
 				UnlockPack();
 				if (reportStatus)
 				{
-					SendStatusReport(true, new _Reporter_652(this));
+					SendStatusReport(true, new _Reporter_655(this));
 					pckOut.End();
 				}
 				else
 				{
 					if (msgs != null)
 					{
-						SendStatusReport(false, new _Reporter_659(this));
+						SendStatusReport(false, new _Reporter_662(this));
 					}
 				}
 				postReceive.OnPostReceive(this, FilterCommands(ReceiveCommand.Result.OK));
@@ -757,9 +759,9 @@ namespace NGit.Transport
 			}
 		}
 
-		private sealed class _Reporter_652 : ReceivePack.Reporter
+		private sealed class _Reporter_655 : ReceivePack.Reporter
 		{
-			public _Reporter_652(ReceivePack _enclosing)
+			public _Reporter_655(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -773,9 +775,9 @@ namespace NGit.Transport
 			private readonly ReceivePack _enclosing;
 		}
 
-		private sealed class _Reporter_659 : ReceivePack.Reporter
+		private sealed class _Reporter_662 : ReceivePack.Reporter
 		{
-			public _Reporter_659(ReceivePack _enclosing)
+			public _Reporter_662(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -902,9 +904,10 @@ namespace NGit.Transport
 				OutputStream @out = rawOut;
 				rawOut = new SideBandOutputStream(SideBandOutputStream.CH_DATA, SideBandOutputStream
 					.MAX_BUF, @out);
+				msgOut = new SideBandOutputStream(SideBandOutputStream.CH_PROGRESS, SideBandOutputStream
+					.MAX_BUF, @out);
 				pckOut = new PacketLineOut(rawOut);
-				msgs = new OutputStreamWriter(new SideBandOutputStream(SideBandOutputStream.CH_PROGRESS
-					, SideBandOutputStream.MAX_BUF, @out), Constants.CHARSET);
+				msgs = new OutputStreamWriter(msgOut, Constants.CHARSET);
 			}
 		}
 
@@ -931,6 +934,12 @@ namespace NGit.Transport
 			{
 				timeoutIn.SetTimeout(10 * timeout * 1000);
 			}
+			ProgressMonitor receiving = NullProgressMonitor.INSTANCE;
+			ProgressMonitor resolving = NullProgressMonitor.INSTANCE;
+			if (sideBand)
+			{
+				resolving = new SideBandProgressMonitor(msgOut);
+			}
 			ObjectInserter ins = db.NewObjectInserter();
 			try
 			{
@@ -945,7 +954,7 @@ namespace NGit.Transport
 				parser.SetNeedBaseObjectIds(checkReferencedIsReachable);
 				parser.SetObjectChecking(IsCheckReceivedObjects());
 				parser.SetLockMessage(lockMsg);
-				packLock = parser.Parse(NullProgressMonitor.INSTANCE);
+				packLock = parser.Parse(receiving, resolving);
 				ins.Flush();
 			}
 			finally
