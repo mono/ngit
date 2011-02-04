@@ -490,6 +490,11 @@ namespace Sharpen
 			}
 			return 0;
 		}
+		
+		public static bool Contains<T,U> (this ICollection<T> col, U item) where T:U
+		{
+			return col.Any (n => (object.ReferenceEquals (n, item)) || n.Equals (item));
+		}
 
 		public static void Sort<T> (this IList<T> list)
 		{

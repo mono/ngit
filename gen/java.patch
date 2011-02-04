@@ -583,10 +583,10 @@ index a95303b..c67652f 100644
  	static final int SORT_COMMIT_TIME_DESC = 1 << 0;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
-index 22e5412..51a66d9 100644
+index f28facb..f8283f2 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/FileObjectDatabase.java
-@@ -58,7 +58,7 @@
+@@ -60,7 +60,7 @@
  import org.eclipse.jgit.storage.pack.PackWriter;
  import org.eclipse.jgit.util.FS;
  
@@ -623,10 +623,10 @@ index 96abaee..5135f9f 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index 3f6a091..612b4cf 100644
+index eee08ed..3b41811 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-@@ -132,7 +132,7 @@
+@@ -136,7 +136,7 @@
  	private static final int PACK_VERSION_GENERATED = 2;
  
  	@SuppressWarnings("unchecked")
@@ -635,7 +635,7 @@ index 3f6a091..612b4cf 100644
  	{
  		objectsLists[0] = Collections.<ObjectToPack> emptyList();
  		objectsLists[Constants.OBJ_COMMIT] = new ArrayList<ObjectToPack>();
-@@ -157,7 +157,7 @@
+@@ -165,7 +165,7 @@
  
  	private List<ObjectToPack> sortedByName;
  
@@ -798,10 +798,10 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 0d1c035..4b9669f 100644
+index 81da247..f453646 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-@@ -168,7 +168,7 @@
+@@ -169,7 +169,7 @@
  
  	private final RevFlagSet SAVE;
  
@@ -810,7 +810,7 @@ index 0d1c035..4b9669f 100644
  
  	/**
  	 * Create a new pack upload for an open repository.
-@@ -516,14 +516,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -513,14 +513,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  				addCommonBase(obj);
  
  				switch (multiAck) {
@@ -828,7 +828,7 @@ index 0d1c035..4b9669f 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -541,12 +541,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -538,12 +538,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  			if (walk.lookupOrNull(id) == null) {
  				if (okToGiveUp()) {
  					switch (multiAck) {
@@ -858,10 +858,10 @@ index c683308..09a5bf3 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index 48e6483..fb2d7af 100644
+index e2dd0c7..c5b0f72 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-@@ -119,6 +119,12 @@
+@@ -120,6 +120,12 @@
  	private IgnoreNode ignoreNode;
  
  	/**
@@ -874,7 +874,7 @@ index 48e6483..fb2d7af 100644
  	 * Create a new iterator with no parent.
  	 *
  	 * @param options
-@@ -421,6 +427,8 @@ public boolean isEntryIgnored() throws IOException {
+@@ -455,6 +461,8 @@ public boolean isEntryIgnored() throws IOException {
  	 *             a relevant ignore rule file exists but cannot be read.
  	 */
  	protected boolean isEntryIgnored(final int pLen) throws IOException {
@@ -883,7 +883,7 @@ index 48e6483..fb2d7af 100644
  		IgnoreNode rules = getIgnoreNode();
  		if (rules != null) {
  			// The ignore code wants path to start with a '/' if possible.
-@@ -433,15 +441,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
+@@ -467,15 +475,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
  			String p = TreeWalk.pathOf(path, pOff, pLen);
  			switch (rules.isIgnored(p, FileMode.TREE.equals(mode))) {
  			case IGNORED:
@@ -906,7 +906,7 @@ index 48e6483..fb2d7af 100644
  		return false;
  	}
  
-@@ -597,8 +610,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
+@@ -631,8 +644,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();

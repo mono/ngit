@@ -41,63 +41,45 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
-using ICSharpCode.SharpZipLib.Zip.Compression;
-using NGit.Storage.File;
+using System.Collections.Generic;
+using NGit;
 using NGit.Storage.Pack;
 using Sharpen;
 
-namespace NGit.Storage.File
+namespace NGit.Storage.Pack
 {
 	/// <summary>
-	/// A window for accessing git packs using a
-	/// <see cref="Sharpen.ByteBuffer">Sharpen.ByteBuffer</see>
-	/// for storage.
+	/// Describes a pack file
+	/// <see cref="ObjectReuseAsIs">ObjectReuseAsIs</see>
+	/// can append onto a stream.
 	/// </summary>
-	/// <seealso cref="ByteWindow">ByteWindow</seealso>
-	internal sealed class ByteBufferWindow : ByteWindow
+	public abstract class CachedPack
 	{
-		private readonly ByteBuffer buffer;
+		/// <summary>Objects that start this pack.</summary>
+		/// <remarks>
+		/// Objects that start this pack.
+		/// <p>
+		/// All objects reachable from the tips are contained within this pack. If
+		/// <see cref="PackWriter">PackWriter</see>
+		/// is going to include everything reachable from all of
+		/// these objects, this cached pack is eligible to be appended directly onto
+		/// the output pack stream.
+		/// </remarks>
+		/// <returns>the tip objects that describe this pack.</returns>
+		public abstract ICollection<ObjectId> GetTips();
 
-		internal ByteBufferWindow(PackFile pack, long o, ByteBuffer b) : base(pack, o, b.
-			Capacity())
-		{
-			buffer = b;
-		}
+		/// <summary>Get the number of objects in this pack.</summary>
+		/// <remarks>Get the number of objects in this pack.</remarks>
+		/// <returns>the total object count for the pack.</returns>
+		/// <exception cref="System.IO.IOException">if the object count cannot be read.</exception>
+		public abstract long GetObjectCount();
 
-		protected internal override int Copy(int p, byte[] b, int o, int n)
-		{
-			ByteBuffer s = buffer.Slice();
-			s.Position(p);
-			n = Math.Min(s.Remaining(), n);
-			s.Get(b, o, n);
-			return n;
-		}
-
-		/// <exception cref="System.IO.IOException"></exception>
-		internal override void Write(PackOutputStream @out, long pos, int cnt)
-		{
-			ByteBuffer s = buffer.Slice();
-			s.Position((int)(pos - start));
-			while (0 < cnt)
-			{
-				byte[] buf = @out.GetCopyBuffer();
-				int n = Math.Min(cnt, buf.Length);
-				s.Get(buf, 0, n);
-				@out.Write(buf, 0, n);
-				cnt -= n;
-			}
-		}
-
-		/// <exception cref="Sharpen.DataFormatException"></exception>
-		protected internal override int SetInput(int pos, Inflater inf)
-		{
-			ByteBuffer s = buffer.Slice();
-			s.Position(pos);
-			byte[] tmp = new byte[Math.Min(s.Remaining(), 512)];
-			s.Get(tmp, 0, tmp.Length);
-			inf.SetInput(tmp, 0, tmp.Length);
-			return tmp.Length;
-		}
+		/// <summary>Determine if the pack contains the requested objects.</summary>
+		/// <remarks>Determine if the pack contains the requested objects.</remarks>
+		/// <?></?>
+		/// <param name="toFind">the objects to search for.</param>
+		/// <returns>the objects contained in the pack.</returns>
+		/// <exception cref="System.IO.IOException">the pack cannot be accessed</exception>
+		public abstract ICollection<ObjectId> HasObject<T>(Iterable<T> toFind) where T:ObjectId;
 	}
 }
