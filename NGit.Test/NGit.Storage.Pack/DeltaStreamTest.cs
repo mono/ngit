@@ -203,13 +203,13 @@ namespace NGit.Storage.Pack
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override long GetBaseSize()
+			internal protected override long GetBaseSize()
 			{
 				return this._enclosing.@base.Length;
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override InputStream OpenBase()
+			internal protected override InputStream OpenBase()
 			{
 				opened[0] = true;
 				return new ByteArrayInputStream(this._enclosing.@base);
@@ -258,13 +258,13 @@ namespace NGit.Storage.Pack
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override long GetBaseSize()
+			internal protected override long GetBaseSize()
 			{
 				return 128;
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override InputStream OpenBase()
+			internal protected override InputStream OpenBase()
 			{
 				return new ByteArrayInputStream(this._enclosing.@base);
 			}
@@ -279,13 +279,13 @@ namespace NGit.Storage.Pack
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override long GetBaseSize()
+			internal protected override long GetBaseSize()
 			{
 				return 4;
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override InputStream OpenBase()
+			internal protected override InputStream OpenBase()
 			{
 				return new ByteArrayInputStream(new byte[0]);
 			}
@@ -378,13 +378,13 @@ namespace NGit.Storage.Pack
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override long GetBaseSize()
+			internal protected override long GetBaseSize()
 			{
 				return this._enclosing.@base.Length;
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override InputStream OpenBase()
+			internal protected override InputStream OpenBase()
 			{
 				return new ByteArrayInputStream(this._enclosing.@base);
 			}

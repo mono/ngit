@@ -1334,14 +1334,14 @@ namespace NGit.Storage.Pack
 						{
 							o.Add(inCachedPack);
 						}
-						if (have.Contains(o))
+						if (have.Contains((ObjectId)o))
 						{
 							haveObjs.AddItem(o);
 							walker.MarkUninteresting(o);
 						}
 						else
 						{
-							if (want.Contains(o))
+							if (want.Contains((ObjectId)o))
 							{
 								o.Add(include);
 								wantObjs.AddItem(o);

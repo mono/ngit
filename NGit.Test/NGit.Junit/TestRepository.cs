@@ -546,7 +546,7 @@ namespace NGit.Junit
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			protected override void WriteFile(string name, byte[] bin)
+			internal protected override void WriteFile(string name, byte[] bin)
 			{
 				FilePath path = new FilePath(fr.Directory, name);
 				this._enclosing.WriteFile(path, bin);
