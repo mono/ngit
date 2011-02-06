@@ -222,7 +222,7 @@ namespace Sharpen
 
 		public static CultureInfo GetEnglishCulture ()
 		{
-			return CultureInfo.GetCultureInfo ("en");
+			return CultureInfo.GetCultureInfo ("en-US");
 		}
 
 		public static T GetFirst<T> (this IList<T> list)
@@ -232,7 +232,8 @@ namespace Sharpen
 
 		public static CultureInfo GetGermanCulture ()
 		{
-			return CultureInfo.GetCultureInfo ("de");
+			CultureInfo r =  CultureInfo.GetCultureInfo ("de-DE");
+			return r;
 		}
 
 		public static T GetLast<T> (this IList<T> list)

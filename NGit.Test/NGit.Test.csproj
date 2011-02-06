@@ -359,5 +359,17 @@
     <EmbeddedResource Include="resources\global\excludeTest\src\test.stp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="resources\GermanTranslatedBundle.properties">
+      <LogicalName>NGit.Nls.GermanTranslatedBundle.properties</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\GermanTranslatedBundle_de.properties">
+      <LogicalName>NGit.Nls.GermanTranslatedBundle_de.properties</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\MissingPropertyBundle.properties">
+      <LogicalName>NGit.Nls.MissingPropertyBundle.properties</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\NonTranslatedBundle.properties">
+      <LogicalName>NGit.Nls.NonTranslatedBundle.properties</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
