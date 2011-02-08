@@ -486,6 +486,7 @@ namespace NGit.Treewalk
 
 		private void ParseEntry()
 		{
+			ignoreStatus = -1;
 			WorkingTreeIterator.Entry e = entries[ptr];
 			mode = e.GetMode().GetBits();
 			int nameLen = e.encodedNameLen;
@@ -552,10 +553,16 @@ namespace NGit.Treewalk
 		/// 	</exception>
 		protected internal virtual bool IsEntryIgnored(int pLen)
 		{
-			if (ignoreStatus != -1)
-			{
+			if (pLen == pathLen) {
+				if (ignoreStatus == -1)
+					ignoreStatus = IsEntryIgnoredInternal (pLen) ? 1 : 0;
 				return ignoreStatus == 1;
 			}
+			return IsEntryIgnoredInternal (pLen);
+		}
+
+		bool IsEntryIgnoredInternal (int pLen)
+		{
 			IgnoreNode rules = GetIgnoreNode();
 			if (rules != null)
 			{
@@ -573,13 +580,11 @@ namespace NGit.Treewalk
 				{
 					case IgnoreNode.MatchResult.IGNORED:
 					{
-						ignoreStatus = 1;
 						return true;
 					}
 
 					case IgnoreNode.MatchResult.NOT_IGNORED:
 					{
-						ignoreStatus = 0;
 						return false;
 					}
 
@@ -591,14 +596,11 @@ namespace NGit.Treewalk
 			}
 			if (parent is NGit.Treewalk.WorkingTreeIterator)
 			{
-				ignoreStatus = ((NGit.Treewalk.WorkingTreeIterator)parent).IsEntryIgnored(pLen) ? 
-					1 : 0;
-				return ignoreStatus == 1;
+				return ((NGit.Treewalk.WorkingTreeIterator)parent).IsEntryIgnored(pLen);
 			}
-			ignoreStatus = 0;
 			return false;
 		}
-
+		
 		/// <exception cref="System.IO.IOException"></exception>
 		private IgnoreNode GetIgnoreNode()
 		{
