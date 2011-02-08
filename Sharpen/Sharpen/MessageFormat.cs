@@ -34,6 +34,7 @@ namespace Sharpen
 					continue;
 				}
 				else if (c == '}' && !inQuote && inPlaceholder) {
+					inPlaceholder = false;
 					placeholderArgs.Add (message.Substring (argStartPos, n - argStartPos));
 					AddFormatted (sb, placeholderArgs, args);
 					placeholderArgs.Clear ();
@@ -44,6 +45,9 @@ namespace Sharpen
 					argStartPos = n + 1;
 					continue;
 				}
+				else if (inPlaceholder)
+					continue;
+				
 				sb.Append (c);
 			}
 			return sb.ToString ();
