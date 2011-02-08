@@ -248,7 +248,7 @@ namespace NGit
 				}
 				if (0 != (includedOptions & ASSUME_UNCHANGED))
 				{
-					sb.Append(", assume-unchanged:" + entry.IsAssumeValid);
+					sb.Append(", assume-unchanged:" + entry.IsAssumeValid.ToString().ToLower());
 				}
 				sb.Append("]");
 			}
