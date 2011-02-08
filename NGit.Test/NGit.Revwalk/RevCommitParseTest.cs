@@ -224,7 +224,7 @@ namespace NGit.Revwalk
 			c = new RevCommit(Id("9473095c4cb2f12aefe1db8a355fe3fafba42f67"));
 			// bogus id
 			c.ParseCanonical(new RevWalk(db), b.ToByteArray());
-			NUnit.Framework.Assert.AreEqual("Japanese (EUC)", c.Encoding.EncodingName);
+			NUnit.Framework.Assert.AreEqual("EUC-JP", c.Encoding.Name());
 			NUnit.Framework.Assert.AreEqual("F\u00f6r fattare", c.GetAuthorIdent().GetName());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044", c.GetShortMessage());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044\n\nHi\n", c.GetFullMessage());
@@ -257,7 +257,7 @@ namespace NGit.Revwalk
 			c = new RevCommit(Id("9473095c4cb2f12aefe1db8a355fe3fafba42f67"));
 			// bogus id
 			c.ParseCanonical(new RevWalk(db), b.ToByteArray());
-			NUnit.Framework.Assert.AreEqual("Japanese (EUC)", c.Encoding.EncodingName);
+			NUnit.Framework.Assert.AreEqual("EUC-JP", c.Encoding.Name());
 			NUnit.Framework.Assert.AreEqual("F\u00f6r fattare", c.GetAuthorIdent().GetName());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044", c.GetShortMessage());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044\n\nHi\n", c.GetFullMessage());
@@ -291,7 +291,7 @@ namespace NGit.Revwalk
 			c = new RevCommit(Id("9473095c4cb2f12aefe1db8a355fe3fafba42f67"));
 			// bogus id
 			c.ParseCanonical(new RevWalk(db), b.ToByteArray());
-			NUnit.Framework.Assert.AreEqual("ISO-8859-1", c.Encoding.EncodingName);
+			NUnit.Framework.Assert.AreEqual("ISO-8859-1", c.Encoding.Name());
 			NUnit.Framework.Assert.AreEqual("F\u00f6r fattare", c.GetAuthorIdent().GetName());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044", c.GetShortMessage());
 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044\n\nHi\n", c.GetFullMessage());

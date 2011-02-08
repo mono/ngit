@@ -19,10 +19,10 @@ index 2bb9439..cac7103 100644
  		}
  	}
 diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-index d3e98ea..cd6d911 100644
+index d3e98ea..0c072b5 100644
 --- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
 +++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-@@ -687,7 +687,7 @@ namespace NGit.Api
+@@ -687,9 +687,14 @@ namespace NGit.Api
  				sb.Append(line);
  				sb.Append('\n');
  			}
@@ -30,7 +30,14 @@ index d3e98ea..cd6d911 100644
 +			RepositoryTestCase.CheckFile(file, sb.ToString());
  		}
  
++		private void CheckFile(string fileName, string text)
++		{
++			RepositoryTestCase.CheckFile(fileName, text);
++		}
++		
  		/// <exception cref="System.Exception"></exception>
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestStopOnConflictFileCreationAndDeletion()
 diff --git a/NGit.Test/NGit.Diff/EditListTest.cs b/NGit.Test/NGit.Diff/EditListTest.cs
 index 813e9dd..5989194 100644
 --- a/NGit.Test/NGit.Diff/EditListTest.cs
@@ -199,7 +206,7 @@ index be657c3..f482dc9 100644
  
  		public override string GetHostname()
 diff --git a/NGit.Test/NGit.Junit/TestRepository.cs b/NGit.Test/NGit.Junit/TestRepository.cs
-index 93ef474..40de6ce 100644
+index 93ef474..12691f1 100644
 --- a/NGit.Test/NGit.Junit/TestRepository.cs
 +++ b/NGit.Test/NGit.Junit/TestRepository.cs
 @@ -55,6 +55,8 @@ using NGit.Storage.Pack;
@@ -249,8 +256,12 @@ index 93ef474..40de6ce 100644
  				<Ref> baseArg1) : base(baseArg1)
  			{
  				this._enclosing = _enclosing;
-@@ -536,10 +549,10 @@ namespace NGit.Junit
- 			protected override void WriteFile(string name, byte[] bin)
+@@ -533,13 +546,13 @@ namespace NGit.Junit
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override void WriteFile(string name, byte[] bin)
++			internal protected override void WriteFile(string name, byte[] bin)
  			{
  				FilePath path = new FilePath(fr.Directory, name);
 -				this._enclosing._enclosing.WriteFile(path, bin);
@@ -461,7 +472,7 @@ index 8b54acd..b957485 100644
  		protected internal override LIFORevQueue Create()
  		{
 diff --git a/NGit.Test/NGit.Revwalk/RevCommitParseTest.cs b/NGit.Test/NGit.Revwalk/RevCommitParseTest.cs
-index de99080..ac5c43b 100644
+index 37502ab..da7b4ca 100644
 --- a/NGit.Test/NGit.Revwalk/RevCommitParseTest.cs
 +++ b/NGit.Test/NGit.Revwalk/RevCommitParseTest.cs
 @@ -215,7 +215,7 @@ namespace NGit.Revwalk
@@ -473,24 +484,6 @@ index de99080..ac5c43b 100644
  			b.Write(Sharpen.Runtime.GetBytesForString("\n", "EUC-JP"));
  			b.Write(Sharpen.Runtime.GetBytesForString("\u304d\u308c\u3044\n", "EUC-JP"));
  			b.Write(Sharpen.Runtime.GetBytesForString("\n", "EUC-JP"));
-@@ -224,7 +224,7 @@ namespace NGit.Revwalk
- 			c = new RevCommit(Id("9473095c4cb2f12aefe1db8a355fe3fafba42f67"));
- 			// bogus id
- 			c.ParseCanonical(new RevWalk(db), b.ToByteArray());
--			NUnit.Framework.Assert.AreEqual("EUC-JP", c.Encoding.EncodingName);
-+			NUnit.Framework.Assert.AreEqual("Japanese (EUC)", c.Encoding.EncodingName);
- 			NUnit.Framework.Assert.AreEqual("F\u00f6r fattare", c.GetAuthorIdent().GetName());
- 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044", c.GetShortMessage());
- 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044\n\nHi\n", c.GetFullMessage());
-@@ -257,7 +257,7 @@ namespace NGit.Revwalk
- 			c = new RevCommit(Id("9473095c4cb2f12aefe1db8a355fe3fafba42f67"));
- 			// bogus id
- 			c.ParseCanonical(new RevWalk(db), b.ToByteArray());
--			NUnit.Framework.Assert.AreEqual("EUC-JP", c.Encoding.EncodingName);
-+			NUnit.Framework.Assert.AreEqual("Japanese (EUC)", c.Encoding.EncodingName);
- 			NUnit.Framework.Assert.AreEqual("F\u00f6r fattare", c.GetAuthorIdent().GetName());
- 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044", c.GetShortMessage());
- 			NUnit.Framework.Assert.AreEqual("\u304d\u308c\u3044\n\nHi\n", c.GetFullMessage());
 diff --git a/NGit.Test/NGit.Revwalk/RevObjectTest.cs b/NGit.Test/NGit.Revwalk/RevObjectTest.cs
 index 2ec38fa..e78f280 100644
 --- a/NGit.Test/NGit.Revwalk/RevObjectTest.cs
@@ -547,9 +540,57 @@ index 3fa240b..47c1ce5 100644
  		}
  
 diff --git a/NGit.Test/NGit.Storage.Pack/DeltaStreamTest.cs b/NGit.Test/NGit.Storage.Pack/DeltaStreamTest.cs
-index 08446d0..11b8c58 100644
+index 08446d0..f5b82af 100644
 --- a/NGit.Test/NGit.Storage.Pack/DeltaStreamTest.cs
 +++ b/NGit.Test/NGit.Storage.Pack/DeltaStreamTest.cs
+@@ -203,13 +203,13 @@ namespace NGit.Storage.Pack
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override long GetBaseSize()
++			internal protected override long GetBaseSize()
+ 			{
+ 				return this._enclosing.@base.Length;
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override InputStream OpenBase()
++			internal protected override InputStream OpenBase()
+ 			{
+ 				opened[0] = true;
+ 				return new ByteArrayInputStream(this._enclosing.@base);
+@@ -258,13 +258,13 @@ namespace NGit.Storage.Pack
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override long GetBaseSize()
++			internal protected override long GetBaseSize()
+ 			{
+ 				return 128;
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override InputStream OpenBase()
++			internal protected override InputStream OpenBase()
+ 			{
+ 				return new ByteArrayInputStream(this._enclosing.@base);
+ 			}
+@@ -279,13 +279,13 @@ namespace NGit.Storage.Pack
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override long GetBaseSize()
++			internal protected override long GetBaseSize()
+ 			{
+ 				return 4;
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override InputStream OpenBase()
++			internal protected override InputStream OpenBase()
+ 			{
+ 				return new ByteArrayInputStream(new byte[0]);
+ 			}
 @@ -297,6 +297,7 @@ namespace NGit.Storage.Pack
  			@base = GetRng().NextBytes(baseSize);
  			data = new byte[dataSize];
@@ -558,6 +599,22 @@ index 08446d0..11b8c58 100644
  		}
  
  		/// <exception cref="System.IO.IOException"></exception>
+@@ -377,13 +378,13 @@ namespace NGit.Storage.Pack
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override long GetBaseSize()
++			internal protected override long GetBaseSize()
+ 			{
+ 				return this._enclosing.@base.Length;
+ 			}
+ 
+ 			/// <exception cref="System.IO.IOException"></exception>
+-			protected override InputStream OpenBase()
++			internal protected override InputStream OpenBase()
+ 			{
+ 				return new ByteArrayInputStream(this._enclosing.@base);
+ 			}
 diff --git a/NGit.Test/NGit.Util/Base64Test.cs b/NGit.Test/NGit.Util/Base64Test.cs
 index 198f581..8cde1df 100644
 --- a/NGit.Test/NGit.Util/Base64Test.cs
@@ -703,7 +760,7 @@ index ff18e73..62d7d9f 100644
  				);
  			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads(), null);
 diff --git a/NGit.Test/NGit/RepositoryTestCase.cs b/NGit.Test/NGit/RepositoryTestCase.cs
-index f1e542c..7ec731a 100644
+index f1e542c..f2f4f3c 100644
 --- a/NGit.Test/NGit/RepositoryTestCase.cs
 +++ b/NGit.Test/NGit/RepositoryTestCase.cs
 @@ -248,7 +248,7 @@ namespace NGit
@@ -711,7 +768,7 @@ index f1e542c..7ec731a 100644
  				if (0 != (includedOptions & ASSUME_UNCHANGED))
  				{
 -					sb.Append(", assume-unchanged:" + bool.ToString(entry.IsAssumeValid));
-+					sb.Append(", assume-unchanged:" + entry.IsAssumeValid);
++					sb.Append(", assume-unchanged:" + entry.IsAssumeValid.ToString().ToLower());
  				}
  				sb.Append("]");
  			}
@@ -1874,7 +1931,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index bc8b011..5b7058e 100644
+index bc8b011..f12fa10 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1904,6 +1961,23 @@ index bc8b011..5b7058e 100644
  			}
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
+@@ -1334,14 +1334,14 @@ namespace NGit.Storage.Pack
+ 						{
+ 							o.Add(inCachedPack);
+ 						}
+-						if (have.Contains(o))
++						if (have.Contains((ObjectId)o))
+ 						{
+ 							haveObjs.AddItem(o);
+ 							walker.MarkUninteresting(o);
+ 						}
+ 						else
+ 						{
+-							if (want.Contains(o))
++							if (want.Contains((ObjectId)o))
+ 							{
+ 								o.Add(include);
+ 								wantObjs.AddItem(o);
 diff --git a/NGit/NGit.Transport/BaseConnection.cs b/NGit/NGit.Transport/BaseConnection.cs
 index 14f5150..ee19789 100644
 --- a/NGit/NGit.Transport/BaseConnection.cs
@@ -2565,10 +2639,68 @@ index 4557681..024be0c 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index a219a09..53a55cf 100644
+index a219a09..814a3e6 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-@@ -963,7 +963,7 @@ namespace NGit.Treewalk
+@@ -486,6 +486,7 @@ namespace NGit.Treewalk
+ 
+ 		private void ParseEntry()
+ 		{
++			ignoreStatus = -1;
+ 			WorkingTreeIterator.Entry e = entries[ptr];
+ 			mode = e.GetMode().GetBits();
+ 			int nameLen = e.encodedNameLen;
+@@ -552,10 +553,16 @@ namespace NGit.Treewalk
+ 		/// 	</exception>
+ 		protected internal virtual bool IsEntryIgnored(int pLen)
+ 		{
+-			if (ignoreStatus != -1)
+-			{
++			if (pLen == pathLen) {
++				if (ignoreStatus == -1)
++					ignoreStatus = IsEntryIgnoredInternal (pLen) ? 1 : 0;
+ 				return ignoreStatus == 1;
+ 			}
++			return IsEntryIgnoredInternal (pLen);
++		}
++
++		bool IsEntryIgnoredInternal (int pLen)
++		{
+ 			IgnoreNode rules = GetIgnoreNode();
+ 			if (rules != null)
+ 			{
+@@ -573,13 +580,11 @@ namespace NGit.Treewalk
+ 				{
+ 					case IgnoreNode.MatchResult.IGNORED:
+ 					{
+-						ignoreStatus = 1;
+ 						return true;
+ 					}
+ 
+ 					case IgnoreNode.MatchResult.NOT_IGNORED:
+ 					{
+-						ignoreStatus = 0;
+ 						return false;
+ 					}
+ 
+@@ -591,14 +596,11 @@ namespace NGit.Treewalk
+ 			}
+ 			if (parent is NGit.Treewalk.WorkingTreeIterator)
+ 			{
+-				ignoreStatus = ((NGit.Treewalk.WorkingTreeIterator)parent).IsEntryIgnored(pLen) ? 
+-					1 : 0;
+-				return ignoreStatus == 1;
++				return ((NGit.Treewalk.WorkingTreeIterator)parent).IsEntryIgnored(pLen);
+ 			}
+-			ignoreStatus = 0;
+ 			return false;
+ 		}
+-
++		
+ 		/// <exception cref="System.IO.IOException"></exception>
+ 		private IgnoreNode GetIgnoreNode()
+ 		{
+@@ -963,7 +965,7 @@ namespace NGit.Treewalk
  
  		/// <summary>A single entry within a working directory tree.</summary>
  		/// <remarks>A single entry within a working directory tree.</remarks>

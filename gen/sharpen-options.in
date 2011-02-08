@@ -255,7 +255,6 @@
 -typeMapping java.util.Properties Sharpen.Properties
 -typeMapping java.util.concurrent.Semaphore System.Threading.Semaphore
 -typeMapping java.lang.ProcessBuilder System.Diagnostics.ProcessStartInfo
--propertyMapping java.nio.charset.Charset.name EncodingName
 -propertyMapping java.lang.Class.getSimpleName Name
 -propertyMapping java.nio.charset.Charset.defaultCharset Default
 -propertyMapping java.util.Locale.getDefault CurrentCulture

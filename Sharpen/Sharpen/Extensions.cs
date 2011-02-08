@@ -116,6 +116,11 @@ namespace Sharpen
 			return GetEncoding (encoding).Decode (chars, start, len);
 		}
 
+		public static string Name (this Encoding e)
+		{
+			return e.BodyName.ToUpper ();
+		}
+		
 		public static string Decode (this Encoding e, byte[] chars, int start, int len)
 		{
 			try {
@@ -158,7 +163,7 @@ namespace Sharpen
 		public static Encoding GetEncoding (string name)
 		{
 //			Encoding e = Encoding.GetEncoding (name, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
-			Encoding e = Encoding.GetEncoding (name);
+			Encoding e = Encoding.GetEncoding (name.Replace ('_','-'));
 			if (e is UTF8Encoding)
 				return new UTF8Encoding (false, true);
 			return e;

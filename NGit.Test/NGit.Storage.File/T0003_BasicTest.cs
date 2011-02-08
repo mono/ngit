@@ -566,7 +566,7 @@ namespace NGit.Storage.File
 			try
 			{
 				ObjectId blobId = oi.Insert(Constants.OBJ_BLOB, Sharpen.Runtime.GetBytesForString
-					("and this is the data in me\n", Constants.CHARSET.EncodingName));
+					("and this is the data in me\n", Constants.CHARSET.Name()));
 				TreeFormatter fmt = new TreeFormatter();
 				fmt.Append("i-am-a-file", FileMode.REGULAR_FILE, blobId);
 				treeId = oi.Insert(fmt);
