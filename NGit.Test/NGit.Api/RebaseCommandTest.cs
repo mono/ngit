@@ -690,6 +690,11 @@ namespace NGit.Api
 			RepositoryTestCase.CheckFile(file, sb.ToString());
 		}
 
+		private void CheckFile(string fileName, string text)
+		{
+			RepositoryTestCase.CheckFile(fileName, text);
+		}
+		
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestStopOnConflictFileCreationAndDeletion()
