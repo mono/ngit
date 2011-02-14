@@ -41,6 +41,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections.Generic;
+using System.Diagnostics;
 using NGit.Util;
 using Sharpen;
 
@@ -52,7 +54,7 @@ namespace NGit.Util
 
 		internal static bool Detect()
 		{
-			string path = AccessController.DoPrivileged(new _PrivilegedAction_55());
+			string path = AccessController.DoPrivileged(new _PrivilegedAction_58());
 			if (path == null)
 			{
 				return false;
@@ -65,9 +67,9 @@ namespace NGit.Util
 			return cygpath != null;
 		}
 
-		private sealed class _PrivilegedAction_55 : PrivilegedAction<string>
+		private sealed class _PrivilegedAction_58 : PrivilegedAction<string>
 		{
-			public _PrivilegedAction_55()
+			public _PrivilegedAction_58()
 			{
 			}
 
@@ -92,7 +94,7 @@ namespace NGit.Util
 
 		protected internal override FilePath UserHomeImpl()
 		{
-			string home = AccessController.DoPrivileged(new _PrivilegedAction_80());
+			string home = AccessController.DoPrivileged(new _PrivilegedAction_83());
 			if (home == null || home.Length == 0)
 			{
 				return base.UserHomeImpl();
@@ -100,9 +102,9 @@ namespace NGit.Util
 			return Resolve(new FilePath("."), home);
 		}
 
-		private sealed class _PrivilegedAction_80 : PrivilegedAction<string>
+		private sealed class _PrivilegedAction_83 : PrivilegedAction<string>
 		{
-			public _PrivilegedAction_80()
+			public _PrivilegedAction_83()
 			{
 			}
 
@@ -110,6 +112,19 @@ namespace NGit.Util
 			{
 				return Runtime.Getenv("HOME");
 			}
+		}
+
+		public override ProcessStartInfo RunInShell(string cmd, string[] args)
+		{
+			IList<string> argv = new AList<string>(4 + args.Length);
+			argv.AddItem("sh.exe");
+			argv.AddItem("-c");
+			argv.AddItem(cmd + " \"$@\"");
+			argv.AddItem(cmd);
+			Sharpen.Collections.AddAll(argv, Arrays.AsList(args));
+			ProcessStartInfo proc = new ProcessStartInfo();
+			proc.SetCommand(argv);
+			return proc;
 		}
 	}
 }

@@ -135,6 +135,11 @@ namespace NGit.Api
 			//$NON-NLS-1$ //$NON-NLS-2$
 			config.AddFetchRefSpec(refSpec);
 			config.Update(repo.GetConfig());
+			repo.GetConfig().SetString(ConfigConstants.CONFIG_BRANCH_SECTION, branch, ConfigConstants
+				.CONFIG_REMOTE_SECTION, remote);
+			repo.GetConfig().SetString(ConfigConstants.CONFIG_BRANCH_SECTION, branch, ConfigConstants
+				.CONFIG_KEY_MERGE, branch);
+			//$NON-NLS-1$ //$NON-NLS-2$
 			repo.GetConfig().Save();
 			// run the fetch command
 			FetchCommand command = new FetchCommand(repo);

@@ -1533,36 +1533,36 @@ index 0feb20c..aed1c8a 100644
  			return pc;
  		}
 diff --git a/NGit/NGit.Revwalk.Filter/CommitTimeRevFilter.cs b/NGit/NGit.Revwalk.Filter/CommitTimeRevFilter.cs
-index b64b0b1..6e14bc2 100644
+index 8451a5e..51ea3c5 100644
 --- a/NGit/NGit.Revwalk.Filter/CommitTimeRevFilter.cs
 +++ b/NGit/NGit.Revwalk.Filter/CommitTimeRevFilter.cs
-@@ -57,7 +57,7 @@ namespace NGit.Revwalk.Filter
- 		/// <remarks>Create a new filter to select commits before a given date/time.</remarks>
- 		/// <param name="ts">the point in time to cut on.</param>
- 		/// <returns>a new filter to select commits on or before <code>ts</code>.</returns>
--		public static RevFilter Before(DateTime ts)
-+		public static RevFilter BeforeFilter(DateTime ts)
+@@ -138,7 +138,7 @@ namespace NGit.Revwalk.Filter
+ 		//
+ 	}
+ 
+-	private class CommitTimeRevFilterBefore : CommitTimeRevFilter
++	class CommitTimeRevFilterBefore : CommitTimeRevFilter
+ 	{
+ 		internal CommitTimeRevFilterBefore(long ts) : base(ts)
  		{
- 			return new CommitTimeRevFilter.Before(ts.GetTime());
+@@ -159,7 +159,7 @@ namespace NGit.Revwalk.Filter
  		}
-@@ -66,7 +66,7 @@ namespace NGit.Revwalk.Filter
- 		/// <remarks>Create a new filter to select commits after a given date/time.</remarks>
- 		/// <param name="ts">the point in time to cut on.</param>
- 		/// <returns>a new filter to select commits on or after <code>ts</code>.</returns>
--		public static RevFilter After(DateTime ts)
-+		public static RevFilter AfterFilter(DateTime ts)
+ 	}
+ 
+-	private class CommitTimeRevFilterAfter : CommitTimeRevFilter
++	class CommitTimeRevFilterAfter : CommitTimeRevFilter
+ 	{
+ 		internal CommitTimeRevFilterAfter(long ts) : base(ts)
  		{
- 			return new CommitTimeRevFilter.After(ts.GetTime());
+@@ -184,7 +184,7 @@ namespace NGit.Revwalk.Filter
  		}
-@@ -82,7 +82,7 @@ namespace NGit.Revwalk.Filter
- 		/// <param name="since">the point in time to cut on.</param>
- 		/// <param name="until">the point in time to cut off.</param>
- 		/// <returns>a new filter to select commits between the given date/times.</returns>
--		public static RevFilter Between(DateTime since, DateTime until)
-+		public static RevFilter BetweenFilter(DateTime since, DateTime until)
- 		{
- 			return new CommitTimeRevFilter.Between(since.GetTime(), until.GetTime());
- 		}
+ 	}
+ 
+-	private class CommitTimeRevFilterBetween : CommitTimeRevFilter
++	class CommitTimeRevFilterBetween : CommitTimeRevFilter
+ 	{
+ 		private readonly int until;
+ 
 diff --git a/NGit/NGit.Revwalk/BlockRevQueue.cs b/NGit/NGit.Revwalk/BlockRevQueue.cs
 index 4d31129..d43f049 100644
 --- a/NGit/NGit.Revwalk/BlockRevQueue.cs
@@ -1992,7 +1992,7 @@ index 14f5150..ee19789 100644
  		private bool startedOperation;
  
 diff --git a/NGit/NGit.Transport/BasePackFetchConnection.cs b/NGit/NGit.Transport/BasePackFetchConnection.cs
-index ecf07a3..d9fdcba 100644
+index b91331e..b1e9d3d 100644
 --- a/NGit/NGit.Transport/BasePackFetchConnection.cs
 +++ b/NGit/NGit.Transport/BasePackFetchConnection.cs
 @@ -665,7 +665,7 @@ SEND_HAVES_break: ;
@@ -2383,10 +2383,10 @@ index 6653eb2..052c99b 100644
  				this._enclosing = _enclosing;
  				this.sock = this._enclosing.OpenConnection();
 diff --git a/NGit/NGit.Transport/TransportGitSsh.cs b/NGit/NGit.Transport/TransportGitSsh.cs
-index 495a620..cbaba1b 100644
+index 7aa04bc..afb3885 100644
 --- a/NGit/NGit.Transport/TransportGitSsh.cs
 +++ b/NGit/NGit.Transport/TransportGitSsh.cs
-@@ -496,7 +496,7 @@ namespace NGit.Transport
+@@ -455,7 +455,7 @@ namespace NGit.Transport
  			private readonly TransportGitSsh _enclosing;
  		}
  
@@ -2395,7 +2395,7 @@ index 495a620..cbaba1b 100644
  		{
  			private TransportGitSsh.Connection conn;
  
-@@ -504,7 +504,7 @@ namespace NGit.Transport
+@@ -463,7 +463,7 @@ namespace NGit.Transport
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SshFetchConnection(TransportGitSsh _enclosing, TransportGitSsh.Connection
@@ -2404,7 +2404,7 @@ index 495a620..cbaba1b 100644
  			{
  				this._enclosing = _enclosing;
  				this.conn = conn;
-@@ -568,7 +568,7 @@ namespace NGit.Transport
+@@ -527,7 +527,7 @@ namespace NGit.Transport
  			private readonly TransportGitSsh _enclosing;
  		}
  
@@ -2413,7 +2413,7 @@ index 495a620..cbaba1b 100644
  		{
  			private TransportGitSsh.Connection conn;
  
-@@ -576,7 +576,7 @@ namespace NGit.Transport
+@@ -535,7 +535,7 @@ namespace NGit.Transport
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SshPushConnection(TransportGitSsh _enclosing, TransportGitSsh.Connection
@@ -2481,10 +2481,35 @@ index af443df..bc47920 100644
  				{
  					this._enclosing = _enclosing;
 diff --git a/NGit/NGit.Transport/TransportLocal.cs b/NGit/NGit.Transport/TransportLocal.cs
-index c36eff8..7583fa7 100644
+index f04f8d1..0bfb292 100644
 --- a/NGit/NGit.Transport/TransportLocal.cs
 +++ b/NGit/NGit.Transport/TransportLocal.cs
-@@ -191,7 +191,7 @@ namespace NGit.Transport
+@@ -164,15 +164,15 @@ namespace NGit.Transport
+ 				ProcessStartInfo proc = local.FileSystem.RunInShell(cmd, args);
+ 				proc.WorkingDirectory = remoteGitDir;
+ 				// Remove the same variables CGit does.
+-				IDictionary<string, string> env = proc.EnvironmentVariables;
+-				Sharpen.Collections.Remove(env, "GIT_ALTERNATE_OBJECT_DIRECTORIES");
+-				Sharpen.Collections.Remove(env, "GIT_CONFIG");
+-				Sharpen.Collections.Remove(env, "GIT_CONFIG_PARAMETERS");
+-				Sharpen.Collections.Remove(env, "GIT_DIR");
+-				Sharpen.Collections.Remove(env, "GIT_WORK_TREE");
+-				Sharpen.Collections.Remove(env, "GIT_GRAFT_FILE");
+-				Sharpen.Collections.Remove(env, "GIT_INDEX_FILE");
+-				Sharpen.Collections.Remove(env, "GIT_NO_REPLACE_OBJECTS");
++				var env = proc.EnvironmentVariables;
++				env.Remove ("GIT_ALTERNATE_OBJECT_DIRECTORIES");
++				env.Remove ("GIT_CONFIG");
++				env.Remove ("GIT_CONFIG_PARAMETERS");
++				env.Remove ("GIT_DIR");
++				env.Remove ("GIT_WORK_TREE");
++				env.Remove ("GIT_GRAFT_FILE");
++				env.Remove ("GIT_INDEX_FILE");
++				env.Remove ("GIT_NO_REPLACE_OBJECTS");
+ 				return proc.Start();
+ 			}
+ 			catch (IOException err)
+@@ -186,7 +186,7 @@ namespace NGit.Transport
  			private Sharpen.Thread worker;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2493,7 +2518,7 @@ index c36eff8..7583fa7 100644
  				)
  			{
  				this._enclosing = _enclosing;
-@@ -329,7 +329,7 @@ namespace NGit.Transport
+@@ -324,7 +324,7 @@ namespace NGit.Transport
  			private Sharpen.Thread errorReaderThread;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2502,7 +2527,7 @@ index c36eff8..7583fa7 100644
  				)
  			{
  				this._enclosing = _enclosing;
-@@ -390,7 +390,7 @@ namespace NGit.Transport
+@@ -385,7 +385,7 @@ namespace NGit.Transport
  			private Sharpen.Thread worker;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2511,7 +2536,7 @@ index c36eff8..7583fa7 100644
  				)
  			{
  				this._enclosing = _enclosing;
-@@ -512,7 +512,7 @@ namespace NGit.Transport
+@@ -507,7 +507,7 @@ namespace NGit.Transport
  			private Sharpen.Thread errorReaderThread;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2560,10 +2585,10 @@ index 49fce84..551432d 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index 3933e7b..fe376eb 100644
+index bd688eb..d3ce070 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
-@@ -152,7 +152,7 @@ namespace NGit.Transport
+@@ -161,7 +161,7 @@ namespace NGit.Transport
  		/// <see cref="commonBase">commonBase</see>
  		/// should be examined again.
  		/// </summary>
@@ -2572,16 +2597,7 @@ index 3933e7b..fe376eb 100644
  
  		/// <summary>Objects we sent in our advertisement list, clients can ask for these.</summary>
  		/// <remarks>Objects we sent in our advertisement list, clients can ask for these.</remarks>
-@@ -457,7 +457,7 @@ namespace NGit.Transport
- 			{
- 				return;
- 			}
--			AsyncRevObjectQueue q = walk.ParseAny(wantIds, true);
-+			AsyncRevObjectQueue q = walk.ParseAny(wantIds.AsIterable (), true);
- 			try
- 			{
- 				for (; ; )
-@@ -698,7 +698,7 @@ namespace NGit.Transport
+@@ -713,7 +713,7 @@ namespace NGit.Transport
  			{
  				okToGiveUp = Sharpen.Extensions.ValueOf(OkToGiveUpImp());
  			}
@@ -2590,6 +2606,26 @@ index 3933e7b..fe376eb 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
+@@ -793,7 +793,7 @@ namespace NGit.Transport
+ 					pm = new SideBandProgressMonitor(msgOut);
+ 				}
+ 			}
+-			ICollection<ObjectId> want = wantAll;
++			ICollection<ObjectId> want = wantAll.UpcastTo<RevObject,ObjectId> ();
+ 			if (want.IsEmpty())
+ 			{
+ 				want = wantIds;
+@@ -812,8 +812,9 @@ namespace NGit.Transport
+ 				pw.PreparePack(pm, want, commonBase);
+ 				if (options.Contains(OPTION_INCLUDE_TAG))
+ 				{
+-					foreach (Ref @ref in refs.Values)
++					foreach (Ref vref in refs.Values)
+ 					{
++						Ref @ref = vref;
+ 						ObjectId objectId = @ref.GetObjectId();
+ 						// If the object was already requested, skip it.
+ 						if (wantAll.IsEmpty())
 diff --git a/NGit/NGit.Transport/WalkFetchConnection.cs b/NGit/NGit.Transport/WalkFetchConnection.cs
 index e3585d5..7864f9e 100644
 --- a/NGit/NGit.Transport/WalkFetchConnection.cs
@@ -2773,7 +2809,7 @@ index fede4b0..1a76cff 100644
  					b4[b4Posn++] = sbiCrop;
  					if (b4Posn > 3)
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
-index e1bf033..636568b 100644
+index 392973a..ee01003 100644
 --- a/NGit/NGit.Util/FS.cs
 +++ b/NGit/NGit.Util/FS.cs
 @@ -82,7 +82,7 @@ namespace NGit.Util

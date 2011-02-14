@@ -266,7 +266,7 @@ namespace NGit.Revwalk
 			Tick(100);
 			RevCommit e = Commit(d);
 			{
-				RevFilter after = NGit.Revwalk.Filter.CommitTimeRevFilter.AfterFilter(since);
+				RevFilter after = CommitTimeRevFilter.After(since);
 				NUnit.Framework.Assert.IsNotNull(after);
 				rw.SetRevFilter(after);
 				MarkStart(e);
@@ -277,7 +277,7 @@ namespace NGit.Revwalk
 				NUnit.Framework.Assert.IsNull(rw.Next());
 			}
 			{
-				RevFilter before = NGit.Revwalk.Filter.CommitTimeRevFilter.BeforeFilter(until);
+				RevFilter before = CommitTimeRevFilter.Before(until);
 				NUnit.Framework.Assert.IsNotNull(before);
 				rw.Reset();
 				rw.SetRevFilter(before);
@@ -289,8 +289,7 @@ namespace NGit.Revwalk
 				NUnit.Framework.Assert.IsNull(rw.Next());
 			}
 			{
-				RevFilter between = NGit.Revwalk.Filter.CommitTimeRevFilter.BetweenFilter(since, 
-					until);
+				RevFilter between = CommitTimeRevFilter.Between(since, until);
 				NUnit.Framework.Assert.IsNotNull(between);
 				rw.Reset();
 				rw.SetRevFilter(between);

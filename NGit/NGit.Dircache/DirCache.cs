@@ -364,6 +364,17 @@ namespace NGit.Dircache
 			}
 		}
 
+		/// <returns>true if the memory state differs from the index file</returns>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual bool IsOutdated()
+		{
+			if (liveFile == null || !liveFile.Exists())
+			{
+				return false;
+			}
+			return liveFile.LastModified() != lastModified;
+		}
+
 		/// <summary>Empty this index, removing all entries.</summary>
 		/// <remarks>Empty this index, removing all entries.</remarks>
 		public virtual void Clear()

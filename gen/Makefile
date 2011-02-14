@@ -167,6 +167,7 @@ validate-convert:
 
 import: validate-convert
 	cp -r $(NGIT_DIR)/* ..
+	cp $(JGIT_DIR)/org.eclipse.jgit/resources/org/eclipse/jgit/JGitText.properties ../NGit/resources
 	rm -rf ../NGit/.git
 	rm -rf ../NGit.Test/.git
 	rm -rf ../NGit.NSch/.git

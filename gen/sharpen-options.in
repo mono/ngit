@@ -8,9 +8,6 @@
 
 -namespaceMapping org.eclipse.jgit.lib NGit
 -namespaceMapping org.eclipse.jgit NGit
--methodMapping org.eclipse.jgit.revwalk.filter.CommitTimeRevFilter.before NGit.Revwalk.Filter.CommitTimeRevFilter.BeforeFilter
--methodMapping org.eclipse.jgit.revwalk.filter.CommitTimeRevFilter.after NGit.Revwalk.Filter.CommitTimeRevFilter.AfterFilter
--methodMapping org.eclipse.jgit.revwalk.filter.CommitTimeRevFilter.between NGit.Revwalk.Filter.CommitTimeRevFilter.BetweenFilter
 -methodMapping org.eclipse.jgit.revwalk.filter.RevFlagFilter.hasAll HasAllFilter
 -methodMapping org.eclipse.jgit.revwalk.filter.RevFlagFilter.hasAny HasAnyFilter
 -methodMapping org.eclipse.jgit.storage.file.WindowCache.lock LockCache
@@ -33,6 +30,9 @@
 -typeMapping org.eclipse.jgit.transport.LongMap.Node<> NGit.Transport.LongMapNode
 -typeMapping org.eclipse.jgit.errors.NotSupportedException System.NotSupportedException
 -typeMapping org.eclipse.jgit.lib.ReadTreeTest.Checkout NGit.ReadTreeTestCheckout
+-typeMapping org.eclipse.jgit.revwalk.filter.CommitTimeRevFilter.Before CommitTimeRevFilterBefore
+-typeMapping org.eclipse.jgit.revwalk.filter.CommitTimeRevFilter.After CommitTimeRevFilterAfter
+-typeMapping org.eclipse.jgit.revwalk.filter.CommitTimeRevFilter.Between CommitTimeRevFilterBetween
 -propertyMapping org.eclipse.jgit.lib.AbbreviatedObjectId.length Length
 -propertyMapping org.eclipse.jgit.lib.AbbreviatedObjectId.isComplete IsComplete
 -propertyMapping org.eclipse.jgit.lib.AbbreviatedObjectId.name Name
@@ -280,6 +280,7 @@
 -propertyMapping java.net.Socket.setTcpNoDelay NoDelay
 -propertyMapping java.net.Socket.isConnected Connected
 -propertyMapping java.lang.ProcessBuilder.environment EnvironmentVariables
+-propertyMapping java.lang.ProcessBuilder.directory WorkingDirectory
 -fullyQualify Thread
 -fullyQualify Pattern
 -fullyQualify SocketAddress

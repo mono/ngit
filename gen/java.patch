@@ -798,10 +798,10 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 81da247..f453646 100644
+index 5133f5c..ea8ecdf 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-@@ -169,7 +169,7 @@
+@@ -177,7 +177,7 @@
  
  	private final RevFlagSet SAVE;
  
@@ -810,9 +810,9 @@ index 81da247..f453646 100644
  
  	/**
  	 * Create a new pack upload for an open repository.
-@@ -513,14 +513,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
- 				addCommonBase(obj);
- 
+@@ -541,14 +541,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+ 				// If both sides have the same object; let the client know.
+ 				//
  				switch (multiAck) {
 -				case OFF:
 +				case MultiAck.OFF:
@@ -828,7 +828,7 @@ index 81da247..f453646 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -538,12 +538,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -566,12 +566,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  			if (walk.lookupOrNull(id) == null) {
  				if (okToGiveUp()) {
  					switch (multiAck) {

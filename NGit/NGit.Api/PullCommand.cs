@@ -149,10 +149,8 @@ namespace NGit.Api
 				, ConfigConstants.CONFIG_KEY_REMOTE);
 			if (remote == null)
 			{
-				string missingKey = ConfigConstants.CONFIG_BRANCH_SECTION + DOT + branchName + DOT
-					 + ConfigConstants.CONFIG_KEY_REMOTE;
-				throw new InvalidConfigurationException(MessageFormat.Format(JGitText.Get().missingConfigurationForKey
-					, missingKey));
+				// fall back to default remote
+				remote = Constants.DEFAULT_REMOTE_NAME;
 			}
 			// get the name of the branch in the remote repository
 			// stored in configuration key branch.<branch name>.merge
