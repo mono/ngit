@@ -210,6 +210,11 @@
     <Compile Include="NGit.Treewalk.Filter\PathSuffixFilterTest.cs" />
     <Compile Include="NGit.Util\Base64Test.cs" />
     <Compile Include="NGit.Util\FileUtilTest.cs" />
+    <Compile Include="NGit\ObjectIdSubclassMapTest.cs" />
+    <Compile Include="NGit.Api\CloneCommandTest.cs" />
+    <Compile Include="NGit.Api\PullCommandWithRebaseTest.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkResetTest.cs" />
+    <Compile Include="NGit.Storage.Pack\IntSetTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

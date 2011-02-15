@@ -146,6 +146,7 @@
     <Compile Include="Sharpen\X509Certificate.cs" />
     <Compile Include="Sharpen\TrustManager.cs" />
     <Compile Include="Sharpen\SSLContext.cs" />
+    <Compile Include="Sharpen\AtomicBoolean.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -1785,10 +1785,10 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index 1d855f6..ddc2057 100644
+index c5dac06..38c4e5f 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
-@@ -322,7 +322,7 @@ namespace NGit.Storage.File
+@@ -326,7 +326,7 @@ namespace NGit.Storage.File
  
  		private RefList<Ref> Upcast<_T0>(RefList<_T0> loose) where _T0:Ref
  		{
@@ -1797,7 +1797,7 @@ index 1d855f6..ddc2057 100644
  		}
  
  		private class LooseScanner
-@@ -1086,7 +1086,7 @@ namespace NGit.Storage.File
+@@ -1090,7 +1090,7 @@ namespace NGit.Storage.File
  			if (IsSymRef(buf, n))
  			{
  				// trim trailing whitespace
@@ -1806,7 +1806,7 @@ index 1d855f6..ddc2057 100644
  				{
  					n--;
  				}
-@@ -1111,7 +1111,7 @@ namespace NGit.Storage.File
+@@ -1115,7 +1115,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{

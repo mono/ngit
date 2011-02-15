@@ -828,7 +828,11 @@ namespace NGit
 
 		public string sequenceTooLargeForDiffAlgorithm;
 
+		public string serviceNotEnabledNoName;
+
 		public string serviceNotPermitted;
+
+		public string serviceNotPermittedNoName;
 
 		public string shortCompressedStreamAt;
 
