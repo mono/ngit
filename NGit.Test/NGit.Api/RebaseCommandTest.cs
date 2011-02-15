@@ -690,9 +690,9 @@ namespace NGit.Api
 			RepositoryTestCase.CheckFile(file, sb.ToString());
 		}
 
-		private void CheckFile(string fileName, string text)
+		private void CheckFile(FilePath f, string text)
 		{
-			RepositoryTestCase.CheckFile(fileName, text);
+			RepositoryTestCase.CheckFile(f, text);
 		}
 		
 		/// <exception cref="System.Exception"></exception>
