@@ -41,58 +41,29 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using NGit.Revwalk;
-using NGit.Revwalk.Filter;
+using NGit.Storage.Pack;
+using NGit.Transport;
 using Sharpen;
 
-namespace NGit.Revwalk.Filter
+namespace NGit.Transport
 {
-	/// <summary>Includes a commit only if the subfilter does not include the commit.</summary>
-	/// <remarks>Includes a commit only if the subfilter does not include the commit.</remarks>
-	public class NotRevFilter : RevFilter
+	/// <summary>
+	/// Logs activity that occurred within
+	/// <see cref="UploadPack">UploadPack</see>
+	/// .
+	/// <p>
+	/// Implementors of the interface are responsible for associating the current
+	/// thread to a particular connection, if they need to also include connection
+	/// information. One method is to use a
+	/// <see cref="Sharpen.ThreadLocal{T}">Sharpen.ThreadLocal&lt;T&gt;</see>
+	/// to remember
+	/// the connection information before invoking UploadPack.
+	/// </summary>
+	public interface UploadPackLogger
 	{
-		/// <summary>Create a filter that negates the result of another filter.</summary>
-		/// <remarks>Create a filter that negates the result of another filter.</remarks>
-		/// <param name="a">filter to negate.</param>
-		/// <returns>a filter that does the reverse of <code>a</code>.</returns>
-		public static RevFilter Create(RevFilter a)
-		{
-			return new NGit.Revwalk.Filter.NotRevFilter(a);
-		}
-
-		private readonly RevFilter a;
-
-		private NotRevFilter(RevFilter one)
-		{
-			a = one;
-		}
-
-		public override RevFilter Negate()
-		{
-			return a;
-		}
-
-		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
-		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
-		/// <exception cref="System.IO.IOException"></exception>
-		public override bool Include(RevWalk walker, RevCommit c)
-		{
-			return !a.Include(walker, c);
-		}
-
-		public override bool RequiresCommitBody()
-		{
-			return a.RequiresCommitBody();
-		}
-
-		public override RevFilter Clone()
-		{
-			return new NGit.Revwalk.Filter.NotRevFilter(a.Clone());
-		}
-
-		public override string ToString()
-		{
-			return "NOT " + a.ToString();
-		}
+		/// <summary>Notice to the logger after a pack has been sent.</summary>
+		/// <remarks>Notice to the logger after a pack has been sent.</remarks>
+		/// <param name="stats">the statistics after sending a pack to the client.</param>
+		void OnPackStatistics(PackWriter.Statistics stats);
 	}
 }

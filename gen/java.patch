@@ -623,7 +623,7 @@ index 96abaee..5135f9f 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index eee08ed..3b41811 100644
+index 3b10169..fa9a2a9 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 @@ -136,7 +136,7 @@
@@ -658,7 +658,7 @@ index 2927cad..52bf920 100644
  	/** The repository this transport fetches into, or pushes out of. */
  	protected final Repository local;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-index 2653bad..7753486 100644
+index 4f3d1bb..dff6f62 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 @@ -138,8 +138,12 @@
@@ -798,7 +798,7 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 5133f5c..ea8ecdf 100644
+index 19ef019..59beb56 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 @@ -177,7 +177,7 @@
@@ -808,9 +808,9 @@ index 5133f5c..ea8ecdf 100644
 -	private MultiAck multiAck = MultiAck.OFF;
 +	private int multiAck = MultiAck.OFF;
  
- 	/**
- 	 * Create a new pack upload for an open repository.
-@@ -541,14 +541,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+ 	private PackWriter.Statistics statistics;
+ 
+@@ -566,14 +566,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  				// If both sides have the same object; let the client know.
  				//
  				switch (multiAck) {
@@ -828,7 +828,7 @@ index 5133f5c..ea8ecdf 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -566,12 +566,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -591,12 +591,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  			if (walk.lookupOrNull(id) == null) {
  				if (okToGiveUp()) {
  					switch (multiAck) {

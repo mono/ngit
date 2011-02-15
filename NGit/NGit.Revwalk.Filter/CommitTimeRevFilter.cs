@@ -132,6 +132,11 @@ namespace NGit.Revwalk.Filter
 		{
 			return this;
 		}
+
+		public override bool RequiresCommitBody()
+		{
+			return false;
+		}
 		// Since the walker sorts commits by commit time we can be
 		// reasonably certain there is nothing remaining worth our
 		// scanning if this commit is before the point in question.

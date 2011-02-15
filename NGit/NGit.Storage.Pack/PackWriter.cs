@@ -409,6 +409,40 @@ namespace NGit.Storage.Pack
 		/// </p>
 		/// </remarks>
 		/// <param name="countingMonitor">progress during object enumeration.</param>
+		/// <param name="want">
+		/// collection of objects to be marked as interesting (start
+		/// points of graph traversal).
+		/// </param>
+		/// <param name="have">
+		/// collection of objects to be marked as uninteresting (end
+		/// points of graph traversal).
+		/// </param>
+		/// <exception cref="System.IO.IOException">when some I/O problem occur during reading objects.
+		/// 	</exception>
+		public virtual void PreparePack<_T0, _T1>(ProgressMonitor countingMonitor, ICollection
+			<_T0> want, ICollection<_T1> have) where _T0:ObjectId where _T1:ObjectId
+		{
+			ObjectWalk ow = new ObjectWalk(reader);
+			PreparePack(countingMonitor, ow, want, have);
+		}
+
+		/// <summary>Prepare the list of objects to be written to the pack stream.</summary>
+		/// <remarks>
+		/// Prepare the list of objects to be written to the pack stream.
+		/// <p>
+		/// Basing on these 2 sets, another set of objects to put in a pack file is
+		/// created: this set consists of all objects reachable (ancestors) from
+		/// interesting objects, except uninteresting objects and their ancestors.
+		/// This method uses class
+		/// <see cref="NGit.Revwalk.ObjectWalk">NGit.Revwalk.ObjectWalk</see>
+		/// extensively to find out that
+		/// appropriate set of output objects and their optimal order in output pack.
+		/// Order is consistent with general git in-pack rules: sort by object type,
+		/// recency, path and delta-base first.
+		/// </p>
+		/// </remarks>
+		/// <param name="countingMonitor">progress during object enumeration.</param>
+		/// <param name="walk">ObjectWalk to perform enumeration.</param>
 		/// <param name="interestingObjects">
 		/// collection of objects to be marked as interesting (start
 		/// points of graph traversal).
@@ -419,15 +453,16 @@ namespace NGit.Storage.Pack
 		/// </param>
 		/// <exception cref="System.IO.IOException">when some I/O problem occur during reading objects.
 		/// 	</exception>
-		public virtual void PreparePack<_T0, _T1>(ProgressMonitor countingMonitor, ICollection
-			<_T0> interestingObjects, ICollection<_T1> uninterestingObjects) where _T0:ObjectId
-			 where _T1:ObjectId
+		public virtual void PreparePack<_T0, _T1>(ProgressMonitor countingMonitor, ObjectWalk
+			 walk, ICollection<_T0> interestingObjects, ICollection<_T1> uninterestingObjects
+			) where _T0:ObjectId where _T1:ObjectId
 		{
 			if (countingMonitor == null)
 			{
 				countingMonitor = NullProgressMonitor.INSTANCE;
 			}
-			FindObjectsToPack(countingMonitor, interestingObjects, uninterestingObjects);
+			FindObjectsToPack(countingMonitor, walk, interestingObjects, uninterestingObjects
+				);
 		}
 
 		/// <summary>Determine if the pack file will contain the requested object.</summary>
@@ -604,15 +639,26 @@ namespace NGit.Storage.Pack
 			}
 			stats.totalObjects = objCnt;
 			writeMonitor.BeginTask(JGitText.Get().writingObjects, (int)objCnt);
+			long writeStart = Runtime.CurrentTimeMillis();
+			long headerStart = @out.Length();
 			@out.WriteFileHeader(PACK_VERSION_GENERATED, objCnt);
 			@out.Flush();
+			long headerEnd = @out.Length();
 			WriteObjects(@out);
+			if (!edgeObjects.IsEmpty() || !cachedPacks.IsEmpty())
+			{
+				stats.thinPackBytes = @out.Length() - (headerEnd - headerStart);
+			}
 			foreach (CachedPack pack_1 in cachedPacks)
 			{
 				stats.reusedObjects += pack_1.GetObjectCount();
 				reuseSupport.CopyPackAsIs(@out, pack_1);
 			}
 			WriteChecksum(@out);
+			@out.Flush();
+			stats.timeWriting = Runtime.CurrentTimeMillis() - writeStart;
+			stats.totalBytes = @out.Length();
+			stats.reusedPacks = Sharpen.Collections.UnmodifiableList(cachedPacks);
 			reader.Release();
 			writeMonitor.EndTask();
 		}
@@ -761,7 +807,7 @@ namespace NGit.Storage.Pack
 			// applies "Linus' Law" which states that newer files tend to be the
 			// bigger ones, because source files grow and hardly ever shrink.
 			//
-			Arrays.Sort(list, 0, cnt, new _IComparer_672());
+			Arrays.Sort(list, 0, cnt, new _IComparer_717());
 			// Above we stored the objects we cannot delta onto the end.
 			// Remove them from the list so we don't waste time on them.
 			while (0 < cnt && list[cnt - 1].IsDoNotDelta())
@@ -776,14 +822,24 @@ namespace NGit.Storage.Pack
 			{
 				return;
 			}
+			long searchStart = Runtime.CurrentTimeMillis();
 			monitor.BeginTask(JGitText.Get().compressingObjects, nonEdgeCnt);
 			SearchForDeltas(monitor, list, cnt);
 			monitor.EndTask();
+			stats.deltaSearchNonEdgeObjects = nonEdgeCnt;
+			stats.timeCompressing = Runtime.CurrentTimeMillis() - searchStart;
+			for (int i = 0; i < cnt; i++)
+			{
+				if (!list[i].IsEdge() && list[i].IsDeltaRepresentation())
+				{
+					stats.deltasFound++;
+				}
+			}
 		}
 
-		private sealed class _IComparer_672 : IComparer<ObjectToPack>
+		private sealed class _IComparer_717 : IComparer<ObjectToPack>
 		{
-			public _IComparer_672()
+			public _IComparer_717()
 			{
 			}
 
@@ -954,7 +1010,7 @@ namespace NGit.Storage.Pack
 					//
 					foreach (DeltaTask task in myTasks)
 					{
-						executor.Execute(new _Runnable_815(task, errors));
+						executor.Execute(new _Runnable_867(task, errors));
 					}
 					try
 					{
@@ -993,9 +1049,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _Runnable_815 : Runnable
+		private sealed class _Runnable_867 : Runnable
 		{
-			public _Runnable_815(DeltaTask task, IList<Exception> errors)
+			public _Runnable_867(DeltaTask task, IList<Exception> errors)
 			{
 				this.task = task;
 				this.errors = errors;
@@ -1270,21 +1326,24 @@ namespace NGit.Storage.Pack
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
-		private void FindObjectsToPack<_T0, _T1>(ProgressMonitor countingMonitor, ICollection
-			<_T0> want, ICollection<_T1> have) where _T0:ObjectId where _T1:ObjectId
+		private void FindObjectsToPack<_T0, _T1>(ProgressMonitor countingMonitor, ObjectWalk
+			 walker, ICollection<_T0> want, ICollection<_T1> have) where _T0:ObjectId where 
+			_T1:ObjectId
 		{
+			long countingStart = Runtime.CurrentTimeMillis();
 			countingMonitor.BeginTask(JGitText.Get().countingObjects, ProgressMonitor.UNKNOWN
 				);
 			if (have == null)
 			{
 				have = Sharpen.Collections.EmptySet<_T1>();
 			}
+			stats.interestingObjects = Sharpen.Collections.UnmodifiableSet(new HashSet<ObjectId>(want.UpcastTo<_T0,ObjectId> ()));
+			stats.uninterestingObjects = Sharpen.Collections.UnmodifiableSet(new HashSet<ObjectId>(have.UpcastTo<_T1,ObjectId> ()));
 			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
 			Sharpen.Collections.AddAll(all, want);
 			Sharpen.Collections.AddAll(all, have);
 			IDictionary<ObjectId, CachedPack> tipToPack = new Dictionary<ObjectId, CachedPack
 				>();
-			ObjectWalk walker = new ObjectWalk(reader);
 			RevFlag inCachedPack = walker.NewFlag("inCachedPack");
 			RevFlag include = walker.NewFlag("include");
 			RevFlagSet keepOnRestart = new RevFlagSet();
@@ -1455,6 +1514,7 @@ namespace NGit.Storage.Pack
 				countingMonitor.Update((int)pack_1.GetObjectCount());
 			}
 			countingMonitor.EndTask();
+			stats.timeCounting = Runtime.CurrentTimeMillis() - countingStart;
 		}
 
 		private void PruneObjectList(int typesToPrune, int typeCode)
@@ -1664,6 +1724,16 @@ namespace NGit.Storage.Pack
 		/// <remarks>Summary of how PackWriter created the pack.</remarks>
 		public class Statistics
 		{
+			internal ICollection<ObjectId> interestingObjects;
+
+			internal ICollection<ObjectId> uninterestingObjects;
+
+			internal ICollection<CachedPack> reusedPacks;
+
+			internal int deltaSearchNonEdgeObjects;
+
+			internal int deltasFound;
+
 			internal long totalObjects;
 
 			internal long totalDeltas;
@@ -1671,6 +1741,173 @@ namespace NGit.Storage.Pack
 			internal long reusedObjects;
 
 			internal long reusedDeltas;
+
+			internal long totalBytes;
+
+			internal long thinPackBytes;
+
+			internal long timeCounting;
+
+			internal long timeCompressing;
+
+			internal long timeWriting;
+
+			/// <returns>
+			/// unmodifiable collection of objects to be included in the
+			/// pack. May be null if the pack was hand-crafted in a unit
+			/// test.
+			/// </returns>
+			public virtual ICollection<ObjectId> GetInterestingObjects()
+			{
+				return interestingObjects;
+			}
+
+			/// <returns>
+			/// unmodifiable collection of objects that should be excluded
+			/// from the pack, as the peer that will receive the pack already
+			/// has these objects.
+			/// </returns>
+			public virtual ICollection<ObjectId> GetUninterestingObjects()
+			{
+				return uninterestingObjects;
+			}
+
+			/// <returns>
+			/// unmodifiable collection of the cached packs that were reused
+			/// in the output, if any were selected for reuse.
+			/// </returns>
+			public virtual ICollection<CachedPack> GetReusedPacks()
+			{
+				return reusedPacks;
+			}
+
+			/// <returns>
+			/// number of objects in the output pack that went through the
+			/// delta search process in order to find a potential delta base.
+			/// </returns>
+			public virtual int GetDeltaSearchNonEdgeObjects()
+			{
+				return deltaSearchNonEdgeObjects;
+			}
+
+			/// <returns>
+			/// number of objects in the output pack that went through delta
+			/// base search and found a suitable base. This is a subset of
+			/// <see cref="GetDeltaSearchNonEdgeObjects()">GetDeltaSearchNonEdgeObjects()</see>
+			/// .
+			/// </returns>
+			public virtual int GetDeltasFound()
+			{
+				return deltasFound;
+			}
+
+			/// <returns>
+			/// total number of objects output. This total includes the value
+			/// of
+			/// <see cref="GetTotalDeltas()">GetTotalDeltas()</see>
+			/// .
+			/// </returns>
+			public virtual long GetTotalObjects()
+			{
+				return totalObjects;
+			}
+
+			/// <returns>
+			/// total number of deltas output. This may be lower than the
+			/// actual number of deltas if a cached pack was reused.
+			/// </returns>
+			public virtual long GetTotalDeltas()
+			{
+				return totalDeltas;
+			}
+
+			/// <returns>
+			/// number of objects whose existing representation was reused in
+			/// the output. This count includes
+			/// <see cref="GetReusedDeltas()">GetReusedDeltas()</see>
+			/// .
+			/// </returns>
+			public virtual long GetReusedObjects()
+			{
+				return reusedObjects;
+			}
+
+			/// <returns>
+			/// number of deltas whose existing representation was reused in
+			/// the output, as their base object was also output or was
+			/// assumed present for a thin pack. This may be lower than the
+			/// actual number of reused deltas if a cached pack was reused.
+			/// </returns>
+			public virtual long GetReusedDeltas()
+			{
+				return reusedDeltas;
+			}
+
+			/// <returns>
+			/// total number of bytes written. This size includes the pack
+			/// header, trailer, thin pack, and reused cached pack(s).
+			/// </returns>
+			public virtual long GetTotalBytes()
+			{
+				return totalBytes;
+			}
+
+			/// <returns>
+			/// size of the thin pack in bytes, if a thin pack was generated.
+			/// A thin pack is created when the client already has objects
+			/// and some deltas are created against those objects, or if a
+			/// cached pack is being used and some deltas will reference
+			/// objects in the cached pack. This size does not include the
+			/// pack header or trailer.
+			/// </returns>
+			public virtual long GetThinPackBytes()
+			{
+				return thinPackBytes;
+			}
+
+			/// <returns>
+			/// time in milliseconds spent enumerating the objects that need
+			/// to be included in the output. This time includes any restarts
+			/// that occur when a cached pack is selected for reuse.
+			/// </returns>
+			public virtual long GetTimeCounting()
+			{
+				return timeCounting;
+			}
+
+			/// <returns>
+			/// time in milliseconds spent on delta compression. This is
+			/// observed wall-clock time and does not accurately track CPU
+			/// time used when multiple threads were used to perform the
+			/// delta compression.
+			/// </returns>
+			public virtual long GetTimeCompressing()
+			{
+				return timeCompressing;
+			}
+
+			/// <returns>
+			/// time in milliseconds spent writing the pack output, from
+			/// start of header until end of trailer. The transfer speed can
+			/// be approximated by dividing
+			/// <see cref="GetTotalBytes()">GetTotalBytes()</see>
+			/// by this
+			/// value.
+			/// </returns>
+			public virtual long GetTimeWriting()
+			{
+				return timeWriting;
+			}
+
+			/// <returns>
+			/// get the average output speed in terms of bytes-per-second.
+			/// <code>getTotalBytes() / (getTimeWriting() / 1000.0)</code>
+			/// .
+			/// </returns>
+			public virtual double GetTransferRate()
+			{
+				return GetTotalBytes() / (GetTimeWriting() / 1000.0);
+			}
 
 			/// <returns>formatted message string for display to clients.</returns>
 			public virtual string GetMessage()

@@ -723,6 +723,11 @@ READ_RESULT_break2: ;
 				return !remoteKnowsIsCommon;
 			}
 
+			public override bool RequiresCommitBody()
+			{
+				return false;
+			}
+
 			private readonly BasePackFetchConnection _enclosing;
 		}
 

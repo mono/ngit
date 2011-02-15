@@ -610,6 +610,15 @@ namespace Sharpen
 			return list;
 		}
 
+		public static ICollection<U> UpcastTo<T, U> (this ICollection<T> s) where T : U
+		{
+			List<U> list = new List<U> (s.Count);
+			foreach (var v in s) {
+				list.Add ((U)v);
+			}
+			return list;
+		}
+
 		public static T ValueOf<T> (T val)
 		{
 			return val;

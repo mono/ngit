@@ -190,6 +190,10 @@ namespace NGit.Transport
 
 		private int multiAck = BasePackFetchConnection.MultiAck.OFF;
 
+		private PackWriter.Statistics statistics;
+
+		private UploadPackLogger logger;
+
 		/// <summary>Create a new pack upload for an open repository.</summary>
 		/// <remarks>Create a new pack upload for an open repository.</remarks>
 		/// <param name="copyFrom">the source repository.</param>
@@ -295,6 +299,14 @@ namespace NGit.Transport
 			this.packConfig = pc;
 		}
 
+		/// <summary>Set the logger.</summary>
+		/// <remarks>Set the logger.</remarks>
+		/// <param name="logger">the logger instance. If null, no logging occurs.</param>
+		public virtual void SetLogger(UploadPackLogger logger)
+		{
+			this.logger = logger;
+		}
+
 		/// <summary>Execute the upload task on the socket.</summary>
 		/// <remarks>Execute the upload task on the socket.</remarks>
 		/// <param name="input">
@@ -350,6 +362,18 @@ namespace NGit.Transport
 					}
 				}
 			}
+		}
+
+		/// <summary>Get the PackWriter's statistics if a pack was sent to the client.</summary>
+		/// <remarks>Get the PackWriter's statistics if a pack was sent to the client.</remarks>
+		/// <returns>
+		/// statistics about pack output, if a pack was sent. Null if no pack
+		/// was sent, such as during the negotation phase of a smart HTTP
+		/// connection, or if the client was already up-to-date.
+		/// </returns>
+		public virtual PackWriter.Statistics GetPackStatistics()
+		{
+			return statistics;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -793,11 +817,6 @@ namespace NGit.Transport
 					pm = new SideBandProgressMonitor(msgOut);
 				}
 			}
-			ICollection<ObjectId> want = wantAll.UpcastTo<RevObject,ObjectId> ();
-			if (want.IsEmpty())
-			{
-				want = wantIds;
-			}
 			PackConfig cfg = packConfig;
 			if (cfg == null)
 			{
@@ -809,7 +828,18 @@ namespace NGit.Transport
 				pw.SetUseCachedPacks(true);
 				pw.SetDeltaBaseAsOffset(options.Contains(OPTION_OFS_DELTA));
 				pw.SetThin(options.Contains(OPTION_THIN_PACK));
-				pw.PreparePack(pm, want, commonBase);
+				RevWalk rw = walk;
+				if (wantAll.IsEmpty())
+				{
+					pw.PreparePack(pm, wantIds, commonBase);
+				}
+				else
+				{
+					walk.Reset();
+					ObjectWalk ow = walk.ToObjectWalkWithSameObjects();
+					pw.PreparePack(pm, ow, wantAll, commonBase);
+					rw = ow;
+				}
 				if (options.Contains(OPTION_INCLUDE_TAG))
 				{
 					foreach (Ref vref in refs.Values)
@@ -826,7 +856,7 @@ namespace NGit.Transport
 						}
 						else
 						{
-							RevObject obj = walk.LookupOrNull(objectId);
+							RevObject obj = rw.LookupOrNull(objectId);
 							if (obj != null && obj.Has(WANT))
 							{
 								continue;
@@ -844,12 +874,12 @@ namespace NGit.Transport
 						objectId = @ref.GetObjectId();
 						if (pw.WillInclude(peeledId) && !pw.WillInclude(objectId))
 						{
-							pw.AddObject(walk.ParseAny(objectId));
+							pw.AddObject(rw.ParseAny(objectId));
 						}
 					}
 				}
 				pw.WritePack(pm, NullProgressMonitor.INSTANCE, packOut);
-				packOut.Flush();
+				statistics = pw.GetStatistics();
 				if (msgOut != null)
 				{
 					string msg = pw.GetStatistics().GetMessage() + '\n';
@@ -864,6 +894,10 @@ namespace NGit.Transport
 			if (sideband)
 			{
 				pckOut.End();
+			}
+			if (logger != null && statistics != null)
+			{
+				logger.OnPackStatistics(statistics);
 			}
 		}
 	}

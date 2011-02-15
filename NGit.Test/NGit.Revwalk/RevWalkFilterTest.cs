@@ -315,6 +315,11 @@ namespace NGit.Revwalk
 			{
 				return true;
 			}
+
+			public override bool RequiresCommitBody()
+			{
+				return false;
+			}
 		}
 	}
 }
