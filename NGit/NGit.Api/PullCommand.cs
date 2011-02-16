@@ -116,6 +116,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.DetachedHeadException"></exception>
 		/// <exception cref="NGit.Api.Errors.InvalidRemoteException"></exception>
 		/// <exception cref="NGit.Api.Errors.CanceledException"></exception>
+		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
 		public override PullResult Call()
 		{
 			CheckCallable();
@@ -234,6 +235,11 @@ namespace NGit.Api
 				try
 				{
 					commitToMerge = repo.Resolve(remoteBranchName);
+					if (commitToMerge == null)
+					{
+						throw new RefNotFoundException(MessageFormat.Format(JGitText.Get().refNotResolved
+							, remoteBranchName));
+					}
 				}
 				catch (IOException e)
 				{

@@ -440,7 +440,7 @@ namespace NGit.Transport
 					try
 					{
 						ReceivePack rp = this._enclosing._enclosing.CreateReceivePack(dst);
-						rp.Receive(out_r, in_w, System.Console.Error);
+						rp.Receive(out_r, in_w, System.Console.OpenStandardError ());
 					}
 					catch (IOException)
 					{

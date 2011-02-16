@@ -2333,10 +2333,10 @@ index 7cb5ae7..30d4847 100644
  		/// <summary>Get status of remote refs updates.</summary>
  		/// <remarks>
 diff --git a/NGit/NGit.Transport/ReceivePack.cs b/NGit/NGit.Transport/ReceivePack.cs
-index 2536cb6..7c83d72 100644
+index 579cb1d..751f4b4 100644
 --- a/NGit/NGit.Transport/ReceivePack.cs
 +++ b/NGit/NGit.Transport/ReceivePack.cs
-@@ -610,7 +610,7 @@ namespace NGit.Transport
+@@ -608,7 +608,7 @@ namespace NGit.Transport
  		/// other network connections this should be null.
  		/// </param>
  		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
@@ -2345,15 +2345,6 @@ index 2536cb6..7c83d72 100644
  			messages)
  		{
  			try
-@@ -632,7 +632,7 @@ namespace NGit.Transport
- 				pckOut = new PacketLineOut(rawOut);
- 				if (messages != null)
- 				{
--					msgs = new OutputStreamWriter(messages, Constants.CHARSET);
-+					msgs = messages;
- 				}
- 				enabledCapablities = new HashSet<string>();
- 				commands = new AList<ReceiveCommand>();
 diff --git a/NGit/NGit.Transport/RefAdvertiser.cs b/NGit/NGit.Transport/RefAdvertiser.cs
 index db6b8da..328ddcd 100644
 --- a/NGit/NGit.Transport/RefAdvertiser.cs
