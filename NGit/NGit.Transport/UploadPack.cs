@@ -227,6 +227,12 @@ namespace NGit.Transport
 			return walk;
 		}
 
+		/// <returns>all refs which were advertised to the client.</returns>
+		public IDictionary<string, Ref> GetAdvertisedRefs()
+		{
+			return refs;
+		}
+
 		/// <returns>timeout (in seconds) before aborting an IO operation.</returns>
 		public virtual int GetTimeout()
 		{

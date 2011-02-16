@@ -19,7 +19,7 @@ index 2bb9439..cac7103 100644
  		}
  	}
 diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-index d3e98ea..0c072b5 100644
+index d3e98ea..08e015a 100644
 --- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
 +++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
 @@ -687,9 +687,14 @@ namespace NGit.Api
@@ -30,9 +30,9 @@ index d3e98ea..0c072b5 100644
 +			RepositoryTestCase.CheckFile(file, sb.ToString());
  		}
  
-+		private void CheckFile(string fileName, string text)
++		private void CheckFile(FilePath f, string text)
 +		{
-+			RepositoryTestCase.CheckFile(fileName, text);
++			RepositoryTestCase.CheckFile(f, text);
 +		}
 +		
  		/// <exception cref="System.Exception"></exception>
@@ -1947,7 +1947,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 83d0c14..ece7d4e 100644
+index 520b77b..fc94626 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1968,7 +1968,7 @@ index 83d0c14..ece7d4e 100644
  		{
  			ObjectToPack obj = objectsMap.Get(id);
  			if (obj != null && !obj.IsEdge())
-@@ -1335,11 +1335,10 @@ namespace NGit.Storage.Pack
+@@ -1336,11 +1336,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
@@ -1983,7 +1983,7 @@ index 83d0c14..ece7d4e 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1394,14 +1393,14 @@ namespace NGit.Storage.Pack
+@@ -1395,14 +1394,14 @@ namespace NGit.Storage.Pack
  						{
  							o.Add(inCachedPack);
  						}
@@ -2727,7 +2727,7 @@ index 49fce84..551432d 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index df30a33..9d60f63 100644
+index 9b4d0c7..300318c 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
 @@ -161,7 +161,7 @@ namespace NGit.Transport
@@ -2739,7 +2739,7 @@ index df30a33..9d60f63 100644
  
  		/// <summary>Objects we sent in our advertisement list, clients can ask for these.</summary>
  		/// <remarks>Objects we sent in our advertisement list, clients can ask for these.</remarks>
-@@ -737,7 +737,7 @@ namespace NGit.Transport
+@@ -743,7 +743,7 @@ namespace NGit.Transport
  			{
  				okToGiveUp = Sharpen.Extensions.ValueOf(OkToGiveUpImp());
  			}
@@ -2748,7 +2748,7 @@ index df30a33..9d60f63 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
-@@ -842,8 +842,9 @@ namespace NGit.Transport
+@@ -848,8 +848,9 @@ namespace NGit.Transport
  				}
  				if (options.Contains(OPTION_INCLUDE_TAG))
  				{
@@ -2921,9 +2921,66 @@ index 6adeafb..100f42b 100644
  		private const int BUFFER_SIZE = 1024;
  
 diff --git a/NGit/NGit.Util/Base64.cs b/NGit/NGit.Util/Base64.cs
-index fede4b0..1a76cff 100644
+index fede4b0..d3cc5fe 100644
 --- a/NGit/NGit.Util/Base64.cs
 +++ b/NGit/NGit.Util/Base64.cs
+@@ -65,19 +65,19 @@ namespace NGit.Util
+ 	{
+ 		/// <summary>The equals sign (=) as a byte.</summary>
+ 		/// <remarks>The equals sign (=) as a byte.</remarks>
+-		private const byte EQUALS_SIGN = unchecked((byte)(byte)('='));
++		private const sbyte EQUALS_SIGN = (sbyte)('=');
+ 
+ 		/// <summary>Indicates equals sign in encoding.</summary>
+ 		/// <remarks>Indicates equals sign in encoding.</remarks>
+-		private const byte EQUALS_SIGN_DEC = unchecked((byte)(-1));
++		private const sbyte EQUALS_SIGN_DEC = -1;
+ 
+ 		/// <summary>Indicates white space in encoding.</summary>
+ 		/// <remarks>Indicates white space in encoding.</remarks>
+-		private const byte WHITE_SPACE_DEC = unchecked((byte)(-2));
++		private const sbyte WHITE_SPACE_DEC = -2;
+ 
+ 		/// <summary>Indicates an invalid byte during decoding.</summary>
+ 		/// <remarks>Indicates an invalid byte during decoding.</remarks>
+-		private const byte INVALID_DEC = unchecked((byte)(-3));
++		private const sbyte INVALID_DEC = -3;
+ 
+ 		/// <summary>Preferred encoding.</summary>
+ 		/// <remarks>Preferred encoding.</remarks>
+@@ -96,7 +96,7 @@ namespace NGit.Util
+ 		/// negative number indicating some other meaning. The table is only 7 bits
+ 		/// wide, as the 8th bit is discarded during decoding.
+ 		/// </remarks>
+-		private static readonly byte[] DEC;
++		private static readonly sbyte[] DEC;
+ 
+ 		static Base64()
+ 		{
+@@ -118,17 +118,17 @@ namespace NGit.Util
+ 				//
+ 				throw new RuntimeException(uee.Message, uee);
+ 			}
+-			DEC = new byte[128];
++			DEC = new sbyte[128];
+ 			Arrays.Fill(DEC, INVALID_DEC);
+ 			for (int i = 0; i < 64; i++)
+ 			{
+-				DEC[ENC[i]] = unchecked((byte)i);
++				DEC[ENC[i]] = unchecked((sbyte)i);
+ 			}
+ 			DEC[EQUALS_SIGN] = EQUALS_SIGN_DEC;
+-			DEC[(byte)('\t')] = WHITE_SPACE_DEC;
+-			DEC[(byte)('\n')] = WHITE_SPACE_DEC;
+-			DEC[(byte)('\r')] = WHITE_SPACE_DEC;
+-			DEC[(byte)(' ')] = WHITE_SPACE_DEC;
++			DEC[(sbyte)('\t')] = WHITE_SPACE_DEC;
++			DEC[(sbyte)('\n')] = WHITE_SPACE_DEC;
++			DEC[(sbyte)('\r')] = WHITE_SPACE_DEC;
++			DEC[(sbyte)(' ')] = WHITE_SPACE_DEC;
+ 		}
+ 
+ 		/// <summary>Defeats instantiation.</summary>
 @@ -183,6 +183,7 @@ namespace NGit.Util
  				{
  					//$FALL-THROUGH$
@@ -2932,11 +2989,33 @@ index fede4b0..1a76cff 100644
  				}
  			}
  			switch (numSigBytes)
-@@ -339,7 +340,7 @@ namespace NGit.Util
+@@ -205,7 +206,7 @@ namespace NGit.Util
+ 						(0x3f))];
+ 					destination[destOffset + 2] = ENC[((int)(((uint)inBuff) >> 6)) & unchecked((int)(
+ 						0x3f))];
+-					destination[destOffset + 3] = EQUALS_SIGN;
++					destination[destOffset + 3] = (byte)EQUALS_SIGN;
+ 					break;
+ 				}
+ 
+@@ -214,8 +215,8 @@ namespace NGit.Util
+ 					destination[destOffset] = ENC[((int)(((uint)inBuff) >> 18))];
+ 					destination[destOffset + 1] = ENC[((int)(((uint)inBuff) >> 12)) & unchecked((int)
+ 						(0x3f))];
+-					destination[destOffset + 2] = EQUALS_SIGN;
+-					destination[destOffset + 3] = EQUALS_SIGN;
++					destination[destOffset + 2] = (byte)EQUALS_SIGN;
++					destination[destOffset + 3] = (byte)EQUALS_SIGN;
+ 					break;
+ 				}
+ 			}
+@@ -338,8 +339,8 @@ namespace NGit.Util
+ 			for (int i = off; i < off + len; i++)
  			{
  				byte sbiCrop = unchecked((byte)(source[i] & unchecked((int)(0x7f))));
- 				byte sbiDecode = DEC[sbiCrop];
+-				byte sbiDecode = DEC[sbiCrop];
 -				if (((sbyte)EQUALS_SIGN_DEC) <= sbiDecode)
++				sbyte sbiDecode = DEC[sbiCrop];
 +				if (unchecked((sbyte)EQUALS_SIGN_DEC) <= sbiDecode)
  				{
  					b4[b4Posn++] = sbiCrop;
@@ -3175,7 +3254,7 @@ index cd2daec..0004081 100644
  			return Name;
  		}
 diff --git a/NGit/NGit/BaseRepositoryBuilder.cs b/NGit/NGit/BaseRepositoryBuilder.cs
-index 93630ea..cb1ceeb 100644
+index 895b83c..9a8f00a 100644
 --- a/NGit/NGit/BaseRepositoryBuilder.cs
 +++ b/NGit/NGit/BaseRepositoryBuilder.cs
 @@ -63,7 +63,7 @@ namespace NGit
@@ -3187,16 +3266,16 @@ index 93630ea..cb1ceeb 100644
  	{
  		private FS fs;
  
-@@ -670,7 +670,7 @@ namespace NGit
+@@ -697,7 +697,7 @@ namespace NGit
  		/// </exception>
  		public virtual R Build()
  		{
--			return (R)new FileRepository(Setup());
-+			return (R)(object)new FileRepository(Setup());
- 		}
- 
- 		/// <summary>
-@@ -862,7 +862,20 @@ namespace NGit
+-			R repo = (R)new FileRepository(Setup());
++			R repo = (R)(object)new FileRepository(Setup());
+ 			if (IsMustExist() && !repo.ObjectDatabase.Exists())
+ 			{
+ 				throw new RepositoryNotFoundException(GetGitDir());
+@@ -894,7 +894,20 @@ namespace NGit
  		/// </returns>
  		protected internal B Self()
  		{
