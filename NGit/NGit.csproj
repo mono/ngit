@@ -504,6 +504,7 @@
     <Compile Include="NGit.Transport.Resolver\ServiceNotAuthorizedException.cs" />
     <Compile Include="NGit.Transport.Resolver\ServiceNotEnabledException.cs" />
     <Compile Include="NGit.Transport.Resolver\UploadPackFactory.cs" />
+    <Compile Include="NGit.Api\ResetCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

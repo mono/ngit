@@ -410,6 +410,8 @@ namespace NGit
 
 		public string exceptionCaughtDuringExecutionOfPullCommand;
 
+		public string exceptionCaughtDuringExecutionOfResetCommand;
+
 		public string exceptionCaughtDuringExecutionOfRevertCommand;
 
 		public string exceptionCaughtDuringExecutionOfRmCommand;

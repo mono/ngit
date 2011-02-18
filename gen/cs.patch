@@ -2332,19 +2332,6 @@ index 7cb5ae7..30d4847 100644
  
  		/// <summary>Get status of remote refs updates.</summary>
  		/// <remarks>
-diff --git a/NGit/NGit.Transport/ReceivePack.cs b/NGit/NGit.Transport/ReceivePack.cs
-index 579cb1d..751f4b4 100644
---- a/NGit/NGit.Transport/ReceivePack.cs
-+++ b/NGit/NGit.Transport/ReceivePack.cs
-@@ -608,7 +608,7 @@ namespace NGit.Transport
- 		/// other network connections this should be null.
- 		/// </param>
- 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
--		public virtual void Receive(InputStream input, OutputStream output, OutputStream 
-+		public virtual void Receive(InputStream input, OutputStream output, TextWriter 
- 			messages)
- 		{
- 			try
 diff --git a/NGit/NGit.Transport/RefAdvertiser.cs b/NGit/NGit.Transport/RefAdvertiser.cs
 index db6b8da..328ddcd 100644
 --- a/NGit/NGit.Transport/RefAdvertiser.cs
@@ -2614,7 +2601,7 @@ index af443df..bc47920 100644
  				{
  					this._enclosing = _enclosing;
 diff --git a/NGit/NGit.Transport/TransportLocal.cs b/NGit/NGit.Transport/TransportLocal.cs
-index f04f8d1..0bfb292 100644
+index f04f8d1..eda11d5 100644
 --- a/NGit/NGit.Transport/TransportLocal.cs
 +++ b/NGit/NGit.Transport/TransportLocal.cs
 @@ -164,15 +164,15 @@ namespace NGit.Transport
@@ -2669,6 +2656,15 @@ index f04f8d1..0bfb292 100644
  				)
  			{
  				this._enclosing = _enclosing;
+@@ -440,7 +440,7 @@ namespace NGit.Transport
+ 					try
+ 					{
+ 						ReceivePack rp = this._enclosing._enclosing.CreateReceivePack(dst);
+-						rp.Receive(out_r, in_w, System.Console.Error);
++						rp.Receive(out_r, in_w, System.Console.OpenStandardError ());
+ 					}
+ 					catch (IOException)
+ 					{
 @@ -507,7 +507,7 @@ namespace NGit.Transport
  			private Sharpen.Thread errorReaderThread;
  
