@@ -623,7 +623,7 @@ index 96abaee..5135f9f 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index b8b2767..629c25c 100644
+index f28f222..d4a3c83 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 @@ -136,7 +136,7 @@

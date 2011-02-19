@@ -1347,6 +1347,7 @@ namespace NGit.Storage.Pack
 				>();
 			RevFlag inCachedPack = walker.NewFlag("inCachedPack");
 			RevFlag include = walker.NewFlag("include");
+			RevFlag added = walker.NewFlag("added");
 			RevFlagSet keepOnRestart = new RevFlagSet();
 			keepOnRestart.AddItem(inCachedPack);
 			walker.SetRetainBody(false);
@@ -1426,37 +1427,63 @@ namespace NGit.Storage.Pack
 			int typesToPrune = 0;
 			int maxBases = config.GetDeltaSearchWindowSize();
 			ICollection<RevTree> baseTrees = new HashSet<RevTree>();
-			RevObject o_1;
-			while ((o_1 = walker.Next()) != null)
+			IList<RevCommit> commits = new AList<RevCommit>();
+			RevCommit c;
+			while ((c = walker.Next()) != null)
 			{
-				if (o_1.Has(inCachedPack))
+				if (c.Has(inCachedPack))
 				{
-					CachedPack pack = tipToPack.Get(o_1);
+					CachedPack pack = tipToPack.Get(c);
 					if (IncludesAllTips(pack, include, walker))
 					{
 						UseCachedPack(walker, keepOnRestart, wantObjs, haveObjs, pack);
 						//
+						commits = new AList<RevCommit>();
 						countingMonitor.EndTask();
 						countingMonitor.BeginTask(JGitText.Get().countingObjects, ProgressMonitor.UNKNOWN
 							);
 						continue;
 					}
 				}
-				if (o_1.Has(RevFlag.UNINTERESTING))
+				if (c.Has(RevFlag.UNINTERESTING))
 				{
 					if (baseTrees.Count <= maxBases)
 					{
-						baseTrees.AddItem(((RevCommit)o_1).Tree);
+						baseTrees.AddItem(c.Tree);
 					}
 					continue;
 				}
-				AddObject(o_1, 0);
+				commits.AddItem(c);
 				countingMonitor.Update(1);
 			}
-			foreach (CachedPack p in cachedPacks)
+			if (objectsLists[Constants.OBJ_COMMIT] is ArrayList)
 			{
-				foreach (ObjectId d in p.HasObject(objectsLists[Constants.OBJ_COMMIT].AsIterable(
-					)))
+				AList<ObjectToPack> list = (AList<ObjectToPack>)objectsLists[Constants.OBJ_COMMIT
+					];
+				list.EnsureCapacity(list.Count + commits.Count);
+			}
+			foreach (RevCommit cmit in commits)
+			{
+				if (!cmit.Has(added))
+				{
+					cmit.Add(added);
+					AddObject(cmit, 0);
+				}
+				for (int i = 0; i < cmit.ParentCount; i++)
+				{
+					RevCommit p = cmit.GetParent(i);
+					if (!p.Has(added) && !p.Has(RevFlag.UNINTERESTING))
+					{
+						p.Add(added);
+						AddObject(p, 0);
+					}
+				}
+			}
+			commits = null;
+			foreach (CachedPack p_1 in cachedPacks)
+			{
+				foreach (ObjectId d in p_1.HasObject(objectsLists[Constants.OBJ_COMMIT].AsIterable
+					()))
 				{
 					if (baseTrees.Count <= maxBases)
 					{
@@ -1469,6 +1496,7 @@ namespace NGit.Storage.Pack
 			BaseSearch bases = new BaseSearch(countingMonitor, baseTrees, objectsMap, edgeObjects
 				, reader);
 			//
+			RevObject o_1;
 			while ((o_1 = walker.NextObject()) != null)
 			{
 				if (o_1.Has(RevFlag.UNINTERESTING))
@@ -1482,21 +1510,21 @@ namespace NGit.Storage.Pack
 				AddObject(o_1, pathHash);
 				countingMonitor.Update(1);
 			}
-			foreach (CachedPack p_1 in cachedPacks)
+			foreach (CachedPack p_2 in cachedPacks)
 			{
-				foreach (ObjectId d in p_1.HasObject(objectsLists[Constants.OBJ_TREE].AsIterable(
+				foreach (ObjectId d in p_2.HasObject(objectsLists[Constants.OBJ_TREE].AsIterable(
 					)))
 				{
 					objectsMap.Get(d).SetEdge();
 					typesToPrune |= 1 << Constants.OBJ_TREE;
 				}
-				foreach (ObjectId d_1 in p_1.HasObject(objectsLists[Constants.OBJ_BLOB].AsIterable
+				foreach (ObjectId d_1 in p_2.HasObject(objectsLists[Constants.OBJ_BLOB].AsIterable
 					()))
 				{
 					objectsMap.Get(d_1).SetEdge();
 					typesToPrune |= 1 << Constants.OBJ_BLOB;
 				}
-				foreach (ObjectId d_2 in p_1.HasObject(objectsLists[Constants.OBJ_TAG].AsIterable
+				foreach (ObjectId d_2 in p_2.HasObject(objectsLists[Constants.OBJ_TAG].AsIterable
 					()))
 				{
 					objectsMap.Get(d_2).SetEdge();
@@ -1558,8 +1586,6 @@ namespace NGit.Storage.Pack
 			{
 				baseObj.AddItem(walker.LookupOrNull(id));
 			}
-			objectsMap.Clear();
-			objectsLists[Constants.OBJ_COMMIT] = new AList<ObjectToPack>();
 			SetThin(true);
 			walker.ResetRetain(keepOnRestart);
 			walker.Sort(RevSort.TOPO);

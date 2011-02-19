@@ -1947,7 +1947,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 520b77b..fc94626 100644
+index d21b451..e73c571 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1983,7 +1983,7 @@ index 520b77b..fc94626 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1395,14 +1394,14 @@ namespace NGit.Storage.Pack
+@@ -1396,14 +1395,14 @@ namespace NGit.Storage.Pack
  						{
  							o.Add(inCachedPack);
  						}

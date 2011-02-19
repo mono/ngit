@@ -78,6 +78,12 @@ namespace Sharpen
 		{
 			Capacity = Count;
 		}
+		
+		public void EnsureCapacity (int c)
+		{
+			if (c > Capacity && c > Count)
+				Capacity = c;
+		}
 	}
 }
 
