@@ -651,8 +651,10 @@ namespace NGit.Storage.Pack
 			}
 			foreach (CachedPack pack_1 in cachedPacks)
 			{
+				long deltaCnt = pack_1.GetDeltaCount();
 				stats.reusedObjects += pack_1.GetObjectCount();
-				stats.reusedDeltas += pack_1.GetDeltaCount();
+				stats.reusedDeltas += deltaCnt;
+				stats.totalDeltas += deltaCnt;
 				reuseSupport.CopyPackAsIs(@out, pack_1);
 			}
 			WriteChecksum(@out);
@@ -808,7 +810,7 @@ namespace NGit.Storage.Pack
 			// applies "Linus' Law" which states that newer files tend to be the
 			// bigger ones, because source files grow and hardly ever shrink.
 			//
-			Arrays.Sort(list, 0, cnt, new _IComparer_718());
+			Arrays.Sort(list, 0, cnt, new _IComparer_720());
 			// Above we stored the objects we cannot delta onto the end.
 			// Remove them from the list so we don't waste time on them.
 			while (0 < cnt && list[cnt - 1].IsDoNotDelta())
@@ -838,9 +840,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _IComparer_718 : IComparer<ObjectToPack>
+		private sealed class _IComparer_720 : IComparer<ObjectToPack>
 		{
-			public _IComparer_718()
+			public _IComparer_720()
 			{
 			}
 
@@ -1011,7 +1013,7 @@ namespace NGit.Storage.Pack
 					//
 					foreach (DeltaTask task in myTasks)
 					{
-						executor.Execute(new _Runnable_868(task, errors));
+						executor.Execute(new _Runnable_870(task, errors));
 					}
 					try
 					{
@@ -1050,9 +1052,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _Runnable_868 : Runnable
+		private sealed class _Runnable_870 : Runnable
 		{
-			public _Runnable_868(DeltaTask task, IList<Exception> errors)
+			public _Runnable_870(DeltaTask task, IList<Exception> errors)
 			{
 				this.task = task;
 				this.errors = errors;

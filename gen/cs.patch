@@ -1947,7 +1947,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index d21b451..e73c571 100644
+index afa0f20..c450672 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1968,22 +1968,23 @@ index d21b451..e73c571 100644
  		{
  			ObjectToPack obj = objectsMap.Get(id);
  			if (obj != null && !obj.IsEdge())
-@@ -1336,11 +1336,10 @@ namespace NGit.Storage.Pack
+@@ -1338,12 +1338,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
 -				have = Sharpen.Collections.EmptySet();
 +				have = Sharpen.Collections.EmptySet<_T1>();
  			}
--			stats.interestingObjects = Sharpen.Collections.UnmodifiableSet(new HashSet(want));
--			stats.uninterestingObjects = Sharpen.Collections.UnmodifiableSet(new HashSet(have
--				));
+-			stats.interestingObjects = Sharpen.Collections.UnmodifiableSet(new HashSet<ObjectId
+-				>(want));
+-			stats.uninterestingObjects = Sharpen.Collections.UnmodifiableSet(new HashSet<ObjectId
+-				>(have));
 +			stats.interestingObjects = Sharpen.Collections.UnmodifiableSet(new HashSet<ObjectId>(want.UpcastTo<_T0,ObjectId> ()));
 +			stats.uninterestingObjects = Sharpen.Collections.UnmodifiableSet(new HashSet<ObjectId>(have.UpcastTo<_T1,ObjectId> ()));
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1396,14 +1395,14 @@ namespace NGit.Storage.Pack
+@@ -1399,14 +1397,14 @@ namespace NGit.Storage.Pack
  						{
  							o.Add(inCachedPack);
  						}

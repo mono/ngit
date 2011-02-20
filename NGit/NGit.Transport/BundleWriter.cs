@@ -193,6 +193,7 @@ namespace NGit.Transport
 				{
 					exc.AddItem(r.Id);
 				}
+				packWriter.SetDeltaBaseAsOffset(true);
 				packWriter.SetThin(exc.Count > 0);
 				packWriter.PreparePack(monitor, inc, exc);
 				TextWriter w = new OutputStreamWriter(os, Constants.CHARSET);
