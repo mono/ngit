@@ -1432,7 +1432,7 @@ index 19a5a10..8a5004b 100644
  			return hunks;
  		}
 diff --git a/NGit/NGit.Revplot/PlotCommit.cs b/NGit/NGit.Revplot/PlotCommit.cs
-index 49b6dc5..148001b 100644
+index 6c8c3be..f3dcefc 100644
 --- a/NGit/NGit.Revplot/PlotCommit.cs
 +++ b/NGit/NGit.Revplot/PlotCommit.cs
 @@ -53,7 +53,7 @@ namespace NGit.Revplot
@@ -1444,7 +1444,7 @@ index 49b6dc5..148001b 100644
  	{
  		internal static readonly NGit.Revplot.PlotCommit[] NO_CHILDREN = new NGit.Revplot.PlotCommit
  			[] {  };
-@@ -200,5 +200,63 @@ namespace NGit.Revplot
+@@ -203,5 +203,63 @@ namespace NGit.Revplot
  			lane = null;
  			base.Reset();
  		}

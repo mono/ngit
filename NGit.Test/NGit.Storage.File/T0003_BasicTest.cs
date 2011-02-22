@@ -58,6 +58,7 @@ namespace NGit.Storage.File
 		public virtual void Test001_Initalize()
 		{
 			FilePath gitdir = new FilePath(trash, Constants.DOT_GIT);
+			FilePath hooks = new FilePath(gitdir, "hooks");
 			FilePath objects = new FilePath(gitdir, "objects");
 			FilePath objects_pack = new FilePath(objects, "pack");
 			FilePath objects_info = new FilePath(objects, "info");
@@ -66,6 +67,7 @@ namespace NGit.Storage.File
 			FilePath refs_tags = new FilePath(refs, "tags");
 			FilePath HEAD = new FilePath(gitdir, "HEAD");
 			NUnit.Framework.Assert.IsTrue(trash.IsDirectory(), "Exists " + trash);
+			NUnit.Framework.Assert.IsTrue(hooks.IsDirectory(), "Exists " + hooks);
 			NUnit.Framework.Assert.IsTrue(objects.IsDirectory(), "Exists " + objects);
 			NUnit.Framework.Assert.IsTrue(objects_pack.IsDirectory(), "Exists " + objects_pack
 				);
