@@ -1947,7 +1947,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index afa0f20..c450672 100644
+index 7c2e631..6654143 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1959,7 +1959,16 @@ index afa0f20..c450672 100644
  			 + 1];
  
  		private readonly ObjectIdSubclassMap<ObjectToPack> objectsMap = new ObjectIdSubclassMap
-@@ -470,7 +470,7 @@ namespace NGit.Storage.Pack
+@@ -118,7 +118,7 @@ namespace NGit.Storage.Pack
+ 
+ 		private IList<CachedPack> cachedPacks = new AList<CachedPack>(2);
+ 
+-		private ICollection<ObjectId> tagTargets = Sharpen.Collections.EmptySet();
++		private ICollection<ObjectId> tagTargets = Sharpen.Collections.EmptySet<ObjectId>();
+ 
+ 		private ICSharpCode.SharpZipLib.Zip.Compression.Deflater myDeflater;
+ 
+@@ -488,7 +488,7 @@ namespace NGit.Storage.Pack
  		/// <param name="id">the object to test the existence of.</param>
  		/// <returns>true if the object will appear in the output pack file.</returns>
  		/// <exception cref="System.IO.IOException">a cached pack cannot be examined.</exception>
@@ -1968,7 +1977,7 @@ index afa0f20..c450672 100644
  		{
  			ObjectToPack obj = objectsMap.Get(id);
  			if (obj != null && !obj.IsEdge())
-@@ -1338,12 +1338,10 @@ namespace NGit.Storage.Pack
+@@ -1356,12 +1356,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
@@ -1984,23 +1993,15 @@ index afa0f20..c450672 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1399,14 +1397,14 @@ namespace NGit.Storage.Pack
- 						{
- 							o.Add(inCachedPack);
- 						}
--						if (have.Contains(o))
-+						if (have.Contains((ObjectId)o))
- 						{
- 							haveObjs.AddItem(o);
- 							walker.MarkUninteresting(o);
- 						}
- 						else
- 						{
--							if (want.Contains(o))
-+							if (want.Contains((ObjectId)o))
- 							{
- 								o.Add(include);
- 								wantObjs.AddItem(o);
+@@ -1380,7 +1378,7 @@ namespace NGit.Storage.Pack
+ 				walker.Sort(RevSort.COMMIT_TIME_DESC);
+ 				if (useCachedPacks && reuseSupport != null)
+ 				{
+-					ICollection<ObjectId> need = new HashSet<ObjectId>(want);
++					ICollection<ObjectId> need = new HashSet<ObjectId>(want.UpcastTo<_T0,ObjectId> ());
+ 					IList<CachedPack> shortCircuit = new List<CachedPack>();
+ 					foreach (CachedPack pack in reuseSupport.GetCachedPacks())
+ 					{
 diff --git a/NGit/NGit.Transport.Resolver/ReceivePackFactory.cs b/NGit/NGit.Transport.Resolver/ReceivePackFactory.cs
 index b4e6023..3414b15 100644
 --- a/NGit/NGit.Transport.Resolver/ReceivePackFactory.cs
@@ -2715,7 +2716,7 @@ index 49fce84..551432d 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index 9b4d0c7..300318c 100644
+index a1577ac..d2b6b9e 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
 @@ -161,7 +161,7 @@ namespace NGit.Transport
@@ -2736,7 +2737,7 @@ index 9b4d0c7..300318c 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
-@@ -848,8 +848,9 @@ namespace NGit.Transport
+@@ -874,8 +874,9 @@ namespace NGit.Transport
  				}
  				if (options.Contains(OPTION_INCLUDE_TAG))
  				{

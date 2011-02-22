@@ -118,6 +118,8 @@ namespace NGit.Storage.Pack
 
 		private IList<CachedPack> cachedPacks = new AList<CachedPack>(2);
 
+		private ICollection<ObjectId> tagTargets = Sharpen.Collections.EmptySet<ObjectId>();
+
 		private ICSharpCode.SharpZipLib.Zip.Compression.Deflater myDeflater;
 
 		private readonly ObjectReader reader;
@@ -345,6 +347,22 @@ namespace NGit.Storage.Pack
 		public virtual void SetIgnoreMissingUninteresting(bool ignore)
 		{
 			ignoreMissingUninteresting = ignore;
+		}
+
+		/// <summary>Set the tag targets that should be hoisted earlier during packing.</summary>
+		/// <remarks>
+		/// Set the tag targets that should be hoisted earlier during packing.
+		/// <p>
+		/// Callers may put objects into this set before invoking any of the
+		/// preparePack methods to influence where an annotated tag's target is
+		/// stored within the resulting pack. Typically these will be clustered
+		/// together, and hoisted earlier in the file even if they are ancient
+		/// revisions, allowing readers to find tag targets with better locality.
+		/// </remarks>
+		/// <param name="objects">objects that annotated tags point at.</param>
+		public virtual void SetTagTargets(ICollection<ObjectId> objects)
+		{
+			tagTargets = objects;
 		}
 
 		/// <summary>Returns objects number in a pack file that was created by this writer.</summary>
@@ -810,7 +828,7 @@ namespace NGit.Storage.Pack
 			// applies "Linus' Law" which states that newer files tend to be the
 			// bigger ones, because source files grow and hardly ever shrink.
 			//
-			Arrays.Sort(list, 0, cnt, new _IComparer_720());
+			Arrays.Sort(list, 0, cnt, new _IComparer_740());
 			// Above we stored the objects we cannot delta onto the end.
 			// Remove them from the list so we don't waste time on them.
 			while (0 < cnt && list[cnt - 1].IsDoNotDelta())
@@ -840,9 +858,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _IComparer_720 : IComparer<ObjectToPack>
+		private sealed class _IComparer_740 : IComparer<ObjectToPack>
 		{
-			public _IComparer_720()
+			public _IComparer_740()
 			{
 			}
 
@@ -1013,7 +1031,7 @@ namespace NGit.Storage.Pack
 					//
 					foreach (DeltaTask task in myTasks)
 					{
-						executor.Execute(new _Runnable_870(task, errors));
+						executor.Execute(new _Runnable_890(task, errors));
 					}
 					try
 					{
@@ -1052,9 +1070,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _Runnable_870 : Runnable
+		private sealed class _Runnable_890 : Runnable
 		{
-			public _Runnable_870(DeltaTask task, IList<Exception> errors)
+			public _Runnable_890(DeltaTask task, IList<Exception> errors)
 			{
 				this.task = task;
 				this.errors = errors;
@@ -1360,13 +1378,31 @@ namespace NGit.Storage.Pack
 				walker.Sort(RevSort.COMMIT_TIME_DESC);
 				if (useCachedPacks && reuseSupport != null)
 				{
+					ICollection<ObjectId> need = new HashSet<ObjectId>(want.UpcastTo<_T0,ObjectId> ());
+					IList<CachedPack> shortCircuit = new List<CachedPack>();
 					foreach (CachedPack pack in reuseSupport.GetCachedPacks())
 					{
+						if (need.ContainsAll(pack.GetTips()))
+						{
+							need.RemoveAll(pack.GetTips());
+							shortCircuit.AddItem(pack);
+						}
 						foreach (ObjectId id in pack.GetTips())
 						{
 							tipToPack.Put(id, pack);
 							all.AddItem(id);
 						}
+					}
+					if (need.IsEmpty() && !shortCircuit.IsEmpty())
+					{
+						Sharpen.Collections.AddAll(cachedPacks, shortCircuit);
+						foreach (CachedPack pack_1 in shortCircuit)
+						{
+							countingMonitor.Update((int)pack_1.GetObjectCount());
+						}
+						countingMonitor.EndTask();
+						stats.timeCounting = Runtime.CurrentTimeMillis() - countingStart;
+						return;
 					}
 					haveEst += tipToPack.Count;
 				}
@@ -1381,6 +1417,7 @@ namespace NGit.Storage.Pack
 			}
 			IList<RevObject> wantObjs = new AList<RevObject>(want.Count);
 			IList<RevObject> haveObjs = new AList<RevObject>(haveEst);
+			IList<RevTag> wantTags = new AList<RevTag>(want.Count);
 			AsyncRevObjectQueue q = walker.ParseAny(all.AsIterable(), true);
 			try
 			{
@@ -1397,18 +1434,20 @@ namespace NGit.Storage.Pack
 						{
 							o.Add(inCachedPack);
 						}
-						if (have.Contains((ObjectId)o))
+						if (have.Contains(o))
 						{
 							haveObjs.AddItem(o);
-							walker.MarkUninteresting(o);
 						}
 						else
 						{
-							if (want.Contains((ObjectId)o))
+							if (want.Contains(o))
 							{
 								o.Add(include);
 								wantObjs.AddItem(o);
-								walker.MarkStart(o);
+								if (o is RevTag)
+								{
+									wantTags.AddItem((RevTag)o);
+								}
 							}
 						}
 					}
@@ -1425,6 +1464,34 @@ namespace NGit.Storage.Pack
 			finally
 			{
 				q.Release();
+			}
+			if (!wantTags.IsEmpty())
+			{
+				all = new AList<ObjectId>(wantTags.Count);
+				foreach (RevTag tag in wantTags)
+				{
+					all.AddItem(tag.GetObject());
+				}
+				q = walker.ParseAny(all.AsIterable(), true);
+				try
+				{
+					while (q.Next() != null)
+					{
+					}
+				}
+				finally
+				{
+					// Just need to pop the queue item to parse the object.
+					q.Release();
+				}
+			}
+			foreach (RevObject obj in wantObjs)
+			{
+				walker.MarkStart(obj);
+			}
+			foreach (RevObject obj_1 in haveObjs)
+			{
+				walker.MarkUninteresting(obj_1);
 			}
 			int typesToPrune = 0;
 			int maxBases = config.GetDeltaSearchWindowSize();
@@ -1464,12 +1531,15 @@ namespace NGit.Storage.Pack
 					];
 				list.EnsureCapacity(list.Count + commits.Count);
 			}
+			int commitCnt = 0;
+			bool putTagTargets = false;
 			foreach (RevCommit cmit in commits)
 			{
 				if (!cmit.Has(added))
 				{
 					cmit.Add(added);
 					AddObject(cmit, 0);
+					commitCnt++;
 				}
 				for (int i = 0; i < cmit.ParentCount; i++)
 				{
@@ -1478,7 +1548,22 @@ namespace NGit.Storage.Pack
 					{
 						p.Add(added);
 						AddObject(p, 0);
+						commitCnt++;
 					}
+				}
+				if (!putTagTargets && 4096 < commitCnt)
+				{
+					foreach (ObjectId id in tagTargets)
+					{
+						RevObject obj_2 = walker.LookupOrNull(id);
+						if (obj_2 is RevCommit && obj_2.Has(include) && !obj_2.Has(RevFlag.UNINTERESTING)
+							 && !obj_2.Has(added))
+						{
+							obj_2.Add(added);
+							AddObject(obj_2, 0);
+						}
+					}
+					putTagTargets = true;
 				}
 			}
 			commits = null;
@@ -1540,9 +1625,9 @@ namespace NGit.Storage.Pack
 				PruneObjectList(typesToPrune, Constants.OBJ_BLOB);
 				PruneObjectList(typesToPrune, Constants.OBJ_TAG);
 			}
-			foreach (CachedPack pack_1 in cachedPacks)
+			foreach (CachedPack pack_2 in cachedPacks)
 			{
-				countingMonitor.Update((int)pack_1.GetObjectCount());
+				countingMonitor.Update((int)pack_2.GetObjectCount());
 			}
 			countingMonitor.EndTask();
 			stats.timeCounting = Runtime.CurrentTimeMillis() - countingStart;

@@ -440,12 +440,6 @@ namespace Sharpen
 			return old;
 		}
 
-		public static void RemoveAll<T> (this IList<T> list, IEnumerable<T> toRemove)
-		{
-			foreach (T t in toRemove)
-				list.Remove (t);
-		}
-
 		public static T RemoveFirst<T> (this IList<T> list)
 		{
 			return list.Remove<T> (0);
@@ -497,8 +491,24 @@ namespace Sharpen
 			return 0;
 		}
 		
-		public static bool Contains<T,U> (this ICollection<T> col, U item) where T:U
+		public static void RemoveAll<T,U> (this ICollection<T> col, ICollection<U> items) where U:T
 		{
+			foreach (var u in items)
+				col.Remove (u);
+		}
+
+		public static bool ContainsAll<T,U> (this ICollection<T> col, ICollection<U> items) where U:T
+		{
+			foreach (var u in items)
+				if (!col.Any (n => (object.ReferenceEquals (n, u)) || n.Equals (u)))
+					return false;
+			return true;
+		}
+
+		public static bool Contains<T> (this ICollection<T> col, object item)
+		{
+			if (!(item is T))
+				return false;
 			return col.Any (n => (object.ReferenceEquals (n, item)) || n.Equals (item));
 		}
 

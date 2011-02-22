@@ -834,6 +834,32 @@ namespace NGit.Transport
 				pw.SetUseCachedPacks(true);
 				pw.SetDeltaBaseAsOffset(options.Contains(OPTION_OFS_DELTA));
 				pw.SetThin(options.Contains(OPTION_THIN_PACK));
+				if (commonBase.IsEmpty())
+				{
+					ICollection<ObjectId> tagTargets = new HashSet<ObjectId>();
+					foreach (Ref @ref in refs.Values)
+					{
+						if (@ref.GetPeeledObjectId() != null)
+						{
+							tagTargets.AddItem(@ref.GetPeeledObjectId());
+						}
+						else
+						{
+							if (@ref.GetObjectId() == null)
+							{
+								continue;
+							}
+							else
+							{
+								if (@ref.GetName().StartsWith(Constants.R_HEADS))
+								{
+									tagTargets.AddItem(@ref.GetObjectId());
+								}
+							}
+						}
+					}
+					pw.SetTagTargets(tagTargets);
+				}
 				RevWalk rw = walk;
 				if (wantAll.IsEmpty())
 				{
