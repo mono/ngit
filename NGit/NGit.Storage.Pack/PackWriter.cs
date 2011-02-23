@@ -1176,6 +1176,7 @@ namespace NGit.Storage.Pack
 					stats.reusedObjects++;
 					if (otp.IsDeltaRepresentation())
 					{
+						stats.totalDeltas++;
 						stats.reusedDeltas++;
 					}
 					return;
