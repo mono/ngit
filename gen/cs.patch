@@ -1947,7 +1947,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index f35afce..c971d87 100644
+index 548ce86..df59c33 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1977,7 +1977,7 @@ index f35afce..c971d87 100644
  		{
  			ObjectToPack obj = objectsMap.Get(id);
  			if (obj != null && !obj.IsEdge())
-@@ -1357,12 +1357,10 @@ namespace NGit.Storage.Pack
+@@ -1361,12 +1361,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
@@ -1993,7 +1993,7 @@ index f35afce..c971d87 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1381,7 +1379,7 @@ namespace NGit.Storage.Pack
+@@ -1385,7 +1383,7 @@ namespace NGit.Storage.Pack
  				walker.Sort(RevSort.COMMIT_TIME_DESC);
  				if (useCachedPacks && reuseSupport != null)
  				{
@@ -2797,7 +2797,7 @@ index 4557681..024be0c 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index a219a09..814a3e6 100644
+index 16d26eb..bb03ca8 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 @@ -486,6 +486,7 @@ namespace NGit.Treewalk

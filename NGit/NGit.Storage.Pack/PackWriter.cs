@@ -715,12 +715,14 @@ namespace NGit.Storage.Pack
 			{
 				cnt += list.Count;
 			}
+			long start = Runtime.CurrentTimeMillis();
 			monitor.BeginTask(JGitText.Get().searchForReuse, cnt);
 			foreach (IList<ObjectToPack> list_1 in objectsLists)
 			{
 				reuseSupport.SelectObjectRepresentation(this, monitor, list_1.AsIterable());
 			}
 			monitor.EndTask();
+			stats.timeSearchingForReuse = Runtime.CurrentTimeMillis() - start;
 		}
 
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
@@ -758,6 +760,7 @@ namespace NGit.Storage.Pack
 			// search code to discover the missing object and skip over it, or
 			// abort with an exception if we actually had to have it.
 			//
+			long sizingStart = Runtime.CurrentTimeMillis();
 			monitor.BeginTask(JGitText.Get().searchForSizes, cnt);
 			AsyncObjectSizeQueue<ObjectToPack> sizeQueue = reader.GetObjectSize(Arrays.AsList
 				<ObjectToPack>(list).SubList(0, cnt).AsIterable(), false);
@@ -823,12 +826,13 @@ namespace NGit.Storage.Pack
 				sizeQueue.Release();
 			}
 			monitor.EndTask();
+			stats.timeSearchingForSizes = Runtime.CurrentTimeMillis() - sizingStart;
 			// Sort the objects by path hash so like files are near each other,
 			// and then by size descending so that bigger files are first. This
 			// applies "Linus' Law" which states that newer files tend to be the
 			// bigger ones, because source files grow and hardly ever shrink.
 			//
-			Arrays.Sort(list, 0, cnt, new _IComparer_740());
+			Arrays.Sort(list, 0, cnt, new _IComparer_744());
 			// Above we stored the objects we cannot delta onto the end.
 			// Remove them from the list so we don't waste time on them.
 			while (0 < cnt && list[cnt - 1].IsDoNotDelta())
@@ -858,9 +862,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _IComparer_740 : IComparer<ObjectToPack>
+		private sealed class _IComparer_744 : IComparer<ObjectToPack>
 		{
-			public _IComparer_740()
+			public _IComparer_744()
 			{
 			}
 
@@ -1031,7 +1035,7 @@ namespace NGit.Storage.Pack
 					//
 					foreach (DeltaTask task in myTasks)
 					{
-						executor.Execute(new _Runnable_890(task, errors));
+						executor.Execute(new _Runnable_894(task, errors));
 					}
 					try
 					{
@@ -1070,9 +1074,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _Runnable_890 : Runnable
+		private sealed class _Runnable_894 : Runnable
 		{
-			public _Runnable_890(DeltaTask task, IList<Exception> errors)
+			public _Runnable_894(DeltaTask task, IList<Exception> errors)
 			{
 				this.task = task;
 				this.errors = errors;
@@ -1863,6 +1867,10 @@ namespace NGit.Storage.Pack
 
 			internal long timeCounting;
 
+			internal long timeSearchingForReuse;
+
+			internal long timeSearchingForSizes;
+
 			internal long timeCompressing;
 
 			internal long timeWriting;
@@ -1988,6 +1996,27 @@ namespace NGit.Storage.Pack
 			public virtual long GetTimeCounting()
 			{
 				return timeCounting;
+			}
+
+			/// <returns>
+			/// time in milliseconds spent matching existing representations
+			/// against objects that will be transmitted, or that the client
+			/// can be assumed to already have.
+			/// </returns>
+			public virtual long GetTimeSearchingForReuse()
+			{
+				return timeSearchingForReuse;
+			}
+
+			/// <returns>
+			/// time in milliseconds spent finding the sizes of all objects
+			/// that will enter the delta compression search window. The
+			/// sizes need to be known to better match similar objects
+			/// together and improve delta compression ratios.
+			/// </returns>
+			public virtual long GetTimeSearchingForSizes()
+			{
+				return timeSearchingForSizes;
 			}
 
 			/// <returns>
