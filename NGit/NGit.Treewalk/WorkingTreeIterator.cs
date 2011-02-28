@@ -73,8 +73,7 @@ namespace NGit.Treewalk
 	{
 		/// <summary>
 		/// An empty entry array, suitable for
-		/// <see cref="Init(org.eclipse.jgit.treewalk.WorkingTreeIterator.Entry[])">Init(org.eclipse.jgit.treewalk.WorkingTreeIterator.Entry[])
-		/// 	</see>
+		/// <see cref="Init(Entry[])">Init(Entry[])</see>
 		/// .
 		/// </summary>
 		protected internal static readonly WorkingTreeIterator.Entry[] EOF = new WorkingTreeIterator.Entry
@@ -188,8 +187,7 @@ namespace NGit.Treewalk
 		/// Initialize this iterator for the root level of a repository.
 		/// <p>
 		/// This method should only be invoked after calling
-		/// <see cref="Init(org.eclipse.jgit.treewalk.WorkingTreeIterator.Entry[])">Init(org.eclipse.jgit.treewalk.WorkingTreeIterator.Entry[])
-		/// 	</see>
+		/// <see cref="Init(Entry[])">Init(Entry[])</see>
 		/// ,
 		/// and only for the root iterator.
 		/// </remarks>

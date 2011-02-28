@@ -194,5 +194,10 @@ namespace Sharpen
 		{
 			return Environment.TickCount * 1000 * 1000;
 		}
+		
+		public static int CompareOrdinal (string s1, string s2)
+		{
+			return string.CompareOrdinal (s1, s2);
+		}
 	}
 }

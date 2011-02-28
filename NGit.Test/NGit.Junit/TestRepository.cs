@@ -271,8 +271,8 @@ namespace NGit.Junit
 		/// Create a new commit.
 		/// <p>
 		/// See
-		/// <see cref="TestRepository{R}.Commit(int, NGit.Revwalk.RevTree, org.eclipse.jgit.revwalk.RevCommit[])
-		/// 	">TestRepository&lt;R&gt;.Commit(int, NGit.Revwalk.RevTree, org.eclipse.jgit.revwalk.RevCommit[])
+		/// <see cref="TestRepository{R}.Commit(int, NGit.Revwalk.RevTree, NGit.Revwalk.RevCommit[])
+		/// 	">TestRepository&lt;R&gt;.Commit(int, NGit.Revwalk.RevTree, NGit.Revwalk.RevCommit[])
 		/// 	</see>
 		/// . The tree is the empty
 		/// tree (no files or subdirectories).
@@ -290,8 +290,8 @@ namespace NGit.Junit
 		/// Create a new commit.
 		/// <p>
 		/// See
-		/// <see cref="TestRepository{R}.Commit(int, NGit.Revwalk.RevTree, org.eclipse.jgit.revwalk.RevCommit[])
-		/// 	">TestRepository&lt;R&gt;.Commit(int, NGit.Revwalk.RevTree, org.eclipse.jgit.revwalk.RevCommit[])
+		/// <see cref="TestRepository{R}.Commit(int, NGit.Revwalk.RevTree, NGit.Revwalk.RevCommit[])
+		/// 	">TestRepository&lt;R&gt;.Commit(int, NGit.Revwalk.RevTree, NGit.Revwalk.RevCommit[])
 		/// 	</see>
 		/// .
 		/// </remarks>
@@ -309,8 +309,8 @@ namespace NGit.Junit
 		/// Create a new commit.
 		/// <p>
 		/// See
-		/// <see cref="TestRepository{R}.Commit(int, NGit.Revwalk.RevTree, org.eclipse.jgit.revwalk.RevCommit[])
-		/// 	">TestRepository&lt;R&gt;.Commit(int, NGit.Revwalk.RevTree, org.eclipse.jgit.revwalk.RevCommit[])
+		/// <see cref="TestRepository{R}.Commit(int, NGit.Revwalk.RevTree, NGit.Revwalk.RevCommit[])
+		/// 	">TestRepository&lt;R&gt;.Commit(int, NGit.Revwalk.RevTree, NGit.Revwalk.RevCommit[])
 		/// 	</see>
 		/// . The tree is the empty
 		/// tree (no files or subdirectories).

@@ -206,7 +206,7 @@ index be657c3..f482dc9 100644
  
  		public override string GetHostname()
 diff --git a/NGit.Test/NGit.Junit/TestRepository.cs b/NGit.Test/NGit.Junit/TestRepository.cs
-index 93ef474..12691f1 100644
+index f611b93..12b726e 100644
 --- a/NGit.Test/NGit.Junit/TestRepository.cs
 +++ b/NGit.Test/NGit.Junit/TestRepository.cs
 @@ -55,6 +55,8 @@ using NGit.Storage.Pack;
@@ -1522,7 +1522,7 @@ index 92f3c22..bc87b85 100644
  		public override void Clear()
  		{
 diff --git a/NGit/NGit.Revplot/PlotWalk.cs b/NGit/NGit.Revplot/PlotWalk.cs
-index 0feb20c..aed1c8a 100644
+index aceb627..6723cbe 100644
 --- a/NGit/NGit.Revplot/PlotWalk.cs
 +++ b/NGit/NGit.Revplot/PlotWalk.cs
 @@ -83,7 +83,7 @@ namespace NGit.Revplot
@@ -2775,7 +2775,7 @@ index 5ca024b..891a6df 100644
  			StringBuilder w = new StringBuilder();
  			foreach (string n in packNames)
 diff --git a/NGit/NGit.Treewalk.Filter/PathFilterGroup.cs b/NGit/NGit.Treewalk.Filter/PathFilterGroup.cs
-index 4557681..024be0c 100644
+index ecdcd93..0675d66 100644
 --- a/NGit/NGit.Treewalk.Filter/PathFilterGroup.cs
 +++ b/NGit/NGit.Treewalk.Filter/PathFilterGroup.cs
 @@ -135,7 +135,7 @@ namespace NGit.Treewalk.Filter
@@ -2797,10 +2797,10 @@ index 4557681..024be0c 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index 16d26eb..bb03ca8 100644
+index 0928942..0ebf421 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-@@ -486,6 +486,7 @@ namespace NGit.Treewalk
+@@ -484,6 +484,7 @@ namespace NGit.Treewalk
  
  		private void ParseEntry()
  		{
@@ -2808,7 +2808,7 @@ index 16d26eb..bb03ca8 100644
  			WorkingTreeIterator.Entry e = entries[ptr];
  			mode = e.GetMode().GetBits();
  			int nameLen = e.encodedNameLen;
-@@ -552,10 +553,16 @@ namespace NGit.Treewalk
+@@ -550,10 +551,16 @@ namespace NGit.Treewalk
  		/// 	</exception>
  		protected internal virtual bool IsEntryIgnored(int pLen)
  		{
@@ -2827,7 +2827,7 @@ index 16d26eb..bb03ca8 100644
  			IgnoreNode rules = GetIgnoreNode();
  			if (rules != null)
  			{
-@@ -573,13 +580,11 @@ namespace NGit.Treewalk
+@@ -571,13 +578,11 @@ namespace NGit.Treewalk
  				{
  					case IgnoreNode.MatchResult.IGNORED:
  					{
@@ -2841,7 +2841,7 @@ index 16d26eb..bb03ca8 100644
  						return false;
  					}
  
-@@ -591,14 +596,11 @@ namespace NGit.Treewalk
+@@ -589,14 +594,11 @@ namespace NGit.Treewalk
  			}
  			if (parent is NGit.Treewalk.WorkingTreeIterator)
  			{
@@ -2858,7 +2858,7 @@ index 16d26eb..bb03ca8 100644
  		/// <exception cref="System.IO.IOException"></exception>
  		private IgnoreNode GetIgnoreNode()
  		{
-@@ -963,7 +965,7 @@ namespace NGit.Treewalk
+@@ -961,7 +963,7 @@ namespace NGit.Treewalk
  
  		/// <summary>A single entry within a working directory tree.</summary>
  		/// <remarks>A single entry within a working directory tree.</remarks>
@@ -3377,11 +3377,11 @@ index b39fc57..ce31fcf 100644
  		}
  
 diff --git a/NGit/NGit/GitIndex.cs b/NGit/NGit/GitIndex.cs
-index 8a2752b..74a7c4f 100644
+index c6a9d91..b123e91 100644
 --- a/NGit/NGit/GitIndex.cs
 +++ b/NGit/NGit/GitIndex.cs
 @@ -418,15 +418,15 @@ namespace NGit
- 		[System.ObsoleteAttribute(@"Use .")]
+ 		[System.ObsoleteAttribute(@"Use NGit.Dircache.DirCacheEntry .")]
  		public class Entry
  		{
 -			private long ctime;
@@ -3537,7 +3537,7 @@ index 1ca293c..2ce9dbb 100644
  				if (target == null)
  				{
 diff --git a/NGit/NGit/Tree.cs b/NGit/NGit/Tree.cs
-index 55f1884..0602f92 100644
+index be4447e..cdf7af0 100644
 --- a/NGit/NGit/Tree.cs
 +++ b/NGit/NGit/Tree.cs
 @@ -351,7 +351,7 @@ namespace NGit
@@ -3778,7 +3778,7 @@ index f3e4422..e34c6dc 100644
  					object name = _env.Current;
  					object value = env[name];
 diff --git a/NSch/NSch/ChannelSftp.cs b/NSch/NSch/ChannelSftp.cs
-index cd66e76..562d493 100644
+index dcefdd2..02c5720 100644
 --- a/NSch/NSch/ChannelSftp.cs
 +++ b/NSch/NSch/ChannelSftp.cs
 @@ -34,7 +34,6 @@ using System.Collections;
@@ -3816,7 +3816,7 @@ index cd66e76..562d493 100644
  			}
  
  			internal long offset;
-@@ -3234,6 +3233,7 @@ loop_break: ;
+@@ -3235,6 +3234,7 @@ loop_break: ;
  
  		public ChannelSftp()
  		{
