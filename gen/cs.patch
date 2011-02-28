@@ -174,7 +174,7 @@ index d834f3e..8d8c1ae 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
-index bfd2130..482b7db 100644
+index 0c4655a..c07624e 100644
 --- a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 +++ b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 @@ -225,7 +225,7 @@ namespace NGit.Junit
@@ -356,7 +356,7 @@ index f611b93..12b726e 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-index 45aa835..7cfdd3d 100644
+index a6a1bfa..e9fdffe 100644
 --- a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
 +++ b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
 @@ -221,7 +221,7 @@ namespace NGit.Merge
@@ -776,7 +776,7 @@ index 4fc1d3e..022e2b7 100644
  			}
  		}
 diff --git a/NGit.Test/NGit/RepositoryTestCase.cs b/NGit.Test/NGit/RepositoryTestCase.cs
-index f1e542c..f2f4f3c 100644
+index adf9f10..78f49a4 100644
 --- a/NGit.Test/NGit/RepositoryTestCase.cs
 +++ b/NGit.Test/NGit/RepositoryTestCase.cs
 @@ -248,7 +248,7 @@ namespace NGit
@@ -892,7 +892,7 @@ index cf2d1e8..7ab13f9 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index f81e80f..b6f5b5a 100644
+index d874f9f..f39d85b 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -183,6 +183,7 @@ namespace NGit.Api
@@ -2158,7 +2158,7 @@ index e6cc3c6..4514820 100644
  		}
  
 diff --git a/NGit/NGit.Transport/HttpAuthMethod.cs b/NGit/NGit.Transport/HttpAuthMethod.cs
-index e0ff10d..b752205 100644
+index 4b5f8a0..7c4744f 100644
 --- a/NGit/NGit.Transport/HttpAuthMethod.cs
 +++ b/NGit/NGit.Transport/HttpAuthMethod.cs
 @@ -400,7 +400,7 @@ namespace NGit.Transport
@@ -2910,7 +2910,7 @@ index 6adeafb..100f42b 100644
  		private const int BUFFER_SIZE = 1024;
  
 diff --git a/NGit/NGit.Util/Base64.cs b/NGit/NGit.Util/Base64.cs
-index fede4b0..d3cc5fe 100644
+index d902038..bb6fd35 100644
 --- a/NGit/NGit.Util/Base64.cs
 +++ b/NGit/NGit.Util/Base64.cs
 @@ -65,19 +65,19 @@ namespace NGit.Util
@@ -3230,7 +3230,7 @@ index 05ff394..74f90dc 100644
  			if (stringValue == null)
  			{
 diff --git a/NGit/NGit/AnyObjectId.cs b/NGit/NGit/AnyObjectId.cs
-index cd2daec..0004081 100644
+index cd36c35..73ab866 100644
 --- a/NGit/NGit/AnyObjectId.cs
 +++ b/NGit/NGit/AnyObjectId.cs
 @@ -549,7 +549,7 @@ namespace NGit
@@ -3496,7 +3496,7 @@ index 8913cf3..3099dbf 100644
  			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
-index 1ca293c..2ce9dbb 100644
+index b97cc9b..f6918e6 100644
 --- a/NGit/NGit/Repository.cs
 +++ b/NGit/NGit/Repository.cs
 @@ -296,7 +296,6 @@ namespace NGit
@@ -4114,7 +4114,7 @@ index 0137177..b2b8af9 100644
  	}
  }
 diff --git a/NSch/NSch/Util.cs b/NSch/NSch/Util.cs
-index 2af18bb..92c0eba 100644
+index 1dd7c60..394e130 100644
 --- a/NSch/NSch/Util.cs
 +++ b/NSch/NSch/Util.cs
 @@ -351,7 +351,7 @@ namespace NSch

@@ -437,7 +437,7 @@ namespace NGit.Junit
 		protected internal virtual string Read(FilePath f)
 		{
 			byte[] body = IOUtil.ReadFully(f);
-			return Sharpen.Extensions.CreateString(body, 0, body.Length, "UTF-8");
+			return Sharpen.Runtime.GetStringForBytes(body, 0, body.Length, "UTF-8");
 		}
 
 		private static string[] ToEnvArray(IDictionary<string, string> env)

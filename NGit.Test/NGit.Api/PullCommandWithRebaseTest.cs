@@ -227,7 +227,7 @@ namespace NGit.Api
 					bos.Write(buffer, 0, read);
 					read = fis.Read(buffer);
 				}
-				string content = Sharpen.Extensions.CreateString(bos.ToByteArray(), "UTF-8");
+				string content = Sharpen.Runtime.GetStringForBytes(bos.ToByteArray(), "UTF-8");
 				NUnit.Framework.Assert.AreEqual(@string, content);
 			}
 			finally

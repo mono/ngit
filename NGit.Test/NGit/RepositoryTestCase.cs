@@ -115,7 +115,7 @@ namespace NGit
 				{
 					throw new IOException("Internal error reading file data from " + f);
 				}
-				NUnit.Framework.Assert.AreEqual(checkData, Sharpen.Extensions.CreateString(data));
+				NUnit.Framework.Assert.AreEqual(checkData, new string(data));
 			}
 			finally
 			{
@@ -243,7 +243,7 @@ namespace NGit
 				}
 				if (0 != (includedOptions & CONTENT))
 				{
-					sb.Append(", content:" + Sharpen.Extensions.CreateString(db.Open(entry.GetObjectId
+					sb.Append(", content:" + Sharpen.Runtime.GetStringForBytes(db.Open(entry.GetObjectId
 						(), Constants.OBJ_BLOB).GetCachedBytes(), "UTF-8"));
 				}
 				if (0 != (includedOptions & ASSUME_UNCHANGED))

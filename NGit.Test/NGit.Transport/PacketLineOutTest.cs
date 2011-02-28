@@ -163,7 +163,7 @@ namespace NGit.Transport
 			byte[] act = rawOut.ToByteArray();
 			string explen = Sharpen.Extensions.ToString(buf.Length + 4, 16);
 			NUnit.Framework.Assert.AreEqual(4 + buf.Length, act.Length);
-			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.CreateString(act, 0, 4, "UTF-8"
+			NUnit.Framework.Assert.AreEqual(Sharpen.Runtime.GetStringForBytes(act, 0, 4, "UTF-8"
 				), explen);
 			for (int i_1 = 0; i_1 < buf.Length; i_1++, j++)
 			{
@@ -207,7 +207,7 @@ namespace NGit.Transport
 		/// <exception cref="System.IO.IOException"></exception>
 		private void AssertBuffer(string exp)
 		{
-			NUnit.Framework.Assert.AreEqual(exp, Sharpen.Extensions.CreateString(rawOut.ToByteArray
+			NUnit.Framework.Assert.AreEqual(exp, Sharpen.Runtime.GetStringForBytes(rawOut.ToByteArray
 				(), Constants.CHARACTER_ENCODING));
 		}
 	}

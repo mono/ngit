@@ -225,7 +225,7 @@ namespace NGit.Merge
 				), RT(ours), RT(theirs));
 			ByteArrayOutputStream bo = new ByteArrayOutputStream(50);
 			fmt.FormatMerge(bo, r, "B", "O", "T", Constants.CHARACTER_ENCODING);
-			return Sharpen.Extensions.CreateString(bo.ToByteArray(), Constants.CHARACTER_ENCODING
+			return Sharpen.Runtime.GetStringForBytes(bo.ToByteArray(), Constants.CHARACTER_ENCODING
 				);
 		}
 

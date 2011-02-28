@@ -58,8 +58,8 @@ namespace NGit
 			byte[] exp = new byte[] { (byte)('a'), (byte)('b'), (byte)('c') };
 			byte[] res = Constants.EncodeASCII(src);
 			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, res));
-			NUnit.Framework.Assert.AreEqual(src, Sharpen.Extensions.CreateString(res, 0, res.
-				Length, "UTF-8"));
+			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(res, 0, res
+				.Length, "UTF-8"));
 		}
 
 		[NUnit.Framework.Test]
@@ -94,8 +94,8 @@ namespace NGit
 			byte[] exp = new byte[] { (byte)('a'), (byte)('b'), (byte)('c') };
 			byte[] res = Constants.Encode(src);
 			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, res));
-			NUnit.Framework.Assert.AreEqual(src, Sharpen.Extensions.CreateString(res, 0, res.
-				Length, "UTF-8"));
+			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(res, 0, res
+				.Length, "UTF-8"));
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
@@ -111,8 +111,8 @@ namespace NGit
 				(byte)unchecked((int)(0xBD))) };
 			byte[] res = Constants.Encode(src);
 			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, res));
-			NUnit.Framework.Assert.AreEqual(src, Sharpen.Extensions.CreateString(res, 0, res.
-				Length, "UTF-8"));
+			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(res, 0, res
+				.Length, "UTF-8"));
 		}
 	}
 }

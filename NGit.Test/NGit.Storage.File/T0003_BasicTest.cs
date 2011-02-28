@@ -326,7 +326,7 @@ namespace NGit.Storage.File
 			char[] cbuf = new char[configStr.Length];
 			fr.Read(cbuf);
 			fr.Close();
-			NUnit.Framework.Assert.AreEqual(configStr, Sharpen.Extensions.CreateString(cbuf));
+			NUnit.Framework.Assert.AreEqual(configStr, new string(cbuf));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

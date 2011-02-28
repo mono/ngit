@@ -170,7 +170,7 @@ namespace NGit.Transport
 				, 16);
 			NUnit.Framework.Assert.AreEqual(SideBandOutputStream.HDR_SIZE + buf.Length, act.Length
 				);
-			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.CreateString(act, 0, 4, "UTF-8"
+			NUnit.Framework.Assert.AreEqual(Sharpen.Runtime.GetStringForBytes(act, 0, 4, "UTF-8"
 				), explen);
 			NUnit.Framework.Assert.AreEqual(1, act[4]);
 			for (int i_1 = 0; i_1 < buf.Length; i_1++, j++)
@@ -291,7 +291,7 @@ namespace NGit.Transport
 		/// <exception cref="System.IO.IOException"></exception>
 		private void AssertBuffer(string exp)
 		{
-			NUnit.Framework.Assert.AreEqual(exp, Sharpen.Extensions.CreateString(rawOut.ToByteArray
+			NUnit.Framework.Assert.AreEqual(exp, Sharpen.Runtime.GetStringForBytes(rawOut.ToByteArray
 				(), Constants.CHARACTER_ENCODING));
 		}
 	}

@@ -255,11 +255,11 @@ namespace NGit.Util
 			}
 			try
 			{
-				return Sharpen.Extensions.CreateString(outBuff, 0, e, UTF_8);
+				return Sharpen.Runtime.GetStringForBytes(outBuff, 0, e, UTF_8);
 			}
 			catch (UnsupportedEncodingException)
 			{
-				return Sharpen.Extensions.CreateString(outBuff, 0, e);
+				return Sharpen.Runtime.GetStringForBytes(outBuff, 0, e);
 			}
 		}
 

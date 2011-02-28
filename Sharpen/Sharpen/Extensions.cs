@@ -81,41 +81,6 @@ namespace Sharpen
 			return CultureInfo.GetCultureInfo ("en-US");
 		}
 
-		public static string CreateString (string str)
-		{
-			return new string (str.ToCharArray ());
-		}
-
-		public static string CreateString (byte[] chars)
-		{
-			return Encoding.UTF8.GetString (chars);
-		}
-
-		public static string CreateString (char[] chars)
-		{
-			return new string (chars);
-		}
-
-		public static string CreateString (byte[] chars, string encoding)
-		{
-			return GetEncoding (encoding).GetString (chars);
-		}
-
-		public static string CreateString (byte[] chars, int start, int len)
-		{
-			return Encoding.UTF8.GetString (chars, start, len);
-		}
-
-		public static string CreateString (char[] chars, int start, int len)
-		{
-			return new string (chars, start, len);
-		}
-
-		public static string CreateString (byte[] chars, int start, int len, string encoding)
-		{
-			return GetEncoding (encoding).Decode (chars, start, len);
-		}
-
 		public static string Name (this Encoding e)
 		{
 			return e.BodyName.ToUpper ();

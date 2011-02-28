@@ -153,8 +153,8 @@ namespace NGit
 			FileTreeEntry f = t.AddFile(n);
 			NUnit.Framework.Assert.IsNotNull(f, "have file");
 			NUnit.Framework.Assert.AreEqual(n, f.GetName(), "name matches");
-			NUnit.Framework.Assert.AreEqual(f.GetName(), Sharpen.Extensions.CreateString(f.GetNameUTF8
-				(), "UTF-8"), "name matches");
+			NUnit.Framework.Assert.AreEqual(f.GetName(), Sharpen.Runtime.GetStringForBytes(f.
+				GetNameUTF8(), "UTF-8"), "name matches");
 			NUnit.Framework.Assert.AreEqual(n, f.GetFullName(), "full name matches");
 			NUnit.Framework.Assert.IsTrue(f.GetId() == null, "no id");
 			NUnit.Framework.Assert.IsTrue(t.IsModified(), "is modified");
@@ -179,8 +179,8 @@ namespace NGit
 			Tree f = t.AddTree(n);
 			NUnit.Framework.Assert.IsNotNull(f, "have tree");
 			NUnit.Framework.Assert.AreEqual(n, f.GetName(), "name matches");
-			NUnit.Framework.Assert.AreEqual(f.GetName(), Sharpen.Extensions.CreateString(f.GetNameUTF8
-				(), "UTF-8"), "name matches");
+			NUnit.Framework.Assert.AreEqual(f.GetName(), Sharpen.Runtime.GetStringForBytes(f.
+				GetNameUTF8(), "UTF-8"), "name matches");
 			NUnit.Framework.Assert.AreEqual(n, f.GetFullName(), "full name matches");
 			NUnit.Framework.Assert.IsTrue(f.GetId() == null, "no id");
 			NUnit.Framework.Assert.IsTrue(f.GetParent() == t, "parent matches");

@@ -514,7 +514,7 @@ namespace NGit.Dircache
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
 		private static string FormatExtensionName(byte[] hdr)
 		{
-			return "'" + Sharpen.Extensions.CreateString(hdr, 0, 4, "ISO-8859-1") + "'";
+			return "'" + Sharpen.Runtime.GetStringForBytes(hdr, 0, 4, "ISO-8859-1") + "'";
 		}
 
 		private static bool Is_DIRC(byte[] hdr)
