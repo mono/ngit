@@ -2,6 +2,7 @@
 -nativeTypeSystem
 -organizeUsings
 -junitConversion
+-flatDirectoryStructure
 
 -cp @NUNIT_JAR@
 -cp @BIN_PATH@
