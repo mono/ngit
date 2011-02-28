@@ -1845,10 +1845,10 @@ index aaf082d..33e2acd 100644
  			int rs = RawParseUtils.PrevLF(log, log.Length);
  			IList<ReflogReader.Entry> ret = new AList<ReflogReader.Entry>();
 diff --git a/NGit/NGit.Storage.File/UnpackedObject.cs b/NGit/NGit.Storage.File/UnpackedObject.cs
-index 7e63e2e..3b6633d 100644
+index 32214e1..236c10e 100644
 --- a/NGit/NGit.Storage.File/UnpackedObject.cs
 +++ b/NGit/NGit.Storage.File/UnpackedObject.cs
-@@ -378,7 +378,7 @@ namespace NGit.Storage.File
+@@ -379,7 +379,7 @@ namespace NGit.Storage.File
  			return avail;
  		}
  
@@ -1857,7 +1857,7 @@ index 7e63e2e..3b6633d 100644
  		{
  			private readonly int type;
  
-@@ -390,7 +390,7 @@ namespace NGit.Storage.File
+@@ -391,7 +391,7 @@ namespace NGit.Storage.File
  
  			private readonly FileObjectDatabase source;
  
