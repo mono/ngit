@@ -109,7 +109,15 @@ namespace Sharpen
 		
 		public void SetRequestProperty (string key, string value)
 		{
-			request.Headers.Set (key, value);
+			switch (key.ToLower ()) {
+			case "user-agent": request.UserAgent = value; break;
+			case "content-length": request.ContentLength = long.Parse (value); break;
+			case "content-type": request.ContentType = value; break;
+			case "expect": request.Expect = value; break;
+			case "referer": request.Referer = value; break;
+			case "transfer-encoding": request.TransferEncoding = value; break;
+			default: request.Headers.Set (key, value); break;
+			}
 		}
 		
 		public string GetResponseMessage ()
