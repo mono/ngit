@@ -116,6 +116,7 @@ namespace Sharpen
 			case "expect": request.Expect = value; break;
 			case "referer": request.Referer = value; break;
 			case "transfer-encoding": request.TransferEncoding = value; break;
+			case "accept": request.Accept = value; break;
 			default: request.Headers.Set (key, value); break;
 			}
 		}
@@ -127,6 +128,8 @@ namespace Sharpen
 		
 		public void SetConnectTimeout (int ms)
 		{
+			if (ms == 0)
+				ms = -1;
 			request.Timeout = ms;
 		}
 		
