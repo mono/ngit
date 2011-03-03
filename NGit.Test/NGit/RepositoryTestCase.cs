@@ -177,9 +177,10 @@ namespace NGit
 		/// 'stage' is only presented when the stage is different from 0. All
 		/// reported time stamps are mapped to strings like "t0", "t1", ... "tn". The
 		/// smallest reported time-stamp will be called "t0". This allows to write
-		/// assertions against the string although the concrete value of the
-		/// time stamps is unknown.
+		/// assertions against the string although the concrete value of the time
+		/// stamps is unknown.
 		/// </remarks>
+		/// <param name="repo">the repository the index state should be determined for</param>
 		/// <param name="includedOptions">
 		/// a bitmask constructed out of the constants
 		/// <see cref="MOD_TIME">MOD_TIME</see>
@@ -191,15 +192,16 @@ namespace NGit
 		/// <see cref="CONTENT_ID">CONTENT_ID</see>
 		/// and
 		/// <see cref="CONTENT">CONTENT</see>
-		/// controlling which info is present in the resulting string.
+		/// controlling which info is present in the
+		/// resulting string.
 		/// </param>
 		/// <returns>a string encoding the index state</returns>
 		/// <exception cref="System.InvalidOperationException">System.InvalidOperationException
 		/// 	</exception>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
-		public virtual string IndexState(int includedOptions)
+		public virtual string IndexState(Repository repo, int includedOptions)
 		{
-			DirCache dc = db.ReadDirCache();
+			DirCache dc = repo.ReadDirCache();
 			StringBuilder sb = new StringBuilder();
 			TreeSet<long> timeStamps = null;
 			// iterate once over the dircache just to collect all time stamps
@@ -253,6 +255,54 @@ namespace NGit
 				sb.Append("]");
 			}
 			return sb.ToString();
+		}
+
+		/// <summary>Represent the state of the index in one String.</summary>
+		/// <remarks>
+		/// Represent the state of the index in one String. This representation is
+		/// useful when writing tests which do assertions on the state of the index.
+		/// By default information about path, mode, stage (if different from 0) is
+		/// included. A bitmask controls which additional info about
+		/// modificationTimes, smudge state and length is included.
+		/// <p>
+		/// The format of the returned string is described with this BNF:
+		/// <pre>
+		/// result = ( "[" path mode stage? time? smudge? length? sha1? content? "]" )* .
+		/// mode = ", mode:" number .
+		/// stage = ", stage:" number .
+		/// time = ", time:t" timestamp-index .
+		/// smudge = "" | ", smudged" .
+		/// length = ", length:" number .
+		/// sha1 = ", sha1:" hex-sha1 .
+		/// content = ", content:" blob-data .
+		/// </pre>
+		/// 'stage' is only presented when the stage is different from 0. All
+		/// reported time stamps are mapped to strings like "t0", "t1", ... "tn". The
+		/// smallest reported time-stamp will be called "t0". This allows to write
+		/// assertions against the string although the concrete value of the time
+		/// stamps is unknown.
+		/// </remarks>
+		/// <param name="includedOptions">
+		/// a bitmask constructed out of the constants
+		/// <see cref="MOD_TIME">MOD_TIME</see>
+		/// ,
+		/// <see cref="SMUDGE">SMUDGE</see>
+		/// ,
+		/// <see cref="LENGTH">LENGTH</see>
+		/// ,
+		/// <see cref="CONTENT_ID">CONTENT_ID</see>
+		/// and
+		/// <see cref="CONTENT">CONTENT</see>
+		/// controlling which info is present in the
+		/// resulting string.
+		/// </param>
+		/// <returns>a string encoding the index state</returns>
+		/// <exception cref="System.InvalidOperationException">System.InvalidOperationException
+		/// 	</exception>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual string IndexState(int includedOptions)
+		{
+			return IndexState(db, includedOptions);
 		}
 
 		/// <summary>Resets the index to represent exactly some filesystem content.</summary>

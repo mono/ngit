@@ -776,10 +776,10 @@ index 4fc1d3e..022e2b7 100644
  			}
  		}
 diff --git a/NGit.Test/NGit/RepositoryTestCase.cs b/NGit.Test/NGit/RepositoryTestCase.cs
-index adf9f10..78f49a4 100644
+index 3eeb05c..18cd052 100644
 --- a/NGit.Test/NGit/RepositoryTestCase.cs
 +++ b/NGit.Test/NGit/RepositoryTestCase.cs
-@@ -248,7 +248,7 @@ namespace NGit
+@@ -250,7 +250,7 @@ namespace NGit
  				}
  				if (0 != (includedOptions & ASSUME_UNCHANGED))
  				{

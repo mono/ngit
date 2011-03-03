@@ -47,6 +47,7 @@ using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Revwalk;
+using NGit.Transport;
 using NGit.Util;
 using Sharpen;
 
@@ -226,6 +227,36 @@ namespace NGit.Api
 				NUnit.Framework.Assert.IsNull(result);
 				NUnit.Framework.Assert.AreEqual(initialCommit.Name, git.GetRepository().GetFullBranch
 					());
+			}
+			catch (Exception e)
+			{
+				NUnit.Framework.Assert.Fail(e.Message);
+			}
+		}
+
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutRemoteTrackingWithoutLocalBranch()
+		{
+			try
+			{
+				// create second repository
+				Repository db2 = CreateWorkRepository();
+				Git git2 = new Git(db2);
+				// setup the second repository to fetch from the first repository
+				StoredConfig config = db2.GetConfig();
+				RemoteConfig remoteConfig = new RemoteConfig(config, "origin");
+				URIish uri = new URIish(db.Directory.ToURI().ToURL());
+				remoteConfig.AddURI(uri);
+				remoteConfig.Update(config);
+				config.Save();
+				// fetch from first repository
+				RefSpec spec = new RefSpec("+refs/heads/*:refs/remotes/origin/*");
+				git2.Fetch().SetRemote("origin").SetRefSpecs(spec).Call();
+				// checkout remote tracking branch in second repository
+				// (no local branches exist yet in second repository)
+				git2.Checkout().SetName("remotes/origin/test").Call();
+				NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Some change]", IndexState
+					(db2, CONTENT));
 			}
 			catch (Exception e)
 			{
