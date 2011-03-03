@@ -142,6 +142,10 @@ namespace NGit.Storage.Pack
 
 		private bool reuseDeltas;
 
+		private bool reuseDeltaCommits;
+
+		private bool reuseValidate;
+
 		private bool thin;
 
 		private bool useCachedPacks;
@@ -241,6 +245,8 @@ namespace NGit.Storage.Pack
 			}
 			deltaBaseAsOffset = config.IsDeltaBaseAsOffset();
 			reuseDeltas = config.IsReuseDeltas();
+			reuseValidate = true;
+			// be paranoid by default
 			stats = new PackWriter.Statistics();
 		}
 
@@ -280,6 +286,54 @@ namespace NGit.Storage.Pack
 		public virtual void SetDeltaBaseAsOffset(bool deltaBaseAsOffset)
 		{
 			this.deltaBaseAsOffset = deltaBaseAsOffset;
+		}
+
+		/// <summary>Check if the writer will reuse commits that are already stored as deltas.
+		/// 	</summary>
+		/// <remarks>Check if the writer will reuse commits that are already stored as deltas.
+		/// 	</remarks>
+		/// <returns>
+		/// true if the writer would reuse commits stored as deltas, assuming
+		/// delta reuse is already enabled.
+		/// </returns>
+		public virtual bool IsReuseDeltaCommits()
+		{
+			return reuseDeltaCommits;
+		}
+
+		/// <summary>Set the writer to reuse existing delta versions of commits.</summary>
+		/// <remarks>Set the writer to reuse existing delta versions of commits.</remarks>
+		/// <param name="reuse">
+		/// if true, the writer will reuse any commits stored as deltas.
+		/// By default the writer does not reuse delta commits.
+		/// </param>
+		public virtual void SetReuseDeltaCommits(bool reuse)
+		{
+			reuseDeltaCommits = reuse;
+		}
+
+		/// <summary>Check if the writer validates objects before copying them.</summary>
+		/// <remarks>Check if the writer validates objects before copying them.</remarks>
+		/// <returns>
+		/// true if validation is enabled; false if the reader will handle
+		/// object validation as a side-effect of it consuming the output.
+		/// </returns>
+		public virtual bool IsReuseValidatingObjects()
+		{
+			return reuseValidate;
+		}
+
+		/// <summary>Enable (or disable) object validation during packing.</summary>
+		/// <remarks>Enable (or disable) object validation during packing.</remarks>
+		/// <param name="validate">
+		/// if true the pack writer will validate an object before it is
+		/// put into the output. This additional validation work may be
+		/// necessary to avoid propagating corruption from one local pack
+		/// file to another local pack file.
+		/// </param>
+		public virtual void SetReuseValidatingObjects(bool validate)
+		{
+			reuseValidate = validate;
 		}
 
 		/// <returns>true if this writer is producing a thin pack.</returns>
@@ -673,7 +727,7 @@ namespace NGit.Storage.Pack
 				stats.reusedObjects += pack_1.GetObjectCount();
 				stats.reusedDeltas += deltaCnt;
 				stats.totalDeltas += deltaCnt;
-				reuseSupport.CopyPackAsIs(@out, pack_1);
+				reuseSupport.CopyPackAsIs(@out, pack_1, reuseValidate);
 			}
 			WriteChecksum(@out);
 			@out.Flush();
@@ -832,7 +886,7 @@ namespace NGit.Storage.Pack
 			// applies "Linus' Law" which states that newer files tend to be the
 			// bigger ones, because source files grow and hardly ever shrink.
 			//
-			Arrays.Sort(list, 0, cnt, new _IComparer_744());
+			Arrays.Sort(list, 0, cnt, new _IComparer_793());
 			// Above we stored the objects we cannot delta onto the end.
 			// Remove them from the list so we don't waste time on them.
 			while (0 < cnt && list[cnt - 1].IsDoNotDelta())
@@ -862,9 +916,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _IComparer_744 : IComparer<ObjectToPack>
+		private sealed class _IComparer_793 : IComparer<ObjectToPack>
 		{
-			public _IComparer_744()
+			public _IComparer_793()
 			{
 			}
 
@@ -904,14 +958,14 @@ namespace NGit.Storage.Pack
 		{
 			foreach (ObjectToPack otp in objectsLists[type])
 			{
+				if (otp.IsReuseAsIs())
+				{
+					// already reusing a representation
+					continue;
+				}
 				if (otp.IsDoNotDelta())
 				{
 					// delta is disabled for this path
-					continue;
-				}
-				if (otp.IsDeltaRepresentation())
-				{
-					// already reusing a delta
 					continue;
 				}
 				otp.SetWeight(0);
@@ -1035,7 +1089,7 @@ namespace NGit.Storage.Pack
 					//
 					foreach (DeltaTask task in myTasks)
 					{
-						executor.Execute(new _Runnable_894(task, errors));
+						executor.Execute(new _Runnable_943(task, errors));
 					}
 					try
 					{
@@ -1074,9 +1128,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _Runnable_894 : Runnable
+		private sealed class _Runnable_943 : Runnable
 		{
-			public _Runnable_894(DeltaTask task, IList<Exception> errors)
+			public _Runnable_943(DeltaTask task, IList<Exception> errors)
 			{
 				this.task = task;
 				this.errors = errors;
@@ -1136,21 +1190,24 @@ namespace NGit.Storage.Pack
 		/// <exception cref="System.IO.IOException"></exception>
 		private void WriteObjects(PackOutputStream @out)
 		{
+			WriteObjects(@out, objectsLists[Constants.OBJ_COMMIT]);
+			WriteObjects(@out, objectsLists[Constants.OBJ_TAG]);
+			WriteObjects(@out, objectsLists[Constants.OBJ_TREE]);
+			WriteObjects(@out, objectsLists[Constants.OBJ_BLOB]);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void WriteObjects(PackOutputStream @out, IList<ObjectToPack> list)
+		{
 			if (reuseSupport != null)
 			{
-				foreach (IList<ObjectToPack> list in objectsLists)
-				{
-					reuseSupport.WriteObjects(@out, list);
-				}
+				reuseSupport.WriteObjects(@out, list);
 			}
 			else
 			{
-				foreach (IList<ObjectToPack> list in objectsLists)
+				foreach (ObjectToPack otp in list)
 				{
-					foreach (ObjectToPack otp in list)
-					{
-						@out.WriteObject(otp);
-					}
+					@out.WriteObject(otp);
 				}
 			}
 		}
@@ -1174,7 +1231,7 @@ namespace NGit.Storage.Pack
 			{
 				try
 				{
-					reuseSupport.CopyObjectAsIs(@out, otp);
+					reuseSupport.CopyObjectAsIs(@out, otp, reuseValidate);
 					@out.EndObject();
 					otp.SetCRC(@out.GetCRC32());
 					stats.reusedObjects++;
@@ -1797,7 +1854,8 @@ namespace NGit.Storage.Pack
 				// next would be bigger
 				nWeight = next.GetWeight();
 			}
-			if (nFmt == StoredObjectRepresentation.PACK_DELTA && reuseDeltas)
+			if (nFmt == StoredObjectRepresentation.PACK_DELTA && reuseDeltas && ReuseDeltaFor
+				(otp))
 			{
 				ObjectId baseId = next.GetDeltaBase();
 				ObjectToPack ptr = objectsMap.Get(baseId);
@@ -1837,6 +1895,38 @@ namespace NGit.Storage.Pack
 				}
 			}
 			otp.Select(next);
+		}
+
+		private bool ReuseDeltaFor(ObjectToPack otp)
+		{
+			switch (otp.GetType())
+			{
+				case Constants.OBJ_COMMIT:
+				{
+					return reuseDeltaCommits;
+				}
+
+				case Constants.OBJ_TREE:
+				{
+					return true;
+				}
+
+				case Constants.OBJ_BLOB:
+				{
+					return true;
+				}
+
+				case Constants.OBJ_TAG:
+				{
+					return false;
+				}
+
+				default:
+				{
+					return true;
+					break;
+				}
+			}
 		}
 
 		/// <summary>Summary of how PackWriter created the pack.</summary>

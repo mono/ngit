@@ -209,6 +209,7 @@ namespace NGit.Transport
 				}
 				packWriter.SetDeltaBaseAsOffset(true);
 				packWriter.SetThin(exc.Count > 0);
+				packWriter.SetReuseValidatingObjects(false);
 				if (exc.Count == 0)
 				{
 					packWriter.SetTagTargets(tagTargets);

@@ -290,6 +290,7 @@ namespace NGit.Transport
 				}
 				writer.SetUseCachedPacks(true);
 				writer.SetThin(thinPack);
+				writer.SetReuseValidatingObjects(false);
 				writer.SetDeltaBaseAsOffset(capableOfsDelta);
 				writer.PreparePack(monitor, newObjects, remoteObjects);
 				writer.WritePack(monitor, monitor, @out);

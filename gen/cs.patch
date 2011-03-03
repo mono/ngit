@@ -1867,10 +1867,10 @@ index 32214e1..236c10e 100644
  			{
  				this.type = type;
 diff --git a/NGit/NGit.Storage.File/WindowCursor.cs b/NGit/NGit.Storage.File/WindowCursor.cs
-index 7b5542f..5587bf3 100644
+index 690b968..ba23072 100644
 --- a/NGit/NGit.Storage.File/WindowCursor.cs
 +++ b/NGit/NGit.Storage.File/WindowCursor.cs
-@@ -83,7 +83,7 @@ namespace NGit.Storage.File
+@@ -84,7 +84,7 @@ namespace NGit.Storage.File
  			{
  				return Sharpen.Collections.Singleton(id.ToObjectId());
  			}
@@ -1879,7 +1879,7 @@ index 7b5542f..5587bf3 100644
  			db.Resolve(matches, id);
  			return matches;
  		}
-@@ -132,7 +132,7 @@ namespace NGit.Storage.File
+@@ -133,7 +133,7 @@ namespace NGit.Storage.File
  			return sz;
  		}
  
@@ -1888,7 +1888,7 @@ index 7b5542f..5587bf3 100644
  		{
  			return new LocalObjectToPack(obj);
  		}
-@@ -270,7 +270,7 @@ namespace NGit.Storage.File
+@@ -304,7 +304,7 @@ namespace NGit.Storage.File
  					}
  					else
  					{
@@ -1947,7 +1947,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 548ce86..df59c33 100644
+index 15784a9..6fa8da4 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1968,7 +1968,7 @@ index 548ce86..df59c33 100644
  
  		private ICSharpCode.SharpZipLib.Zip.Compression.Deflater myDeflater;
  
-@@ -488,7 +488,7 @@ namespace NGit.Storage.Pack
+@@ -542,7 +542,7 @@ namespace NGit.Storage.Pack
  		/// <param name="id">the object to test the existence of.</param>
  		/// <returns>true if the object will appear in the output pack file.</returns>
  		/// <exception cref="System.IO.IOException">a cached pack cannot be examined.</exception>
@@ -1977,7 +1977,7 @@ index 548ce86..df59c33 100644
  		{
  			ObjectToPack obj = objectsMap.Get(id);
  			if (obj != null && !obj.IsEdge())
-@@ -1361,12 +1361,10 @@ namespace NGit.Storage.Pack
+@@ -1418,12 +1418,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
@@ -1993,7 +1993,7 @@ index 548ce86..df59c33 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1385,7 +1383,7 @@ namespace NGit.Storage.Pack
+@@ -1442,7 +1440,7 @@ namespace NGit.Storage.Pack
  				walker.Sort(RevSort.COMMIT_TIME_DESC);
  				if (useCachedPacks && reuseSupport != null)
  				{
@@ -2716,7 +2716,7 @@ index 49fce84..551432d 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index a1577ac..d2b6b9e 100644
+index 8ba7cab..a00cf0e 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
 @@ -161,7 +161,7 @@ namespace NGit.Transport
@@ -2737,7 +2737,7 @@ index a1577ac..d2b6b9e 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
-@@ -874,8 +874,9 @@ namespace NGit.Transport
+@@ -876,8 +876,9 @@ namespace NGit.Transport
  				}
  				if (options.Contains(OPTION_INCLUDE_TAG))
  				{

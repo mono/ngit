@@ -832,8 +832,10 @@ namespace NGit.Transport
 			try
 			{
 				pw.SetUseCachedPacks(true);
+				pw.SetReuseDeltaCommits(true);
 				pw.SetDeltaBaseAsOffset(options.Contains(OPTION_OFS_DELTA));
 				pw.SetThin(options.Contains(OPTION_THIN_PACK));
+				pw.SetReuseValidatingObjects(false);
 				if (commonBase.IsEmpty())
 				{
 					ICollection<ObjectId> tagTargets = new HashSet<ObjectId>();
