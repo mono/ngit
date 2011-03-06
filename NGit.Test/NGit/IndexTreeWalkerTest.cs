@@ -90,6 +90,7 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestTreeOnlyOneLevel()
 		{
+			treeOnlyEntriesVisited.Clear ();
 			GitIndex index = new GitIndex(db);
 			Tree tree = new Tree(db);
 			tree.AddFile("foo");
@@ -104,6 +105,7 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestIndexOnlyOneLevel()
 		{
+			indexOnlyEntriesVisited.Clear ();
 			GitIndex index = new GitIndex(db);
 			Tree tree = new Tree(db);
 			index.Add(trash, WriteTrashFile("foo", "foo"));
@@ -135,6 +137,7 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestIndexOnlySubDirs()
 		{
+			indexOnlyEntriesVisited.Clear ();
 			GitIndex index = new GitIndex(db);
 			Tree tree = new Tree(db);
 			index.Add(trash, WriteTrashFile("foo/bar/baz", "foobar"));

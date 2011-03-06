@@ -777,6 +777,34 @@ index d0f761a..8537253 100644
  			NUnit.Framework.Assert.AreSame(refA_two, map.Get("A"));
  			NUnit.Framework.Assert.AreEqual(1, map.Count);
  		}
+diff --git a/NGit.Test/NGit/IndexTreeWalkerTest.cs b/NGit.Test/NGit/IndexTreeWalkerTest.cs
+index 12e671a..be2ae56 100644
+--- a/NGit.Test/NGit/IndexTreeWalkerTest.cs
++++ b/NGit.Test/NGit/IndexTreeWalkerTest.cs
+@@ -90,6 +90,7 @@ namespace NGit
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestTreeOnlyOneLevel()
+ 		{
++			treeOnlyEntriesVisited.Clear ();
+ 			GitIndex index = new GitIndex(db);
+ 			Tree tree = new Tree(db);
+ 			tree.AddFile("foo");
+@@ -104,6 +105,7 @@ namespace NGit
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestIndexOnlyOneLevel()
+ 		{
++			indexOnlyEntriesVisited.Clear ();
+ 			GitIndex index = new GitIndex(db);
+ 			Tree tree = new Tree(db);
+ 			index.Add(trash, WriteTrashFile("foo", "foo"));
+@@ -135,6 +137,7 @@ namespace NGit
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestIndexOnlySubDirs()
+ 		{
++			indexOnlyEntriesVisited.Clear ();
+ 			GitIndex index = new GitIndex(db);
+ 			Tree tree = new Tree(db);
+ 			index.Add(trash, WriteTrashFile("foo/bar/baz", "foobar"));
 diff --git a/NGit.Test/NGit/MergeHeadMsgTest.cs b/NGit.Test/NGit/MergeHeadMsgTest.cs
 index ff18e73..62d7d9f 100644
 --- a/NGit.Test/NGit/MergeHeadMsgTest.cs
