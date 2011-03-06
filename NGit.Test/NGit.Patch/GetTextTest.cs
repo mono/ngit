@@ -108,7 +108,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.IsTrue(p.GetErrors().IsEmpty());
 			NUnit.Framework.Assert.AreEqual(1, p.GetFiles().Count);
 			CombinedFileHeader fh = (CombinedFileHeader)p.GetFiles()[0];
-			NUnit.Framework.Assert.AreEqual(1, ((IList<CombinedHunkHeader>)fh.GetHunks()).Count
+			NUnit.Framework.Assert.AreEqual(1, fh.GetHunks().Count
 				);
 			// Read the original file as ISO-8859-1 and fix up the one place
 			// where we changed the character encoding. That makes the exp

@@ -168,7 +168,7 @@ namespace NGit.Patch
 			NUnit.Framework.Assert.AreSame(FileMode.MISSING, cfh.GetNewMode());
 			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.DELETE, cfh.GetChangeType());
 			NUnit.Framework.Assert.AreEqual(FileHeader.PatchType.UNIFIED, cfh.GetPatchType());
-			NUnit.Framework.Assert.IsTrue(((IList<CombinedHunkHeader>)cfh.GetHunks()).IsEmpty
+			NUnit.Framework.Assert.IsTrue((cfh.GetHunks()).IsEmpty
 				());
 		}
 
