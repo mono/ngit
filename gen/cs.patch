@@ -1714,7 +1714,7 @@ index 9c927c4..393dfb3 100644
  			public _AsyncRevObjectQueue_914(RevWalk _enclosing, Sharpen.Iterator<RevObject> objItr
  				, AsyncObjectLoaderQueue<T> lItr)
 diff --git a/NGit/NGit.Storage.File/FileSnapshot.cs b/NGit/NGit.Storage.File/FileSnapshot.cs
-index cf3d447..e2378c8 100644
+index 31c61bf..abdb052 100644
 --- a/NGit/NGit.Storage.File/FileSnapshot.cs
 +++ b/NGit/NGit.Storage.File/FileSnapshot.cs
 @@ -105,7 +105,7 @@ namespace NGit.Storage.File
@@ -3496,7 +3496,7 @@ index 8913cf3..3099dbf 100644
  			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
-index b97cc9b..f6918e6 100644
+index 73bd3a3..0a694ae 100644
 --- a/NGit/NGit/Repository.cs
 +++ b/NGit/NGit/Repository.cs
 @@ -296,7 +296,6 @@ namespace NGit
@@ -3515,7 +3515,7 @@ index b97cc9b..f6918e6 100644
  		[System.ObsoleteAttribute(@"Use NGit.Treewalk.TreeWalk.AddTree(AnyObjectId) .")]
  		public virtual Tree MapTree(ObjectId id)
  		{
-@@ -978,7 +976,7 @@ namespace NGit
+@@ -975,7 +973,7 @@ namespace NGit
  		/// <returns>unmodifiable collection of other known objects.</returns>
  		public virtual ICollection<ObjectId> GetAdditionalHaves()
  		{
@@ -3524,7 +3524,7 @@ index b97cc9b..f6918e6 100644
  		}
  
  		/// <summary>Get a ref by name.</summary>
-@@ -1063,9 +1061,9 @@ namespace NGit
+@@ -1060,9 +1058,9 @@ namespace NGit
  			IDictionary<string, Ref> allRefs = GetAllRefs();
  			IDictionary<AnyObjectId, ICollection<Ref>> ret = new Dictionary<AnyObjectId, ICollection
  				<Ref>>(allRefs.Count);

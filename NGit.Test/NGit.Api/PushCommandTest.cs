@@ -89,5 +89,43 @@ namespace NGit.Api
 				));
 			NUnit.Framework.Assert.AreEqual(tag.Id, db2.Resolve(tag.Id.GetName()));
 		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestTrackingUpdate()
+		{
+			Repository db2 = CreateBareRepository();
+			string remote = "origin";
+			string branch = "refs/heads/master";
+			string trackingBranch = "refs/remotes/" + remote + "/master";
+			Git git = new Git(db);
+			RevCommit commit1 = git.Commit().SetMessage("Initial commit").Call();
+			RefUpdate branchRefUpdate = db.UpdateRef(branch);
+			branchRefUpdate.SetNewObjectId(commit1.Id);
+			branchRefUpdate.Update();
+			RefUpdate trackingBranchRefUpdate = db.UpdateRef(trackingBranch);
+			trackingBranchRefUpdate.SetNewObjectId(commit1.Id);
+			trackingBranchRefUpdate.Update();
+			StoredConfig config = ((FileBasedConfig)db.GetConfig());
+			RemoteConfig remoteConfig = new RemoteConfig(config, remote);
+			URIish uri = new URIish(db2.Directory.ToURI().ToURL());
+			remoteConfig.AddURI(uri);
+			remoteConfig.AddFetchRefSpec(new RefSpec("+refs/heads/*:refs/remotes/" + remote +
+				 "/*"));
+			remoteConfig.Update(config);
+			config.Save();
+			RevCommit commit2 = git.Commit().SetMessage("Commit to push").Call();
+			RefSpec spec = new RefSpec(branch + ":" + branch);
+			Iterable<PushResult> resultIterable = git.Push().SetRemote(remote).SetRefSpecs(spec
+				).Call();
+			PushResult result = resultIterable.Iterator().Next();
+			TrackingRefUpdate trackingRefUpdate = result.GetTrackingRefUpdate(trackingBranch);
+			NUnit.Framework.Assert.IsNotNull(trackingRefUpdate);
+			NUnit.Framework.Assert.AreEqual(trackingBranch, trackingRefUpdate.GetLocalName());
+			NUnit.Framework.Assert.AreEqual(branch, trackingRefUpdate.GetRemoteName());
+			NUnit.Framework.Assert.AreEqual(commit2.Id, trackingRefUpdate.GetNewObjectId());
+			NUnit.Framework.Assert.AreEqual(commit2.Id, db.Resolve(trackingBranch));
+			NUnit.Framework.Assert.AreEqual(commit2.Id, db2.Resolve(branch));
+		}
 	}
 }

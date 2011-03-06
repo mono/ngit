@@ -255,6 +255,23 @@ namespace NGit
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestParseNonGitDescribe()
+		{
+			ObjectId id = Id("49322bb17d3acc9146f98c97d078513228bbf3c0");
+			RefUpdate ru = db.UpdateRef("refs/heads/foo-g032c");
+			ru.SetNewObjectId(id);
+			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NEW, ru.Update());
+			NUnit.Framework.Assert.AreEqual(id, db.Resolve("refs/heads/foo-g032c"));
+			NUnit.Framework.Assert.AreEqual(id, db.Resolve("foo-g032c"));
+			ru = db.UpdateRef("refs/heads/foo-g032c-dev");
+			ru.SetNewObjectId(id);
+			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NEW, ru.Update());
+			NUnit.Framework.Assert.AreEqual(id, db.Resolve("refs/heads/foo-g032c-dev"));
+			NUnit.Framework.Assert.AreEqual(id, db.Resolve("foo-g032c-dev"));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestParseLookupPath()
 		{
 			ObjectId b2_txt = Id("10da5895682013006950e7da534b705252b03be6");

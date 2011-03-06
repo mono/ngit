@@ -157,8 +157,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestUpdateDelete()
 		{
-			RemoteRefUpdate rru = new RemoteRefUpdate(db, null, "refs/heads/master", false, null
-				, null);
+			RemoteRefUpdate rru = new RemoteRefUpdate(db, (string)null, "refs/heads/master", 
+				false, null, null);
 			Ref @ref = new ObjectIdRef.Unpeeled(RefStorage.LOOSE, "refs/heads/master", ObjectId
 				.FromString("2c349335b7f797072cf729c4f3bb0914ecb6dec9"));
 			TestOneUpdateStatus(rru, @ref, RemoteRefUpdate.Status.OK, true);
@@ -176,8 +176,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestUpdateDeleteNonExisting()
 		{
-			RemoteRefUpdate rru = new RemoteRefUpdate(db, null, "refs/heads/master", false, null
-				, null);
+			RemoteRefUpdate rru = new RemoteRefUpdate(db, (string)null, "refs/heads/master", 
+				false, null, null);
 			TestOneUpdateStatus(rru, null, RemoteRefUpdate.Status.NON_EXISTING, null);
 		}
 
@@ -279,11 +279,11 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestUpdateMixedCases()
 		{
-			RemoteRefUpdate rruOk = new RemoteRefUpdate(db, null, "refs/heads/master", false, 
-				null, null);
+			RemoteRefUpdate rruOk = new RemoteRefUpdate(db, (string)null, "refs/heads/master"
+				, false, null, null);
 			Ref refToChange = new ObjectIdRef.Unpeeled(RefStorage.LOOSE, "refs/heads/master", 
 				ObjectId.FromString("2c349335b7f797072cf729c4f3bb0914ecb6dec9"));
-			RemoteRefUpdate rruReject = new RemoteRefUpdate(db, null, "refs/heads/nonexisting"
+			RemoteRefUpdate rruReject = new RemoteRefUpdate(db, (string)null, "refs/heads/nonexisting"
 				, false, null, null);
 			refUpdates.AddItem(rruOk);
 			refUpdates.AddItem(rruReject);

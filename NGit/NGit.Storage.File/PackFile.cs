@@ -539,6 +539,18 @@ namespace NGit.Storage.File
 					// Tiny optimization: Lots of objects are very small deltas or
 					// deflated commits that are likely to fit in the copy buffer.
 					//
+					if (!validate)
+					{
+						long pos = dataOffset;
+						long cnt = dataLength;
+						while (cnt > 0)
+						{
+							int n = (int)Math.Min(cnt, buf.Length);
+							ReadFully(pos, buf, 0, n, curs);
+							pos += n;
+							cnt -= n;
+						}
+					}
 					@out.WriteHeader(src, inflatedLength);
 					@out.Write(buf, 0, (int)dataLength);
 				}
