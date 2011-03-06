@@ -109,13 +109,19 @@ namespace Sharpen
 		
 		public override long Position {
 			get {
-				return position;
+				if (ist != null && ist.CanSeek ())
+					return ist.Position;
+				else
+					return position;
 			}
 			set {
 				if (value == position)
 					return;
 				else if (value == markedPosition)
 					ist.Reset ();
+				else if (ist != null && ist.CanSeek ()) {
+					ist.Position = value;
+				}
 				else
 					throw new NotSupportedException ();
 			}

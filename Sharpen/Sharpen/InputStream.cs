@@ -123,6 +123,29 @@ namespace Sharpen
 			}
 			return cnt - n;
 		}
+		
+		internal bool CanSeek ()
+		{
+			if (Wrapped != null)
+				return Wrapped.CanSeek;
+			else
+				return false;
+		}
+		
+		internal long Position {
+			get {
+				if (Wrapped != null)
+					return Wrapped.Position;
+				else
+					throw new NotSupportedException ();
+			}
+			set {
+				if (Wrapped != null)
+					Wrapped.Position = value;
+				else
+					throw new NotSupportedException ();
+			}
+		}
 
 		static internal InputStream Wrap (Stream s)
 		{
