@@ -47,7 +47,6 @@ using Sharpen;
 
 namespace NGit.Diff
 {
-	[NUnit.Framework.TestFixture]
 	public abstract class AbstractDiffTestCase
 	{
 		[NUnit.Framework.Test]

@@ -99,6 +99,7 @@ namespace NGit.Storage.File
 			}
 			WindowCache.Reconfigure(new WindowCacheConfig());
 			base.TearDown();
+			Release();
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -355,7 +356,6 @@ namespace NGit.Storage.File
 
 		private ObjectInserter inserter;
 
-		[NUnit.Framework.TearDown]
 		public virtual void Release()
 		{
 			if (inserter != null)

@@ -46,7 +46,6 @@ using Sharpen;
 
 namespace NGit.Revwalk
 {
-	[NUnit.Framework.TestFixture]
 	public abstract class RevQueueTestCase<T> : RevWalkTestCase where T:AbstractRevQueue
 	{
 		protected internal T q;

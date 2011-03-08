@@ -46,6 +46,7 @@ using Sharpen;
 
 namespace NGit.Diff
 {
+	[NUnit.Framework.TestFixture]
 	public class MyersDiffTest : AbstractDiffTestCase
 	{
 		protected internal override DiffAlgorithm Algorithm()

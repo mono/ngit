@@ -65,10 +65,10 @@ index 6444bbb..44cbd35 100644
  			NUnit.Framework.Assert.AreEqual(5, r.Count);
  		}
 diff --git a/NGit.Test/NGit.Diff/MyersDiffTest.cs b/NGit.Test/NGit.Diff/MyersDiffTest.cs
-index 9815204..53d3e54 100644
+index 2c66cba..fbcc6d3 100644
 --- a/NGit.Test/NGit.Diff/MyersDiffTest.cs
 +++ b/NGit.Test/NGit.Diff/MyersDiffTest.cs
-@@ -50,7 +50,7 @@ namespace NGit.Diff
+@@ -51,7 +51,7 @@ namespace NGit.Diff
  	{
  		protected internal override DiffAlgorithm Algorithm()
  		{
@@ -454,45 +454,6 @@ index 2fca3a6..8a86467 100644
  				());
  		}
  
-diff --git a/NGit.Test/NGit.Revwalk/DateRevQueueTest.cs b/NGit.Test/NGit.Revwalk/DateRevQueueTest.cs
-index 2f50a5f..5f8a330 100644
---- a/NGit.Test/NGit.Revwalk/DateRevQueueTest.cs
-+++ b/NGit.Test/NGit.Revwalk/DateRevQueueTest.cs
-@@ -47,7 +47,7 @@ using Sharpen;
- namespace NGit.Revwalk
- {
- 	[NUnit.Framework.TestFixture]
--	public class DateRevQueueTest : RevQueueTestCase<DateRevQueue>
-+	internal class DateRevQueueTest : RevQueueTestCase<DateRevQueue>
- 	{
- 		protected internal override DateRevQueue Create()
- 		{
-diff --git a/NGit.Test/NGit.Revwalk/FIFORevQueueTest.cs b/NGit.Test/NGit.Revwalk/FIFORevQueueTest.cs
-index c1dfa00..2a83bae 100644
---- a/NGit.Test/NGit.Revwalk/FIFORevQueueTest.cs
-+++ b/NGit.Test/NGit.Revwalk/FIFORevQueueTest.cs
-@@ -47,7 +47,7 @@ using Sharpen;
- namespace NGit.Revwalk
- {
- 	[NUnit.Framework.TestFixture]
--	public class FIFORevQueueTest : RevQueueTestCase<FIFORevQueue>
-+	internal class FIFORevQueueTest : RevQueueTestCase<FIFORevQueue>
- 	{
- 		protected internal override FIFORevQueue Create()
- 		{
-diff --git a/NGit.Test/NGit.Revwalk/LIFORevQueueTest.cs b/NGit.Test/NGit.Revwalk/LIFORevQueueTest.cs
-index 8b54acd..b957485 100644
---- a/NGit.Test/NGit.Revwalk/LIFORevQueueTest.cs
-+++ b/NGit.Test/NGit.Revwalk/LIFORevQueueTest.cs
-@@ -47,7 +47,7 @@ using Sharpen;
- namespace NGit.Revwalk
- {
- 	[NUnit.Framework.TestFixture]
--	public class LIFORevQueueTest : RevQueueTestCase<LIFORevQueue>
-+	internal class LIFORevQueueTest : RevQueueTestCase<LIFORevQueue>
- 	{
- 		protected internal override LIFORevQueue Create()
- 		{
 diff --git a/NGit.Test/NGit.Revwalk/RevCommitParseTest.cs b/NGit.Test/NGit.Revwalk/RevCommitParseTest.cs
 index 37502ab..da7b4ca 100644
 --- a/NGit.Test/NGit.Revwalk/RevCommitParseTest.cs
@@ -519,6 +480,26 @@ index 2ec38fa..e78f280 100644
  		{
  			RevCommit a = Commit();
  			NUnit.Framework.Assert.AreSame(a, a.Id);
+diff --git a/NGit.Test/NGit.Storage.File/PackFileTest.cs b/NGit.Test/NGit.Storage.File/PackFileTest.cs
+index 77fdb86..3f2856b 100644
+--- a/NGit.Test/NGit.Storage.File/PackFileTest.cs
++++ b/NGit.Test/NGit.Storage.File/PackFileTest.cs
+@@ -99,6 +99,7 @@ namespace NGit.Storage.File
+ 			}
+ 			WindowCache.Reconfigure(new WindowCacheConfig());
+ 			base.TearDown();
++			Release();
+ 		}
+ 
+ 		/// <exception cref="System.Exception"></exception>
+@@ -355,7 +356,6 @@ namespace NGit.Storage.File
+ 
+ 		private ObjectInserter inserter;
+ 
+-		[NUnit.Framework.TearDown]
+ 		public virtual void Release()
+ 		{
+ 			if (inserter != null)
 diff --git a/NGit.Test/NGit.Storage.File/RefUpdateTest.cs b/NGit.Test/NGit.Storage.File/RefUpdateTest.cs
 index ce77655..519e23b 100644
 --- a/NGit.Test/NGit.Storage.File/RefUpdateTest.cs
@@ -1651,45 +1632,6 @@ index 4d31129..d43f049 100644
  
  		/// <summary>Create an empty revision queue.</summary>
  		/// <remarks>Create an empty revision queue.</remarks>
-diff --git a/NGit/NGit.Revwalk/DateRevQueue.cs b/NGit/NGit.Revwalk/DateRevQueue.cs
-index f762b55..8dc1b62 100644
---- a/NGit/NGit.Revwalk/DateRevQueue.cs
-+++ b/NGit/NGit.Revwalk/DateRevQueue.cs
-@@ -49,7 +49,7 @@ namespace NGit.Revwalk
- {
- 	/// <summary>A queue of commits sorted by commit time order.</summary>
- 	/// <remarks>A queue of commits sorted by commit time order.</remarks>
--	public class DateRevQueue : AbstractRevQueue
-+	internal class DateRevQueue : AbstractRevQueue
- 	{
- 		private DateRevQueue.Entry head;
- 
-diff --git a/NGit/NGit.Revwalk/FIFORevQueue.cs b/NGit/NGit.Revwalk/FIFORevQueue.cs
-index ae87cfa..cc70e57 100644
---- a/NGit/NGit.Revwalk/FIFORevQueue.cs
-+++ b/NGit/NGit.Revwalk/FIFORevQueue.cs
-@@ -49,7 +49,7 @@ namespace NGit.Revwalk
- {
- 	/// <summary>A queue of commits in FIFO order.</summary>
- 	/// <remarks>A queue of commits in FIFO order.</remarks>
--	public class FIFORevQueue : BlockRevQueue
-+	internal class FIFORevQueue : BlockRevQueue
- 	{
- 		private BlockRevQueue.Block head;
- 
-diff --git a/NGit/NGit.Revwalk/LIFORevQueue.cs b/NGit/NGit.Revwalk/LIFORevQueue.cs
-index 18610d3..2ed6484 100644
---- a/NGit/NGit.Revwalk/LIFORevQueue.cs
-+++ b/NGit/NGit.Revwalk/LIFORevQueue.cs
-@@ -49,7 +49,7 @@ namespace NGit.Revwalk
- {
- 	/// <summary>A queue of commits in LIFO order.</summary>
- 	/// <remarks>A queue of commits in LIFO order.</remarks>
--	public class LIFORevQueue : BlockRevQueue
-+	internal class LIFORevQueue : BlockRevQueue
- 	{
- 		private BlockRevQueue.Block head;
- 
 diff --git a/NGit/NGit.Revwalk/RevCommit.cs b/NGit/NGit.Revwalk/RevCommit.cs
 index 98f34bc..2b8f0c5 100644
 --- a/NGit/NGit.Revwalk/RevCommit.cs

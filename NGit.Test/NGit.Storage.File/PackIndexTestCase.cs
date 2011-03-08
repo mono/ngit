@@ -48,7 +48,6 @@ using Sharpen;
 
 namespace NGit.Storage.File
 {
-	[NUnit.Framework.TestFixture]
 	public abstract class PackIndexTestCase : RepositoryTestCase
 	{
 		internal PackIndex smallIdx;

@@ -50,7 +50,6 @@ using Sharpen;
 
 namespace NGit
 {
-	[NUnit.Framework.TestFixture]
 	public abstract class ReadTreeTest : RepositoryTestCase
 	{
 		protected internal Tree theHead;
