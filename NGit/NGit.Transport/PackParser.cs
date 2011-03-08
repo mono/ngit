@@ -163,7 +163,7 @@ namespace NGit.Transport
 
 		/// <summary>Blobs whose contents need to be double-checked after indexing.</summary>
 		/// <remarks>Blobs whose contents need to be double-checked after indexing.</remarks>
-		private IList<PackedObjectInfo> deferredCheckBlobs;
+		private BlockList<PackedObjectInfo> deferredCheckBlobs;
 
 		private MessageDigest packDigest;
 
@@ -488,7 +488,7 @@ namespace NGit.Transport
 				entries = new PackedObjectInfo[(int)objectCount];
 				baseById = new ObjectIdSubclassMap<PackParser.DeltaChain>();
 				baseByPos = new LongMap<PackParser.UnresolvedDelta>();
-				deferredCheckBlobs = new AList<PackedObjectInfo>();
+				deferredCheckBlobs = new BlockList<PackedObjectInfo>();
 				receiving.BeginTask(JGitText.Get().receivingObjects, (int)objectCount);
 				try
 				{

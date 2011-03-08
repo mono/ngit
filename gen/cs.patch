@@ -656,6 +656,84 @@ index 198f581..8cde1df 100644
  			}
  		}
  
+diff --git a/NGit.Test/NGit.Util/BlockListTest.cs b/NGit.Test/NGit.Util/BlockListTest.cs
+index 9226f38..05ab28b 100644
+--- a/NGit.Test/NGit.Util/BlockListTest.cs
++++ b/NGit.Test/NGit.Util/BlockListTest.cs
+@@ -76,9 +76,10 @@ namespace NGit.Util
+ 		public virtual void TestGet()
+ 		{
+ 			BlockList<string> list = new BlockList<string>(4);
++			string b;
+ 			try
+ 			{
+-				list[-1];
++				b = list[-1];
+ 			}
+ 			catch (IndexOutOfRangeException badIndex)
+ 			{
+@@ -86,7 +87,7 @@ namespace NGit.Util
+ 			}
+ 			try
+ 			{
+-				list[0];
++				b = list[0];
+ 			}
+ 			catch (IndexOutOfRangeException badIndex)
+ 			{
+@@ -94,7 +95,7 @@ namespace NGit.Util
+ 			}
+ 			try
+ 			{
+-				list[4];
++				b = list[4];
+ 			}
+ 			catch (IndexOutOfRangeException badIndex)
+ 			{
+@@ -111,7 +112,7 @@ namespace NGit.Util
+ 			NUnit.Framework.Assert.AreSame(foobarStr, list[2]);
+ 			try
+ 			{
+-				list[3];
++				b = list[3];
+ 			}
+ 			catch (IndexOutOfRangeException badIndex)
+ 			{
+@@ -174,7 +175,7 @@ namespace NGit.Util
+ 		public virtual void TestAddToEnd()
+ 		{
+ 			BlockList<int> list = new BlockList<int>(4);
+-			int cnt = BlockList.BLOCK_SIZE * 3;
++			int cnt = BlockList<int>.BLOCK_SIZE * 3;
+ 			for (int i = 0; i < cnt; i++)
+ 			{
+ 				list.AddItem(Sharpen.Extensions.ValueOf(42 + i));
+@@ -269,13 +270,13 @@ namespace NGit.Util
+ 		public virtual void TestAddRemoveAdd()
+ 		{
+ 			BlockList<int> list = new BlockList<int>();
+-			for (int i = 0; i < BlockList.BLOCK_SIZE + 1; i++)
++			for (int i = 0; i < BlockList<int>.BLOCK_SIZE + 1; i++)
+ 			{
+ 				list.AddItem(Sharpen.Extensions.ValueOf(i));
+ 			}
+-			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.ValueOf(BlockList.BLOCK_SIZE), 
++			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.ValueOf(BlockList<int>.BLOCK_SIZE), 
+ 				list.Remove(list.Count - 1));
+-			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.ValueOf(BlockList.BLOCK_SIZE -
++			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.ValueOf(BlockList<int>.BLOCK_SIZE -
+ 				 1), list.Remove(list.Count - 1));
+ 			NUnit.Framework.Assert.IsTrue(list.AddItem(Sharpen.Extensions.ValueOf(1)));
+ 			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.ValueOf(1), list[list.Count - 
+@@ -286,7 +287,7 @@ namespace NGit.Util
+ 		public virtual void TestFastIterator()
+ 		{
+ 			BlockList<int> list = new BlockList<int>(4);
+-			int cnt = BlockList.BLOCK_SIZE * 3;
++			int cnt = BlockList<int>.BLOCK_SIZE * 3;
+ 			for (int i = 0; i < cnt; i++)
+ 			{
+ 				list.AddItem(Sharpen.Extensions.ValueOf(42 + i));
 diff --git a/NGit.Test/NGit.Util/ChangeIdUtilTest.cs b/NGit.Test/NGit.Util/ChangeIdUtilTest.cs
 index e218546..8dd8998 100644
 --- a/NGit.Test/NGit.Util/ChangeIdUtilTest.cs
@@ -758,34 +836,6 @@ index d0f761a..8537253 100644
  			NUnit.Framework.Assert.AreSame(refA_two, map.Get("A"));
  			NUnit.Framework.Assert.AreEqual(1, map.Count);
  		}
-diff --git a/NGit.Test/NGit/IndexTreeWalkerTest.cs b/NGit.Test/NGit/IndexTreeWalkerTest.cs
-index 12e671a..be2ae56 100644
---- a/NGit.Test/NGit/IndexTreeWalkerTest.cs
-+++ b/NGit.Test/NGit/IndexTreeWalkerTest.cs
-@@ -90,6 +90,7 @@ namespace NGit
- 		[NUnit.Framework.Test]
- 		public virtual void TestTreeOnlyOneLevel()
- 		{
-+			treeOnlyEntriesVisited.Clear ();
- 			GitIndex index = new GitIndex(db);
- 			Tree tree = new Tree(db);
- 			tree.AddFile("foo");
-@@ -104,6 +105,7 @@ namespace NGit
- 		[NUnit.Framework.Test]
- 		public virtual void TestIndexOnlyOneLevel()
- 		{
-+			indexOnlyEntriesVisited.Clear ();
- 			GitIndex index = new GitIndex(db);
- 			Tree tree = new Tree(db);
- 			index.Add(trash, WriteTrashFile("foo", "foo"));
-@@ -135,6 +137,7 @@ namespace NGit
- 		[NUnit.Framework.Test]
- 		public virtual void TestIndexOnlySubDirs()
- 		{
-+			indexOnlyEntriesVisited.Clear ();
- 			GitIndex index = new GitIndex(db);
- 			Tree tree = new Tree(db);
- 			index.Add(trash, WriteTrashFile("foo/bar/baz", "foobar"));
 diff --git a/NGit.Test/NGit/MergeHeadMsgTest.cs b/NGit.Test/NGit/MergeHeadMsgTest.cs
 index ff18e73..62d7d9f 100644
 --- a/NGit.Test/NGit/MergeHeadMsgTest.cs
@@ -828,29 +878,6 @@ index 3eeb05c..18cd052 100644
  				}
  				sb.Append("]");
  			}
-diff --git a/NGit.Test/NGit/WorkDirCheckoutTest.cs b/NGit.Test/NGit/WorkDirCheckoutTest.cs
-index 7761040..99d613f 100644
---- a/NGit.Test/NGit/WorkDirCheckoutTest.cs
-+++ b/NGit.Test/NGit/WorkDirCheckoutTest.cs
-@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
- using NGit;
- using Sharpen;
-+using System.Collections.Generic;
- 
- namespace NGit
- {
-@@ -62,8 +63,8 @@ namespace NGit
- 			WriteTrashFile("foo", "troublesome little bugger");
- 			WorkDirCheckout workDirCheckout = new WorkDirCheckout(db, trash, index, index);
- 			workDirCheckout.PrescanOneTree();
--			AList<string> conflictingEntries = workDirCheckout.GetConflicts();
--			AList<string> removedEntries = workDirCheckout.GetRemoved();
-+			IList<string> conflictingEntries = workDirCheckout.GetConflicts();
-+			IList<string> removedEntries = workDirCheckout.GetRemoved();
- 			NUnit.Framework.Assert.AreEqual("bar/baz/qux/foo", conflictingEntries[0]);
- 			NUnit.Framework.Assert.AreEqual("foo", conflictingEntries[1]);
- 			GitIndex index2 = new GitIndex(db);
 diff --git a/NGit/NGit.Api/CreateBranchCommand.cs b/NGit/NGit.Api/CreateBranchCommand.cs
 index c81f7c0..111c265 100644
 --- a/NGit/NGit.Api/CreateBranchCommand.cs
@@ -1948,7 +1975,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 15784a9..6fa8da4 100644
+index b9f9a05..a3d55e4 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1978,7 +2005,7 @@ index 15784a9..6fa8da4 100644
  		{
  			ObjectToPack obj = objectsMap.Get(id);
  			if (obj != null && !obj.IsEdge())
-@@ -1418,12 +1418,10 @@ namespace NGit.Storage.Pack
+@@ -1415,12 +1415,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
@@ -1994,7 +2021,7 @@ index 15784a9..6fa8da4 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1442,7 +1440,7 @@ namespace NGit.Storage.Pack
+@@ -1439,7 +1437,7 @@ namespace NGit.Storage.Pack
  				walker.Sort(RevSort.COMMIT_TIME_DESC);
  				if (useCachedPacks && reuseSupport != null)
  				{
@@ -3010,6 +3037,151 @@ index d902038..bb6fd35 100644
  				{
  					b4[b4Posn++] = sbiCrop;
  					if (b4Posn > 3)
+diff --git a/NGit/NGit.Util/BlockList.cs b/NGit/NGit.Util/BlockList.cs
+index c663bf7..b986289 100644
+--- a/NGit/NGit.Util/BlockList.cs
++++ b/NGit/NGit.Util/BlockList.cs
+@@ -96,8 +96,8 @@ namespace NGit.Util
+ 		/// <remarks>Initialize an empty list.</remarks>
+ 		public BlockList()
+ 		{
+-			directory = NGit.Util.BlockList.NewDirectory<T>(256);
+-			directory[0] = NGit.Util.BlockList.NewBlock<T>();
++			directory = NGit.Util.BlockList<T>.NewDirectory(256);
++			directory[0] = NGit.Util.BlockList<T>.NewBlock();
+ 			tailBlock = directory[0];
+ 		}
+ 
+@@ -111,8 +111,8 @@ namespace NGit.Util
+ 			{
+ 				dirSize++;
+ 			}
+-			directory = NGit.Util.BlockList.NewDirectory<T>(dirSize);
+-			directory[0] = NGit.Util.BlockList.NewBlock<T>();
++			directory = NGit.Util.BlockList<T>.NewDirectory(dirSize);
++			directory[0] = NGit.Util.BlockList<T>.NewBlock();
+ 			tailBlock = directory[0];
+ 		}
+ 
+@@ -130,7 +130,7 @@ namespace NGit.Util
+ 			{
+ 				if (block != null)
+ 				{
+-					Arrays.Fill(block, null);
++					Arrays.Fill(block, default(T));
+ 				}
+ 			}
+ 			size = 0;
+@@ -175,14 +175,14 @@ namespace NGit.Util
+ 			// Slow path: Move to the next block, expanding if necessary.
+ 			if (++tailDirIdx == directory.Length)
+ 			{
+-				T[][] newDir = NGit.Util.BlockList.NewDirectory<T>(directory.Length << 1);
++				T[][] newDir = NGit.Util.BlockList<T>.NewDirectory(directory.Length << 1);
+ 				System.Array.Copy(directory, 0, newDir, 0, directory.Length);
+ 				directory = newDir;
+ 			}
+ 			T[] blockRef = directory[tailDirIdx];
+ 			if (blockRef == null)
+ 			{
+-				blockRef = NGit.Util.BlockList.NewBlock<T>();
++				blockRef = NGit.Util.BlockList<T>.NewBlock();
+ 				directory[tailDirIdx] = blockRef;
+ 			}
+ 			blockRef[0] = element;
+@@ -211,7 +211,7 @@ namespace NGit.Util
+ 					// Do this the naive way, callers shouldn't abuse
+ 					// this class by entering this code path.
+ 					//
+-					AddItem(null);
++					AddItem(default(T));
+ 					// expand the list by one
+ 					for (int oldIdx = size - 2; index <= oldIdx; oldIdx--)
+ 					{
+@@ -230,7 +230,7 @@ namespace NGit.Util
+ 				T[] blockRef = directory[ToDirectoryIndex(index)];
+ 				int blockIdx = ToBlockIndex(index);
+ 				T old = blockRef[blockIdx];
+-				blockRef[blockIdx] = null;
++				blockRef[blockIdx] = default(T);
+ 				size--;
+ 				if (0 < tailBlkIdx)
+ 				{
+@@ -259,7 +259,7 @@ namespace NGit.Util
+ 					{
+ 						Set(index, this[index + 1]);
+ 					}
+-					Set(size - 1, null);
++					Set(size - 1, default(T));
+ 					size--;
+ 					ResetTailBlock();
+ 					return old;
+@@ -276,7 +276,7 @@ namespace NGit.Util
+ 
+ 		public override Sharpen.Iterator<T> Iterator()
+ 		{
+-			return new BlockList.MyIterator(this);
++			return new BlockList<T>.MyIterator(this);
+ 		}
+ 
+ 		private static int ToDirectoryIndex(int index)
+@@ -289,14 +289,14 @@ namespace NGit.Util
+ 			return index & BLOCK_MASK;
+ 		}
+ 
+-		private static T[][] NewDirectory<T>(int size)
++		private static T[][] NewDirectory(int size)
+ 		{
+-			return (T[][])new object[size][];
++			return new T[size][];
+ 		}
+ 
+-		private static T[] NewBlock<T>()
++		private static T[] NewBlock()
+ 		{
+-			return (T[])new object[BLOCK_SIZE];
++			return new T[BLOCK_SIZE];
+ 		}
+ 
+ 		private class MyIterator : Iterator<T>
+@@ -307,7 +307,7 @@ namespace NGit.Util
+ 
+ 			private int blkIdx;
+ 
+-			private T[] block = this._enclosing.directory[this.dirIdx];
++			private T[] block;
+ 
+ 			public override bool HasNext()
+ 			{
+@@ -321,7 +321,7 @@ namespace NGit.Util
+ 					throw new NoSuchElementException();
+ 				}
+ 				T res = this.block[this.blkIdx];
+-				if (++this.blkIdx == BlockList.BLOCK_SIZE)
++				if (++this.blkIdx == BlockList<T>.BLOCK_SIZE)
+ 				{
+ 					if (++this.dirIdx < this._enclosing.directory.Length)
+ 					{
+@@ -343,15 +343,16 @@ namespace NGit.Util
+ 				{
+ 					throw new InvalidOperationException();
+ 				}
+-				this._enclosing._enclosing.Remove(--this.index);
+-				this.dirIdx = BlockList.ToDirectoryIndex(this.index);
+-				this.blkIdx = BlockList.ToBlockIndex(this.index);
++				this._enclosing.Remove(--this.index);
++				this.dirIdx = BlockList<T>.ToDirectoryIndex(this.index);
++				this.blkIdx = BlockList<T>.ToBlockIndex(this.index);
+ 				this.block = this._enclosing.directory[this.dirIdx];
+ 			}
+ 
+ 			internal MyIterator(BlockList<T> _enclosing)
+ 			{
+ 				this._enclosing = _enclosing;
++				block = this._enclosing.directory[this.dirIdx];
+ 			}
+ 
+ 			private readonly BlockList<T> _enclosing;
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
 index 392973a..ee01003 100644
 --- a/NGit/NGit.Util/FS.cs
@@ -3599,26 +3771,6 @@ index e3d8f35..e6348c3 100644
  			p = BinarySearch(contents, s, xlast, offset, slash);
  			if (p >= 0 && slash < s.Length && contents[p] is NGit.Tree)
  			{
-diff --git a/NGit/NGit/WorkDirCheckout.cs b/NGit/NGit/WorkDirCheckout.cs
-index 82ea97c..63d0f2e 100644
---- a/NGit/NGit/WorkDirCheckout.cs
-+++ b/NGit/NGit/WorkDirCheckout.cs
-@@ -332,13 +332,13 @@ namespace NGit
- 		}
- 
- 		/// <returns>a list of conflicts created by this checkout</returns>
--		public virtual AList<string> GetConflicts()
-+		public virtual IList<string> GetConflicts()
- 		{
- 			return conflicts;
- 		}
- 
- 		/// <returns>a list of all files removed by this checkout</returns>
--		public virtual AList<string> GetRemoved()
-+		public virtual IList<string> GetRemoved()
- 		{
- 			return removed;
- 		}
 diff --git a/NSch/NSch.Jce/DH.cs b/NSch/NSch.Jce/DH.cs
 index 54c2453..e204ff8 100644
 --- a/NSch/NSch.Jce/DH.cs

@@ -211,6 +211,7 @@
     <Compile Include="NGit.Storage.Pack\IntSetTest.cs" />
     <Compile Include="NGit.Api\ResetCommandTest.cs" />
     <Compile Include="NGit.Treewalk\ForPathTest.cs" />
+    <Compile Include="NGit.Util\BlockListTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

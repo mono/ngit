@@ -114,7 +114,7 @@ namespace NGit.Storage.Pack
 		private readonly ObjectIdSubclassMap<ObjectToPack> objectsMap = new ObjectIdSubclassMap
 			<ObjectToPack>();
 
-		private IList<ObjectToPack> edgeObjects = new AList<ObjectToPack>();
+		private IList<ObjectToPack> edgeObjects = new BlockList<ObjectToPack>();
 
 		private IList<CachedPack> cachedPacks = new AList<CachedPack>(2);
 
@@ -227,10 +227,10 @@ namespace NGit.Storage.Pack
 		{
 			{
 				objectsLists[0] = Sharpen.Collections.EmptyList<ObjectToPack>();
-				objectsLists[Constants.OBJ_COMMIT] = new AList<ObjectToPack>();
-				objectsLists[Constants.OBJ_TREE] = new AList<ObjectToPack>();
-				objectsLists[Constants.OBJ_BLOB] = new AList<ObjectToPack>();
-				objectsLists[Constants.OBJ_TAG] = new AList<ObjectToPack>();
+				objectsLists[Constants.OBJ_COMMIT] = new BlockList<ObjectToPack>();
+				objectsLists[Constants.OBJ_TREE] = new BlockList<ObjectToPack>();
+				objectsLists[Constants.OBJ_BLOB] = new BlockList<ObjectToPack>();
+				objectsLists[Constants.OBJ_TAG] = new BlockList<ObjectToPack>();
 			}
 			// edge objects for thin packs
 			this.config = config;
@@ -641,13 +641,10 @@ namespace NGit.Storage.Pack
 				{
 					cnt += list.Count;
 				}
-				sortedByName = new AList<ObjectToPack>(cnt);
+				sortedByName = new BlockList<ObjectToPack>(cnt);
 				foreach (IList<ObjectToPack> list_1 in objectsLists)
 				{
-					foreach (ObjectToPack otp in list_1)
-					{
-						sortedByName.AddItem(otp);
-					}
+					Sharpen.Collections.AddAll(sortedByName, list_1);
 				}
 				sortedByName.Sort();
 			}
@@ -886,7 +883,7 @@ namespace NGit.Storage.Pack
 			// applies "Linus' Law" which states that newer files tend to be the
 			// bigger ones, because source files grow and hardly ever shrink.
 			//
-			Arrays.Sort(list, 0, cnt, new _IComparer_793());
+			Arrays.Sort(list, 0, cnt, new _IComparer_792());
 			// Above we stored the objects we cannot delta onto the end.
 			// Remove them from the list so we don't waste time on them.
 			while (0 < cnt && list[cnt - 1].IsDoNotDelta())
@@ -916,9 +913,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _IComparer_793 : IComparer<ObjectToPack>
+		private sealed class _IComparer_792 : IComparer<ObjectToPack>
 		{
-			public _IComparer_793()
+			public _IComparer_792()
 			{
 			}
 
@@ -1089,7 +1086,7 @@ namespace NGit.Storage.Pack
 					//
 					foreach (DeltaTask task in myTasks)
 					{
-						executor.Execute(new _Runnable_943(task, errors));
+						executor.Execute(new _Runnable_942(task, errors));
 					}
 					try
 					{
@@ -1128,9 +1125,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _Runnable_943 : Runnable
+		private sealed class _Runnable_942 : Runnable
 		{
-			public _Runnable_943(DeltaTask task, IList<Exception> errors)
+			public _Runnable_942(DeltaTask task, IList<Exception> errors)
 			{
 				this.task = task;
 				this.errors = errors;
@@ -1558,7 +1555,7 @@ namespace NGit.Storage.Pack
 			int typesToPrune = 0;
 			int maxBases = config.GetDeltaSearchWindowSize();
 			ICollection<RevTree> baseTrees = new HashSet<RevTree>();
-			IList<RevCommit> commits = new AList<RevCommit>();
+			BlockList<RevCommit> commits = new BlockList<RevCommit>();
 			RevCommit c;
 			while ((c = walker.Next()) != null)
 			{
@@ -1569,7 +1566,7 @@ namespace NGit.Storage.Pack
 					{
 						UseCachedPack(walker, keepOnRestart, wantObjs, haveObjs, pack);
 						//
-						commits = new AList<RevCommit>();
+						commits = new BlockList<RevCommit>();
 						countingMonitor.EndTask();
 						countingMonitor.BeginTask(JGitText.Get().countingObjects, ProgressMonitor.UNKNOWN
 							);
@@ -1586,12 +1583,6 @@ namespace NGit.Storage.Pack
 				}
 				commits.AddItem(c);
 				countingMonitor.Update(1);
-			}
-			if (objectsLists[Constants.OBJ_COMMIT] is ArrayList)
-			{
-				AList<ObjectToPack> list = (AList<ObjectToPack>)objectsLists[Constants.OBJ_COMMIT
-					];
-				list.EnsureCapacity(list.Count + commits.Count);
 			}
 			int commitCnt = 0;
 			bool putTagTargets = false;
@@ -1720,7 +1711,7 @@ namespace NGit.Storage.Pack
 			}
 			while (dst < list.Count)
 			{
-				list.Remove(dst);
+				list.Remove(list.Count - 1);
 			}
 		}
 
