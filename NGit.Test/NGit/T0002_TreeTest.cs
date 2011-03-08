@@ -135,7 +135,6 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(string.Empty, t.GetFullName(), "full name is empty"
 				);
 			NUnit.Framework.Assert.IsTrue(t.GetId() == null, "no id");
-			NUnit.Framework.Assert.IsTrue(t.GetTree() == t, "tree is self");
 			NUnit.Framework.Assert.IsTrue(t.GetRepository() == db, "database is r");
 			NUnit.Framework.Assert.IsTrue(t.FindTreeMember("foo") == null, "no foo child");
 			NUnit.Framework.Assert.IsTrue(t.FindBlobMember("foo") == null, "no foo child");
@@ -188,7 +187,6 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(f.IsLoaded(), "isLoaded");
 			NUnit.Framework.Assert.IsFalse(f.Members().Length > 0, "has items");
 			NUnit.Framework.Assert.IsFalse(f.IsRoot(), "is root");
-			NUnit.Framework.Assert.IsTrue(f.GetTree() == f, "tree is self");
 			NUnit.Framework.Assert.IsTrue(t.IsModified(), "parent is modified");
 			NUnit.Framework.Assert.IsTrue(t.GetId() == null, "parent has no id");
 			NUnit.Framework.Assert.IsTrue(t.FindTreeMember(f.GetName()) == f, "found bob child"

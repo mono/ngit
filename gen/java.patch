@@ -212,46 +212,6 @@ index 70f80ae..a6806c3 100644
  	/** The cache instance this editor updates during {@link #finish()}. */
  	protected DirCache cache;
  
-diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/IndexTreeWalker.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/IndexTreeWalker.java
-index 0889236..6d864db 100644
---- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/IndexTreeWalker.java
-+++ b/org.eclipse.jgit/src/org/eclipse/jgit/lib/IndexTreeWalker.java
-@@ -48,7 +48,7 @@
- import java.io.File;
- import java.io.IOException;
- 
--import org.eclipse.jgit.JGitText;
-+//import org.eclipse.jgit.JGitText;
- import org.eclipse.jgit.lib.GitIndex.Entry;
- 
- /**
-@@ -150,8 +150,9 @@ private void walk(Tree tree, Tree auxTree) throws IOException {
- 	private void visitEntry(TreeEntry t1, TreeEntry t2,
- 			Entry i) throws IOException {
- 
--		assert t1 != null || t2 != null || i != null : JGitText.get().needsAtLeastOneEntry;
--		assert root != null : JGitText.get().needsWorkdir;
-+		// assert t1 != null || t2 != null || i != null :
-+		// org.eclipse.jgit.JGitText.get().needsAtLeastOneEntry;
-+		// assert root != null : JGitText.get().needsWorkdir;
- 
- 		if (t1 != null && t1.getParent() == null)
- 			t1 = null;
-@@ -176,9 +177,11 @@ else if (t2 != null)
- 	private void finishVisitTree(TreeEntry t1, TreeEntry t2, int curIndexPos)
- 			throws IOException {
- 
--		assert t1 != null || t2 != null : JGitText.get().needsAtLeastOneEntry;
--		assert root != null : JGitText.get().needsWorkdir;
--
-+		/*
-+		 * assert t1 != null || t2 != null :
-+		 * JGitText.get().needsAtLeastOneEntry; assert root != null :
-+		 * JGitText.get().needsWorkdir;
-+		 */
- 		if (t1 != null && t1.getParent() == null)
- 			t1 = null;
- 		if (t2 != null && t2.getParent() == null)
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/Ref.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/Ref.java
 index f119c44..d961602 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/Ref.java

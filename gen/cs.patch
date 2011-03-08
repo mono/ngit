@@ -3485,7 +3485,7 @@ index b39fc57..ce31fcf 100644
  		}
  
 diff --git a/NGit/NGit/GitIndex.cs b/NGit/NGit/GitIndex.cs
-index c6a9d91..b123e91 100644
+index 8f686ee..73a6a7c 100644
 --- a/NGit/NGit/GitIndex.cs
 +++ b/NGit/NGit/GitIndex.cs
 @@ -418,15 +418,15 @@ namespace NGit
@@ -3645,10 +3645,10 @@ index 73bd3a3..0a694ae 100644
  				if (target == null)
  				{
 diff --git a/NGit/NGit/Tree.cs b/NGit/NGit/Tree.cs
-index be4447e..cdf7af0 100644
+index e3d8f35..e6348c3 100644
 --- a/NGit/NGit/Tree.cs
 +++ b/NGit/NGit/Tree.cs
-@@ -351,7 +351,7 @@ namespace NGit
+@@ -341,7 +341,7 @@ namespace NGit
  			}
  			// search for path component terminator
  			EnsureLoaded();

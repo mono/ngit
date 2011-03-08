@@ -42,7 +42,6 @@
     <Compile Include="NGit\ConstantsEncodingTest.cs" />
     <Compile Include="NGit\DirCacheCheckoutTest.cs" />
     <Compile Include="NGit\IndexDiffTest.cs" />
-    <Compile Include="NGit\IndexTreeWalkerTest.cs" />
     <Compile Include="NGit\MergeHeadMsgTest.cs" />
     <Compile Include="NGit\ObjectCheckerTest.cs" />
     <Compile Include="NGit\ObjectIdRefTest.cs" />
@@ -56,12 +55,7 @@
     <Compile Include="NGit\RepositoryTestCase.cs" />
     <Compile Include="NGit\SampleDataRepositoryTestCase.cs" />
     <Compile Include="NGit\SymbolicRefTest.cs" />
-    <Compile Include="NGit\TreeIteratorLeafOnlyTest.cs" />
-    <Compile Include="NGit\TreeIteratorPostOrderTest.cs" />
-    <Compile Include="NGit\TreeIteratorPreOrderTest.cs" />
     <Compile Include="NGit\ValidRefNameTest.cs" />
-    <Compile Include="NGit\WorkDirCheckoutTest.cs" />
-    <Compile Include="NGit\WorkDirCheckout_ReadTreeTest.cs" />
     <Compile Include="NGit.Api\AddCommandTest.cs" />
     <Compile Include="NGit.Api\CommitAndLogCommandTests.cs" />
     <Compile Include="NGit.Api\MergeCommandTest.cs" />

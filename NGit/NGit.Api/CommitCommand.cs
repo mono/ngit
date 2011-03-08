@@ -75,6 +75,8 @@ namespace NGit.Api
 
 		private bool all;
 
+		private bool amend;
+
 		/// <summary>parents this commit should have.</summary>
 		/// <remarks>
 		/// parents this commit should have. The current HEAD will be in this list
@@ -159,7 +161,19 @@ namespace NGit.Api
 				ObjectId headId = repo.Resolve(Constants.HEAD + "^{commit}");
 				if (headId != null)
 				{
-					parents.Add(0, headId);
+					if (amend)
+					{
+						RevCommit previousCommit = new RevWalk(repo).ParseCommit(headId);
+						RevCommit[] p = previousCommit.Parents;
+						for (int i = 0; i < p.Length; i++)
+						{
+							parents.Add(0, p[i].Id);
+						}
+					}
+					else
+					{
+						parents.Add(0, headId);
+					}
 				}
 				// lock the index
 				DirCache index = repo.LockDirCache();
@@ -189,10 +203,11 @@ namespace NGit.Api
 							ru.SetNewObjectId(commitId);
 							ru.SetRefLogMessage("commit : " + revCommit.GetShortMessage(), false);
 							ru.SetExpectedOldObjectId(headId);
-							RefUpdate.Result rc = ru.Update();
+							RefUpdate.Result rc = ru.ForceUpdate();
 							switch (rc)
 							{
 								case RefUpdate.Result.NEW:
+								case RefUpdate.Result.FORCED:
 								case RefUpdate.Result.FAST_FORWARD:
 								{
 									SetCallable(false);
@@ -472,6 +487,23 @@ namespace NGit.Api
 		public virtual NGit.Api.CommitCommand SetAll(bool all)
 		{
 			this.all = all;
+			return this;
+		}
+
+		/// <summary>Used to amend the tip of the current branch.</summary>
+		/// <remarks>
+		/// Used to amend the tip of the current branch. If set to true, the previous
+		/// commit will be amended. This is equivalent to --amend on the command
+		/// line.
+		/// </remarks>
+		/// <param name="amend"></param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.CommitCommand SetAmend(bool amend)
+		{
+			this.amend = amend;
 			return this;
 		}
 	}

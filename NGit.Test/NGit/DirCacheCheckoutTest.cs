@@ -62,7 +62,7 @@ namespace NGit
 			DirCache dc = db.LockDirCache();
 			try
 			{
-				dco = new DirCacheCheckout(db, head.GetTreeId(), dc, merge.GetTreeId());
+				dco = new DirCacheCheckout(db, head.GetId(), dc, merge.GetId());
 				dco.PreScanTwoTrees();
 			}
 			finally
@@ -77,7 +77,7 @@ namespace NGit
 			DirCache dc = db.LockDirCache();
 			try
 			{
-				dco = new DirCacheCheckout(db, theHead.GetTreeId(), dc, theMerge.GetTreeId());
+				dco = new DirCacheCheckout(db, theHead.GetId(), dc, theMerge.GetId());
 				dco.Checkout();
 			}
 			finally

@@ -615,10 +615,7 @@ namespace NGit
 			WriteTrashFile("foo/bar/baz", string.Empty);
 			WriteTrashFile("foo/blahblah", string.Empty);
 			Go();
-			// TODO: In DirCacheCheckout the following assertion would pass. But
-			// old WorkDirCheckout fails on this. For now I leave it out. Find out
-			// what's the correct behavior.
-			// assertConflict("foo");
+			AssertConflict("foo");
 			AssertConflict("foo/bar/baz");
 			AssertConflict("foo/blahblah");
 			RecursiveDelete(new FilePath(trash, "foo"));
