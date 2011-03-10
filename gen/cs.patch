@@ -3509,7 +3509,7 @@ index 895b83c..9a8f00a 100644
 +	 
  }
 diff --git a/NGit/NGit/Config.cs b/NGit/NGit/Config.cs
-index b39fc57..ce31fcf 100644
+index 2a195d0..074e7f3 100644
 --- a/NGit/NGit/Config.cs
 +++ b/NGit/NGit/Config.cs
 @@ -93,7 +93,7 @@ namespace NGit
@@ -3662,18 +3662,18 @@ index 8f686ee..73a6a7c 100644
  				signature = unchecked((int)(0x44495243));
  				version = 2;
 diff --git a/NGit/NGit/IndexDiff.cs b/NGit/NGit/IndexDiff.cs
-index b2bd55d..1278569 100644
+index ddd1894..4421c16 100644
 --- a/NGit/NGit/IndexDiff.cs
 +++ b/NGit/NGit/IndexDiff.cs
 @@ -82,7 +82,7 @@ namespace NGit
  
  			private readonly int total;
  
--			private ProgressReportingFilter(IndexDiff _enclosing, ProgressMonitor monitor, int
-+			public ProgressReportingFilter(IndexDiff _enclosing, ProgressMonitor monitor, int
- 				 total)
+-			private ProgressReportingFilter(ProgressMonitor monitor, int total)
++			public ProgressReportingFilter(ProgressMonitor monitor, int total)
  			{
- 				this._enclosing = _enclosing;
+ 				this.monitor = monitor;
+ 				this.total = total;
 diff --git a/NGit/NGit/ObjectIdSubclassMap.cs b/NGit/NGit/ObjectIdSubclassMap.cs
 index 0b1152e..e202eb2 100644
 --- a/NGit/NGit/ObjectIdSubclassMap.cs
