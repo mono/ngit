@@ -65,13 +65,13 @@ namespace NGit
 	{
 		private int size;
 
-		private V[] obj_hash;
+		private V[] table;
 
 		/// <summary>Create an empty map.</summary>
 		/// <remarks>Create an empty map.</remarks>
 		public ObjectIdSubclassMap()
 		{
-			obj_hash = CreateArray(32);
+			table = CreateArray(32);
 		}
 
 		/// <summary>Remove all entries from this map.</summary>
@@ -79,7 +79,7 @@ namespace NGit
 		public virtual void Clear()
 		{
 			size = 0;
-			obj_hash = CreateArray(32);
+			table = CreateArray(32);
 		}
 
 		/// <summary>Lookup an existing mapping.</summary>
@@ -90,13 +90,13 @@ namespace NGit
 		{
 			int i = Index(toFind);
 			V obj;
-			while ((obj = obj_hash[i]) != null)
+			while ((obj = table[i]) != null)
 			{
 				if (AnyObjectId.Equals(obj, toFind))
 				{
 					return obj;
 				}
-				if (++i == obj_hash.Length)
+				if (++i == table.Length)
 				{
 					i = 0;
 				}
@@ -131,7 +131,7 @@ namespace NGit
 		/// <?></?>
 		public virtual void Add<Q>(Q newValue) where Q:V
 		{
-			if (obj_hash.Length - 1 <= size * 2)
+			if (table.Length - 1 <= size * 2)
 			{
 				Grow();
 			}
@@ -167,25 +167,25 @@ namespace NGit
 		{
 			int i = Index(newValue);
 			V obj;
-			while ((obj = obj_hash[i]) != null)
+			while ((obj = table[i]) != null)
 			{
 				if (AnyObjectId.Equals(obj, newValue))
 				{
 					return obj;
 				}
-				if (++i == obj_hash.Length)
+				if (++i == table.Length)
 				{
 					i = 0;
 				}
 			}
-			if (obj_hash.Length - 1 <= size * 2)
+			if (table.Length - 1 <= size * 2)
 			{
 				Grow();
 				Insert(newValue);
 			}
 			else
 			{
-				obj_hash[i] = newValue;
+				table[i] = newValue;
 			}
 			size++;
 			return newValue;
@@ -230,9 +230,9 @@ namespace NGit
 
 			public override V Next()
 			{
-				while (this.i < this._enclosing.obj_hash.Length)
+				while (this.i < this._enclosing.table.Length)
 				{
-					V v = this._enclosing.obj_hash[this.i++];
+					V v = this._enclosing.table[this.i++];
 					if (v != null)
 					{
 						this.found++;
@@ -252,30 +252,30 @@ namespace NGit
 
 		private int Index(AnyObjectId id)
 		{
-			return ((int)(((uint)id.w1) >> 1)) % obj_hash.Length;
+			return ((int)(((uint)id.w1) >> 1)) % table.Length;
 		}
 
 		private void Insert(V newValue)
 		{
 			int j = Index(newValue);
-			while (obj_hash[j] != null)
+			while (table[j] != null)
 			{
-				if (++j >= obj_hash.Length)
+				if (++j >= table.Length)
 				{
 					j = 0;
 				}
 			}
-			obj_hash[j] = newValue;
+			table[j] = newValue;
 		}
 
 		private void Grow()
 		{
-			V[] old_hash = obj_hash;
-			int old_hash_size = obj_hash.Length;
-			obj_hash = CreateArray(2 * old_hash_size);
-			for (int i = 0; i < old_hash_size; i++)
+			V[] oldTable = table;
+			int oldSize = table.Length;
+			table = CreateArray(2 * oldSize);
+			for (int i = 0; i < oldSize; i++)
 			{
-				V obj = old_hash[i];
+				V obj = oldTable[i];
 				if (obj != null)
 				{
 					Insert(obj);
