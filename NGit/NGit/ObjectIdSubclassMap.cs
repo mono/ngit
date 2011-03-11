@@ -63,7 +63,13 @@ namespace NGit
 	/// <?></?>
 	public class ObjectIdSubclassMap<V> : Iterable<V> where V:ObjectId
 	{
+		private const int INITIAL_TABLE_SIZE = 2048;
+
 		private int size;
+
+		private int grow;
+
+		private int mask;
 
 		private V[] table;
 
@@ -71,7 +77,7 @@ namespace NGit
 		/// <remarks>Create an empty map.</remarks>
 		public ObjectIdSubclassMap()
 		{
-			table = CreateArray(32);
+			InitTable(INITIAL_TABLE_SIZE);
 		}
 
 		/// <summary>Remove all entries from this map.</summary>
@@ -79,7 +85,7 @@ namespace NGit
 		public virtual void Clear()
 		{
 			size = 0;
-			table = CreateArray(32);
+			InitTable(INITIAL_TABLE_SIZE);
 		}
 
 		/// <summary>Lookup an existing mapping.</summary>
@@ -88,15 +94,17 @@ namespace NGit
 		/// <returns>the instance mapped to toFind, or null if no mapping exists.</returns>
 		public virtual V Get(AnyObjectId toFind)
 		{
-			int i = Index(toFind);
+			int i = toFind.w1 & mask;
+			V[] tbl = table;
+			int end = tbl.Length;
 			V obj;
-			while ((obj = table[i]) != null)
+			while ((obj = tbl[i]) != null)
 			{
 				if (AnyObjectId.Equals(obj, toFind))
 				{
 					return obj;
 				}
-				if (++i == table.Length)
+				if (++i == end)
 				{
 					i = 0;
 				}
@@ -131,12 +139,11 @@ namespace NGit
 		/// <?></?>
 		public virtual void Add<Q>(Q newValue) where Q:V
 		{
-			if (table.Length - 1 <= size * 2)
+			if (++size == grow)
 			{
 				Grow();
 			}
 			Insert(newValue);
-			size++;
 		}
 
 		/// <summary>Store an object for future lookup.</summary>
@@ -165,29 +172,30 @@ namespace NGit
 		/// <?></?>
 		public virtual V AddIfAbsent<Q>(Q newValue) where Q:V
 		{
-			int i = Index(newValue);
+			int i = ((ObjectId)newValue).w1 & mask;
+			V[] tbl = table;
+			int end = tbl.Length;
 			V obj;
-			while ((obj = table[i]) != null)
+			while ((obj = tbl[i]) != null)
 			{
 				if (AnyObjectId.Equals(obj, newValue))
 				{
 					return obj;
 				}
-				if (++i == table.Length)
+				if (++i == end)
 				{
 					i = 0;
 				}
 			}
-			if (table.Length - 1 <= size * 2)
+			if (++size == grow)
 			{
 				Grow();
 				Insert(newValue);
 			}
 			else
 			{
-				table[i] = newValue;
+				tbl[i] = newValue;
 			}
-			size++;
 			return newValue;
 		}
 
@@ -209,12 +217,12 @@ namespace NGit
 
 		public override Sharpen.Iterator<V> Iterator()
 		{
-			return new _Iterator_186(this);
+			return new _Iterator_194(this);
 		}
 
-		private sealed class _Iterator_186 : Sharpen.Iterator<V>
+		private sealed class _Iterator_194 : Sharpen.Iterator<V>
 		{
-			public _Iterator_186(ObjectIdSubclassMap<V> _enclosing)
+			public _Iterator_194(ObjectIdSubclassMap<V> _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -250,29 +258,26 @@ namespace NGit
 			private readonly ObjectIdSubclassMap<V> _enclosing;
 		}
 
-		private int Index(AnyObjectId id)
-		{
-			return ((int)(((uint)id.w1) >> 1)) % table.Length;
-		}
-
 		private void Insert(V newValue)
 		{
-			int j = Index(newValue);
-			while (table[j] != null)
+			int j = newValue.w1 & mask;
+			V[] tbl = table;
+			int end = tbl.Length;
+			while (tbl[j] != null)
 			{
-				if (++j >= table.Length)
+				if (++j == end)
 				{
 					j = 0;
 				}
 			}
-			table[j] = newValue;
+			tbl[j] = newValue;
 		}
 
 		private void Grow()
 		{
 			V[] oldTable = table;
 			int oldSize = table.Length;
-			table = CreateArray(2 * oldSize);
+			InitTable(oldSize << 1);
 			for (int i = 0; i < oldSize; i++)
 			{
 				V obj = oldTable[i];
@@ -281,6 +286,13 @@ namespace NGit
 					Insert(obj);
 				}
 			}
+		}
+
+		private void InitTable(int sz)
+		{
+			grow = sz >> 1;
+			mask = sz - 1;
+			table = CreateArray(sz);
 		}
 
 		private V[] CreateArray(int sz)

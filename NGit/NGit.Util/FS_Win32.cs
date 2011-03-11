@@ -70,6 +70,10 @@ namespace NGit.Util
 			}
 		}
 
+		private FilePath gitPrefix;
+
+		private bool gitPrefixEvaluated;
+
 		public override bool SupportsExecute()
 		{
 			return false;
@@ -92,24 +96,32 @@ namespace NGit.Util
 
 		public override FilePath GitPrefix()
 		{
+			if (gitPrefixEvaluated)
+			{
+				return gitPrefix;
+			}
 			string path = SystemReader.GetInstance().Getenv("PATH");
 			FilePath gitExe = SearchPath(path, "git.exe", "git.cmd");
 			if (gitExe != null)
 			{
-				return gitExe.GetParentFile().GetParentFile();
+				gitPrefix = gitExe.GetParentFile().GetParentFile();
 			}
-			// This isn't likely to work, if bash is in $PATH, git should
-			// also be in $PATH. But its worth trying.
-			//
-			string w = ReadPipe(UserHome(), new string[] { "bash", "--login", "-c", "which git"
-				 }, Encoding.Default.Name());
-			//
-			//
-			if (w != null)
+			else
 			{
-				return new FilePath(w).GetParentFile().GetParentFile();
+				// This isn't likely to work, if bash is in $PATH, git should
+				// also be in $PATH. But its worth trying.
+				//
+				string w = ReadPipe(UserHome(), new string[] { "bash", "--login", "-c", "which git"
+					 }, Encoding.Default.Name());
+				//
+				//
+				if (w != null)
+				{
+					gitPrefix = new FilePath(w).GetParentFile().GetParentFile();
+				}
 			}
-			return null;
+			gitPrefixEvaluated = true;
+			return gitPrefix;
 		}
 
 		protected internal override FilePath UserHomeImpl()

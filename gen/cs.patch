@@ -3675,10 +3675,10 @@ index ddd1894..4421c16 100644
  				this.monitor = monitor;
  				this.total = total;
 diff --git a/NGit/NGit/ObjectIdSubclassMap.cs b/NGit/NGit/ObjectIdSubclassMap.cs
-index 5fb3522..c2d3dcc 100644
+index ba9bca1..25ac1de 100644
 --- a/NGit/NGit/ObjectIdSubclassMap.cs
 +++ b/NGit/NGit/ObjectIdSubclassMap.cs
-@@ -285,7 +285,7 @@ namespace NGit
+@@ -297,7 +297,7 @@ namespace NGit
  
  		private V[] CreateArray(int sz)
  		{
