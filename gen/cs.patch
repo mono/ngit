@@ -3675,9 +3675,18 @@ index ddd1894..4421c16 100644
  				this.monitor = monitor;
  				this.total = total;
 diff --git a/NGit/NGit/ObjectIdSubclassMap.cs b/NGit/NGit/ObjectIdSubclassMap.cs
-index ba9bca1..25ac1de 100644
+index ba9bca1..2c755c4 100644
 --- a/NGit/NGit/ObjectIdSubclassMap.cs
 +++ b/NGit/NGit/ObjectIdSubclassMap.cs
+@@ -172,7 +172,7 @@ namespace NGit
+ 		/// <?></?>
+ 		public virtual V AddIfAbsent<Q>(Q newValue) where Q:V
+ 		{
+-			int i = newValue.w1 & mask;
++			int i = ((ObjectId)newValue).w1 & mask;
+ 			V[] tbl = table;
+ 			int end = tbl.Length;
+ 			V obj;
 @@ -297,7 +297,7 @@ namespace NGit
  
  		private V[] CreateArray(int sz)
