@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System.IO;
 using NGit;
+using NGit.Errors;
 using NGit.Transport;
 using Sharpen;
 
@@ -365,6 +366,22 @@ namespace NGit.Transport
 			catch (IOException e)
 			{
 				NUnit.Framework.Assert.AreEqual("Expected ACK/NAK, found EOF", e.Message);
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestReadACK_ERR()
+		{
+			Init("001aERR want is not valid\n");
+			try
+			{
+				@in.ReadACK(new MutableObjectId());
+				NUnit.Framework.Assert.Fail("incorrectly accepted ERR");
+			}
+			catch (PackProtocolException e)
+			{
+				NUnit.Framework.Assert.AreEqual("want is not valid", e.Message);
 			}
 		}
 

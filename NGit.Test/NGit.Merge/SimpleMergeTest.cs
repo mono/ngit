@@ -59,7 +59,7 @@ namespace NGit.Merge
 			Merger ourMerger = MergeStrategy.OURS.NewMerger(db);
 			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a"), db.Resolve("c") });
 			NUnit.Framework.Assert.IsTrue(merge);
-			NUnit.Framework.Assert.AreEqual(db.MapTree("a").GetId(), ourMerger.GetResultTreeId
+			NUnit.Framework.Assert.AreEqual(db.Resolve("a^{tree}"), ourMerger.GetResultTreeId
 				());
 		}
 
@@ -70,7 +70,7 @@ namespace NGit.Merge
 			Merger ourMerger = MergeStrategy.THEIRS.NewMerger(db);
 			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a"), db.Resolve("c") });
 			NUnit.Framework.Assert.IsTrue(merge);
-			NUnit.Framework.Assert.AreEqual(db.MapTree("c").GetId(), ourMerger.GetResultTreeId
+			NUnit.Framework.Assert.AreEqual(db.Resolve("c^{tree}"), ourMerger.GetResultTreeId
 				());
 		}
 
@@ -108,7 +108,7 @@ namespace NGit.Merge
 			bool merge = ourMerger.Merge(new ObjectId[] { db.Resolve("a^0^0^0"), db.Resolve("a^0^0^1"
 				) });
 			NUnit.Framework.Assert.IsTrue(merge);
-			NUnit.Framework.Assert.AreEqual(db.MapTree("a^0^0").GetId(), ourMerger.GetResultTreeId
+			NUnit.Framework.Assert.AreEqual(db.Resolve("a^0^0^{tree}"), ourMerger.GetResultTreeId
 				());
 		}
 

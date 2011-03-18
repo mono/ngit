@@ -51,7 +51,7 @@ namespace NGit.Util
 {
 	internal class FS_Win32 : FS
 	{
-		internal static bool Detect()
+		internal static bool IsWin32()
 		{
 			string osDotName = AccessController.DoPrivileged(new _PrivilegedAction_58());
 			return osDotName != null && StringUtils.ToLowerCase(osDotName).IndexOf("windows")
@@ -70,9 +70,18 @@ namespace NGit.Util
 			}
 		}
 
-		private FilePath gitPrefix;
+		public FS_Win32() : base()
+		{
+		}
 
-		private bool gitPrefixEvaluated;
+		protected internal FS_Win32(FS src) : base(src)
+		{
+		}
+
+		public override FS NewInstance()
+		{
+			return new NGit.Util.FS_Win32(this);
+		}
 
 		public override bool SupportsExecute()
 		{
@@ -94,34 +103,26 @@ namespace NGit.Util
 			return true;
 		}
 
-		public override FilePath GitPrefix()
+		protected internal override FilePath DiscoverGitPrefix()
 		{
-			if (gitPrefixEvaluated)
-			{
-				return gitPrefix;
-			}
 			string path = SystemReader.GetInstance().Getenv("PATH");
 			FilePath gitExe = SearchPath(path, "git.exe", "git.cmd");
 			if (gitExe != null)
 			{
-				gitPrefix = gitExe.GetParentFile().GetParentFile();
+				return gitExe.GetParentFile().GetParentFile();
 			}
-			else
+			// This isn't likely to work, if bash is in $PATH, git should
+			// also be in $PATH. But its worth trying.
+			//
+			string w = ReadPipe(UserHome(), new string[] { "bash", "--login", "-c", "which git"
+				 }, Encoding.Default.Name());
+			//
+			//
+			if (w != null)
 			{
-				// This isn't likely to work, if bash is in $PATH, git should
-				// also be in $PATH. But its worth trying.
-				//
-				string w = ReadPipe(UserHome(), new string[] { "bash", "--login", "-c", "which git"
-					 }, Encoding.Default.Name());
-				//
-				//
-				if (w != null)
-				{
-					gitPrefix = new FilePath(w).GetParentFile().GetParentFile();
-				}
+				return new FilePath(w).GetParentFile().GetParentFile();
 			}
-			gitPrefixEvaluated = true;
-			return gitPrefix;
+			return null;
 		}
 
 		protected internal override FilePath UserHomeImpl()

@@ -153,18 +153,48 @@ namespace NGit.Transport
 		/// , returning true only if all of the fields
 		/// match the specification.
 		/// </remarks>
+		/// <param name="uri">address of the Git repository; never null.</param>
+		/// <returns>true if this protocol can handle this URI; false otherwise.</returns>
+		public virtual bool CanHandle(URIish uri)
+		{
+			return CanHandle(uri, null, null);
+		}
+
+		/// <summary>Determine if this protocol can handle a particular URI.</summary>
+		/// <remarks>
+		/// Determine if this protocol can handle a particular URI.
+		/// <p>
+		/// Implementations should try to avoid looking at the local filesystem, but
+		/// may look at implementation specific configuration options in the remote
+		/// block of
+		/// <code>local.getConfig()</code>
+		/// using
+		/// <code>remoteName</code>
+		/// if the name
+		/// is non-null.
+		/// <p>
+		/// The default implementation of this method matches the scheme against
+		/// <see cref="GetSchemes()">GetSchemes()</see>
+		/// , required fields against
+		/// <see cref="GetRequiredFields()">GetRequiredFields()</see>
+		/// , and optional fields against
+		/// <see cref="GetOptionalFields()">GetOptionalFields()</see>
+		/// , returning true only if all of the fields
+		/// match the specification.
+		/// </remarks>
+		/// <param name="uri">address of the Git repository; never null.</param>
 		/// <param name="local">
 		/// the local repository that will communicate with the other Git
-		/// repository.
+		/// repository. May be null if the caller is only asking about a
+		/// specific URI and does not have a local Repository.
 		/// </param>
-		/// <param name="uri">address of the Git repository; never null.</param>
 		/// <param name="remoteName">
 		/// name of the remote, if the remote as configured in
 		/// <code>local</code>
 		/// ; otherwise null.
 		/// </param>
 		/// <returns>true if this protocol can handle this URI; false otherwise.</returns>
-		public virtual bool CanHandle(Repository local, URIish uri, string remoteName)
+		public virtual bool CanHandle(URIish uri, Repository local, string remoteName)
 		{
 			if (!GetSchemes().IsEmpty() && !GetSchemes().Contains(uri.GetScheme()))
 			{
@@ -272,11 +302,11 @@ namespace NGit.Transport
 		/// <code>remoteName</code>
 		/// , if the name is non-null.
 		/// </remarks>
+		/// <param name="uri">address of the Git repository.</param>
 		/// <param name="local">
 		/// the local repository that will communicate with the other Git
 		/// repository.
 		/// </param>
-		/// <param name="uri">address of the Git repository.</param>
 		/// <param name="remoteName">
 		/// name of the remote, if the remote as configured in
 		/// <code>local</code>
@@ -287,7 +317,7 @@ namespace NGit.Transport
 		/// 	</exception>
 		/// <exception cref="NGit.Errors.TransportException">the transport cannot open this URI.
 		/// 	</exception>
-		public abstract NGit.Transport.Transport Open(Repository local, URIish uri, string
+		public abstract NGit.Transport.Transport Open(URIish uri, Repository local, string
 			 remoteName);
 	}
 }

@@ -103,7 +103,7 @@ namespace NGit.Transport
 			}
 
 			//$NON-NLS-1$
-			public override bool CanHandle(Repository local, URIish uri, string remoteName)
+			public override bool CanHandle(URIish uri, Repository local, string remoteName)
 			{
 				if (uri.GetPath() == null || uri.GetPort() > 0 || uri.GetUser() != null || uri.GetPass
 					() != null || uri.GetHost() != null || (uri.GetScheme() != null && !this.GetSchemes
@@ -115,7 +115,7 @@ namespace NGit.Transport
 			}
 
 			/// <exception cref="NGit.Errors.NoRemoteRepositoryException"></exception>
-			public override NGit.Transport.Transport Open(Repository local, URIish uri, string
+			public override NGit.Transport.Transport Open(URIish uri, Repository local, string
 				 remoteName)
 			{
 				// If the reference is to a local file, C Git behavior says

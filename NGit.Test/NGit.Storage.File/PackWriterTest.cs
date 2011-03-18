@@ -109,6 +109,7 @@ namespace NGit.Storage.File
 
 		/// <summary>Test constructor for exceptions, default settings, initialization.</summary>
 		/// <remarks>Test constructor for exceptions, default settings, initialization.</remarks>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		[NUnit.Framework.Test]
 		public virtual void TestContructor()
 		{
@@ -116,7 +117,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(false, writer.IsDeltaBaseAsOffset());
 			NUnit.Framework.Assert.AreEqual(true, config.IsReuseDeltas());
 			NUnit.Framework.Assert.AreEqual(true, config.IsReuseObjects());
-			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectsNumber());
+			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectCount());
 		}
 
 		/// <summary>Change default settings and verify them.</summary>
@@ -149,7 +150,7 @@ namespace NGit.Storage.File
 		public virtual void TestWriteEmptyPack1()
 		{
 			CreateVerifyOpenPack(EMPTY_LIST_OBJECT, EMPTY_LIST_OBJECT, false, false);
-			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectsNumber());
+			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectCount());
 			NUnit.Framework.Assert.AreEqual(0, pack.GetObjectCount());
 			NUnit.Framework.Assert.AreEqual("da39a3ee5e6b4b0d3255bfef95601890afd80709", writer
 				.ComputeName().Name);
@@ -167,8 +168,8 @@ namespace NGit.Storage.File
 		[NUnit.Framework.Test]
 		public virtual void TestWriteEmptyPack2()
 		{
-			CreateVerifyOpenPack(EMPTY_LIST_REVS.Iterator());
-			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectsNumber());
+			CreateVerifyOpenPack(EMPTY_LIST_REVS);
+			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectCount());
 			NUnit.Framework.Assert.AreEqual(0, pack.GetObjectCount());
 		}
 
@@ -335,8 +336,8 @@ namespace NGit.Storage.File
 			{
 				forcedOrderRevs[i] = parser.ParseAny(forcedOrder[i]);
 			}
-			CreateVerifyOpenPack(Arrays.AsList(forcedOrderRevs).Iterator());
-			NUnit.Framework.Assert.AreEqual(forcedOrder.Length, writer.GetObjectsNumber());
+			CreateVerifyOpenPack(Arrays.AsList(forcedOrderRevs));
+			NUnit.Framework.Assert.AreEqual(forcedOrder.Length, writer.GetObjectCount());
 			VerifyObjectsOrder(forcedOrder);
 			NUnit.Framework.Assert.AreEqual("ed3f96b8327c7c66b0f8f70056129f0769323d86", writer
 				.ComputeName().Name);
@@ -490,7 +491,7 @@ namespace NGit.Storage.File
 				), ObjectId.FromString("902d5476fa249b7abc9d84c611577a81381f0327"), ObjectId.FromString
 				("4b825dc642cb6eb9a060e54bf8d69288fbee4904"), ObjectId.FromString("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259"
 				), ObjectId.FromString("6ff87c4664981e4397625791c8ea3bbb5f2279a3") };
-			NUnit.Framework.Assert.AreEqual(expectedOrder.Length, writer.GetObjectsNumber());
+			NUnit.Framework.Assert.AreEqual(expectedOrder.Length, writer.GetObjectCount());
 			VerifyObjectsOrder(expectedOrder);
 			NUnit.Framework.Assert.AreEqual("34be9032ac282b11fa9babdc2b2a93ca996c9c2f", writer
 				.ComputeName().Name);
@@ -519,7 +520,7 @@ namespace NGit.Storage.File
 				expectedOrder[4] = expectedOrder[5];
 				expectedOrder[5] = temp;
 			}
-			NUnit.Framework.Assert.AreEqual(expectedOrder.Length, writer.GetObjectsNumber());
+			NUnit.Framework.Assert.AreEqual(expectedOrder.Length, writer.GetObjectCount());
 			VerifyObjectsOrder(expectedOrder);
 			NUnit.Framework.Assert.AreEqual("ed3f96b8327c7c66b0f8f70056129f0769323d86", writer
 				.ComputeName().Name);
@@ -538,7 +539,7 @@ namespace NGit.Storage.File
 			ObjectId[] writtenObjects = new ObjectId[] { ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
 				), ObjectId.FromString("aabf2ffaec9b497f0950352b3e582d73035c2035"), ObjectId.FromString
 				("5b6e7c66c276e7610d4a73c70ec1a1f7c1003259") };
-			NUnit.Framework.Assert.AreEqual(writtenObjects.Length, writer.GetObjectsNumber());
+			NUnit.Framework.Assert.AreEqual(writtenObjects.Length, writer.GetObjectCount());
 			ObjectId[] expectedObjects;
 			if (thin)
 			{
@@ -573,11 +574,12 @@ namespace NGit.Storage.File
 
 		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
-		private void CreateVerifyOpenPack(Iterator<RevObject> objectSource)
+		private void CreateVerifyOpenPack(IList<RevObject> objectSource)
 		{
 			NullProgressMonitor m = NullProgressMonitor.INSTANCE;
 			writer = new PackWriter(config, db.NewObjectReader());
-			writer.PreparePack(objectSource);
+			writer.PreparePack(objectSource.Iterator());
+			NUnit.Framework.Assert.AreEqual(objectSource.Count, writer.GetObjectCount());
 			writer.WritePack(m, m, os);
 			writer.Release();
 			VerifyOpenPack(false);
@@ -626,7 +628,7 @@ namespace NGit.Storage.File
 			{
 				entries.AddItem(me.CloneEntry());
 			}
-			entries.Sort(new _IComparer_591());
+			entries.Sort(new _IComparer_593());
 			int i = 0;
 			foreach (PackIndex.MutableEntry me_1 in entries)
 			{
@@ -635,9 +637,9 @@ namespace NGit.Storage.File
 			}
 		}
 
-		private sealed class _IComparer_591 : IComparer<PackIndex.MutableEntry>
+		private sealed class _IComparer_593 : IComparer<PackIndex.MutableEntry>
 		{
-			public _IComparer_591()
+			public _IComparer_593()
 			{
 			}
 

@@ -110,7 +110,7 @@ namespace NGit.Transport
 			}
 
 			/// <exception cref="System.NotSupportedException"></exception>
-			public override NGit.Transport.Transport Open(Repository local, URIish uri, string
+			public override NGit.Transport.Transport Open(URIish uri, Repository local, string
 				 remoteName)
 			{
 				return new NGit.Transport.TransportAmazonS3(local, uri);

@@ -136,16 +136,24 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(Constants.UNKNOWN_USER_DEFAULT, authorName);
 			NUnit.Framework.Assert.AreEqual(Constants.UNKNOWN_USER_DEFAULT + "@" + hostname, 
 				authorEmail);
+			NUnit.Framework.Assert.IsTrue(localConfig.Get(UserConfig.KEY).IsAuthorNameImplicit
+				());
+			NUnit.Framework.Assert.IsTrue(localConfig.Get(UserConfig.KEY).IsAuthorEmailImplicit
+				());
 			// the system user name is defined
 			mockSystemReader.SetProperty(Constants.OS_USER_NAME_KEY, "os user name");
 			localConfig.Uncache(UserConfig.KEY);
 			authorName = localConfig.Get(UserConfig.KEY).GetAuthorName();
 			NUnit.Framework.Assert.AreEqual("os user name", authorName);
+			NUnit.Framework.Assert.IsTrue(localConfig.Get(UserConfig.KEY).IsAuthorNameImplicit
+				());
 			if (hostname != null && hostname.Length != 0)
 			{
 				authorEmail = localConfig.Get(UserConfig.KEY).GetAuthorEmail();
 				NUnit.Framework.Assert.AreEqual("os user name@" + hostname, authorEmail);
 			}
+			NUnit.Framework.Assert.IsTrue(localConfig.Get(UserConfig.KEY).IsAuthorEmailImplicit
+				());
 			// the git environment variables are defined
 			mockSystemReader.SetProperty(Constants.GIT_AUTHOR_NAME_KEY, "git author name");
 			mockSystemReader.SetProperty(Constants.GIT_AUTHOR_EMAIL_KEY, "author@email");
@@ -154,6 +162,10 @@ namespace NGit
 			authorEmail = localConfig.Get(UserConfig.KEY).GetAuthorEmail();
 			NUnit.Framework.Assert.AreEqual("git author name", authorName);
 			NUnit.Framework.Assert.AreEqual("author@email", authorEmail);
+			NUnit.Framework.Assert.IsFalse(localConfig.Get(UserConfig.KEY).IsAuthorNameImplicit
+				());
+			NUnit.Framework.Assert.IsFalse(localConfig.Get(UserConfig.KEY).IsAuthorEmailImplicit
+				());
 			// the values are defined in the global configuration
 			userGitConfig.SetString("user", null, "name", "global username");
 			userGitConfig.SetString("user", null, "email", "author@globalemail");
@@ -161,6 +173,10 @@ namespace NGit
 			authorEmail = localConfig.Get(UserConfig.KEY).GetAuthorEmail();
 			NUnit.Framework.Assert.AreEqual("global username", authorName);
 			NUnit.Framework.Assert.AreEqual("author@globalemail", authorEmail);
+			NUnit.Framework.Assert.IsFalse(localConfig.Get(UserConfig.KEY).IsAuthorNameImplicit
+				());
+			NUnit.Framework.Assert.IsFalse(localConfig.Get(UserConfig.KEY).IsAuthorEmailImplicit
+				());
 			// the values are defined in the local configuration
 			localConfig.SetString("user", null, "name", "local username");
 			localConfig.SetString("user", null, "email", "author@localemail");
@@ -168,10 +184,18 @@ namespace NGit
 			authorEmail = localConfig.Get(UserConfig.KEY).GetAuthorEmail();
 			NUnit.Framework.Assert.AreEqual("local username", authorName);
 			NUnit.Framework.Assert.AreEqual("author@localemail", authorEmail);
+			NUnit.Framework.Assert.IsFalse(localConfig.Get(UserConfig.KEY).IsAuthorNameImplicit
+				());
+			NUnit.Framework.Assert.IsFalse(localConfig.Get(UserConfig.KEY).IsAuthorEmailImplicit
+				());
 			authorName = localConfig.Get(UserConfig.KEY).GetCommitterName();
 			authorEmail = localConfig.Get(UserConfig.KEY).GetCommitterEmail();
 			NUnit.Framework.Assert.AreEqual("local username", authorName);
 			NUnit.Framework.Assert.AreEqual("author@localemail", authorEmail);
+			NUnit.Framework.Assert.IsFalse(localConfig.Get(UserConfig.KEY).IsCommitterNameImplicit
+				());
+			NUnit.Framework.Assert.IsFalse(localConfig.Get(UserConfig.KEY).IsCommitterEmailImplicit
+				());
 		}
 
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>

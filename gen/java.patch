@@ -95,7 +95,7 @@ index 201f03b..0000000
 -	}
 -}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-index 045fecd..159a4cf 100644
+index ceef6e6..ad59843 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
 @@ -255,7 +255,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
@@ -520,7 +520,7 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index e5861ec..cce1a2b 100644
+index 525e4b3..5586f47 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 @@ -104,7 +104,7 @@
@@ -625,7 +625,7 @@ index 96abaee..5135f9f 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index 2eb2700..c494913 100644
+index eaa8663..16fb625 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 @@ -139,7 +139,7 @@
@@ -660,7 +660,7 @@ index 2927cad..52bf920 100644
  	/** The repository this transport fetches into, or pushes out of. */
  	protected final Repository local;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-index 4f3d1bb..dff6f62 100644
+index 4ae26a3..f833164 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 @@ -138,8 +138,12 @@
@@ -800,7 +800,7 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 798c463..90a008f 100644
+index 4b22557..27b6fbf 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 @@ -177,7 +177,7 @@
@@ -812,7 +812,7 @@ index 798c463..90a008f 100644
  
  	private PackWriter.Statistics statistics;
  
-@@ -571,14 +571,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -575,14 +575,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  				// If both sides have the same object; let the client know.
  				//
  				switch (multiAck) {
@@ -830,8 +830,8 @@ index 798c463..90a008f 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -596,12 +596,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
- 			if (walk.lookupOrNull(id) == null) {
+@@ -602,12 +602,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+ 				didOkToGiveUp = true;
  				if (okToGiveUp()) {
  					switch (multiAck) {
 -					case OFF:

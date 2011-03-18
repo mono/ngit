@@ -606,9 +606,9 @@ namespace NGit.Transport
 					protocols.Remove(@ref);
 					continue;
 				}
-				if (proto.CanHandle(local, uri, remoteName))
+				if (proto.CanHandle(uri, local, remoteName))
 				{
-					return proto.Open(local, uri, remoteName);
+					return proto.Open(uri, local, remoteName);
 				}
 			}
 			throw new NotSupportedException(MessageFormat.Format(JGitText.Get().URINotSupported

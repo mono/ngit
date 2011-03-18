@@ -611,8 +611,7 @@ namespace NGit.Transport
 		{
 			string incorrectSshUrl = "ssh://some-host:/path/to/repository.git";
 			URIish u = new URIish(incorrectSshUrl);
-			NUnit.Framework.Assert.IsFalse(TransportGitSsh.PROTO_SSH.CanHandle(null, u, null)
-				);
+			NUnit.Framework.Assert.IsFalse(TransportGitSsh.PROTO_SSH.CanHandle(u));
 		}
 	}
 }

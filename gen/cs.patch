@@ -922,7 +922,7 @@ index 7125656..eb3c4c4 100644
  						if (merger is ResolveMerger)
  						{
 diff --git a/NGit/NGit.Api/MergeCommandResult.cs b/NGit/NGit.Api/MergeCommandResult.cs
-index 01c00a4..9f02842 100644
+index e2a7cd1..c3b5920 100644
 --- a/NGit/NGit.Api/MergeCommandResult.cs
 +++ b/NGit/NGit.Api/MergeCommandResult.cs
 @@ -90,7 +90,7 @@ namespace NGit.Api
@@ -953,10 +953,10 @@ index 01c00a4..9f02842 100644
  				{
  					AddConflict(result.Key, result.Value);
 diff --git a/NGit/NGit.Api/PushCommand.cs b/NGit/NGit.Api/PushCommand.cs
-index cf2d1e8..7ab13f9 100644
+index b00c5a1..bbeedae 100644
 --- a/NGit/NGit.Api/PushCommand.cs
 +++ b/NGit/NGit.Api/PushCommand.cs
-@@ -129,7 +129,7 @@ namespace NGit.Api
+@@ -135,7 +135,7 @@ namespace NGit.Api
  					}
  				}
  				IList<NGit.Transport.Transport> transports;
@@ -965,7 +965,7 @@ index cf2d1e8..7ab13f9 100644
  					);
  				foreach (NGit.Transport.Transport transport in transports)
  				{
-@@ -179,7 +179,7 @@ namespace NGit.Api
+@@ -185,7 +185,7 @@ namespace NGit.Api
  				throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfPushCommand
  					, e);
  			}
@@ -1396,7 +1396,7 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index d413e65..b63e483 100644
+index 0357786..e04b43f 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
 @@ -534,7 +534,7 @@ namespace NGit.Merge
@@ -2000,7 +2000,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index bb8a3bc..4acac26 100644
+index 3a3cc6c..2af99bf 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -2021,7 +2021,7 @@ index bb8a3bc..4acac26 100644
  
  		private ICSharpCode.SharpZipLib.Zip.Compression.Deflater myDeflater;
  
-@@ -542,7 +542,7 @@ namespace NGit.Storage.Pack
+@@ -557,7 +557,7 @@ namespace NGit.Storage.Pack
  		/// <param name="id">the object to test the existence of.</param>
  		/// <returns>true if the object will appear in the output pack file.</returns>
  		/// <exception cref="System.IO.IOException">a cached pack cannot be examined.</exception>
@@ -2030,7 +2030,7 @@ index bb8a3bc..4acac26 100644
  		{
  			ObjectToPack obj = objectsMap.Get(id);
  			if (obj != null && !obj.IsEdge())
-@@ -1415,12 +1415,10 @@ namespace NGit.Storage.Pack
+@@ -1422,12 +1422,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
@@ -2046,7 +2046,7 @@ index bb8a3bc..4acac26 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1439,7 +1437,7 @@ namespace NGit.Storage.Pack
+@@ -1446,7 +1444,7 @@ namespace NGit.Storage.Pack
  				walker.Sort(RevSort.COMMIT_TIME_DESC);
  				if (useCachedPacks && reuseSupport != null)
  				{
@@ -2158,10 +2158,10 @@ index 14f5150..ee19789 100644
  		private bool startedOperation;
  
 diff --git a/NGit/NGit.Transport/BasePackFetchConnection.cs b/NGit/NGit.Transport/BasePackFetchConnection.cs
-index fb45f00..1203324 100644
+index 0d64e5b..9521f45 100644
 --- a/NGit/NGit.Transport/BasePackFetchConnection.cs
 +++ b/NGit/NGit.Transport/BasePackFetchConnection.cs
-@@ -665,7 +665,7 @@ SEND_HAVES_break: ;
+@@ -682,7 +682,7 @@ SEND_HAVES_break: ;
  						// A solitary ACK at this point means the remote won't
  						// speak anymore, but is going to send us a pack now.
  						//
@@ -2170,7 +2170,7 @@ index fb45f00..1203324 100644
  					}
  
  					case PacketLineIn.AckNackResult.ACK_CONTINUE:
-@@ -684,7 +684,7 @@ SEND_HAVES_break: ;
+@@ -701,7 +701,7 @@ SEND_HAVES_break: ;
  				}
  READ_RESULT_continue: ;
  			}
@@ -2336,7 +2336,7 @@ index c547732..85ba51f 100644
  		internal URIish uri;
  
 diff --git a/NGit/NGit.Transport/PacketLineIn.cs b/NGit/NGit.Transport/PacketLineIn.cs
-index 33eec5f..12628c2 100644
+index ae4917c..5329470 100644
 --- a/NGit/NGit.Transport/PacketLineIn.cs
 +++ b/NGit/NGit.Transport/PacketLineIn.cs
 @@ -52,7 +52,7 @@ using Sharpen;
@@ -2431,7 +2431,7 @@ index e300fdd..2f8430e 100644
  		/// <summary>
  		/// Filters a
 diff --git a/NGit/NGit.Transport/Transport.cs b/NGit/NGit.Transport/Transport.cs
-index b6bcb2d..ef9d4b0 100644
+index dc86215..8a63ee5 100644
 --- a/NGit/NGit.Transport/Transport.cs
 +++ b/NGit/NGit.Transport/Transport.cs
 @@ -50,7 +50,6 @@ using NGit.Errors;
@@ -2515,7 +2515,7 @@ index 5d74675..7ab83a5 100644
  		/// <summary>Bundle signature</summary>
  		public const string V2_BUNDLE_SIGNATURE = "# v2 git bundle";
 diff --git a/NGit/NGit.Transport/TransportGitAnon.cs b/NGit/NGit.Transport/TransportGitAnon.cs
-index ad9b679..340ccd5 100644
+index 983bffd..5b30496 100644
 --- a/NGit/NGit.Transport/TransportGitAnon.cs
 +++ b/NGit/NGit.Transport/TransportGitAnon.cs
 @@ -137,7 +137,7 @@ namespace NGit.Transport
@@ -2546,7 +2546,7 @@ index ad9b679..340ccd5 100644
  				this._enclosing = _enclosing;
  				this.sock = this._enclosing.OpenConnection();
 diff --git a/NGit/NGit.Transport/TransportGitSsh.cs b/NGit/NGit.Transport/TransportGitSsh.cs
-index bebdcc3..8e9eb4e 100644
+index 3686336..800e65c 100644
 --- a/NGit/NGit.Transport/TransportGitSsh.cs
 +++ b/NGit/NGit.Transport/TransportGitSsh.cs
 @@ -492,7 +492,7 @@ namespace NGit.Transport
@@ -2586,7 +2586,7 @@ index bebdcc3..8e9eb4e 100644
  				this._enclosing = _enclosing;
  				this.conn = conn;
 diff --git a/NGit/NGit.Transport/TransportHttp.cs b/NGit/NGit.Transport/TransportHttp.cs
-index bacb180..bc9e176 100644
+index ce2edea..8a93926 100644
 --- a/NGit/NGit.Transport/TransportHttp.cs
 +++ b/NGit/NGit.Transport/TransportHttp.cs
 @@ -715,7 +715,7 @@ namespace NGit.Transport
@@ -2644,7 +2644,7 @@ index bacb180..bc9e176 100644
  				{
  					this._enclosing = _enclosing;
 diff --git a/NGit/NGit.Transport/TransportLocal.cs b/NGit/NGit.Transport/TransportLocal.cs
-index 5ee7331..64bea9c 100644
+index 4af0c0b..2a32d30 100644
 --- a/NGit/NGit.Transport/TransportLocal.cs
 +++ b/NGit/NGit.Transport/TransportLocal.cs
 @@ -193,15 +193,15 @@ namespace NGit.Transport
@@ -2718,7 +2718,7 @@ index 5ee7331..64bea9c 100644
  				this._enclosing = _enclosing;
  				MessageWriter msg = new MessageWriter();
 diff --git a/NGit/NGit.Transport/TransportProtocol.cs b/NGit/NGit.Transport/TransportProtocol.cs
-index 1d702e4..1d7bc07 100644
+index ba4dc69..917373b 100644
 --- a/NGit/NGit.Transport/TransportProtocol.cs
 +++ b/NGit/NGit.Transport/TransportProtocol.cs
 @@ -109,7 +109,7 @@ namespace NGit.Transport
@@ -2740,7 +2740,7 @@ index 1d702e4..1d7bc07 100644
  
  		/// <returns>if a port is supported, the default port, else -1.</returns>
 diff --git a/NGit/NGit.Transport/TransportSftp.cs b/NGit/NGit.Transport/TransportSftp.cs
-index d3f7d02..f2b5e80 100644
+index 175cd4f..bd81647 100644
 --- a/NGit/NGit.Transport/TransportSftp.cs
 +++ b/NGit/NGit.Transport/TransportSftp.cs
 @@ -48,6 +48,7 @@ using NGit.Errors;
@@ -2779,7 +2779,7 @@ index d3f7d02..f2b5e80 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index 8ba7cab..a00cf0e 100644
+index aa47330..2996cf4 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
 @@ -161,7 +161,7 @@ namespace NGit.Transport
@@ -2791,7 +2791,7 @@ index 8ba7cab..a00cf0e 100644
  
  		/// <summary>Objects we sent in our advertisement list, clients can ask for these.</summary>
  		/// <remarks>Objects we sent in our advertisement list, clients can ask for these.</remarks>
-@@ -743,7 +743,7 @@ namespace NGit.Transport
+@@ -754,7 +754,7 @@ namespace NGit.Transport
  			{
  				okToGiveUp = Sharpen.Extensions.ValueOf(OkToGiveUpImp());
  			}
@@ -2800,7 +2800,7 @@ index 8ba7cab..a00cf0e 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
-@@ -876,8 +876,9 @@ namespace NGit.Transport
+@@ -887,8 +887,9 @@ namespace NGit.Transport
  				}
  				if (options.Contains(OPTION_INCLUDE_TAG))
  				{
@@ -3218,20 +3218,20 @@ index c663bf7..b986289 100644
  
  			private readonly BlockList<T> _enclosing;
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
-index 392973a..ee01003 100644
+index fba8b94..0f0af07 100644
 --- a/NGit/NGit.Util/FS.cs
 +++ b/NGit/NGit.Util/FS.cs
-@@ -82,7 +82,7 @@ namespace NGit.Util
+@@ -90,7 +90,7 @@ namespace NGit.Util
  		/// Note: this parameter is only relevant on Windows.
  		/// </param>
  		/// <returns>detected file system abstraction</returns>
 -		public static NGit.Util.FS Detect(bool cygwinUsed)
 +		public static NGit.Util.FS Detect(bool? cygwinUsed)
  		{
- 			if (FS_Win32.Detect())
+ 			if (FS_Win32.IsWin32())
  			{
 diff --git a/NGit/NGit.Util/FS_POSIX_Java6.cs b/NGit/NGit.Util/FS_POSIX_Java6.cs
-index 9173138..3f33aaf 100644
+index e1ae417..e71eaad 100644
 --- a/NGit/NGit.Util/FS_POSIX_Java6.cs
 +++ b/NGit/NGit.Util/FS_POSIX_Java6.cs
 @@ -66,7 +66,7 @@ namespace NGit.Util
@@ -3814,26 +3814,10 @@ index 8913cf3..3099dbf 100644
  			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
-index 73bd3a3..0a694ae 100644
+index a65f903..ab827d2 100644
 --- a/NGit/NGit/Repository.cs
 +++ b/NGit/NGit/Repository.cs
-@@ -296,7 +296,6 @@ namespace NGit
- 		/// <returns>a Tree named by the specified string</returns>
- 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
- 		/// <seealso cref="Resolve(string)">Resolve(string)</seealso>
--		[Obsolete]
- 		[System.ObsoleteAttribute(@"Use Resolve(string) and pass its return value toNGit.Treewalk.TreeWalk.AddTree(AnyObjectId) ."
- 			)]
- 		public virtual Tree MapTree(string revstr)
-@@ -310,7 +309,6 @@ namespace NGit
- 		/// <param name="id"></param>
- 		/// <returns>Tree or null</returns>
- 		/// <exception cref="System.IO.IOException">for I/O error or unexpected object type.</exception>
--		[Obsolete]
- 		[System.ObsoleteAttribute(@"Use NGit.Treewalk.TreeWalk.AddTree(AnyObjectId) .")]
- 		public virtual Tree MapTree(ObjectId id)
- 		{
-@@ -975,7 +973,7 @@ namespace NGit
+@@ -918,7 +918,7 @@ namespace NGit
  		/// <returns>unmodifiable collection of other known objects.</returns>
  		public virtual ICollection<ObjectId> GetAdditionalHaves()
  		{
@@ -3842,7 +3826,7 @@ index 73bd3a3..0a694ae 100644
  		}
  
  		/// <summary>Get a ref by name.</summary>
-@@ -1060,9 +1058,9 @@ namespace NGit
+@@ -1003,9 +1003,9 @@ namespace NGit
  			IDictionary<string, Ref> allRefs = GetAllRefs();
  			IDictionary<AnyObjectId, ICollection<Ref>> ret = new Dictionary<AnyObjectId, ICollection
  				<Ref>>(allRefs.Count);

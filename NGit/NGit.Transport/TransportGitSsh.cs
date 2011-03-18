@@ -111,7 +111,7 @@ namespace NGit.Transport
 				return 22;
 			}
 
-			public override bool CanHandle(Repository local, URIish uri, string remoteName)
+			public override bool CanHandle(URIish uri, Repository local, string remoteName)
 			{
 				if (uri.GetScheme() == null)
 				{
@@ -119,11 +119,11 @@ namespace NGit.Transport
 					return uri.GetHost() != null && uri.GetPath() != null && uri.GetHost().Length != 
 						0 && uri.GetPath().Length != 0;
 				}
-				return base.CanHandle(local, uri, remoteName);
+				return base.CanHandle(uri, local, remoteName);
 			}
 
 			/// <exception cref="System.NotSupportedException"></exception>
-			public override NGit.Transport.Transport Open(Repository local, URIish uri, string
+			public override NGit.Transport.Transport Open(URIish uri, Repository local, string
 				 remoteName)
 			{
 				return new NGit.Transport.TransportGitSsh(local, uri);

@@ -420,9 +420,9 @@ namespace NGit
 
 		public string exceptionCaughtDuringExecutionOfTagCommand;
 
-		public string exceptionOccuredDuringAddingOfOptionToALogCommand;
+		public string exceptionOccurredDuringAddingOfOptionToALogCommand;
 
-		public string exceptionOccuredDuringReadingOfGIT_DIR;
+		public string exceptionOccurredDuringReadingOfGIT_DIR;
 
 		public string expectedACKNAKFoundEOF;
 
@@ -665,8 +665,6 @@ namespace NGit
 		public string notAValidPack;
 
 		public string notFound;
-
-		public string notValid;
 
 		public string nothingToFetch;
 
@@ -991,6 +989,8 @@ namespace NGit
 		public string userConfigFileInvalid;
 
 		public string walkFailure;
+
+		public string wantNotValid;
 
 		public string windowSizeMustBeLesserThanLimit;
 

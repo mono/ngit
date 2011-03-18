@@ -422,8 +422,23 @@ namespace NGit.Storage.Pack
 		/// <summary>Returns objects number in a pack file that was created by this writer.</summary>
 		/// <remarks>Returns objects number in a pack file that was created by this writer.</remarks>
 		/// <returns>number of objects in pack.</returns>
-		public virtual long GetObjectsNumber()
+		/// <exception cref="System.IO.IOException">a cached pack cannot supply its object count.
+		/// 	</exception>
+		public virtual long GetObjectCount()
 		{
+			if (stats.totalObjects == 0)
+			{
+				long objCnt = 0;
+				foreach (IList<ObjectToPack> list in objectsLists)
+				{
+					objCnt += list.Count;
+				}
+				foreach (CachedPack pack in cachedPacks)
+				{
+					objCnt += pack.GetObjectCount();
+				}
+				return objCnt;
+			}
 			return stats.totalObjects;
 		}
 
@@ -697,15 +712,7 @@ namespace NGit.Storage.Pack
 				SearchForDeltas(compressMonitor);
 			}
 			PackOutputStream @out = new PackOutputStream(writeMonitor, packStream, this);
-			long objCnt = 0;
-			foreach (IList<ObjectToPack> list in objectsLists)
-			{
-				objCnt += list.Count;
-			}
-			foreach (CachedPack pack in cachedPacks)
-			{
-				objCnt += pack.GetObjectCount();
-			}
+			long objCnt = GetObjectCount();
 			stats.totalObjects = objCnt;
 			writeMonitor.BeginTask(JGitText.Get().writingObjects, (int)objCnt);
 			long writeStart = Runtime.CurrentTimeMillis();
@@ -718,13 +725,13 @@ namespace NGit.Storage.Pack
 			{
 				stats.thinPackBytes = @out.Length() - (headerEnd - headerStart);
 			}
-			foreach (CachedPack pack_1 in cachedPacks)
+			foreach (CachedPack pack in cachedPacks)
 			{
-				long deltaCnt = pack_1.GetDeltaCount();
-				stats.reusedObjects += pack_1.GetObjectCount();
+				long deltaCnt = pack.GetDeltaCount();
+				stats.reusedObjects += pack.GetObjectCount();
 				stats.reusedDeltas += deltaCnt;
 				stats.totalDeltas += deltaCnt;
-				reuseSupport.CopyPackAsIs(@out, pack_1, reuseValidate);
+				reuseSupport.CopyPackAsIs(@out, pack, reuseValidate);
 			}
 			WriteChecksum(@out);
 			@out.Flush();
@@ -883,7 +890,7 @@ namespace NGit.Storage.Pack
 			// applies "Linus' Law" which states that newer files tend to be the
 			// bigger ones, because source files grow and hardly ever shrink.
 			//
-			Arrays.Sort(list, 0, cnt, new _IComparer_792());
+			Arrays.Sort(list, 0, cnt, new _IComparer_797());
 			// Above we stored the objects we cannot delta onto the end.
 			// Remove them from the list so we don't waste time on them.
 			while (0 < cnt && list[cnt - 1].IsDoNotDelta())
@@ -913,9 +920,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _IComparer_792 : IComparer<ObjectToPack>
+		private sealed class _IComparer_797 : IComparer<ObjectToPack>
 		{
-			public _IComparer_792()
+			public _IComparer_797()
 			{
 			}
 
@@ -1086,7 +1093,7 @@ namespace NGit.Storage.Pack
 					//
 					foreach (DeltaTask task in myTasks)
 					{
-						executor.Execute(new _Runnable_942(task, errors));
+						executor.Execute(new _Runnable_947(task, errors));
 					}
 					try
 					{
@@ -1125,9 +1132,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _Runnable_942 : Runnable
+		private sealed class _Runnable_947 : Runnable
 		{
-			public _Runnable_942(DeltaTask task, IList<Exception> errors)
+			public _Runnable_947(DeltaTask task, IList<Exception> errors)
 			{
 				this.task = task;
 				this.errors = errors;

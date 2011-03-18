@@ -324,12 +324,19 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void Test009_SymlinkAndGitlink()
 		{
-			Tree symlinkTree = db.MapTree("symlink");
+			Tree symlinkTree = MapTree("symlink");
 			NUnit.Framework.Assert.IsTrue(symlinkTree.ExistsBlob("symlink.txt"), "Symlink entry exists"
 				);
-			Tree gitlinkTree = db.MapTree("gitlink");
+			Tree gitlinkTree = MapTree("gitlink");
 			NUnit.Framework.Assert.IsTrue(gitlinkTree.ExistsBlob("submodule"), "Gitlink entry exists"
 				);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private Tree MapTree(string name)
+		{
+			ObjectId id = db.Resolve(name + "^{tree}");
+			return new Tree(db, id, db.Open(id).GetCachedBytes());
 		}
 	}
 }

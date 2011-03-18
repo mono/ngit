@@ -213,6 +213,7 @@
     <Compile Include="NGit.Treewalk\ForPathTest.cs" />
     <Compile Include="NGit.Util\BlockListTest.cs" />
     <Compile Include="NGit\ObjectIdOwnerMapTest.cs" />
+    <Compile Include="NGit.Api\CommitOnlyTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

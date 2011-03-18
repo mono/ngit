@@ -50,6 +50,7 @@ using NGit.Dircache;
 using NGit.Errors;
 using NGit.Revwalk;
 using NGit.Treewalk;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Api
@@ -81,6 +82,8 @@ namespace NGit.Api
 		private bool[] onlyProcessed;
 
 		private bool amend;
+
+		private bool insertChangeId;
 
 		/// <summary>parents this commit should have.</summary>
 		/// <remarks>
@@ -195,6 +198,10 @@ namespace NGit.Api
 						// fail for example when the index contains unmerged paths
 						// (unresolved conflicts)
 						ObjectId indexTreeId = index.WriteTree(odi);
+						if (insertChangeId)
+						{
+							InsertChangeId(indexTreeId);
+						}
 						// Create a Commit object, populate it and write it
 						NGit.CommitBuilder commit = new NGit.CommitBuilder();
 						commit.Committer = committer;
@@ -210,7 +217,8 @@ namespace NGit.Api
 							RevCommit revCommit = revWalk.ParseCommit(commitId);
 							RefUpdate ru = repo.UpdateRef(Constants.HEAD);
 							ru.SetNewObjectId(commitId);
-							ru.SetRefLogMessage("commit : " + revCommit.GetShortMessage(), false);
+							string prefix = amend ? "commit (amend): " : "commit: ";
+							ru.SetRefLogMessage(prefix + revCommit.GetShortMessage(), false);
 							ru.SetExpectedOldObjectId(headId);
 							RefUpdate.Result rc = ru.ForceUpdate();
 							switch (rc)
@@ -270,6 +278,24 @@ namespace NGit.Api
 			{
 				throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfCommitCommand
 					, e);
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void InsertChangeId(ObjectId treeId)
+		{
+			ObjectId firstParentId = null;
+			if (!parents.IsEmpty())
+			{
+				firstParentId = parents[0];
+			}
+			ObjectId changeId = ChangeIdUtil.ComputeChangeId(treeId, firstParentId, author, committer
+				, message);
+			message = ChangeIdUtil.InsertId(message, changeId);
+			if (changeId != null)
+			{
+				message = message.ReplaceAll("\nChange-Id: I" + ObjectId.ZeroId.GetName() + "\n", 
+					"\nChange-Id: I" + changeId.GetName() + "\n");
 			}
 		}
 
@@ -348,7 +374,7 @@ namespace NGit.Api
 							}
 						}
 						// update index
-						dcEditor.Add(new _PathEdit_336(dcEntry, path));
+						dcEditor.Add(new _PathEdit_356(dcEntry, path));
 						// add to temporary in-core index
 						dcBuilder.Add(dcEntry);
 						if (emptyCommit && (hTree == null || !hTree.IdEqual(fTree)))
@@ -407,9 +433,9 @@ namespace NGit.Api
 			return inCoreIndex;
 		}
 
-		private sealed class _PathEdit_336 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_356 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_336(DirCacheEntry dcEntry, string baseArg1) : base(baseArg1)
+			public _PathEdit_356(DirCacheEntry dcEntry, string baseArg1) : base(baseArg1)
 			{
 				this.dcEntry = dcEntry;
 			}
@@ -487,7 +513,7 @@ namespace NGit.Api
 				}
 				catch (IOException e)
 				{
-					throw new JGitInternalException(MessageFormat.Format(JGitText.Get().exceptionOccuredDuringReadingOfGIT_DIR
+					throw new JGitInternalException(MessageFormat.Format(JGitText.Get().exceptionOccurredDuringReadingOfGIT_DIR
 						, Constants.MERGE_HEAD, e), e);
 				}
 				if (message == null)
@@ -498,7 +524,7 @@ namespace NGit.Api
 					}
 					catch (IOException e)
 					{
-						throw new JGitInternalException(MessageFormat.Format(JGitText.Get().exceptionOccuredDuringReadingOfGIT_DIR
+						throw new JGitInternalException(MessageFormat.Format(JGitText.Get().exceptionOccurredDuringReadingOfGIT_DIR
 							, Constants.MERGE_MSG, e), e);
 					}
 				}
@@ -741,6 +767,27 @@ namespace NGit.Api
 			{
 				this.only.AddItem(o);
 			}
+			return this;
+		}
+
+		/// <summary>
+		/// If set to true a change id will be inserted into the commit message
+		/// An existing change id is not replaced.
+		/// </summary>
+		/// <remarks>
+		/// If set to true a change id will be inserted into the commit message
+		/// An existing change id is not replaced. An initial change id (I000...)
+		/// will be replaced by the change id.
+		/// </remarks>
+		/// <param name="insertChangeId"></param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.CommitCommand SetInsertChangeId(bool insertChangeId)
+		{
+			CheckCallable();
+			this.insertChangeId = insertChangeId;
 			return this;
 		}
 	}

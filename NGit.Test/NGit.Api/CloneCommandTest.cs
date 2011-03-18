@@ -45,6 +45,8 @@ using System;
 using System.IO;
 using NGit;
 using NGit.Api;
+using NGit.Junit;
+using NGit.Revwalk;
 using Sharpen;
 
 namespace NGit.Api
@@ -54,10 +56,13 @@ namespace NGit.Api
 	{
 		private Git git;
 
+		private TestRepository<Repository> tr;
+
 		/// <exception cref="System.Exception"></exception>
 		public override void SetUp()
 		{
 			base.SetUp();
+			tr = new TestRepository<Repository>(db);
 			git = new Git(db);
 			// commit something
 			WriteTrashFile("Test.txt", "Hello world");
@@ -71,6 +76,8 @@ namespace NGit.Api
 			WriteTrashFile("Test.txt", "Some change");
 			git.Add().AddFilepattern("Test.txt").Call();
 			git.Commit().SetMessage("Second commit").Call();
+			RevBlob blob = tr.Blob("blob-not-in-master-branch");
+			git.Tag().SetName("tag-for-blob").SetObjectId(blob).Call();
 		}
 
 		[NUnit.Framework.Test]
@@ -84,6 +91,8 @@ namespace NGit.Api
 				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
 				Git git2 = command.Call();
 				NUnit.Framework.Assert.IsNotNull(git2);
+				ObjectId id = git2.GetRepository().Resolve("tag-for-blob");
+				NUnit.Framework.Assert.IsNotNull(id);
 			}
 			catch (Exception e)
 			{
