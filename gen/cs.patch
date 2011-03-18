@@ -3218,7 +3218,7 @@ index c663bf7..b986289 100644
  
  			private readonly BlockList<T> _enclosing;
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
-index fba8b94..0f0af07 100644
+index fba8b94..72f042f 100644
 --- a/NGit/NGit.Util/FS.cs
 +++ b/NGit/NGit.Util/FS.cs
 @@ -90,7 +90,7 @@ namespace NGit.Util
@@ -3230,6 +3230,15 @@ index fba8b94..0f0af07 100644
  		{
  			if (FS_Win32.IsWin32())
  			{
+@@ -98,7 +98,7 @@ namespace NGit.Util
+ 				{
+ 					cygwinUsed = Sharpen.Extensions.ValueOf(FS_Win32_Cygwin.IsCygwin());
+ 				}
+-				if (cygwinUsed)
++				if (cygwinUsed.Value)
+ 				{
+ 					return new FS_Win32_Cygwin();
+ 				}
 diff --git a/NGit/NGit.Util/FS_POSIX_Java6.cs b/NGit/NGit.Util/FS_POSIX_Java6.cs
 index e1ae417..e71eaad 100644
 --- a/NGit/NGit.Util/FS_POSIX_Java6.cs
