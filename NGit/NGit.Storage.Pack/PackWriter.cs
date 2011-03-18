@@ -111,7 +111,7 @@ namespace NGit.Storage.Pack
 		private readonly IList<ObjectToPack>[] objectsLists = new IList<ObjectToPack>[Constants.OBJ_TAG
 			 + 1];
 
-		private readonly ObjectIdSubclassMap<ObjectToPack> objectsMap = new ObjectIdSubclassMap
+		private readonly ObjectIdOwnerMap<ObjectToPack> objectsMap = new ObjectIdOwnerMap
 			<ObjectToPack>();
 
 		private IList<ObjectToPack> edgeObjects = new BlockList<ObjectToPack>();

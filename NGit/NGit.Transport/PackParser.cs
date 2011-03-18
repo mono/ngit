@@ -147,7 +147,7 @@ namespace NGit.Transport
 
 		private int entryCount;
 
-		private ObjectIdSubclassMap<PackParser.DeltaChain> baseById;
+		private ObjectIdOwnerMap<PackParser.DeltaChain> baseById;
 
 		/// <summary>Objects referenced by their name from deltas, that aren't in this pack.</summary>
 		/// <remarks>
@@ -486,7 +486,7 @@ namespace NGit.Transport
 			{
 				ReadPackHeader();
 				entries = new PackedObjectInfo[(int)objectCount];
-				baseById = new ObjectIdSubclassMap<PackParser.DeltaChain>();
+				baseById = new ObjectIdOwnerMap<PackParser.DeltaChain>();
 				baseByPos = new LongMap<PackParser.UnresolvedDelta>();
 				deferredCheckBlobs = new BlockList<PackedObjectInfo>();
 				receiving.BeginTask(JGitText.Get().receivingObjects, (int)objectCount);
@@ -1575,7 +1575,7 @@ namespace NGit.Transport
 		}
 
 		[System.Serializable]
-		private class DeltaChain : ObjectId
+		private class DeltaChain : ObjectIdOwnerMap.Entry
 		{
 			internal PackParser.UnresolvedDelta head;
 

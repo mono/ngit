@@ -132,7 +132,7 @@ namespace NGit.Transport
 		public virtual void TestFilterHidesPrivate()
 		{
 			IDictionary<string, Ref> refs;
-			TransportLocal t = new _TransportLocal_146(this, src, UriOf(dst));
+			TransportLocal t = new _TransportLocal_146(this, src, UriOf(dst), dst.Directory);
 			try
 			{
 				PushConnection c = t.OpenPush();
@@ -161,7 +161,7 @@ namespace NGit.Transport
 		private sealed class _TransportLocal_146 : TransportLocal
 		{
 			public _TransportLocal_146(ReceivePackRefFilterTest _enclosing, Repository baseArg1
-				, URIish baseArg2) : base(baseArg1, baseArg2)
+				, URIish baseArg2, FilePath baseArg3) : base(baseArg1, baseArg2, baseArg3)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -206,7 +206,7 @@ namespace NGit.Transport
 			s.Update(R_MASTER, N);
 			// Push this new content to the remote, doing strict validation.
 			//
-			TransportLocal t = new _TransportLocal_209(this, src, UriOf(dst));
+			TransportLocal t = new _TransportLocal_209(this, src, UriOf(dst), dst.Directory);
 			RemoteRefUpdate u = new RemoteRefUpdate(src, R_MASTER, R_MASTER, false, null, null
 				);
 			//
@@ -237,7 +237,7 @@ namespace NGit.Transport
 		private sealed class _TransportLocal_209 : TransportLocal
 		{
 			public _TransportLocal_209(ReceivePackRefFilterTest _enclosing, Repository baseArg1
-				, URIish baseArg2) : base(baseArg1, baseArg2)
+				, URIish baseArg2, FilePath baseArg3) : base(baseArg1, baseArg2, baseArg3)
 			{
 				this._enclosing = _enclosing;
 			}

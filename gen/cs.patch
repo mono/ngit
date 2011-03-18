@@ -849,6 +849,22 @@ index ff18e73..62d7d9f 100644
  			NUnit.Framework.Assert.AreEqual(Read(new FilePath(db.Directory, "MERGE_HEAD")), string.Empty
  				);
  			NUnit.Framework.Assert.AreEqual(db.ReadMergeHeads(), null);
+diff --git a/NGit.Test/NGit/ObjectIdOwnerMapTest.cs b/NGit.Test/NGit/ObjectIdOwnerMapTest.cs
+index cacf2e4..36f6b2a 100644
+--- a/NGit.Test/NGit/ObjectIdOwnerMapTest.cs
++++ b/NGit.Test/NGit/ObjectIdOwnerMapTest.cs
+@@ -229,9 +229,9 @@ namespace NGit
+ 		}
+ 
+ 		[System.Serializable]
+-		private class SubId : ObjectIdOwnerMap.Entry
++		internal class SubId : ObjectIdOwnerMap.Entry
+ 		{
+-			protected SubId(AnyObjectId id) : base(id)
++			public SubId(AnyObjectId id) : base(id)
+ 			{
+ 			}
+ 		}
 diff --git a/NGit.Test/NGit/ObjectIdSubclassMapTest.cs b/NGit.Test/NGit/ObjectIdSubclassMapTest.cs
 index 4fc1d3e..022e2b7 100644
 --- a/NGit.Test/NGit/ObjectIdSubclassMapTest.cs
@@ -1589,7 +1605,7 @@ index 92f3c22..bc87b85 100644
  		public override void Clear()
  		{
 diff --git a/NGit/NGit.Revplot/PlotWalk.cs b/NGit/NGit.Revplot/PlotWalk.cs
-index aceb627..6723cbe 100644
+index 0a031b9..cc9dede 100644
 --- a/NGit/NGit.Revplot/PlotWalk.cs
 +++ b/NGit/NGit.Revplot/PlotWalk.cs
 @@ -83,7 +83,7 @@ namespace NGit.Revplot
@@ -1615,6 +1631,15 @@ index aceb627..6723cbe 100644
  			}
  			return pc;
  		}
+@@ -104,7 +105,7 @@ namespace NGit.Revplot
+ 			ICollection<Ref> list = reverseRefMap.Get(commitId);
+ 			if (list == null)
+ 			{
+-				return PlotCommit.NO_REFS;
++				return PlotCommit<PlotLane>.NO_REFS;
+ 			}
+ 			else
+ 			{
 diff --git a/NGit/NGit.Revwalk.Filter/CommitTimeRevFilter.cs b/NGit/NGit.Revwalk.Filter/CommitTimeRevFilter.cs
 index 8d0c7cc..e73c631 100644
 --- a/NGit/NGit.Revwalk.Filter/CommitTimeRevFilter.cs
@@ -1711,7 +1736,7 @@ index d1b4148..e6174ab 100644
  		internal readonly int shift;
  
 diff --git a/NGit/NGit.Revwalk/RevWalk.cs b/NGit/NGit.Revwalk/RevWalk.cs
-index 9c927c4..393dfb3 100644
+index 2a0724d..79e77aa 100644
 --- a/NGit/NGit.Revwalk/RevWalk.cs
 +++ b/NGit/NGit.Revwalk/RevWalk.cs
 @@ -1052,14 +1052,14 @@ namespace NGit.Revwalk
@@ -1926,7 +1951,7 @@ index b0cec89..320a7e7 100644
  							return dstoff;
  						}
 diff --git a/NGit/NGit.Storage.Pack/BaseSearch.cs b/NGit/NGit.Storage.Pack/BaseSearch.cs
-index e60037b..57b8b3b 100644
+index d8cb76a..d6b7b5d 100644
 --- a/NGit/NGit.Storage.Pack/BaseSearch.cs
 +++ b/NGit/NGit.Storage.Pack/BaseSearch.cs
 @@ -127,7 +127,7 @@ namespace NGit.Storage.Pack
@@ -1975,7 +2000,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index b9f9a05..a3d55e4 100644
+index bb8a3bc..4acac26 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -1986,7 +2011,7 @@ index b9f9a05..a3d55e4 100644
 +		private readonly IList<ObjectToPack>[] objectsLists = new IList<ObjectToPack>[Constants.OBJ_TAG
  			 + 1];
  
- 		private readonly ObjectIdSubclassMap<ObjectToPack> objectsMap = new ObjectIdSubclassMap
+ 		private readonly ObjectIdOwnerMap<ObjectToPack> objectsMap = new ObjectIdOwnerMap
 @@ -118,7 +118,7 @@ namespace NGit.Storage.Pack
  
  		private IList<CachedPack> cachedPacks = new AList<CachedPack>(2);
@@ -2406,58 +2431,46 @@ index e300fdd..2f8430e 100644
  		/// <summary>
  		/// Filters a
 diff --git a/NGit/NGit.Transport/Transport.cs b/NGit/NGit.Transport/Transport.cs
-index 84af77e..acd9dd5 100644
+index b6bcb2d..ef9d4b0 100644
 --- a/NGit/NGit.Transport/Transport.cs
 +++ b/NGit/NGit.Transport/Transport.cs
-@@ -383,12 +383,12 @@ namespace NGit.Transport
- 						}
- 						else
- 						{
--							if (TransportAmazonS3.CanHandle(remote))
-+/*							if (TransportAmazonS3.CanHandle(remote))
- 							{
- 								return true;
- 							}
- 							else
--							{
-+							{*/
- 								if (TransportBundleFile.CanHandle(remote, fs))
- 								{
- 									return true;
-@@ -400,7 +400,7 @@ namespace NGit.Transport
- 										return true;
- 									}
- 								}
--							}
-+//							}
- 						}
- 					}
+@@ -50,7 +50,6 @@ using NGit.Errors;
+ using NGit.Storage.Pack;
+ using NGit.Transport;
+ using Sharpen;
+-using Sharpen.Reflect;
+ 
+ namespace NGit.Transport
+ {
+@@ -86,16 +85,16 @@ namespace NGit.Transport
+ 			// Registration goes backwards in order of priority.
+ 			Register(TransportLocal.PROTO_LOCAL);
+ 			Register(TransportBundleFile.PROTO_BUNDLE);
+-			Register(TransportAmazonS3.PROTO_S3);
++//			Register(TransportAmazonS3.PROTO_S3);
+ 			Register(TransportGitAnon.PROTO_GIT);
+ 			Register(TransportSftp.PROTO_SFTP);
+ 			Register(TransportHttp.PROTO_FTP);
+ 			Register(TransportHttp.PROTO_HTTP);
+ 			Register(TransportGitSsh.PROTO_SSH);
+-			RegisterByService();
++//			RegisterByService();
+ 		}
+ 
+-		private static void RegisterByService()
++/*		private static void RegisterByService()
+ 		{
+ 			ClassLoader ldr = Sharpen.Thread.CurrentThread().GetContextClassLoader();
+ 			if (ldr == null)
+@@ -206,6 +205,7 @@ namespace NGit.Transport
  				}
-@@ -441,12 +441,12 @@ namespace NGit.Transport
- 						}
- 						else
- 						{
--							if (TransportAmazonS3.CanHandle(remote))
-+/*							if (TransportAmazonS3.CanHandle(remote))
- 							{
- 								return new TransportAmazonS3(local, remote);
- 							}
- 							else
--							{
-+							{*/
- 								if (TransportBundleFile.CanHandle(remote, local.FileSystem))
- 								{
- 									return new TransportBundleFile(local, remote);
-@@ -458,7 +458,7 @@ namespace NGit.Transport
- 										return new TransportLocal(local, remote);
- 									}
- 								}
--							}
-+//							}
- 						}
- 					}
- 				}
-@@ -499,7 +499,7 @@ namespace NGit.Transport
+ 			}
+ 		}
++		*/
+ 
+ 		/// <summary>Register a TransportProtocol instance for use during open.</summary>
+ 		/// <remarks>
+@@ -647,7 +647,7 @@ namespace NGit.Transport
  		{
  			if (fetchSpecs == null)
  			{
@@ -2466,7 +2479,7 @@ index 84af77e..acd9dd5 100644
  			}
  			IList<RemoteRefUpdate> result = new List<RemoteRefUpdate>();
  			ICollection<RefSpec> procRefs = ExpandPushWildcardsFor(db, specs);
-@@ -627,7 +627,7 @@ namespace NGit.Transport
+@@ -775,7 +775,7 @@ namespace NGit.Transport
  
  		/// <summary>Specifications to apply during fetch.</summary>
  		/// <remarks>Specifications to apply during fetch.</remarks>
@@ -2475,7 +2488,7 @@ index 84af77e..acd9dd5 100644
  
  		/// <summary>
  		/// How
-@@ -655,7 +655,7 @@ namespace NGit.Transport
+@@ -803,7 +803,7 @@ namespace NGit.Transport
  
  		/// <summary>Specifications to apply during push.</summary>
  		/// <remarks>Specifications to apply during push.</remarks>
@@ -2502,10 +2515,10 @@ index 5d74675..7ab83a5 100644
  		/// <summary>Bundle signature</summary>
  		public const string V2_BUNDLE_SIGNATURE = "# v2 git bundle";
 diff --git a/NGit/NGit.Transport/TransportGitAnon.cs b/NGit/NGit.Transport/TransportGitAnon.cs
-index 6653eb2..052c99b 100644
+index ad9b679..340ccd5 100644
 --- a/NGit/NGit.Transport/TransportGitAnon.cs
 +++ b/NGit/NGit.Transport/TransportGitAnon.cs
-@@ -96,7 +96,7 @@ namespace NGit.Transport
+@@ -137,7 +137,7 @@ namespace NGit.Transport
  		{
  			int tms = GetTimeout() > 0 ? GetTimeout() * 1000 : 0;
  			int port = uri.GetPort() > 0 ? uri.GetPort() : GIT_PORT;
@@ -2514,7 +2527,7 @@ index 6653eb2..052c99b 100644
  			try
  			{
  				IPAddress host = Sharpen.Extensions.GetAddressByName(uri.GetHost());
-@@ -151,7 +151,7 @@ namespace NGit.Transport
+@@ -192,7 +192,7 @@ namespace NGit.Transport
  			private Socket sock;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2523,7 +2536,7 @@ index 6653eb2..052c99b 100644
  			{
  				this._enclosing = _enclosing;
  				this.sock = this._enclosing.OpenConnection();
-@@ -201,7 +201,7 @@ namespace NGit.Transport
+@@ -242,7 +242,7 @@ namespace NGit.Transport
  			private Socket sock;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2533,10 +2546,10 @@ index 6653eb2..052c99b 100644
  				this._enclosing = _enclosing;
  				this.sock = this._enclosing.OpenConnection();
 diff --git a/NGit/NGit.Transport/TransportGitSsh.cs b/NGit/NGit.Transport/TransportGitSsh.cs
-index 7aa04bc..afb3885 100644
+index bebdcc3..8e9eb4e 100644
 --- a/NGit/NGit.Transport/TransportGitSsh.cs
 +++ b/NGit/NGit.Transport/TransportGitSsh.cs
-@@ -455,7 +455,7 @@ namespace NGit.Transport
+@@ -492,7 +492,7 @@ namespace NGit.Transport
  			private readonly TransportGitSsh _enclosing;
  		}
  
@@ -2545,7 +2558,7 @@ index 7aa04bc..afb3885 100644
  		{
  			private TransportGitSsh.Connection conn;
  
-@@ -463,7 +463,7 @@ namespace NGit.Transport
+@@ -500,7 +500,7 @@ namespace NGit.Transport
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SshFetchConnection(TransportGitSsh _enclosing, TransportGitSsh.Connection
@@ -2554,7 +2567,7 @@ index 7aa04bc..afb3885 100644
  			{
  				this._enclosing = _enclosing;
  				this.conn = conn;
-@@ -527,7 +527,7 @@ namespace NGit.Transport
+@@ -564,7 +564,7 @@ namespace NGit.Transport
  			private readonly TransportGitSsh _enclosing;
  		}
  
@@ -2563,7 +2576,7 @@ index 7aa04bc..afb3885 100644
  		{
  			private TransportGitSsh.Connection conn;
  
-@@ -535,7 +535,7 @@ namespace NGit.Transport
+@@ -572,7 +572,7 @@ namespace NGit.Transport
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SshPushConnection(TransportGitSsh _enclosing, TransportGitSsh.Connection
@@ -2573,10 +2586,10 @@ index 7aa04bc..afb3885 100644
  				this._enclosing = _enclosing;
  				this.conn = conn;
 diff --git a/NGit/NGit.Transport/TransportHttp.cs b/NGit/NGit.Transport/TransportHttp.cs
-index af443df..bc47920 100644
+index bacb180..bc9e176 100644
 --- a/NGit/NGit.Transport/TransportHttp.cs
 +++ b/NGit/NGit.Transport/TransportHttp.cs
-@@ -629,7 +629,7 @@ namespace NGit.Transport
+@@ -715,7 +715,7 @@ namespace NGit.Transport
  			/// <exception cref="System.IO.IOException"></exception>
  			internal override WalkRemoteObjectDatabase OpenAlternate(string location)
  			{
@@ -2585,7 +2598,7 @@ index af443df..bc47920 100644
  			}
  
  			/// <exception cref="System.IO.IOException"></exception>
-@@ -779,7 +779,7 @@ namespace NGit.Transport
+@@ -865,7 +865,7 @@ namespace NGit.Transport
  		{
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SmartHttpFetchConnection(TransportHttp _enclosing, InputStream advertisement
@@ -2594,7 +2607,7 @@ index af443df..bc47920 100644
  			{
  				this._enclosing = _enclosing;
  				this.statelessRPC = true;
-@@ -792,7 +792,7 @@ namespace NGit.Transport
+@@ -878,7 +878,7 @@ namespace NGit.Transport
  			protected internal override void DoFetch(ProgressMonitor monitor, ICollection<Ref
  				> want, ICollection<ObjectId> have)
  			{
@@ -2603,7 +2616,7 @@ index af443df..bc47920 100644
  					);
  				this.Init(svc.@in, svc.@out);
  				base.DoFetch(monitor, want, have);
-@@ -805,7 +805,7 @@ namespace NGit.Transport
+@@ -891,7 +891,7 @@ namespace NGit.Transport
  		{
  			/// <exception cref="NGit.Errors.TransportException"></exception>
  			internal SmartHttpPushConnection(TransportHttp _enclosing, InputStream advertisement
@@ -2612,7 +2625,7 @@ index af443df..bc47920 100644
  			{
  				this._enclosing = _enclosing;
  				this.statelessRPC = true;
-@@ -818,7 +818,7 @@ namespace NGit.Transport
+@@ -904,7 +904,7 @@ namespace NGit.Transport
  			protected internal override void DoPush(ProgressMonitor monitor, IDictionary<string
  				, RemoteRefUpdate> refUpdates)
  			{
@@ -2621,7 +2634,7 @@ index af443df..bc47920 100644
  					);
  				this.Init(svc.@in, svc.@out);
  				base.DoPush(monitor, refUpdates);
-@@ -958,7 +958,7 @@ namespace NGit.Transport
+@@ -1044,7 +1044,7 @@ namespace NGit.Transport
  
  			internal class HttpOutputStream : TemporaryBuffer
  			{
@@ -2631,10 +2644,10 @@ index af443df..bc47920 100644
  				{
  					this._enclosing = _enclosing;
 diff --git a/NGit/NGit.Transport/TransportLocal.cs b/NGit/NGit.Transport/TransportLocal.cs
-index f04f8d1..eda11d5 100644
+index 5ee7331..64bea9c 100644
 --- a/NGit/NGit.Transport/TransportLocal.cs
 +++ b/NGit/NGit.Transport/TransportLocal.cs
-@@ -164,15 +164,15 @@ namespace NGit.Transport
+@@ -193,15 +193,15 @@ namespace NGit.Transport
  				ProcessStartInfo proc = local.FileSystem.RunInShell(cmd, args);
  				proc.WorkingDirectory = remoteGitDir;
  				// Remove the same variables CGit does.
@@ -2659,7 +2672,7 @@ index f04f8d1..eda11d5 100644
  				return proc.Start();
  			}
  			catch (IOException err)
-@@ -186,7 +186,7 @@ namespace NGit.Transport
+@@ -215,7 +215,7 @@ namespace NGit.Transport
  			private Sharpen.Thread worker;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2668,7 +2681,7 @@ index f04f8d1..eda11d5 100644
  				)
  			{
  				this._enclosing = _enclosing;
-@@ -324,7 +324,7 @@ namespace NGit.Transport
+@@ -353,7 +353,7 @@ namespace NGit.Transport
  			private Sharpen.Thread errorReaderThread;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2677,7 +2690,7 @@ index f04f8d1..eda11d5 100644
  				)
  			{
  				this._enclosing = _enclosing;
-@@ -385,7 +385,7 @@ namespace NGit.Transport
+@@ -414,7 +414,7 @@ namespace NGit.Transport
  			private Sharpen.Thread worker;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2686,7 +2699,7 @@ index f04f8d1..eda11d5 100644
  				)
  			{
  				this._enclosing = _enclosing;
-@@ -440,7 +440,7 @@ namespace NGit.Transport
+@@ -469,7 +469,7 @@ namespace NGit.Transport
  					try
  					{
  						ReceivePack rp = this._enclosing._enclosing.CreateReceivePack(dst);
@@ -2695,7 +2708,7 @@ index f04f8d1..eda11d5 100644
  					}
  					catch (IOException)
  					{
-@@ -507,7 +507,7 @@ namespace NGit.Transport
+@@ -536,7 +536,7 @@ namespace NGit.Transport
  			private Sharpen.Thread errorReaderThread;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
@@ -2704,8 +2717,30 @@ index f04f8d1..eda11d5 100644
  			{
  				this._enclosing = _enclosing;
  				MessageWriter msg = new MessageWriter();
+diff --git a/NGit/NGit.Transport/TransportProtocol.cs b/NGit/NGit.Transport/TransportProtocol.cs
+index 1d702e4..1d7bc07 100644
+--- a/NGit/NGit.Transport/TransportProtocol.cs
++++ b/NGit/NGit.Transport/TransportProtocol.cs
+@@ -109,7 +109,7 @@ namespace NGit.Transport
+ 		/// <returns>immutable set of schemes supported by this protocol.</returns>
+ 		public virtual ICollection<string> GetSchemes()
+ 		{
+-			return Sharpen.Collections.EmptySet();
++			return Sharpen.Collections.EmptySet<string>();
+ 		}
+ 
+ 		/// <returns>immutable set of URIishFields that must be filled in.</returns>
+@@ -122,7 +122,7 @@ namespace NGit.Transport
+ 		/// <returns>immutable set of URIishFields that may be filled in.</returns>
+ 		public virtual ICollection<TransportProtocol.URIishField> GetOptionalFields()
+ 		{
+-			return Sharpen.Collections.EmptySet();
++			return Sharpen.Collections.EmptySet<TransportProtocol.URIishField>();
+ 		}
+ 
+ 		/// <returns>if a port is supported, the default port, else -1.</returns>
 diff --git a/NGit/NGit.Transport/TransportSftp.cs b/NGit/NGit.Transport/TransportSftp.cs
-index 49fce84..551432d 100644
+index d3f7d02..f2b5e80 100644
 --- a/NGit/NGit.Transport/TransportSftp.cs
 +++ b/NGit/NGit.Transport/TransportSftp.cs
 @@ -48,6 +48,7 @@ using NGit.Errors;
@@ -2716,7 +2751,7 @@ index 49fce84..551432d 100644
  
  namespace NGit.Transport
  {
-@@ -203,7 +204,7 @@ namespace NGit.Transport
+@@ -243,7 +244,7 @@ namespace NGit.Transport
  			/// <exception cref="System.IO.IOException"></exception>
  			internal override WalkRemoteObjectDatabase OpenAlternate(string location)
  			{
@@ -2725,7 +2760,7 @@ index 49fce84..551432d 100644
  			}
  
  			/// <exception cref="System.IO.IOException"></exception>
-@@ -212,7 +213,7 @@ namespace NGit.Transport
+@@ -252,7 +253,7 @@ namespace NGit.Transport
  				IList<string> packs = new AList<string>();
  				try
  				{
@@ -2734,7 +2769,7 @@ index 49fce84..551432d 100644
  					Dictionary<string, ChannelSftp.LsEntry> files;
  					Dictionary<string, int> mtimes;
  					files = new Dictionary<string, ChannelSftp.LsEntry>();
-@@ -426,7 +427,7 @@ namespace NGit.Transport
+@@ -466,7 +467,7 @@ namespace NGit.Transport
  			private void ReadLooseRefs(SortedDictionary<string, Ref> avail, string dir, string
  				 prefix)
  			{
@@ -3674,20 +3709,72 @@ index ddd1894..4421c16 100644
  			{
  				this.monitor = monitor;
  				this.total = total;
-diff --git a/NGit/NGit/ObjectIdSubclassMap.cs b/NGit/NGit/ObjectIdSubclassMap.cs
-index ba9bca1..2c755c4 100644
---- a/NGit/NGit/ObjectIdSubclassMap.cs
-+++ b/NGit/NGit/ObjectIdSubclassMap.cs
-@@ -172,7 +172,7 @@ namespace NGit
+diff --git a/NGit/NGit/ObjectIdOwnerMap.cs b/NGit/NGit/ObjectIdOwnerMap.cs
+index b9e1849..3447dbf 100644
+--- a/NGit/NGit/ObjectIdOwnerMap.cs
++++ b/NGit/NGit/ObjectIdOwnerMap.cs
+@@ -128,7 +128,7 @@ namespace NGit
+ 			bits = 0;
+ 			mask = 0;
+ 			grow = ComputeGrowAt(bits);
+-			directory = (V[][])new ObjectIdOwnerMap.Entry[INITIAL_DIRECTORY][];
++			directory = new V[INITIAL_DIRECTORY][];
+ 			directory[0] = NewSegment();
+ 		}
+ 
+@@ -196,7 +196,7 @@ namespace NGit
+ 			{
+ 				Grow();
+ 			}
+-			int h = newValue.w1;
++			int h = ((V)newValue).w1;
+ 			V[] table = directory[h & mask];
+ 			h = (int)(((uint)h) >> SEGMENT_SHIFT);
+ 			newValue.next = table[h];
+@@ -229,7 +229,7 @@ namespace NGit
  		/// <?></?>
  		public virtual V AddIfAbsent<Q>(Q newValue) where Q:V
  		{
--			int i = newValue.w1 & mask;
-+			int i = ((ObjectId)newValue).w1 & mask;
+-			int h = newValue.w1;
++			int h = ((V)newValue).w1;
+ 			V[] table = directory[h & mask];
+ 			h = (int)(((uint)h) >> SEGMENT_SHIFT);
+ 			for (V obj = table[h]; obj != null; obj = (V)obj.next)
+@@ -388,7 +388,7 @@ namespace NGit
+ 
+ 		private V[] NewSegment()
+ 		{
+-			return (V[])new ObjectIdOwnerMap.Entry[1 << SEGMENT_BITS];
++			return new V[1 << SEGMENT_BITS];
+ 		}
+ 
+ 		private static int ComputeGrowAt(int bits)
+@@ -402,7 +402,10 @@ namespace NGit
+ 				.w3 && firstObjectId.w4 == secondObjectId.w4 && firstObjectId.w5 == secondObjectId
+ 				.w5 && firstObjectId.w1 == secondObjectId.w1;
+ 		}
+-
++	}
++	
++	public class ObjectIdOwnerMap
++	{
+ 		/// <summary>
+ 		/// Type of entry stored in the
+ 		/// <see cref="ObjectIdOwnerMap{V}">ObjectIdOwnerMap&lt;V&gt;</see>
+diff --git a/NGit/NGit/ObjectIdSubclassMap.cs b/NGit/NGit/ObjectIdSubclassMap.cs
+index 928f87a..a0d7e92 100644
+--- a/NGit/NGit/ObjectIdSubclassMap.cs
++++ b/NGit/NGit/ObjectIdSubclassMap.cs
+@@ -170,7 +170,7 @@ namespace NGit
+ 		public virtual V AddIfAbsent<Q>(Q newValue) where Q:V
+ 		{
+ 			int msk = mask;
+-			int i = newValue.w1 & msk;
++			int i = ((ObjectId)newValue).w1 & msk;
  			V[] tbl = table;
- 			int end = tbl.Length;
  			V obj;
-@@ -297,7 +297,7 @@ namespace NGit
+ 			while ((obj = tbl[i]) != null)
+@@ -288,7 +288,7 @@ namespace NGit
  
  		private V[] CreateArray(int sz)
  		{

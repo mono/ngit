@@ -366,6 +366,8 @@ namespace NGit
 
 		public string eitherGitDirOrWorkTreeRequired;
 
+		public string emptyCommit;
+
 		public string emptyPathNotPermitted;
 
 		public string encryptionError;
@@ -473,6 +475,8 @@ namespace NGit
 		public string hunkHeaderDoesNotMatchBodyLineCountOf;
 
 		public string illegalArgumentNotA;
+
+		public string illegalCombinationOfArguments;
 
 		public string illegalStateExists;
 
@@ -893,6 +897,22 @@ namespace NGit
 		public string transportExceptionMissingAssumed;
 
 		public string transportExceptionReadRef;
+
+		public string transportProtoAmazonS3;
+
+		public string transportProtoBundleFile;
+
+		public string transportProtoFTP;
+
+		public string transportProtoGitAnon;
+
+		public string transportProtoHTTP;
+
+		public string transportProtoLocal;
+
+		public string transportProtoSFTP;
+
+		public string transportProtoSSH;
 
 		public string treeEntryAlreadyExists;
 

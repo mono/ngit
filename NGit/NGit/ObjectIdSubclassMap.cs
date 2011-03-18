@@ -55,10 +55,10 @@ namespace NGit
 	/// This map provides an efficient translation from any ObjectId instance to a
 	/// cached subclass of ObjectId that has the same value.
 	/// <p>
-	/// Raw value equality is tested when comparing two ObjectIds (or subclasses),
-	/// not reference equality and not <code>.equals(Object)</code> equality. This
-	/// allows subclasses to override <code>equals</code> to supply their own
-	/// extended semantics.
+	/// If object instances are stored in only one map,
+	/// <see cref="ObjectIdOwnerMap{V}">ObjectIdOwnerMap&lt;V&gt;</see>
+	/// is a
+	/// more efficient implementation.
 	/// </summary>
 	/// <?></?>
 	public class ObjectIdSubclassMap<V> : Iterable<V> where V:ObjectId
@@ -94,9 +94,9 @@ namespace NGit
 		/// <returns>the instance mapped to toFind, or null if no mapping exists.</returns>
 		public virtual V Get(AnyObjectId toFind)
 		{
-			int i = toFind.w1 & mask;
+			int msk = mask;
+			int i = toFind.w1 & msk;
 			V[] tbl = table;
-			int end = tbl.Length;
 			V obj;
 			while ((obj = tbl[i]) != null)
 			{
@@ -104,10 +104,7 @@ namespace NGit
 				{
 					return obj;
 				}
-				if (++i == end)
-				{
-					i = 0;
-				}
+				i = (i + 1) & msk;
 			}
 			return null;
 		}
@@ -172,9 +169,9 @@ namespace NGit
 		/// <?></?>
 		public virtual V AddIfAbsent<Q>(Q newValue) where Q:V
 		{
-			int i = ((ObjectId)newValue).w1 & mask;
+			int msk = mask;
+			int i = ((ObjectId)newValue).w1 & msk;
 			V[] tbl = table;
-			int end = tbl.Length;
 			V obj;
 			while ((obj = tbl[i]) != null)
 			{
@@ -182,10 +179,7 @@ namespace NGit
 				{
 					return obj;
 				}
-				if (++i == end)
-				{
-					i = 0;
-				}
+				i = (i + 1) & msk;
 			}
 			if (++size == grow)
 			{
@@ -217,12 +211,12 @@ namespace NGit
 
 		public override Sharpen.Iterator<V> Iterator()
 		{
-			return new _Iterator_194(this);
+			return new _Iterator_190(this);
 		}
 
-		private sealed class _Iterator_194 : Sharpen.Iterator<V>
+		private sealed class _Iterator_190 : Sharpen.Iterator<V>
 		{
-			public _Iterator_194(ObjectIdSubclassMap<V> _enclosing)
+			public _Iterator_190(ObjectIdSubclassMap<V> _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -260,15 +254,12 @@ namespace NGit
 
 		private void Insert(V newValue)
 		{
-			int j = newValue.w1 & mask;
+			int msk = mask;
+			int j = newValue.w1 & msk;
 			V[] tbl = table;
-			int end = tbl.Length;
 			while (tbl[j] != null)
 			{
-				if (++j == end)
-				{
-					j = 0;
-				}
+				j = (j + 1) & msk;
 			}
 			tbl[j] = newValue;
 		}

@@ -497,6 +497,8 @@
     <Compile Include="NGit.Api\ResetCommand.cs" />
     <Compile Include="NGit\BatchingProgressMonitor.cs" />
     <Compile Include="NGit.Util\BlockList.cs" />
+    <Compile Include="NGit\ObjectIdOwnerMap.cs" />
+    <Compile Include="NGit.Transport\TransportProtocol.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

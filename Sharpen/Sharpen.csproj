@@ -150,6 +150,7 @@
     <Compile Include="Sharpen\ScheduledThreadPoolExecutor.cs" />
     <Compile Include="Sharpen\ThreadFactory.cs" />
     <Compile Include="Sharpen\ThreadPoolExecutor.cs" />
+    <Compile Include="Sharpen\WeakReference.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

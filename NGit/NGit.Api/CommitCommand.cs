@@ -49,6 +49,7 @@ using NGit.Api.Errors;
 using NGit.Dircache;
 using NGit.Errors;
 using NGit.Revwalk;
+using NGit.Treewalk;
 using Sharpen;
 
 namespace NGit.Api
@@ -74,6 +75,10 @@ namespace NGit.Api
 		private string message;
 
 		private bool all;
+
+		private IList<string> only = new AList<string>();
+
+		private bool[] onlyProcessed;
 
 		private bool amend;
 
@@ -179,6 +184,10 @@ namespace NGit.Api
 				DirCache index = repo.LockDirCache();
 				try
 				{
+					if (!only.IsEmpty())
+					{
+						index = CreateTemporaryIndex(headId, index);
+					}
 					ObjectInserter odi = repo.NewObjectInserter();
 					try
 					{
@@ -262,6 +271,193 @@ namespace NGit.Api
 				throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfCommitCommand
 					, e);
 			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private DirCache CreateTemporaryIndex(ObjectId headId, DirCache index)
+		{
+			ObjectInserter inserter = null;
+			// get DirCacheEditor to modify the index if required
+			DirCacheEditor dcEditor = index.Editor();
+			// get DirCacheBuilder for newly created in-core index to build a
+			// temporary index for this commit
+			DirCache inCoreIndex = DirCache.NewInCore();
+			DirCacheBuilder dcBuilder = inCoreIndex.Builder();
+			onlyProcessed = new bool[only.Count];
+			bool emptyCommit = true;
+			TreeWalk treeWalk = new TreeWalk(repo);
+			int dcIdx = treeWalk.AddTree(new DirCacheIterator(index));
+			int fIdx = treeWalk.AddTree(new FileTreeIterator(repo));
+			int hIdx = -1;
+			if (headId != null)
+			{
+				hIdx = treeWalk.AddTree(new RevWalk(repo).ParseTree(headId));
+			}
+			treeWalk.Recursive = true;
+			while (treeWalk.Next())
+			{
+				string path = treeWalk.PathString;
+				// check if current entry's path matches a specified path
+				int pos = LookupOnly(path);
+				CanonicalTreeParser hTree = null;
+				if (hIdx != -1)
+				{
+					hTree = treeWalk.GetTree<CanonicalTreeParser>(hIdx);
+				}
+				if (pos >= 0)
+				{
+					// include entry in commit
+					DirCacheIterator dcTree = treeWalk.GetTree<DirCacheIterator>(dcIdx);
+					FileTreeIterator fTree = treeWalk.GetTree<FileTreeIterator>(fIdx);
+					// check if entry refers to a tracked file
+					bool tracked = dcTree != null || hTree != null;
+					if (!tracked)
+					{
+						break;
+					}
+					if (fTree != null)
+					{
+						// create a new DirCacheEntry with data retrieved from disk
+						DirCacheEntry dcEntry = new DirCacheEntry(path);
+						long entryLength = fTree.GetEntryLength();
+						dcEntry.SetLength(entryLength);
+						dcEntry.LastModified = fTree.GetEntryLastModified();
+						dcEntry.FileMode = fTree.EntryFileMode;
+						bool objectExists = (dcTree != null && fTree.IdEqual(dcTree)) || (hTree != null &&
+							 fTree.IdEqual(hTree));
+						if (objectExists)
+						{
+							dcEntry.SetObjectId(fTree.EntryObjectId);
+						}
+						else
+						{
+							// insert object
+							if (inserter == null)
+							{
+								inserter = repo.NewObjectInserter();
+							}
+							InputStream inputStream = fTree.OpenEntryStream();
+							try
+							{
+								dcEntry.SetObjectId(inserter.Insert(Constants.OBJ_BLOB, entryLength, inputStream)
+									);
+							}
+							finally
+							{
+								inputStream.Close();
+							}
+						}
+						// update index
+						dcEditor.Add(new _PathEdit_336(dcEntry, path));
+						// add to temporary in-core index
+						dcBuilder.Add(dcEntry);
+						if (emptyCommit && (hTree == null || !hTree.IdEqual(fTree)))
+						{
+							// this is a change
+							emptyCommit = false;
+						}
+					}
+					else
+					{
+						// if no file exists on disk, remove entry from index and
+						// don't add it to temporary in-core index
+						dcEditor.Add(new DirCacheEditor.DeletePath(path));
+						if (emptyCommit && hTree != null)
+						{
+							// this is a change
+							emptyCommit = false;
+						}
+					}
+					// keep track of processed path
+					onlyProcessed[pos] = true;
+				}
+				else
+				{
+					// add entries from HEAD for all other paths
+					if (hTree != null)
+					{
+						// create a new DirCacheEntry with data retrieved from HEAD
+						DirCacheEntry dcEntry = new DirCacheEntry(path);
+						dcEntry.SetObjectId(hTree.EntryObjectId);
+						dcEntry.FileMode = hTree.EntryFileMode;
+						// add to temporary in-core index
+						dcBuilder.Add(dcEntry);
+					}
+				}
+			}
+			// there must be no unprocessed paths left at this point; otherwise an
+			// untracked or unknown path has been specified
+			for (int i = 0; i < onlyProcessed.Length; i++)
+			{
+				if (!onlyProcessed[i])
+				{
+					throw new JGitInternalException(MessageFormat.Format(JGitText.Get().entryNotFoundByPath
+						, only[i]));
+				}
+			}
+			// there must be at least one change
+			if (emptyCommit)
+			{
+				throw new JGitInternalException(JGitText.Get().emptyCommit);
+			}
+			// update index
+			dcEditor.Commit();
+			// finish temporary in-core index used for this commit
+			dcBuilder.Finish();
+			return inCoreIndex;
+		}
+
+		private sealed class _PathEdit_336 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_336(DirCacheEntry dcEntry, string baseArg1) : base(baseArg1)
+			{
+				this.dcEntry = dcEntry;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.CopyMetaData(dcEntry);
+			}
+
+			private readonly DirCacheEntry dcEntry;
+		}
+
+		/// <summary>
+		/// Look an entry's path up in the list of paths specified by the --only/ -o
+		/// option
+		/// In case the complete (file) path (e.g.
+		/// </summary>
+		/// <remarks>
+		/// Look an entry's path up in the list of paths specified by the --only/ -o
+		/// option
+		/// In case the complete (file) path (e.g. "d1/d2/f1") cannot be found in
+		/// <code>only</code>, lookup is also tried with (parent) directory paths
+		/// (e.g. "d1/d2" and "d1").
+		/// </remarks>
+		/// <param name="pathString">entry's path</param>
+		/// <returns>the item's index in <code>only</code>; -1 if no item matches</returns>
+		private int LookupOnly(string pathString)
+		{
+			int i = 0;
+			foreach (string o in only)
+			{
+				string p = pathString;
+				while (true)
+				{
+					if (p.Equals(o))
+					{
+						return i;
+					}
+					int l = p.LastIndexOf("/");
+					if (l < 1)
+					{
+						break;
+					}
+					p = Sharpen.Runtime.Substring(p, 0, l);
+				}
+				i++;
+			}
+			return -1;
 		}
 
 		/// <summary>Sets default values for not explicitly specified options.</summary>
@@ -470,22 +666,29 @@ namespace NGit.Api
 
 		/// <summary>
 		/// If set to true the Commit command automatically stages files that have
-		/// been modified and deleted, but new files you not known by the repository
-		/// are not affected.
+		/// been modified and deleted, but new files not known by the repository are
+		/// not affected.
 		/// </summary>
 		/// <remarks>
 		/// If set to true the Commit command automatically stages files that have
-		/// been modified and deleted, but new files you not known by the repository
-		/// are not affected. This corresponds to the parameter -a on the command
-		/// line.
+		/// been modified and deleted, but new files not known by the repository are
+		/// not affected. This corresponds to the parameter -a on the command line.
 		/// </remarks>
 		/// <param name="all"></param>
 		/// <returns>
 		/// 
 		/// <code>this</code>
 		/// </returns>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException">in case of an illegal combination of arguments/ options
+		/// 	</exception>
 		public virtual NGit.Api.CommitCommand SetAll(bool all)
 		{
+			CheckCallable();
+			if (!only.IsEmpty())
+			{
+				throw new JGitInternalException(MessageFormat.Format(JGitText.Get().illegalCombinationOfArguments
+					, "--all", "--only"));
+			}
 			this.all = all;
 			return this;
 		}
@@ -503,7 +706,41 @@ namespace NGit.Api
 		/// </returns>
 		public virtual NGit.Api.CommitCommand SetAmend(bool amend)
 		{
+			CheckCallable();
 			this.amend = amend;
+			return this;
+		}
+
+		/// <summary>
+		/// Commit dedicated path only
+		/// This method can be called several times to add multiple paths.
+		/// </summary>
+		/// <remarks>
+		/// Commit dedicated path only
+		/// This method can be called several times to add multiple paths. Full file
+		/// paths are supported as well as directory paths; in the latter case this
+		/// commits all files/ directories below the specified path.
+		/// </remarks>
+		/// <param name="only">path to commit</param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.CommitCommand SetOnly(string only)
+		{
+			CheckCallable();
+			if (all)
+			{
+				throw new JGitInternalException(MessageFormat.Format(JGitText.Get().illegalCombinationOfArguments
+					, "--only", "--all"));
+			}
+			string o = only.EndsWith("/") ? Sharpen.Runtime.Substring(only, 0, only.Length - 
+				1) : only;
+			// ignore duplicates
+			if (!this.only.Contains(o))
+			{
+				this.only.AddItem(o);
+			}
 			return this;
 		}
 	}

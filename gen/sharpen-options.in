@@ -256,6 +256,7 @@
 -typeMapping java.math.BigInteger Mono.Math.BigInteger
 -typeMapping java.util.Properties Sharpen.Properties
 -typeMapping java.util.concurrent.Semaphore System.Threading.Semaphore
+-typeMapping java.util.Enumeration System.Collections.Generic.IEnumeration
 -typeMapping java.lang.ProcessBuilder System.Diagnostics.ProcessStartInfo
 -propertyMapping java.lang.Class.getSimpleName Name
 -propertyMapping java.nio.charset.Charset.defaultCharset Default
