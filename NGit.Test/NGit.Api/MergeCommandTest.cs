@@ -372,6 +372,8 @@ namespace NGit.Api
 				"b")));
 			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
 				"c/c/c")));
+			NUnit.Framework.Assert.AreEqual("--- dirty ---", Read(new FilePath(db.WorkTree, "d"
+				)));
 			NUnit.Framework.Assert.AreEqual(null, result.GetConflicts());
 			NUnit.Framework.Assert.IsTrue(2 == result.GetMergedCommits().Length);
 			NUnit.Framework.Assert.AreEqual(thirdCommit, result.GetMergedCommits()[0]);
@@ -420,6 +422,8 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
 			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
 				"c/c/c")));
+			NUnit.Framework.Assert.AreEqual("1\nd\n3\n", Read(new FilePath(db.WorkTree, "d"))
+				);
 			// Do the opposite, be on a branch where we have deleted a file and
 			// merge in a old commit where this file was not deleted
 			CheckoutBranch("refs/heads/side");
@@ -432,6 +436,8 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
 			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
 				"c/c/c")));
+			NUnit.Framework.Assert.AreEqual("1\nd\n3\n", Read(new FilePath(db.WorkTree, "d"))
+				);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -494,6 +500,8 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
 			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
 				"c/c/c")));
+			NUnit.Framework.Assert.AreEqual("1\nd\n3\n", Read(new FilePath(db.WorkTree, "d"))
+				);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -564,6 +572,148 @@ namespace NGit.Api
 				"d/d/d")));
 			NUnit.Framework.Assert.AreEqual(null, result.GetConflicts());
 			NUnit.Framework.Assert.AreEqual(RepositoryState.MERGING, db.GetRepositoryState());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSuccessfulMergeFailsDueToDirtyIndex()
+		{
+			Git git = new Git(db);
+			FilePath fileA = WriteTrashFile("a", "a");
+			RevCommit initialCommit = AddAllAndCommit(git);
+			// switch branch
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			// modify file a
+			Write(fileA, "a(side)");
+			WriteTrashFile("b", "b");
+			RevCommit sideCommit = AddAllAndCommit(git);
+			// switch branch
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile("c", "c");
+			AddAllAndCommit(git);
+			// modify and add file a
+			Write(fileA, "a(modified)");
+			git.Add().AddFilepattern("a").Call();
+			// do not commit
+			// get current index state
+			string indexState = IndexState(CONTENT);
+			// merge
+			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			CheckMergeFailedResult(result, indexState, fileA);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestConflictingMergeFailsDueToDirtyIndex()
+		{
+			Git git = new Git(db);
+			FilePath fileA = WriteTrashFile("a", "a");
+			RevCommit initialCommit = AddAllAndCommit(git);
+			// switch branch
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			// modify file a
+			Write(fileA, "a(side)");
+			WriteTrashFile("b", "b");
+			RevCommit sideCommit = AddAllAndCommit(git);
+			// switch branch
+			CheckoutBranch("refs/heads/master");
+			// modify file a - this will cause a conflict during merge
+			Write(fileA, "a(master)");
+			WriteTrashFile("c", "c");
+			AddAllAndCommit(git);
+			// modify and add file a
+			Write(fileA, "a(modified)");
+			git.Add().AddFilepattern("a").Call();
+			// do not commit
+			// get current index state
+			string indexState = IndexState(CONTENT);
+			// merge
+			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			CheckMergeFailedResult(result, indexState, fileA);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSuccessfulMergeFailsDueToDirtyWorktree()
+		{
+			Git git = new Git(db);
+			FilePath fileA = WriteTrashFile("a", "a");
+			RevCommit initialCommit = AddAllAndCommit(git);
+			// switch branch
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			// modify file a
+			Write(fileA, "a(side)");
+			WriteTrashFile("b", "b");
+			RevCommit sideCommit = AddAllAndCommit(git);
+			// switch branch
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile("c", "c");
+			AddAllAndCommit(git);
+			// modify file a
+			Write(fileA, "a(modified)");
+			// do not add and commit
+			// get current index state
+			string indexState = IndexState(CONTENT);
+			// merge
+			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			CheckMergeFailedResult(result, indexState, fileA);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestConflictingMergeFailsDueToDirtyWorktree()
+		{
+			Git git = new Git(db);
+			FilePath fileA = WriteTrashFile("a", "a");
+			RevCommit initialCommit = AddAllAndCommit(git);
+			// switch branch
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			// modify file a
+			Write(fileA, "a(side)");
+			WriteTrashFile("b", "b");
+			RevCommit sideCommit = AddAllAndCommit(git);
+			// switch branch
+			CheckoutBranch("refs/heads/master");
+			// modify file a - this will cause a conflict during merge
+			Write(fileA, "a(master)");
+			WriteTrashFile("c", "c");
+			AddAllAndCommit(git);
+			// modify file a
+			Write(fileA, "a(modified)");
+			// do not add and commit
+			// get current index state
+			string indexState = IndexState(CONTENT);
+			// merge
+			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			CheckMergeFailedResult(result, indexState, fileA);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		private RevCommit AddAllAndCommit(Git git)
+		{
+			git.Add().AddFilepattern(".").Call();
+			return git.Commit().SetMessage("message").Call();
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		private void CheckMergeFailedResult(MergeCommandResult result, string indexState, 
+			FilePath fileA)
+		{
+			NUnit.Framework.Assert.AreEqual(MergeStatus.FAILED, result.GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual("a(modified)", Read(fileA));
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
+			NUnit.Framework.Assert.AreEqual("c", Read(new FilePath(db.WorkTree, "c")));
+			NUnit.Framework.Assert.AreEqual(indexState, IndexState(CONTENT));
+			NUnit.Framework.Assert.AreEqual(null, result.GetConflicts());
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

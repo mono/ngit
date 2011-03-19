@@ -1396,10 +1396,10 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index 0357786..e04b43f 100644
+index c672210..a57f159 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
-@@ -534,7 +534,7 @@ namespace NGit.Merge
+@@ -566,7 +566,7 @@ namespace NGit.Merge
  				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
  				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
  				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);
