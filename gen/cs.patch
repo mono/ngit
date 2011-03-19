@@ -657,7 +657,7 @@ index 198f581..8cde1df 100644
  		}
  
 diff --git a/NGit.Test/NGit.Util/BlockListTest.cs b/NGit.Test/NGit.Util/BlockListTest.cs
-index 9226f38..05ab28b 100644
+index 3c0a67d..2361afc 100644
 --- a/NGit.Test/NGit.Util/BlockListTest.cs
 +++ b/NGit.Test/NGit.Util/BlockListTest.cs
 @@ -76,9 +76,10 @@ namespace NGit.Util
@@ -726,6 +726,15 @@ index 9226f38..05ab28b 100644
  			NUnit.Framework.Assert.IsTrue(list.AddItem(Sharpen.Extensions.ValueOf(1)));
  			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.ValueOf(1), list[list.Count - 
 @@ -286,7 +287,7 @@ namespace NGit.Util
+ 		public virtual void TestAddAllFromOtherList()
+ 		{
+ 			BlockList<int> src = new BlockList<int>(4);
+-			int cnt = BlockList.BLOCK_SIZE * 2;
++			int cnt = BlockList<int>.BLOCK_SIZE * 2;
+ 			for (int i = 0; i < cnt; i++)
+ 			{
+ 				src.AddItem(Sharpen.Extensions.ValueOf(42 + i));
+@@ -309,7 +310,7 @@ namespace NGit.Util
  		public virtual void TestFastIterator()
  		{
  			BlockList<int> list = new BlockList<int>(4);
@@ -2000,7 +2009,7 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 3a3cc6c..2af99bf 100644
+index 5bbb198..62632a1 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
@@ -2021,7 +2030,7 @@ index 3a3cc6c..2af99bf 100644
  
  		private ICSharpCode.SharpZipLib.Zip.Compression.Deflater myDeflater;
  
-@@ -557,7 +557,7 @@ namespace NGit.Storage.Pack
+@@ -559,7 +559,7 @@ namespace NGit.Storage.Pack
  		/// <param name="id">the object to test the existence of.</param>
  		/// <returns>true if the object will appear in the output pack file.</returns>
  		/// <exception cref="System.IO.IOException">a cached pack cannot be examined.</exception>
@@ -2030,7 +2039,7 @@ index 3a3cc6c..2af99bf 100644
  		{
  			ObjectToPack obj = objectsMap.Get(id);
  			if (obj != null && !obj.IsEdge())
-@@ -1422,12 +1422,10 @@ namespace NGit.Storage.Pack
+@@ -1449,12 +1449,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
@@ -2046,7 +2055,7 @@ index 3a3cc6c..2af99bf 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1446,7 +1444,7 @@ namespace NGit.Storage.Pack
+@@ -1473,7 +1471,7 @@ namespace NGit.Storage.Pack
  				walker.Sort(RevSort.COMMIT_TIME_DESC);
  				if (useCachedPacks && reuseSupport != null)
  				{
@@ -3073,7 +3082,7 @@ index d902038..bb6fd35 100644
  					b4[b4Posn++] = sbiCrop;
  					if (b4Posn > 3)
 diff --git a/NGit/NGit.Util/BlockList.cs b/NGit/NGit.Util/BlockList.cs
-index c663bf7..b986289 100644
+index 81693c4..96e7be5 100644
 --- a/NGit/NGit.Util/BlockList.cs
 +++ b/NGit/NGit.Util/BlockList.cs
 @@ -96,8 +96,8 @@ namespace NGit.Util
@@ -3107,7 +3116,7 @@ index c663bf7..b986289 100644
  				}
  			}
  			size = 0;
-@@ -175,14 +175,14 @@ namespace NGit.Util
+@@ -221,14 +221,14 @@ namespace NGit.Util
  			// Slow path: Move to the next block, expanding if necessary.
  			if (++tailDirIdx == directory.Length)
  			{
@@ -3124,7 +3133,7 @@ index c663bf7..b986289 100644
  				directory[tailDirIdx] = blockRef;
  			}
  			blockRef[0] = element;
-@@ -211,7 +211,7 @@ namespace NGit.Util
+@@ -257,7 +257,7 @@ namespace NGit.Util
  					// Do this the naive way, callers shouldn't abuse
  					// this class by entering this code path.
  					//
@@ -3133,7 +3142,7 @@ index c663bf7..b986289 100644
  					// expand the list by one
  					for (int oldIdx = size - 2; index <= oldIdx; oldIdx--)
  					{
-@@ -230,7 +230,7 @@ namespace NGit.Util
+@@ -276,7 +276,7 @@ namespace NGit.Util
  				T[] blockRef = directory[ToDirectoryIndex(index)];
  				int blockIdx = ToBlockIndex(index);
  				T old = blockRef[blockIdx];
@@ -3142,7 +3151,7 @@ index c663bf7..b986289 100644
  				size--;
  				if (0 < tailBlkIdx)
  				{
-@@ -259,7 +259,7 @@ namespace NGit.Util
+@@ -305,7 +305,7 @@ namespace NGit.Util
  					{
  						Set(index, this[index + 1]);
  					}
@@ -3151,7 +3160,7 @@ index c663bf7..b986289 100644
  					size--;
  					ResetTailBlock();
  					return old;
-@@ -276,7 +276,7 @@ namespace NGit.Util
+@@ -322,7 +322,7 @@ namespace NGit.Util
  
  		public override Sharpen.Iterator<T> Iterator()
  		{
@@ -3160,7 +3169,7 @@ index c663bf7..b986289 100644
  		}
  
  		private static int ToDirectoryIndex(int index)
-@@ -289,14 +289,14 @@ namespace NGit.Util
+@@ -335,14 +335,14 @@ namespace NGit.Util
  			return index & BLOCK_MASK;
  		}
  
@@ -3179,7 +3188,7 @@ index c663bf7..b986289 100644
  		}
  
  		private class MyIterator : Iterator<T>
-@@ -307,7 +307,7 @@ namespace NGit.Util
+@@ -353,7 +353,7 @@ namespace NGit.Util
  
  			private int blkIdx;
  
@@ -3188,7 +3197,7 @@ index c663bf7..b986289 100644
  
  			public override bool HasNext()
  			{
-@@ -321,7 +321,7 @@ namespace NGit.Util
+@@ -367,7 +367,7 @@ namespace NGit.Util
  					throw new NoSuchElementException();
  				}
  				T res = this.block[this.blkIdx];
@@ -3197,7 +3206,7 @@ index c663bf7..b986289 100644
  				{
  					if (++this.dirIdx < this._enclosing.directory.Length)
  					{
-@@ -343,15 +343,16 @@ namespace NGit.Util
+@@ -389,15 +389,16 @@ namespace NGit.Util
  				{
  					throw new InvalidOperationException();
  				}

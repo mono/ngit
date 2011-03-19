@@ -284,6 +284,29 @@ namespace NGit.Util
 		}
 
 		[NUnit.Framework.Test]
+		public virtual void TestAddAllFromOtherList()
+		{
+			BlockList<int> src = new BlockList<int>(4);
+			int cnt = BlockList<int>.BLOCK_SIZE * 2;
+			for (int i = 0; i < cnt; i++)
+			{
+				src.AddItem(Sharpen.Extensions.ValueOf(42 + i));
+			}
+			src.AddItem(Sharpen.Extensions.ValueOf(1));
+			BlockList<int> dst = new BlockList<int>(4);
+			dst.AddItem(Sharpen.Extensions.ValueOf(255));
+			dst.AddAll(src);
+			NUnit.Framework.Assert.AreEqual(cnt + 2, dst.Count);
+			for (int i_1 = 0; i_1 < cnt; i_1++)
+			{
+				NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.ValueOf(42 + i_1), dst[i_1 + 1
+					]);
+			}
+			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.ValueOf(1), dst[dst.Count - 1]
+				);
+		}
+
+		[NUnit.Framework.Test]
 		public virtual void TestFastIterator()
 		{
 			BlockList<int> list = new BlockList<int>(4);
