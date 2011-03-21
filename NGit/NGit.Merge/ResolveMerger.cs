@@ -684,6 +684,20 @@ namespace NGit.Merge
 			return (failingPaths.Count == 0) ? null : failingPaths;
 		}
 
+		/// <summary>Returns whether this merge failed abnormally (i.e.</summary>
+		/// <remarks>
+		/// Returns whether this merge failed abnormally (i.e. not because of a
+		/// conflict)
+		/// </remarks>
+		/// <returns>
+		/// <code>true</code> if an abnormal failure occurred,
+		/// <code>false</code> otherwise
+		/// </returns>
+		public virtual bool FailedAbnormally()
+		{
+			return failingPaths.Count > 0;
+		}
+
 		/// <summary>Sets the DirCache which shall be used by this merger.</summary>
 		/// <remarks>
 		/// Sets the DirCache which shall be used by this merger. If the DirCache is

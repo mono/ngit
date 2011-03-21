@@ -19,10 +19,10 @@ index 2bb9439..cac7103 100644
  		}
  	}
 diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-index d3e98ea..08e015a 100644
+index 4d4c350..46ab537 100644
 --- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
 +++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-@@ -687,9 +687,14 @@ namespace NGit.Api
+@@ -662,9 +662,14 @@ namespace NGit.Api
  				sb.Append(line);
  				sb.Append('\n');
  			}
@@ -891,10 +891,10 @@ index 4fc1d3e..022e2b7 100644
  			}
  		}
 diff --git a/NGit.Test/NGit/RepositoryTestCase.cs b/NGit.Test/NGit/RepositoryTestCase.cs
-index 3eeb05c..18cd052 100644
+index 2d7a662..8ca5c16 100644
 --- a/NGit.Test/NGit/RepositoryTestCase.cs
 +++ b/NGit.Test/NGit/RepositoryTestCase.cs
-@@ -250,7 +250,7 @@ namespace NGit
+@@ -251,7 +251,7 @@ namespace NGit
  				}
  				if (0 != (includedOptions & ASSUME_UNCHANGED))
  				{
@@ -918,7 +918,7 @@ index c81f7c0..111c265 100644
  
  		/// <param name="repo"></param>
 diff --git a/NGit/NGit.Api/MergeCommand.cs b/NGit/NGit.Api/MergeCommand.cs
-index 7125656..eb3c4c4 100644
+index 3ba79a5..96758c2 100644
 --- a/NGit/NGit.Api/MergeCommand.cs
 +++ b/NGit/NGit.Api/MergeCommand.cs
 @@ -178,7 +178,7 @@ namespace NGit.Api
@@ -931,29 +931,29 @@ index 7125656..eb3c4c4 100644
  						if (merger is ResolveMerger)
  						{
 diff --git a/NGit/NGit.Api/MergeCommandResult.cs b/NGit/NGit.Api/MergeCommandResult.cs
-index e2a7cd1..c3b5920 100644
+index a24aef5..df27a4c 100644
 --- a/NGit/NGit.Api/MergeCommandResult.cs
 +++ b/NGit/NGit.Api/MergeCommandResult.cs
-@@ -90,7 +90,7 @@ namespace NGit.Api
- 		/// 	</see>
- 		/// </param>
- 		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
--			, MergeStatus mergeStatus, IDictionary<string, NGit.Merge.MergeResult<object>> lowLevelResults
-+			, MergeStatus mergeStatus, IDictionary<string, NGit.Merge.MergeResult<Sequence>> lowLevelResults
- 			, MergeStrategy mergeStrategy) : this(newHead, @base, mergedCommits, mergeStatus
- 			, mergeStrategy, lowLevelResults, null)
- 		{
-@@ -116,7 +116,7 @@ namespace NGit.Api
+@@ -118,7 +118,7 @@ namespace NGit.Api
  		/// <param name="description">a user friendly description of the merge result</param>
  		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
  			, MergeStatus mergeStatus, MergeStrategy mergeStrategy, IDictionary<string, NGit.Merge.MergeResult
--			<object>> lowLevelResults, string description)
-+			<Sequence>> lowLevelResults, string description)
+-			<object>> lowLevelResults, string description) : this(newHead, @base, mergedCommits
++			<Sequence>> lowLevelResults, string description) : this(newHead, @base, mergedCommits
+ 			, mergeStatus, mergeStrategy, lowLevelResults, null, null)
+ 		{
+ 		}
+@@ -149,7 +149,7 @@ namespace NGit.Api
+ 		/// <param name="description">a user friendly description of the merge result</param>
+ 		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
+ 			, MergeStatus mergeStatus, MergeStrategy mergeStrategy, IDictionary<string, NGit.Merge.MergeResult
+-			<object>> lowLevelResults, IDictionary<string, ResolveMerger.MergeFailureReason>
++			<Sequence>> lowLevelResults, IDictionary<string, ResolveMerger.MergeFailureReason>
+ 			 failingPaths, string description)
  		{
  			this.newHead = newHead;
- 			this.mergedCommits = mergedCommits;
-@@ -126,7 +126,7 @@ namespace NGit.Api
- 			this.description = description;
+@@ -161,7 +161,7 @@ namespace NGit.Api
+ 			this.failingPaths = failingPaths;
  			if (lowLevelResults != null)
  			{
 -				foreach (KeyValuePair<string, NGit.Merge.MergeResult<object>> result in lowLevelResults
@@ -1405,7 +1405,7 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index c672210..a57f159 100644
+index f6b36c1..8f7b37c 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
 @@ -566,7 +566,7 @@ namespace NGit.Merge

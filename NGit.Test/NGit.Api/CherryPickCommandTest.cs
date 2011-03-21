@@ -43,7 +43,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
-using NGit.Dircache;
 using NGit.Revwalk;
 using Sharpen;
 
@@ -86,23 +85,6 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("enhanced a", history.Next().GetFullMessage());
 			NUnit.Framework.Assert.AreEqual("create a", history.Next().GetFullMessage());
 			NUnit.Framework.Assert.IsFalse(history.HasNext());
-		}
-
-		/// <exception cref="System.InvalidOperationException"></exception>
-		/// <exception cref="System.IO.IOException"></exception>
-		private void CheckoutBranch(string branchName)
-		{
-			RevWalk walk = new RevWalk(db);
-			RevCommit head = walk.ParseCommit(db.Resolve(Constants.HEAD));
-			RevCommit branch = walk.ParseCommit(db.Resolve(branchName));
-			DirCacheCheckout dco = new DirCacheCheckout(db, head.Tree.Id, db.LockDirCache(), 
-				branch.Tree.Id);
-			dco.SetFailOnConflict(true);
-			dco.Checkout();
-			walk.Release();
-			// update the HEAD
-			RefUpdate refUpdate = db.UpdateRef(Constants.HEAD);
-			refUpdate.Link(branchName);
 		}
 	}
 }

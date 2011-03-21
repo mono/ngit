@@ -47,6 +47,7 @@ using System.Text;
 using NGit;
 using NGit.Dircache;
 using NGit.Junit;
+using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Treewalk;
 using NGit.Util;
@@ -428,6 +429,32 @@ namespace NGit
 			{
 				FileUtils.Delete(tmp);
 			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		protected internal virtual void CreateBranch(ObjectId objectId, string branchName
+			)
+		{
+			RefUpdate updateRef = db.UpdateRef(branchName);
+			updateRef.SetNewObjectId(objectId);
+			updateRef.Update();
+		}
+
+		/// <exception cref="System.InvalidOperationException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		protected internal virtual void CheckoutBranch(string branchName)
+		{
+			RevWalk walk = new RevWalk(db);
+			RevCommit head = walk.ParseCommit(db.Resolve(Constants.HEAD));
+			RevCommit branch = walk.ParseCommit(db.Resolve(branchName));
+			DirCacheCheckout dco = new DirCacheCheckout(db, head.Tree.Id, db.LockDirCache(), 
+				branch.Tree.Id);
+			dco.SetFailOnConflict(true);
+			dco.Checkout();
+			walk.Release();
+			// update the HEAD
+			RefUpdate refUpdate = db.UpdateRef(Constants.HEAD);
+			refUpdate.Link(branchName);
 		}
 	}
 }

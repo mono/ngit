@@ -156,23 +156,5 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(dc.Checkout());
 			return dc;
 		}
-
-		/// <exception cref="System.InvalidOperationException"></exception>
-		/// <exception cref="System.IO.IOException"></exception>
-		private void CheckoutBranch(string branchName)
-		{
-			RevWalk walk = new RevWalk(db);
-			RevCommit head = walk.ParseCommit(db.Resolve(Constants.HEAD));
-			RevCommit branch = walk.ParseCommit(db.Resolve(branchName));
-			DirCacheCheckout dco = new DirCacheCheckout(db, head.Tree, db.LockDirCache(), branch
-				.Tree);
-			dco.SetFailOnConflict(true);
-			NUnit.Framework.Assert.IsTrue(dco.Checkout());
-			walk.Release();
-			// update the HEAD
-			RefUpdate refUpdate = db.UpdateRef(Constants.HEAD);
-			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, refUpdate.Link(branchName
-				));
-		}
 	}
 }

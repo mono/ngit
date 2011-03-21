@@ -44,7 +44,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
-using NGit.Dircache;
 using NGit.Merge;
 using NGit.Revwalk;
 using Sharpen;
@@ -601,7 +600,8 @@ namespace NGit.Api
 			// merge
 			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
 				.RESOLVE).Call();
-			CheckMergeFailedResult(result, indexState, fileA);
+			CheckMergeFailedResult(result, ResolveMerger.MergeFailureReason.DIRTY_INDEX, indexState
+				, fileA);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -633,7 +633,8 @@ namespace NGit.Api
 			// merge
 			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
 				.RESOLVE).Call();
-			CheckMergeFailedResult(result, indexState, fileA);
+			CheckMergeFailedResult(result, ResolveMerger.MergeFailureReason.DIRTY_INDEX, indexState
+				, fileA);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -662,7 +663,8 @@ namespace NGit.Api
 			// merge
 			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
 				.RESOLVE).Call();
-			CheckMergeFailedResult(result, indexState, fileA);
+			CheckMergeFailedResult(result, ResolveMerger.MergeFailureReason.DIRTY_WORKTREE, indexState
+				, fileA);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -693,7 +695,8 @@ namespace NGit.Api
 			// merge
 			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
 				.RESOLVE).Call();
-			CheckMergeFailedResult(result, indexState, fileA);
+			CheckMergeFailedResult(result, ResolveMerger.MergeFailureReason.DIRTY_WORKTREE, indexState
+				, fileA);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -704,41 +707,17 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		private void CheckMergeFailedResult(MergeCommandResult result, string indexState, 
-			FilePath fileA)
+		private void CheckMergeFailedResult(MergeCommandResult result, ResolveMerger.MergeFailureReason
+			 reason, string indexState, FilePath fileA)
 		{
 			NUnit.Framework.Assert.AreEqual(MergeStatus.FAILED, result.GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual(reason, result.GetFailingPaths().Get("a"));
 			NUnit.Framework.Assert.AreEqual("a(modified)", Read(fileA));
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "b").Exists());
 			NUnit.Framework.Assert.AreEqual("c", Read(new FilePath(db.WorkTree, "c")));
 			NUnit.Framework.Assert.AreEqual(indexState, IndexState(CONTENT));
 			NUnit.Framework.Assert.AreEqual(null, result.GetConflicts());
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
-		}
-
-		/// <exception cref="System.IO.IOException"></exception>
-		private void CreateBranch(ObjectId objectId, string branchName)
-		{
-			RefUpdate updateRef = db.UpdateRef(branchName);
-			updateRef.SetNewObjectId(objectId);
-			updateRef.Update();
-		}
-
-		/// <exception cref="System.InvalidOperationException"></exception>
-		/// <exception cref="System.IO.IOException"></exception>
-		private void CheckoutBranch(string branchName)
-		{
-			RevWalk walk = new RevWalk(db);
-			RevCommit head = walk.ParseCommit(db.Resolve(Constants.HEAD));
-			RevCommit branch = walk.ParseCommit(db.Resolve(branchName));
-			DirCacheCheckout dco = new DirCacheCheckout(db, head.Tree.Id, db.LockDirCache(), 
-				branch.Tree.Id);
-			dco.SetFailOnConflict(true);
-			dco.Checkout();
-			walk.Release();
-			// update the HEAD
-			RefUpdate refUpdate = db.UpdateRef(Constants.HEAD);
-			refUpdate.Link(branchName);
 		}
 	}
 }
