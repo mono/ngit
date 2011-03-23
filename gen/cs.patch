@@ -931,9 +931,18 @@ index 3ba79a5..96758c2 100644
  						if (merger is ResolveMerger)
  						{
 diff --git a/NGit/NGit.Api/MergeCommandResult.cs b/NGit/NGit.Api/MergeCommandResult.cs
-index a24aef5..df27a4c 100644
+index a24aef5..6352029 100644
 --- a/NGit/NGit.Api/MergeCommandResult.cs
 +++ b/NGit/NGit.Api/MergeCommandResult.cs
+@@ -92,7 +92,7 @@ namespace NGit.Api
+ 		/// <see cref="NGit.Merge.MergeStrategy">NGit.Merge.MergeStrategy</see>
+ 		/// </param>
+ 		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
+-			, MergeStatus mergeStatus, IDictionary<string, NGit.Merge.MergeResult<object>> lowLevelResults
++			, MergeStatus mergeStatus, IDictionary<string, NGit.Merge.MergeResult<Sequence>> lowLevelResults
+ 			, MergeStrategy mergeStrategy) : this(newHead, @base, mergedCommits, mergeStatus
+ 			, mergeStrategy, lowLevelResults, null)
+ 		{
 @@ -118,7 +118,7 @@ namespace NGit.Api
  		/// <param name="description">a user friendly description of the merge result</param>
  		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits

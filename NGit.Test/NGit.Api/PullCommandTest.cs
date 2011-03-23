@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
+using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Transport;
 using Sharpen;
@@ -93,6 +94,36 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestPullMerge()
+		{
+			PullResult res = target.Pull().Call();
+			// nothing to update since we don't have different data yet
+			NUnit.Framework.Assert.IsTrue(res.GetFetchResult().GetTrackingRefUpdates().IsEmpty
+				());
+			NUnit.Framework.Assert.IsTrue(res.GetMergeResult().GetMergeStatus().Equals(MergeStatus
+				.ALREADY_UP_TO_DATE));
+			WriteToFile(sourceFile, "Source change");
+			source.Add().AddFilepattern("SomeFile.txt");
+			RevCommit sourceCommit = source.Commit().SetMessage("Source change in remote").Call
+				();
+			FilePath targetFile2 = new FilePath(dbTarget.WorkTree, "OtherFile.txt");
+			WriteToFile(targetFile2, "Unconflicting change");
+			target.Add().AddFilepattern("OtherFile.txt").Call();
+			RevCommit targetCommit = target.Commit().SetMessage("Unconflicting change in local"
+				).Call();
+			res = target.Pull().Call();
+			MergeCommandResult mergeResult = res.GetMergeResult();
+			ObjectId[] mergedCommits = mergeResult.GetMergedCommits();
+			NUnit.Framework.Assert.AreEqual(targetCommit.Id, mergedCommits[0]);
+			NUnit.Framework.Assert.AreEqual(sourceCommit.Id, mergedCommits[1]);
+			RevCommit mergeCommit = new RevWalk(dbTarget).ParseCommit(mergeResult.GetNewHead(
+				));
+			string message = "Merge branch 'master' of " + db.WorkTree;
+			NUnit.Framework.Assert.AreEqual(message, mergeCommit.GetShortMessage());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPullConflict()
 		{
 			PullResult res = target.Pull().Call();
@@ -111,8 +142,8 @@ namespace NGit.Api
 			target.Add().AddFilepattern("SomeFile.txt").Call();
 			target.Commit().SetMessage("Target change in local").Call();
 			res = target.Pull().Call();
-			string sourceChangeString = "Source change\n>>>>>>> branch 'refs/heads/master' of "
-				 + target.GetRepository().GetConfig().GetString("remote", "origin", "url");
+			string sourceChangeString = "Source change\n>>>>>>> branch 'master' of " + target
+				.GetRepository().GetConfig().GetString("remote", "origin", "url");
 			NUnit.Framework.Assert.IsFalse(res.GetFetchResult().GetTrackingRefUpdates().IsEmpty
 				());
 			NUnit.Framework.Assert.AreEqual(res.GetMergeResult().GetMergeStatus(), MergeStatus
@@ -147,7 +178,7 @@ namespace NGit.Api
 			target.Add().AddFilepattern("SomeFile.txt").Call();
 			target.Commit().SetMessage("Source change in based on master").Call();
 			res = target.Pull().Call();
-			string sourceChangeString = "Master change\n>>>>>>> branch 'refs/heads/master' of local repository";
+			string sourceChangeString = "Master change\n>>>>>>> branch 'master' of local repository";
 			NUnit.Framework.Assert.IsNull(res.GetFetchResult());
 			NUnit.Framework.Assert.AreEqual(res.GetMergeResult().GetMergeStatus(), MergeStatus
 				.CONFLICTING);
