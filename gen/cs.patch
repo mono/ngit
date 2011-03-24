@@ -174,10 +174,10 @@ index d834f3e..8d8c1ae 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
-index 0c4655a..c07624e 100644
+index 674a569..341f1d0 100644
 --- a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 +++ b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
-@@ -225,7 +225,7 @@ namespace NGit.Junit
+@@ -224,7 +224,7 @@ namespace NGit.Junit
  		private static bool RecursiveDelete(string testName, FilePath dir, bool silent, bool
  			 failOnError)
  		{
@@ -993,7 +993,7 @@ index b00c5a1..bbeedae 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index d874f9f..f39d85b 100644
+index 4680bdd..b83d2f8 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -183,6 +183,7 @@ namespace NGit.Api
@@ -2250,6 +2250,28 @@ index 4b5f8a0..7c4744f 100644
  						}
  						value = Sharpen.Runtime.Substring(auth, eq + 2, dq);
  						next = dq + 1;
+diff --git a/NGit/NGit.Transport/JschSession.cs b/NGit/NGit.Transport/JschSession.cs
+index d1f0c23..af8f8a0 100644
+--- a/NGit/NGit.Transport/JschSession.cs
++++ b/NGit/NGit.Transport/JschSession.cs
+@@ -116,7 +116,7 @@ namespace NGit.Transport
+ 		/// Uses the Jsch session to do actual command execution and manage the
+ 		/// execution.
+ 		/// </remarks>
+-		private class JschProcess : SystemProcess
++		internal class JschProcess : SystemProcess
+ 		{
+ 			private ChannelExec channel;
+ 
+@@ -143,7 +143,7 @@ namespace NGit.Transport
+ 			/// host
+ 			/// </exception>
+ 			/// <exception cref="System.IO.IOException">on problems opening streams</exception>
+-			private JschProcess(JschSession _enclosing, string commandName, int tms)
++			public JschProcess(JschSession _enclosing, string commandName, int tms)
+ 			{
+ 				this._enclosing = _enclosing;
+ 				this.timeout = tms;
 diff --git a/NGit/NGit.Transport/LongMap.cs b/NGit/NGit.Transport/LongMap.cs
 index 87944c9..e689b4a 100644
 --- a/NGit/NGit.Transport/LongMap.cs
@@ -2564,45 +2586,71 @@ index 983bffd..5b30496 100644
  				this._enclosing = _enclosing;
  				this.sock = this._enclosing.OpenConnection();
 diff --git a/NGit/NGit.Transport/TransportGitSsh.cs b/NGit/NGit.Transport/TransportGitSsh.cs
-index 3686336..800e65c 100644
+index 88f90b3..d08ae4c 100644
 --- a/NGit/NGit.Transport/TransportGitSsh.cs
 +++ b/NGit/NGit.Transport/TransportGitSsh.cs
-@@ -492,7 +492,7 @@ namespace NGit.Transport
- 			private readonly TransportGitSsh _enclosing;
+@@ -137,21 +137,24 @@ namespace NGit.Transport
+ 		{
+ 			if (UseExtSession())
+ 			{
+-				SetSshSessionFactory(new _SshSessionFactory_134());
++				SetSshSessionFactory(new _SshSessionFactory_134(this));
+ 			}
+ 		}
+ 
+ 		private sealed class _SshSessionFactory_134 : SshSessionFactory
+ 		{
+-			public _SshSessionFactory_134()
++			TransportGitSsh _enclosing;
++			
++			public _SshSessionFactory_134(TransportGitSsh _enclosing)
+ 			{
++				this._enclosing = _enclosing;
+ 			}
+ 
+ 			/// <exception cref="NGit.Errors.TransportException"></exception>
+ 			public override RemoteSession GetSession(URIish uri2, CredentialsProvider credentialsProvider
+ 				, FS fs, int tms)
+ 			{
+-				return new TransportGitSsh.ExtSession(this);
++				return new TransportGitSsh.ExtSession(_enclosing);
+ 			}
+ 		}
+ 
+@@ -282,14 +285,14 @@ namespace NGit.Transport
+ 			// Nothing to do
  		}
  
 -		internal class SshFetchConnection : BasePackFetchConnection
 +		private class SshFetchConnection : BasePackFetchConnection
  		{
- 			private TransportGitSsh.Connection conn;
+ 			private readonly SystemProcess process;
  
-@@ -500,7 +500,7 @@ namespace NGit.Transport
+ 			private StreamCopyThread errorThread;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
- 			internal SshFetchConnection(TransportGitSsh _enclosing, TransportGitSsh.Connection
--				 conn) : base(this._enclosing)
-+				 conn) : base(_enclosing)
+-			public SshFetchConnection(TransportGitSsh _enclosing) : base(this._enclosing)
++			public SshFetchConnection(TransportGitSsh _enclosing) : base(_enclosing)
  			{
  				this._enclosing = _enclosing;
- 				this.conn = conn;
-@@ -564,7 +564,7 @@ namespace NGit.Transport
+ 				try
+@@ -352,14 +355,14 @@ namespace NGit.Transport
  			private readonly TransportGitSsh _enclosing;
  		}
  
 -		internal class SshPushConnection : BasePackPushConnection
 +		private class SshPushConnection : BasePackPushConnection
  		{
- 			private TransportGitSsh.Connection conn;
+ 			private readonly SystemProcess process;
  
-@@ -572,7 +572,7 @@ namespace NGit.Transport
+ 			private StreamCopyThread errorThread;
  
  			/// <exception cref="NGit.Errors.TransportException"></exception>
- 			internal SshPushConnection(TransportGitSsh _enclosing, TransportGitSsh.Connection
--				 conn) : base(this._enclosing)
-+				 conn) : base(_enclosing)
+-			public SshPushConnection(TransportGitSsh _enclosing) : base(this._enclosing)
++			public SshPushConnection(TransportGitSsh _enclosing) : base(_enclosing)
  			{
  				this._enclosing = _enclosing;
- 				this.conn = conn;
+ 				try
 diff --git a/NGit/NGit.Transport/TransportHttp.cs b/NGit/NGit.Transport/TransportHttp.cs
 index ce2edea..8a93926 100644
 --- a/NGit/NGit.Transport/TransportHttp.cs
@@ -2662,7 +2710,7 @@ index ce2edea..8a93926 100644
  				{
  					this._enclosing = _enclosing;
 diff --git a/NGit/NGit.Transport/TransportLocal.cs b/NGit/NGit.Transport/TransportLocal.cs
-index 4af0c0b..2a32d30 100644
+index 3ea2c4d..8285b08 100644
 --- a/NGit/NGit.Transport/TransportLocal.cs
 +++ b/NGit/NGit.Transport/TransportLocal.cs
 @@ -193,15 +193,15 @@ namespace NGit.Transport
@@ -2758,7 +2806,7 @@ index ba4dc69..917373b 100644
  
  		/// <returns>if a port is supported, the default port, else -1.</returns>
 diff --git a/NGit/NGit.Transport/TransportSftp.cs b/NGit/NGit.Transport/TransportSftp.cs
-index 175cd4f..bd81647 100644
+index fd116ea..97b957a 100644
 --- a/NGit/NGit.Transport/TransportSftp.cs
 +++ b/NGit/NGit.Transport/TransportSftp.cs
 @@ -48,6 +48,7 @@ using NGit.Errors;
@@ -2769,7 +2817,7 @@ index 175cd4f..bd81647 100644
  
  namespace NGit.Transport
  {
-@@ -243,7 +244,7 @@ namespace NGit.Transport
+@@ -244,7 +245,7 @@ namespace NGit.Transport
  			/// <exception cref="System.IO.IOException"></exception>
  			internal override WalkRemoteObjectDatabase OpenAlternate(string location)
  			{
@@ -2778,7 +2826,7 @@ index 175cd4f..bd81647 100644
  			}
  
  			/// <exception cref="System.IO.IOException"></exception>
-@@ -252,7 +253,7 @@ namespace NGit.Transport
+@@ -253,7 +254,7 @@ namespace NGit.Transport
  				IList<string> packs = new AList<string>();
  				try
  				{
@@ -2787,7 +2835,7 @@ index 175cd4f..bd81647 100644
  					Dictionary<string, ChannelSftp.LsEntry> files;
  					Dictionary<string, int> mtimes;
  					files = new Dictionary<string, ChannelSftp.LsEntry>();
-@@ -466,7 +467,7 @@ namespace NGit.Transport
+@@ -467,7 +468,7 @@ namespace NGit.Transport
  			private void ReadLooseRefs(SortedDictionary<string, Ref> avail, string dir, string
  				 prefix)
  			{
@@ -3236,7 +3284,7 @@ index 81693c4..96e7be5 100644
  
  			private readonly BlockList<T> _enclosing;
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
-index fba8b94..72f042f 100644
+index 521d666..95ba8d5 100644
 --- a/NGit/NGit.Util/FS.cs
 +++ b/NGit/NGit.Util/FS.cs
 @@ -90,7 +90,7 @@ namespace NGit.Util
@@ -4065,10 +4113,10 @@ index 96e7cd7..a9542e1 100644
  		protected internal byte[] buf1 = new byte[1];
  
 diff --git a/NSch/NSch/ChannelSession.cs b/NSch/NSch/ChannelSession.cs
-index f3e4422..e34c6dc 100644
+index 2b03acf..d656385 100644
 --- a/NSch/NSch/ChannelSession.cs
 +++ b/NSch/NSch/ChannelSession.cs
-@@ -36,7 +36,7 @@ using Sharpen;
+@@ -37,7 +37,7 @@ using Sharpen;
  
  namespace NSch
  {
@@ -4077,11 +4125,11 @@ index f3e4422..e34c6dc 100644
  	{
  		private static byte[] _session = Util.Str2byte("session");
  
-@@ -237,7 +237,7 @@ namespace NSch
+@@ -238,7 +238,7 @@ namespace NSch
  			}
  			if (env != null)
  			{
--				for (IEnumerator _env = env.Keys; _env.MoveNext(); )
+-				for (IEnumeration _env = env.Keys; _env.MoveNext(); )
 +				for (IEnumerator _env = env.Keys.GetEnumerator (); _env.MoveNext(); )
  				{
  					object name = _env.Current;
@@ -4251,10 +4299,10 @@ index 5b1fb94..ecea1e6 100644
  							_buf.GetInt();
  							//_buf.getInt();
 diff --git a/NSch/NSch/JSch.cs b/NSch/NSch/JSch.cs
-index c0275e0..31b7d88 100644
+index 97aa0fb..b267766 100644
 --- a/NSch/NSch/JSch.cs
 +++ b/NSch/NSch/JSch.cs
-@@ -186,7 +186,7 @@ namespace NSch
+@@ -187,7 +187,7 @@ namespace NSch
  		{
  			lock (pool)
  			{
@@ -4263,7 +4311,7 @@ index c0275e0..31b7d88 100644
  			}
  		}
  
-@@ -357,7 +357,12 @@ namespace NSch
+@@ -358,7 +358,12 @@ namespace NSch
  		{
  			lock (config)
  			{
@@ -4277,11 +4325,11 @@ index c0275e0..31b7d88 100644
  			}
  		}
  
-@@ -365,7 +370,7 @@ namespace NSch
+@@ -366,7 +371,7 @@ namespace NSch
  		{
  			lock (config)
  			{
--				for (IEnumerator e = newconf.Keys; e.MoveNext(); )
+-				for (IEnumeration e = newconf.Keys; e.MoveNext(); )
 +				for (IEnumerator e = newconf.Keys.GetEnumerator (); e.MoveNext(); )
  				{
  					string key = (string)(e.Current);
@@ -4346,10 +4394,10 @@ index 21f337c..4d65538 100644
  		private bool reply = false;
  
 diff --git a/NSch/NSch/Session.cs b/NSch/NSch/Session.cs
-index 813aa7b..a229106 100644
+index 6cd0d66..662cecd 100644
 --- a/NSch/NSch/Session.cs
 +++ b/NSch/NSch/Session.cs
-@@ -1316,7 +1316,7 @@ loop_break: ;
+@@ -1317,7 +1317,7 @@ loop_break: ;
  						}
  						command = packet.buffer.GetCommand();
  						recipient = c.GetRecipient();
@@ -4358,7 +4406,7 @@ index 813aa7b..a229106 100644
  						c.rwsize -= len;
  						sendit = true;
  					}
-@@ -1530,7 +1530,7 @@ loop_break: ;
+@@ -1531,7 +1531,7 @@ loop_break: ;
  								break;
  							}
  							channel.Write_ext(foo, start[0], length[0]);
@@ -4367,7 +4415,7 @@ index 813aa7b..a229106 100644
  							channel.SetLocalWindowSize(channel.lwsize - len);
  							if (channel.lwsize < channel.lwsize_max / 2)
  							{
-@@ -1726,7 +1726,7 @@ loop_break: ;
+@@ -1727,7 +1727,7 @@ loop_break: ;
  							buf.GetShort();
  							foo = buf.GetString();
  							// request name
@@ -4376,11 +4424,11 @@ index 813aa7b..a229106 100644
  							if (reply)
  							{
  								packet.Reset();
-@@ -2197,7 +2197,7 @@ loop_break: ;
+@@ -2198,7 +2198,7 @@ loop_break: ;
  				{
  					config = new Hashtable();
  				}
--				for (IEnumerator e = newconf.Keys; e.MoveNext(); )
+-				for (IEnumeration e = newconf.Keys; e.MoveNext(); )
 +				for (IEnumerator e = newconf.Keys.GetEnumerator (); e.MoveNext(); )
  				{
  					string key = (string)(e.Current);

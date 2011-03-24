@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
+using NGit.Merge;
 using NGit.Revwalk;
 using Sharpen;
 
@@ -85,6 +86,76 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("enhanced a", history.Next().GetFullMessage());
 			NUnit.Framework.Assert.AreEqual("create a", history.Next().GetFullMessage());
 			NUnit.Framework.Assert.IsFalse(history.HasNext());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCherryPickDirtyIndex()
+		{
+			Git git = new Git(db);
+			RevCommit sideCommit = PrepareCherryPick(git);
+			// modify and add file a
+			WriteTrashFile("a", "a(modified)");
+			git.Add().AddFilepattern("a").Call();
+			// do not commit
+			DoCherryPickAndCheckResult(git, sideCommit, ResolveMerger.MergeFailureReason.DIRTY_INDEX
+				);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCherryPickDirtyWorktree()
+		{
+			Git git = new Git(db);
+			RevCommit sideCommit = PrepareCherryPick(git);
+			// modify file a
+			WriteTrashFile("a", "a(modified)");
+			// do not add and commit
+			DoCherryPickAndCheckResult(git, sideCommit, ResolveMerger.MergeFailureReason.DIRTY_WORKTREE
+				);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		private RevCommit PrepareCherryPick(Git git)
+		{
+			// create, add and commit file a
+			WriteTrashFile("a", "a");
+			git.Add().AddFilepattern("a").Call();
+			RevCommit firstMasterCommit = git.Commit().SetMessage("first master").Call();
+			// create and checkout side branch
+			CreateBranch(firstMasterCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			// modify, add and commit file a
+			WriteTrashFile("a", "a(side)");
+			git.Add().AddFilepattern("a").Call();
+			RevCommit sideCommit = git.Commit().SetMessage("side").Call();
+			// checkout master branch
+			CheckoutBranch("refs/heads/master");
+			// modify, add and commit file a
+			WriteTrashFile("a", "a(master)");
+			git.Add().AddFilepattern("a").Call();
+			git.Commit().SetMessage("second master").Call();
+			return sideCommit;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		private void DoCherryPickAndCheckResult(Git git, RevCommit sideCommit, ResolveMerger.MergeFailureReason
+			 reason)
+		{
+			// get current index state
+			string indexState = IndexState(CONTENT);
+			// cherry-pick
+			CherryPickResult result = git.CherryPick().Include(sideCommit.Id).Call();
+			NUnit.Framework.Assert.AreEqual(CherryPickResult.CherryPickStatus.FAILED, result.
+				GetStatus());
+			// staged file a causes DIRTY_INDEX
+			NUnit.Framework.Assert.AreEqual(1, result.GetFailingPaths().Count);
+			NUnit.Framework.Assert.AreEqual(reason, result.GetFailingPaths().Get("a"));
+			NUnit.Framework.Assert.AreEqual("a(modified)", Read(new FilePath(db.WorkTree, "a"
+				)));
+			// index shall be unchanged
+			NUnit.Framework.Assert.AreEqual(indexState, IndexState(CONTENT));
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
 		}
 	}
 }

@@ -42,7 +42,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using NGit;
@@ -350,7 +349,7 @@ namespace NGit.Junit
 			PutPersonIdent(env, "AUTHOR", author);
 			PutPersonIdent(env, "COMMITTER", committer);
 			FilePath cwd = db.WorkTree;
-			Process p = Runtime.GetRuntime().Exec(argv, ToEnvArray(env), cwd);
+			SystemProcess p = Runtime.GetRuntime().Exec(argv, ToEnvArray(env), cwd);
 			p.GetOutputStream().Close();
 			p.GetErrorStream().Close();
 			p.GetInputStream().Close();

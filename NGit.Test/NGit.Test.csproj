@@ -214,6 +214,7 @@
     <Compile Include="NGit.Util\BlockListTest.cs" />
     <Compile Include="NGit\ObjectIdOwnerMapTest.cs" />
     <Compile Include="NGit.Api\CommitOnlyTest.cs" />
+    <Compile Include="NGit.Api\StatusCommandTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

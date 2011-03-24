@@ -233,7 +233,7 @@
 -typeMapping java.util.LinkedList<> System.Collections.Generic.List
 -typeMapping java.net.URL System.Uri
 -typeMapping java.lang.IndexOutOfRangeException Sharpen.IndexOutOfRangeException
--typeMapping java.lang.Process System.Diagnostics.Process
+-typeMapping java.lang.Process Sharpen.SystemProcess
 -typeMapping java.net.InetAddress System.Net.IPAddress
 -typeMapping java.util.TimeZone System.TimeZoneInfo
 -typeMapping java.util.ArrayList<> Sharpen.AList

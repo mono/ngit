@@ -407,7 +407,6 @@
     <Compile Include="NGit.Util\HttpSupport.cs" />
     <Compile Include="NGit.Transport\TransportLocal.cs" />
     <Compile Include="NGit.Transport\DefaultSshSessionFactory.cs" />
-    <Compile Include="NGit.Transport\SshConfigSessionFactory.cs" />
     <Compile Include="NGit.Transport\SshSessionFactory.cs" />
     <Compile Include="NGit.Transport\SshTransport.cs" />
     <Compile Include="NGit.Transport\TransportGitSsh.cs" />
@@ -499,6 +498,12 @@
     <Compile Include="NGit.Util\BlockList.cs" />
     <Compile Include="NGit\ObjectIdOwnerMap.cs" />
     <Compile Include="NGit.Transport\TransportProtocol.cs" />
+    <Compile Include="NGit.Transport\JschConfigSessionFactory.cs" />
+    <Compile Include="NGit.Transport\JschSession.cs" />
+    <Compile Include="NGit.Transport\RemoteSession.cs" />
+    <Compile Include="NGit.Api\CherryPickResult.cs" />
+    <Compile Include="NGit.Api\Status.cs" />
+    <Compile Include="NGit.Api\StatusCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

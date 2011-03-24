@@ -111,17 +111,17 @@ index 9d84c18..a6cdecb 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 72e92b4..67af930 100644
+index 0559e78..317f922 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-@@ -85,6 +85,7 @@
+@@ -84,6 +84,7 @@
+ import org.eclipse.jgit.lib.ProgressMonitor;
  import org.eclipse.jgit.lib.Ref;
  import org.eclipse.jgit.lib.RefUpdate;
- import org.eclipse.jgit.lib.Repository;
 +import org.eclipse.jgit.lib.RepositoryState;
  import org.eclipse.jgit.lib.RefUpdate.Result;
+ import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
- import org.eclipse.jgit.revwalk.RevWalk;
 @@ -647,30 +648,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
