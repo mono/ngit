@@ -77,12 +77,12 @@ namespace NGit.Api
 			WriteTrashFile("c", "content of c");
 			git.Add().AddFilepattern("a").AddFilepattern("b").Call();
 			Status stat = git.Status().Call();
-			NUnit.Framework.Assert.AreEqual(Set("a", "b"), stat.GetAdded());
+			NUnit.Framework.Assert.AreEqual(Set("a", "b"), Set (stat.GetAdded()));
 			NUnit.Framework.Assert.AreEqual(0, stat.GetChanged().Count);
 			NUnit.Framework.Assert.AreEqual(0, stat.GetMissing().Count);
 			NUnit.Framework.Assert.AreEqual(0, stat.GetModified().Count);
 			NUnit.Framework.Assert.AreEqual(0, stat.GetRemoved().Count);
-			NUnit.Framework.Assert.AreEqual(Set("c"), stat.GetUntracked());
+			NUnit.Framework.Assert.AreEqual(Set("c"), Set (stat.GetUntracked()));
 			git.Commit().SetMessage("initial").Call();
 			WriteTrashFile("a", "modified content of a");
 			WriteTrashFile("b", "modified content of b");
@@ -90,12 +90,12 @@ namespace NGit.Api
 			git.Add().AddFilepattern("a").AddFilepattern("d").Call();
 			WriteTrashFile("a", "again modified content of a");
 			stat = git.Status().Call();
-			NUnit.Framework.Assert.AreEqual(Set("d"), stat.GetAdded());
-			NUnit.Framework.Assert.AreEqual(Set("a"), stat.GetChanged());
+			NUnit.Framework.Assert.AreEqual(Set("d"), Set (stat.GetAdded()));
+			NUnit.Framework.Assert.AreEqual(Set("a"), Set (stat.GetChanged()));
 			NUnit.Framework.Assert.AreEqual(0, stat.GetMissing().Count);
-			NUnit.Framework.Assert.AreEqual(Set("b", "a"), stat.GetModified());
+			NUnit.Framework.Assert.AreEqual(Set("b", "a"), Set (stat.GetModified()));
 			NUnit.Framework.Assert.AreEqual(0, stat.GetRemoved().Count);
-			NUnit.Framework.Assert.AreEqual(Set("c"), stat.GetUntracked());
+			NUnit.Framework.Assert.AreEqual(Set("c"), Set (stat.GetUntracked()));
 			git.Add().AddFilepattern(".").Call();
 			git.Commit().SetMessage("second").Call();
 			stat = git.Status().Call();
@@ -115,19 +115,53 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(0, stat.GetChanged().Count);
 			NUnit.Framework.Assert.AreEqual(0, stat.GetMissing().Count);
 			NUnit.Framework.Assert.AreEqual(0, stat.GetModified().Count);
-			NUnit.Framework.Assert.AreEqual(Set("a"), stat.GetRemoved());
-			NUnit.Framework.Assert.AreEqual(Set("a"), stat.GetUntracked());
+			NUnit.Framework.Assert.AreEqual(Set("a"), Set (stat.GetRemoved()));
+			NUnit.Framework.Assert.AreEqual(Set("a"), Set (stat.GetUntracked()));
 			git.Commit().SetMessage("t").Call();
 		}
 
-		public static ICollection<string> Set(params string[] elements)
+		static StringSet Set(params string[] elements)
 		{
-			ICollection<string> ret = new HashSet<string>();
-			foreach (string element in elements)
+			return new StringSet (elements);
+		}
+		
+		static StringSet Set(IEnumerable<string> elements)
+		{
+			return new StringSet (elements);
+		}
+		
+		class StringSet
+		{
+			HashSet<string> sset = new HashSet<string> ();
+			
+			public StringSet (IEnumerable<string> s)
 			{
-				ret.AddItem(element);
+				sset.UnionWith (s);
 			}
-			return ret;
+			
+			public override bool Equals (object obj)
+			{
+				StringSet s = obj as StringSet;
+				if (s == null)
+					return false;
+				if (sset.Count != s.sset.Count)
+					return false;
+				foreach (var v in sset)
+					if (!s.sset.Contains (v))
+						return false;
+				return true;
+			}
+			
+			public override int GetHashCode ()
+			{
+				int c = 0;
+				foreach (var s in sset) {
+					unchecked {
+						c += s.GetHashCode ();
+					}
+				}
+				return c;
+			}
 		}
 	}
 }
