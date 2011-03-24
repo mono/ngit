@@ -47,6 +47,7 @@ using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Dircache;
+using NGit.Merge;
 using NGit.Revwalk;
 using Sharpen;
 
@@ -818,6 +819,327 @@ namespace NGit.Api
 		}
 
 		// expected
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUntrackedFile()
+		{
+			// create file1, add and commit
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / create untracked file3
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file3", "untracked file3");
+			// rebase
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.OK, git.Rebase().SetUpstream(
+				"refs/heads/master").Call().GetStatus());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUnstagedTopicChange()
+		{
+			// create file1, add and commit
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / modify file2
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "unstaged file2");
+			// rebase
+			JGitInternalException exception = null;
+			try
+			{
+				git.Rebase().SetUpstream("refs/heads/master").Call();
+			}
+			catch (JGitInternalException e)
+			{
+				exception = e;
+			}
+			NUnit.Framework.Assert.IsNotNull(exception);
+			NUnit.Framework.Assert.AreEqual("Checkout conflict with files: \nfile2", exception
+				.Message);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUncommittedTopicChange()
+		{
+			// create file1, add and commit
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / modify file2 and add
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "uncommitted file2");
+			git.Add().AddFilepattern("file2").Call();
+			// do not commit
+			// rebase
+			JGitInternalException exception = null;
+			try
+			{
+				git.Rebase().SetUpstream("refs/heads/master").Call();
+			}
+			catch (JGitInternalException e)
+			{
+				exception = e;
+			}
+			NUnit.Framework.Assert.IsNotNull(exception);
+			NUnit.Framework.Assert.AreEqual("Checkout conflict with files: \nfile2", exception
+				.Message);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUnstagedMasterChange()
+		{
+			// create file1, add and commit
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / modify file1
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile(FILE1, "unstaged modified file1");
+			// rebase
+			JGitInternalException exception = null;
+			try
+			{
+				git.Rebase().SetUpstream("refs/heads/master").Call();
+			}
+			catch (JGitInternalException e)
+			{
+				exception = e;
+			}
+			NUnit.Framework.Assert.IsNotNull(exception);
+			NUnit.Framework.Assert.AreEqual("Checkout conflict with files: \nfile1", exception
+				.Message);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUncommittedMasterChange()
+		{
+			// create file1, add and commit
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / modify file1 and add
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile(FILE1, "uncommitted modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			// do not commit
+			// rebase
+			JGitInternalException exception = null;
+			try
+			{
+				git.Rebase().SetUpstream("refs/heads/master").Call();
+			}
+			catch (JGitInternalException e)
+			{
+				exception = e;
+			}
+			NUnit.Framework.Assert.IsNotNull(exception);
+			NUnit.Framework.Assert.AreEqual("Checkout conflict with files: \nfile1", exception
+				.Message);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUnstagedMasterChangeBaseCommit()
+		{
+			// create file0 + file1, add and commit
+			WriteTrashFile("file0", "file0");
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern("file0").AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / modify file0
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file0", "unstaged modified file0");
+			// rebase
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.OK, git.Rebase().SetUpstream(
+				"refs/heads/master").Call().GetStatus());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUncommittedMasterChangeBaseCommit()
+		{
+			// create file0 + file1, add and commit
+			FilePath file0 = WriteTrashFile("file0", "file0");
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern("file0").AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / modify file0 and add
+			CheckoutBranch("refs/heads/topic");
+			Write(file0, "unstaged modified file0");
+			git.Add().AddFilepattern("file0").Call();
+			// do not commit
+			// get current index state
+			string indexState = IndexState(CONTENT);
+			// rebase
+			RebaseResult result = git.Rebase().SetUpstream("refs/heads/master").Call();
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.FAILED, result.GetStatus());
+			// staged file0 causes DIRTY_INDEX
+			NUnit.Framework.Assert.AreEqual(1, result.GetFailingPaths().Count);
+			NUnit.Framework.Assert.AreEqual(ResolveMerger.MergeFailureReason.DIRTY_INDEX, result
+				.GetFailingPaths().Get("file0"));
+			NUnit.Framework.Assert.AreEqual("unstaged modified file0", Read(file0));
+			// index shall be unchanged
+			NUnit.Framework.Assert.AreEqual(indexState, IndexState(CONTENT));
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUnstagedMasterChangeOtherCommit()
+		{
+			// create file0, add and commit
+			WriteTrashFile("file0", "file0");
+			git.Add().AddFilepattern("file0").Call();
+			git.Commit().SetMessage("commit0").Call();
+			// create file1, add and commit
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / modify file0
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file0", "unstaged modified file0");
+			// rebase
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.OK, git.Rebase().SetUpstream(
+				"refs/heads/master").Call().GetStatus());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUncommittedMasterChangeOtherCommit()
+		{
+			// create file0, add and commit
+			FilePath file0 = WriteTrashFile("file0", "file0");
+			git.Add().AddFilepattern("file0").Call();
+			git.Commit().SetMessage("commit0").Call();
+			// create file1, add and commit
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch and checkout / create file2, add and commit
+			CreateBranch(commit, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout master branch / modify file1, add and commit
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit3").Call();
+			// checkout topic branch / modify file0 and add
+			CheckoutBranch("refs/heads/topic");
+			Write(file0, "unstaged modified file0");
+			git.Add().AddFilepattern("file0").Call();
+			// do not commit
+			// get current index state
+			string indexState = IndexState(CONTENT);
+			// rebase
+			RebaseResult result = git.Rebase().SetUpstream("refs/heads/master").Call();
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.FAILED, result.GetStatus());
+			// staged file0 causes DIRTY_INDEX
+			NUnit.Framework.Assert.AreEqual(1, result.GetFailingPaths().Count);
+			NUnit.Framework.Assert.AreEqual(ResolveMerger.MergeFailureReason.DIRTY_INDEX, result
+				.GetFailingPaths().Get("file0"));
+			NUnit.Framework.Assert.AreEqual("unstaged modified file0", Read(file0));
+			// index shall be unchanged
+			NUnit.Framework.Assert.AreEqual(indexState, IndexState(CONTENT));
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private int CountPicks()
 		{
