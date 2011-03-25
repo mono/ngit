@@ -349,7 +349,10 @@ namespace NGit.Transport
 					}
 				}
 				base.Close();
-				this.process.Destroy();
+				if (this.process != null)
+				{
+					this.process.Destroy();
+				}
 			}
 
 			private readonly TransportGitSsh _enclosing;
@@ -419,7 +422,10 @@ namespace NGit.Transport
 					}
 				}
 				base.Close();
-				this.process.Destroy();
+				if (this.process != null)
+				{
+					this.process.Destroy();
+				}
 			}
 
 			private readonly TransportGitSsh _enclosing;

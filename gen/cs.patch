@@ -2691,7 +2691,7 @@ index 983bffd..5b30496 100644
  				this._enclosing = _enclosing;
  				this.sock = this._enclosing.OpenConnection();
 diff --git a/NGit/NGit.Transport/TransportGitSsh.cs b/NGit/NGit.Transport/TransportGitSsh.cs
-index 88f90b3..d08ae4c 100644
+index f85404b..7153017 100644
 --- a/NGit/NGit.Transport/TransportGitSsh.cs
 +++ b/NGit/NGit.Transport/TransportGitSsh.cs
 @@ -137,21 +137,24 @@ namespace NGit.Transport
@@ -2739,7 +2739,7 @@ index 88f90b3..d08ae4c 100644
  			{
  				this._enclosing = _enclosing;
  				try
-@@ -352,14 +355,14 @@ namespace NGit.Transport
+@@ -355,14 +358,14 @@ namespace NGit.Transport
  			private readonly TransportGitSsh _enclosing;
  		}
  
