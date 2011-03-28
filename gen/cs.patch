@@ -4576,7 +4576,7 @@ index 0137177..b2b8af9 100644
  	}
  }
 diff --git a/NSch/NSch/Util.cs b/NSch/NSch/Util.cs
-index 1dd7c60..394e130 100644
+index 1dd7c60..8dd73a6 100644
 --- a/NSch/NSch/Util.cs
 +++ b/NSch/NSch/Util.cs
 @@ -351,7 +351,7 @@ namespace NSch
@@ -4588,3 +4588,12 @@ index 1dd7c60..394e130 100644
  			{
  				byte b = _path[i_1];
  				if (b == '\\' || b == '?' || b == '*')
+@@ -463,7 +463,7 @@ namespace NSch
+ 				}
+ 				catch (Exception e)
+ 				{
+-					string message = e.ToString();
++					string message = e.Message;
+ 					if (e is Exception)
+ 					{
+ 						throw new JSchException(message, (Exception)e);
