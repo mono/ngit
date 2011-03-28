@@ -91,8 +91,7 @@ namespace NGit.Junit
 						// could have arguments, not handled
 						continue;
 					}
-					NUnit.Framework.Test annotation = ((NUnit.Framework.Test)method.GetAnnotation<NUnit.Framework.Test
-						>());
+					NUnit.Framework.Test annotation = method.GetAnnotation<NUnit.Framework.Test>();
 					if (annotation != null)
 					{
 						return methodName;

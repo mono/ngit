@@ -210,7 +210,7 @@ index 5392052..e628843 100644
  
  		/// <exception cref="System.Exception"></exception>
 diff --git a/NGit.Test/NGit.Junit/JGitTestUtil.cs b/NGit.Test/NGit.Junit/JGitTestUtil.cs
-index d834f3e..8d8c1ae 100644
+index edf138f..89df423 100644
 --- a/NGit.Test/NGit.Junit/JGitTestUtil.cs
 +++ b/NGit.Test/NGit.Junit/JGitTestUtil.cs
 @@ -47,6 +47,7 @@ using NGit.Junit;
@@ -230,7 +230,7 @@ index d834f3e..8d8c1ae 100644
  		public static string GetName()
  		{
  			JGitTestUtil.GatherStackTrace stack;
-@@ -102,7 +105,8 @@ namespace NGit.Junit
+@@ -101,7 +104,8 @@ namespace NGit.Junit
  			// Fall through and crash.
  			throw new Exception("Cannot determine name of current test");
  		}
@@ -240,7 +240,7 @@ index d834f3e..8d8c1ae 100644
  		[System.Serializable]
  		private class GatherStackTrace : Exception
  		{
-@@ -125,26 +129,9 @@ namespace NGit.Junit
+@@ -124,26 +128,9 @@ namespace NGit.Junit
  			{
  				return null;
  			}
