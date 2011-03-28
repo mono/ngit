@@ -1977,7 +1977,7 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index c5dac06..38c4e5f 100644
+index 132c7e1..881f1f0 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
 @@ -326,7 +326,7 @@ namespace NGit.Storage.File
@@ -1989,7 +1989,7 @@ index c5dac06..38c4e5f 100644
  		}
  
  		private class LooseScanner
-@@ -1090,7 +1090,7 @@ namespace NGit.Storage.File
+@@ -1097,7 +1097,7 @@ namespace NGit.Storage.File
  			if (IsSymRef(buf, n))
  			{
  				// trim trailing whitespace
@@ -1998,7 +1998,7 @@ index c5dac06..38c4e5f 100644
  				{
  					n--;
  				}
-@@ -1115,7 +1115,7 @@ namespace NGit.Storage.File
+@@ -1122,7 +1122,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{
@@ -2008,10 +2008,10 @@ index c5dac06..38c4e5f 100644
  					n--;
  				}
 diff --git a/NGit/NGit.Storage.File/ReflogReader.cs b/NGit/NGit.Storage.File/ReflogReader.cs
-index aaf082d..33e2acd 100644
+index e58691e..1d40314 100644
 --- a/NGit/NGit.Storage.File/ReflogReader.cs
 +++ b/NGit/NGit.Storage.File/ReflogReader.cs
-@@ -161,7 +161,7 @@ namespace NGit.Storage.File
+@@ -159,7 +159,7 @@ namespace NGit.Storage.File
  			}
  			catch (FileNotFoundException)
  			{

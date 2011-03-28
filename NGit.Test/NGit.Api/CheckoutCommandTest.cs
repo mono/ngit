@@ -263,5 +263,23 @@ namespace NGit.Api
 				NUnit.Framework.Assert.Fail(e.Message);
 			}
 		}
+
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.RefAlreadyExistsException"></exception>
+		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
+		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDetachedHeadOnCheckout()
+		{
+			CheckoutCommand co = git.Checkout();
+			co.SetName("master").Call();
+			string commitId = db.GetRef(Constants.MASTER).GetObjectId().Name;
+			co = git.Checkout();
+			co.SetName(commitId).Call();
+			Ref head = db.GetRef(Constants.HEAD);
+			NUnit.Framework.Assert.IsFalse(head.IsSymbolic());
+			NUnit.Framework.Assert.AreSame(head, head.GetTarget());
+		}
 	}
 }

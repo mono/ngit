@@ -73,6 +73,10 @@ namespace NGit.Storage.File
 		internal static byte[] headLine = Sharpen.Runtime.GetBytesForString("3333333333333333333333333333333333333333 3e7549db262d1e836d9bf0af7e22355468f1717c A U Thor <thor@committer.au> 1243028201 -0100\tbranch: change to HEAD\n"
 			);
 
+		internal static byte[] oneLineWithoutComment = Sharpen.Runtime.GetBytesForString(
+			"da85355dfc525c9f6f3927b876f379f46ccf826e 3e7549db262d1e836d9bf0af7e22355468f1717c A O Thor Too <authortoo@wri.tr> 1243028200 +0200\n"
+			);
+
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestReadOneLine()
@@ -171,6 +175,24 @@ namespace NGit.Storage.File
 				().GetComment());
 			NUnit.Framework.Assert.AreEqual("branch: change to HEAD", db.GetReflogReader("HEAD"
 				).GetLastEntry().GetComment());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestReadLineWithMissingComment()
+		{
+			SetupReflog("logs/refs/heads/master", oneLineWithoutComment);
+			ReflogReader reader = db.GetReflogReader("master");
+			ReflogReader.Entry e = reader.GetLastEntry();
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("da85355dfc525c9f6f3927b876f379f46ccf826e"
+				), e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("3e7549db262d1e836d9bf0af7e22355468f1717c"
+				), e.GetNewId());
+			NUnit.Framework.Assert.AreEqual("A O Thor Too", e.GetWho().GetName());
+			NUnit.Framework.Assert.AreEqual("authortoo@wri.tr", e.GetWho().GetEmailAddress());
+			NUnit.Framework.Assert.AreEqual(120, e.GetWho().GetTimeZoneOffset());
+			NUnit.Framework.Assert.AreEqual("2009-05-22T23:36:40", Iso(e.GetWho()));
+			NUnit.Framework.Assert.AreEqual(string.Empty, e.GetComment());
 		}
 
 		/// <exception cref="System.Exception"></exception>
