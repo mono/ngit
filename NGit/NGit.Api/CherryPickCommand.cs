@@ -146,7 +146,7 @@ namespace NGit.Api
 					}
 					else
 					{
-						if (merger.FailedAbnormally())
+						if (merger.Failed())
 						{
 							return new CherryPickResult(merger.GetFailingPaths());
 						}

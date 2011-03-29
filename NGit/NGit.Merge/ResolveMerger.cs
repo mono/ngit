@@ -59,8 +59,8 @@ namespace NGit.Merge
 	public class ResolveMerger : ThreeWayMerger
 	{
 		/// <summary>
-		/// If the merge fails abnormally (means: not because of unresolved
-		/// conflicts) this enum is used to explain why it failed
+		/// If the merge fails (means: not stopped because of unresolved conflicts)
+		/// this enum is used to explain why it failed
 		/// </summary>
 		public enum MergeFailureReason
 		{
@@ -674,9 +674,9 @@ namespace NGit.Merge
 		}
 
 		/// <returns>
-		/// lists paths causing this merge to fail abnormally (not because of
-		/// a conflict). <code>null</code> is returned if this merge didn't
-		/// fail abnormally.
+		/// lists paths causing this merge to fail (not stopped because of a
+		/// conflict). <code>null</code> is returned if this merge didn't
+		/// fail.
 		/// </returns>
 		public virtual IDictionary<string, ResolveMerger.MergeFailureReason> GetFailingPaths
 			()
@@ -684,16 +684,16 @@ namespace NGit.Merge
 			return (failingPaths.Count == 0) ? null : failingPaths;
 		}
 
-		/// <summary>Returns whether this merge failed abnormally (i.e.</summary>
+		/// <summary>Returns whether this merge failed (i.e.</summary>
 		/// <remarks>
-		/// Returns whether this merge failed abnormally (i.e. not because of a
+		/// Returns whether this merge failed (i.e. not stopped because of a
 		/// conflict)
 		/// </remarks>
 		/// <returns>
-		/// <code>true</code> if an abnormal failure occurred,
-		/// <code>false</code> otherwise
+		/// <code>true</code> if a failure occurred, <code>false</code>
+		/// otherwise
 		/// </returns>
-		public virtual bool FailedAbnormally()
+		public virtual bool Failed()
 		{
 			return failingPaths.Count > 0;
 		}

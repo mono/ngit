@@ -85,7 +85,7 @@ namespace NGit.Api
 		}
 
 		/// <param name="failingPaths">
-		/// list of paths causing this cherry-pick to fail abnormally (see
+		/// list of paths causing this cherry-pick to fail (see
 		/// <see cref="NGit.Merge.ResolveMerger.GetFailingPaths()">NGit.Merge.ResolveMerger.GetFailingPaths()
 		/// 	</see>
 		/// for details)
@@ -145,8 +145,7 @@ namespace NGit.Api
 		}
 
 		/// <returns>
-		/// the list of paths causing this cherry-pick to fail abnormally
-		/// (see
+		/// the list of paths causing this cherry-pick to fail (see
 		/// <see cref="NGit.Merge.ResolveMerger.GetFailingPaths()">NGit.Merge.ResolveMerger.GetFailingPaths()
 		/// 	</see>
 		/// for details),

@@ -141,8 +141,7 @@ namespace NGit.Api
 		/// 	</see>
 		/// </param>
 		/// <param name="failingPaths">
-		/// list of paths causing this merge to fail abnormally as
-		/// returned by
+		/// list of paths causing this merge to fail as returned by
 		/// <see cref="NGit.Merge.ResolveMerger.GetFailingPaths()">NGit.Merge.ResolveMerger.GetFailingPaths()
 		/// 	</see>
 		/// </param>
@@ -335,14 +334,13 @@ namespace NGit.Api
 		}
 
 		/// <summary>
-		/// Returns a list of paths causing this merge to fail abnormally as returned
-		/// by
+		/// Returns a list of paths causing this merge to fail as returned by
 		/// <see cref="NGit.Merge.ResolveMerger.GetFailingPaths()">NGit.Merge.ResolveMerger.GetFailingPaths()
 		/// 	</see>
 		/// </summary>
 		/// <returns>
-		/// the list of paths causing this merge to fail abnormally or
-		/// <code>null</code> if no abnormal failure occurred
+		/// the list of paths causing this merge to fail or <code>null</code>
+		/// if no failure occurred
 		/// </returns>
 		public virtual IDictionary<string, ResolveMerger.MergeFailureReason> GetFailingPaths
 			()

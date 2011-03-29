@@ -97,7 +97,7 @@ namespace NGit.Api
 		/// Create <code>RebaseResult</code> with status
 		/// <see cref="Status.FAILED">Status.FAILED</see>
 		/// </summary>
-		/// <param name="failingPaths">list of paths causing this rebase to fail abnormally</param>
+		/// <param name="failingPaths">list of paths causing this rebase to fail</param>
 		internal RebaseResult(IDictionary<string, ResolveMerger.MergeFailureReason> failingPaths
 			)
 		{
@@ -124,7 +124,7 @@ namespace NGit.Api
 		}
 
 		/// <returns>
-		/// the list of paths causing this rebase to fail abnormally (see
+		/// the list of paths causing this rebase to fail (see
 		/// <see cref="NGit.Merge.ResolveMerger.GetFailingPaths()">NGit.Merge.ResolveMerger.GetFailingPaths()
 		/// 	</see>
 		/// for details) if status is

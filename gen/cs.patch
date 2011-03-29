@@ -1028,7 +1028,7 @@ index 3ba79a5..96758c2 100644
  						if (merger is ResolveMerger)
  						{
 diff --git a/NGit/NGit.Api/MergeCommandResult.cs b/NGit/NGit.Api/MergeCommandResult.cs
-index a24aef5..6352029 100644
+index 18dc103..b74068e 100644
 --- a/NGit/NGit.Api/MergeCommandResult.cs
 +++ b/NGit/NGit.Api/MergeCommandResult.cs
 @@ -92,7 +92,7 @@ namespace NGit.Api
@@ -1049,7 +1049,7 @@ index a24aef5..6352029 100644
  			, mergeStatus, mergeStrategy, lowLevelResults, null, null)
  		{
  		}
-@@ -149,7 +149,7 @@ namespace NGit.Api
+@@ -148,7 +148,7 @@ namespace NGit.Api
  		/// <param name="description">a user friendly description of the merge result</param>
  		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
  			, MergeStatus mergeStatus, MergeStrategy mergeStrategy, IDictionary<string, NGit.Merge.MergeResult
@@ -1058,7 +1058,7 @@ index a24aef5..6352029 100644
  			 failingPaths, string description)
  		{
  			this.newHead = newHead;
-@@ -161,7 +161,7 @@ namespace NGit.Api
+@@ -160,7 +160,7 @@ namespace NGit.Api
  			this.failingPaths = failingPaths;
  			if (lowLevelResults != null)
  			{
@@ -1519,7 +1519,7 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index f6b36c1..8f7b37c 100644
+index 9108d57..3fe5330 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
 @@ -566,7 +566,7 @@ namespace NGit.Merge
