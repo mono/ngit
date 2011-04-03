@@ -2506,6 +2506,19 @@ index 9c4bf2d..e292814 100644
  
  		// Do nothing.
  		/// <summary>Invoked just before commands are executed.</summary>
+diff --git a/NGit/NGit.Transport/PreUploadHook.cs b/NGit/NGit.Transport/PreUploadHook.cs
+index e16dcfa..28d2277 100644
+--- a/NGit/NGit.Transport/PreUploadHook.cs
++++ b/NGit/NGit.Transport/PreUploadHook.cs
+@@ -97,7 +97,7 @@ namespace NGit.Transport
+ 
+ 		/// <summary>A simple no-op hook.</summary>
+ 		/// <remarks>A simple no-op hook.</remarks>
+-		public const PreUploadHook NULL = new _PreUploadHook_60();
++		public static readonly PreUploadHook NULL = new _PreUploadHook_60();
+ 
+ 		// Do nothing.
+ 		/// <summary>
 diff --git a/NGit/NGit.Transport/PushResult.cs b/NGit/NGit.Transport/PushResult.cs
 index 7cb5ae7..30d4847 100644
 --- a/NGit/NGit.Transport/PushResult.cs
