@@ -1890,10 +1890,10 @@ index 2a0724d..79e77aa 100644
  			public _AsyncRevObjectQueue_914(RevWalk _enclosing, Sharpen.Iterator<RevObject> objItr
  				, AsyncObjectLoaderQueue<T> lItr)
 diff --git a/NGit/NGit.Storage.File/FileSnapshot.cs b/NGit/NGit.Storage.File/FileSnapshot.cs
-index 31c61bf..abdb052 100644
+index 967eaa5..2c38d91 100644
 --- a/NGit/NGit.Storage.File/FileSnapshot.cs
 +++ b/NGit/NGit.Storage.File/FileSnapshot.cs
-@@ -105,7 +105,7 @@ namespace NGit.Storage.File
+@@ -130,7 +130,7 @@ namespace NGit.Storage.File
  
  		/// <summary>Last wall-clock time the path was read.</summary>
  		/// <remarks>Last wall-clock time the path was read.</remarks>
@@ -1977,10 +1977,10 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index 132c7e1..881f1f0 100644
+index 1e4af9b..5fec0c1 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
-@@ -326,7 +326,7 @@ namespace NGit.Storage.File
+@@ -332,7 +332,7 @@ namespace NGit.Storage.File
  
  		private RefList<Ref> Upcast<_T0>(RefList<_T0> loose) where _T0:Ref
  		{
@@ -1989,16 +1989,16 @@ index 132c7e1..881f1f0 100644
  		}
  
  		private class LooseScanner
-@@ -1097,7 +1097,7 @@ namespace NGit.Storage.File
- 			if (IsSymRef(buf, n))
- 			{
+@@ -1108,7 +1108,7 @@ namespace NGit.Storage.File
+ 				}
+ 				// possibly truncated ref
  				// trim trailing whitespace
 -				while (0 < n && char.IsWhiteSpace(buf[n - 1]))
 +				while (0 < n && char.IsWhiteSpace((char)buf[n - 1]))
  				{
  					n--;
  				}
-@@ -1122,7 +1122,7 @@ namespace NGit.Storage.File
+@@ -1133,7 +1133,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{
@@ -2043,10 +2043,10 @@ index 4d3e1e6..d468f4b 100644
  			{
  				this.type = type;
 diff --git a/NGit/NGit.Storage.File/WindowCursor.cs b/NGit/NGit.Storage.File/WindowCursor.cs
-index b0cec89..320a7e7 100644
+index 7e604ec..d38a553 100644
 --- a/NGit/NGit.Storage.File/WindowCursor.cs
 +++ b/NGit/NGit.Storage.File/WindowCursor.cs
-@@ -85,7 +85,7 @@ namespace NGit.Storage.File
+@@ -96,7 +96,7 @@ namespace NGit.Storage.File
  			{
  				return Sharpen.Collections.Singleton(id.ToObjectId());
  			}
@@ -2055,7 +2055,7 @@ index b0cec89..320a7e7 100644
  			db.Resolve(matches, id);
  			return matches;
  		}
-@@ -134,7 +134,7 @@ namespace NGit.Storage.File
+@@ -145,7 +145,7 @@ namespace NGit.Storage.File
  			return sz;
  		}
  
@@ -2064,7 +2064,7 @@ index b0cec89..320a7e7 100644
  		{
  			return new LocalObjectToPack(obj);
  		}
-@@ -305,7 +305,7 @@ namespace NGit.Storage.File
+@@ -316,7 +316,7 @@ namespace NGit.Storage.File
  					}
  					else
  					{
@@ -2123,19 +2123,19 @@ index a8b219f..59173e5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index 5bbb198..62632a1 100644
+index 21a5c46..1c8dcec 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
-@@ -108,7 +108,7 @@ namespace NGit.Storage.Pack
+@@ -107,7 +107,7 @@ namespace NGit.Storage.Pack
  	{
  		private const int PACK_VERSION_GENERATED = 2;
  
--		private readonly IList<ObjectToPack>[] objectsLists = new IList[Constants.OBJ_TAG
-+		private readonly IList<ObjectToPack>[] objectsLists = new IList<ObjectToPack>[Constants.OBJ_TAG
- 			 + 1];
+-		private readonly BlockList<ObjectToPack>[] objectsLists = new BlockList[Constants
++		private readonly BlockList<ObjectToPack>[] objectsLists = new BlockList<ObjectToPack>[Constants
+ 			.OBJ_TAG + 1];
  
  		private readonly ObjectIdOwnerMap<ObjectToPack> objectsMap = new ObjectIdOwnerMap
-@@ -118,7 +118,7 @@ namespace NGit.Storage.Pack
+@@ -117,7 +117,7 @@ namespace NGit.Storage.Pack
  
  		private IList<CachedPack> cachedPacks = new AList<CachedPack>(2);
  
@@ -2152,8 +2152,8 @@ index 5bbb198..62632a1 100644
 +		public virtual bool WillInclude(ObjectId id)
  		{
  			ObjectToPack obj = objectsMap.Get(id);
- 			if (obj != null && !obj.IsEdge())
-@@ -1449,12 +1449,10 @@ namespace NGit.Storage.Pack
+ 			return obj != null && !obj.IsEdge();
+@@ -1461,12 +1461,10 @@ namespace NGit.Storage.Pack
  				);
  			if (have == null)
  			{
@@ -2169,7 +2169,7 @@ index 5bbb198..62632a1 100644
  			IList<ObjectId> all = new AList<ObjectId>(want.Count + have.Count);
  			Sharpen.Collections.AddAll(all, want);
  			Sharpen.Collections.AddAll(all, have);
-@@ -1473,7 +1471,7 @@ namespace NGit.Storage.Pack
+@@ -1485,7 +1483,7 @@ namespace NGit.Storage.Pack
  				walker.Sort(RevSort.COMMIT_TIME_DESC);
  				if (useCachedPacks && reuseSupport != null)
  				{
@@ -2480,19 +2480,6 @@ index c547732..85ba51f 100644
  
  		internal URIish uri;
  
-diff --git a/NGit/NGit.Transport/PacketLineIn.cs b/NGit/NGit.Transport/PacketLineIn.cs
-index ae4917c..5329470 100644
---- a/NGit/NGit.Transport/PacketLineIn.cs
-+++ b/NGit/NGit.Transport/PacketLineIn.cs
-@@ -52,7 +52,7 @@ using Sharpen;
- 
- namespace NGit.Transport
- {
--	internal class PacketLineIn
-+	public class PacketLineIn
- 	{
- 		internal static readonly string END = new StringBuilder(0).ToString();
- 
 diff --git a/NGit/NGit.Transport/PostReceiveHook.cs b/NGit/NGit.Transport/PostReceiveHook.cs
 index af35c2c..e92be9c 100644
 --- a/NGit/NGit.Transport/PostReceiveHook.cs
@@ -2533,10 +2520,10 @@ index 7cb5ae7..30d4847 100644
  		/// <summary>Get status of remote refs updates.</summary>
  		/// <remarks>
 diff --git a/NGit/NGit.Transport/RefAdvertiser.cs b/NGit/NGit.Transport/RefAdvertiser.cs
-index db6b8da..328ddcd 100644
+index cb11fdd..cd92095 100644
 --- a/NGit/NGit.Transport/RefAdvertiser.cs
 +++ b/NGit/NGit.Transport/RefAdvertiser.cs
-@@ -173,8 +173,9 @@ namespace NGit.Transport
+@@ -170,8 +170,9 @@ namespace NGit.Transport
  		/// </exception>
  		public virtual ICollection<ObjectId> Send(IDictionary<string, Ref> refs)
  		{
@@ -2547,7 +2534,7 @@ index db6b8da..328ddcd 100644
  				if (@ref.GetObjectId() == null)
  				{
  					continue;
-@@ -202,11 +203,11 @@ namespace NGit.Transport
+@@ -199,11 +200,11 @@ namespace NGit.Transport
  
  		private Iterable<Ref> GetSortedRefs(IDictionary<string, Ref> all)
  		{
@@ -2950,10 +2937,10 @@ index fd116ea..97b957a 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index aa47330..2996cf4 100644
+index 887e7b9..c5e402b 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
-@@ -161,7 +161,7 @@ namespace NGit.Transport
+@@ -165,7 +165,7 @@ namespace NGit.Transport
  		/// <see cref="commonBase">commonBase</see>
  		/// should be examined again.
  		/// </summary>
@@ -2962,7 +2949,7 @@ index aa47330..2996cf4 100644
  
  		/// <summary>Objects we sent in our advertisement list, clients can ask for these.</summary>
  		/// <remarks>Objects we sent in our advertisement list, clients can ask for these.</remarks>
-@@ -754,7 +754,7 @@ namespace NGit.Transport
+@@ -828,7 +828,7 @@ namespace NGit.Transport
  			{
  				okToGiveUp = Sharpen.Extensions.ValueOf(OkToGiveUpImp());
  			}
@@ -2971,7 +2958,7 @@ index aa47330..2996cf4 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
-@@ -887,8 +887,9 @@ namespace NGit.Transport
+@@ -984,8 +984,9 @@ namespace NGit.Transport
  				}
  				if (options.Contains(OPTION_INCLUDE_TAG))
  				{
@@ -3389,7 +3376,7 @@ index 81693c4..96e7be5 100644
  
  			private readonly BlockList<T> _enclosing;
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
-index 521d666..95ba8d5 100644
+index be1e0e3..df68bb0 100644
 --- a/NGit/NGit.Util/FS.cs
 +++ b/NGit/NGit.Util/FS.cs
 @@ -90,7 +90,7 @@ namespace NGit.Util

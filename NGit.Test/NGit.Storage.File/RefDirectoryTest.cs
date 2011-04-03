@@ -1005,6 +1005,9 @@ namespace NGit.Storage.File
 		{
 			FilePath pr = new FilePath(diskRepo.Directory, "packed-refs");
 			Write(pr, content);
+			long now = Runtime.CurrentTimeMillis();
+			int oneHourAgo = 3600 * 1000;
+			pr.SetLastModified(now - oneHourAgo);
 		}
 
 		private void DeleteLooseRef(string name)

@@ -86,8 +86,8 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
-			NUnit.Framework.Assert.AreEqual("D:/m y", u.GetPath());
-			NUnit.Framework.Assert.AreEqual("D:/m y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("D:\\m y", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("D:\\m y", u.ToString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -112,8 +112,8 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
-			NUnit.Framework.Assert.AreEqual("//some/place", u.GetPath());
-			NUnit.Framework.Assert.AreEqual("//some/place", u.ToString());
+			NUnit.Framework.Assert.AreEqual("\\\\some\\place", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("\\\\some\\place", u.ToString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -333,6 +333,24 @@ namespace NGit.Transport
 		public virtual void TestGitWithUserHome()
 		{
 			string str = "git://example.com/~some/p ath";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("git", u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("~some/p ath", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.IsNull(u.GetUser());
+			NUnit.Framework.Assert.IsNull(u.GetPass());
+			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
+			NUnit.Framework.Assert.AreEqual(str, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFileWithUserHome()
+		{
+			string str = "~some/p ath";
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("git", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());

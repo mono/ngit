@@ -625,19 +625,19 @@ index 96abaee..5135f9f 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index 9c247d0..8647012 100644
+index 8a912ae..24b401d 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 @@ -139,7 +139,7 @@
  	private static final int PACK_VERSION_GENERATED = 2;
  
  	@SuppressWarnings("unchecked")
--	private final List<ObjectToPack> objectsLists[] = new List[Constants.OBJ_TAG + 1];
-+	private final List<ObjectToPack>[] objectsLists = new List[Constants.OBJ_TAG + 1];
+-	private final BlockList<ObjectToPack> objectsLists[] = new BlockList[Constants.OBJ_TAG + 1];
++	private final BlockList<ObjectToPack>[] objectsLists = new BlockList[Constants.OBJ_TAG + 1];
  	{
- 		objectsLists[0] = Collections.<ObjectToPack> emptyList();
  		objectsLists[Constants.OBJ_COMMIT] = new BlockList<ObjectToPack>();
-@@ -172,7 +172,7 @@
+ 		objectsLists[Constants.OBJ_TREE] = new BlockList<ObjectToPack>();
+@@ -171,7 +171,7 @@
  
  	private List<ObjectToPack> sortedByName;
  
@@ -800,10 +800,10 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 4b22557..27b6fbf 100644
+index 2802c07..907f536 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-@@ -177,7 +177,7 @@
+@@ -180,7 +180,7 @@
  
  	private final RevFlagSet SAVE;
  
@@ -812,7 +812,7 @@ index 4b22557..27b6fbf 100644
  
  	private PackWriter.Statistics statistics;
  
-@@ -575,14 +575,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -622,14 +622,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  				// If both sides have the same object; let the client know.
  				//
  				switch (multiAck) {
@@ -830,22 +830,22 @@ index 4b22557..27b6fbf 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -602,12 +602,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
- 				didOkToGiveUp = true;
- 				if (okToGiveUp()) {
- 					switch (multiAck) {
--					case OFF:
-+					case MultiAck.OFF:
- 						break;
--					case CONTINUE:
-+					case MultiAck.CONTINUE:
- 						pckOut.writeString("ACK " + id.name() + " continue\n");
- 						break;
--					case DETAILED:
-+					case MultiAck.DETAILED:
- 						pckOut.writeString("ACK " + id.name() + " ready\n");
- 						break;
- 					}
+@@ -652,12 +652,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+ 					didOkToGiveUp = true;
+ 					if (okToGiveUp()) {
+ 						switch (multiAck) {
+-						case OFF:
++						case MultiAck.OFF:
+ 							break;
+-						case CONTINUE:
++						case MultiAck.CONTINUE:
+ 							pckOut.writeString("ACK " + id.name() + " continue\n");
+ 							break;
+-						case DETAILED:
++						case MultiAck.DETAILED:
+ 							pckOut.writeString("ACK " + id.name() + " ready\n");
+ 							sentReady = true;
+ 							break;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
 index c683308..09a5bf3 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
