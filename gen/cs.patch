@@ -3494,7 +3494,7 @@ index d902038..bb6fd35 100644
  					b4[b4Posn++] = sbiCrop;
  					if (b4Posn > 3)
 diff --git a/NGit/NGit.Util/BlockList.cs b/NGit/NGit.Util/BlockList.cs
-index 81693c4..96e7be5 100644
+index 672fa1b..c32292d 100644
 --- a/NGit/NGit.Util/BlockList.cs
 +++ b/NGit/NGit.Util/BlockList.cs
 @@ -96,8 +96,8 @@ namespace NGit.Util
@@ -3604,7 +3604,7 @@ index 81693c4..96e7be5 100644
  
  			private int blkIdx;
  
--			private T[] block = this._enclosing.directory[this.dirIdx];
+-			private T[] block = this._enclosing.directory[0];
 +			private T[] block;
  
  			public override bool HasNext()
@@ -3634,7 +3634,7 @@ index 81693c4..96e7be5 100644
  			internal MyIterator(BlockList<T> _enclosing)
  			{
  				this._enclosing = _enclosing;
-+				block = this._enclosing.directory[this.dirIdx];
++				block = this._enclosing.directory[0];
  			}
  
  			private readonly BlockList<T> _enclosing;
