@@ -348,6 +348,7 @@ namespace NGit.Transport
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		[NUnit.Framework.Ignore ("Resolving ~user is beyond standard Java API and need more support")]
 		public virtual void TestFileWithUserHome()
 		{
 			string str = "~some/p ath";

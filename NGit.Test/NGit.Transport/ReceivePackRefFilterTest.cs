@@ -124,6 +124,7 @@ namespace NGit.Transport
 			{
 				dst.Close();
 			}
+			Release ();
 			base.TearDown();
 		}
 
@@ -576,7 +577,6 @@ namespace NGit.Transport
 
 		private ObjectInserter inserter;
 
-		[NUnit.Framework.TearDown]
 		public virtual void Release()
 		{
 			if (inserter != null)

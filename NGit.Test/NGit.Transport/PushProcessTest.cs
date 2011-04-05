@@ -370,7 +370,7 @@ namespace NGit.Transport
 		/// <exception cref="System.NotSupportedException"></exception>
 		/// <exception cref="NGit.Errors.TransportException"></exception>
 		private PushResult TestOneUpdateStatus(RemoteRefUpdate rru, Ref advertisedRef, RemoteRefUpdate.Status
-			 expectedStatus, bool fastForward)
+			 expectedStatus, bool? fastForward)
 		{
 			refUpdates.AddItem(rru);
 			if (advertisedRef != null)
@@ -381,7 +381,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(expectedStatus, rru.GetStatus());
 			if (fastForward != null)
 			{
-				NUnit.Framework.Assert.AreEqual(fastForward, rru.IsFastForward());
+				NUnit.Framework.Assert.AreEqual(fastForward.Value, rru.IsFastForward());
 			}
 			return result;
 		}
@@ -394,9 +394,9 @@ namespace NGit.Transport
 			return process.Execute(new TextProgressMonitor());
 		}
 
-		private class MockTransport : NGit.Transport.Transport
+		public class MockTransport : NGit.Transport.Transport
 		{
-			protected MockTransport(PushProcessTest _enclosing, Repository local, URIish uri)
+			public MockTransport(PushProcessTest _enclosing, Repository local, URIish uri)
 				 : base(local, uri)
 			{
 				this._enclosing = _enclosing;
@@ -413,7 +413,7 @@ namespace NGit.Transport
 			/// <exception cref="NGit.Errors.TransportException"></exception>
 			public override PushConnection OpenPush()
 			{
-				return new PushProcessTest.MockPushConnection(this);
+				return new PushProcessTest.MockPushConnection(_enclosing);
 			}
 
 			public override void Close()

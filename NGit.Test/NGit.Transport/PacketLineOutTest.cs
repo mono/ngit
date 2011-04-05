@@ -165,7 +165,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(4 + buf.Length, act.Length);
 			NUnit.Framework.Assert.AreEqual(Sharpen.Runtime.GetStringForBytes(act, 0, 4, "UTF-8"
 				), explen);
-			for (int i_1 = 0; i_1 < buf.Length; i_1++, j++)
+			for (int i_1 = 0, j = 4; i_1 < buf.Length; i_1++, j++)
 			{
 				NUnit.Framework.Assert.AreEqual(buf[i_1], act[j]);
 			}

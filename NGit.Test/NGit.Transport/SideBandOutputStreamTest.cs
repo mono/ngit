@@ -73,7 +73,7 @@ namespace NGit.Transport
 				.SMALL_BUF, rawOut);
 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
 			@out.Flush();
-			AssertBuffer("0008\x1abc");
+			AssertBuffer("0008\x0001abc");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -85,7 +85,7 @@ namespace NGit.Transport
 				.SMALL_BUF, rawOut);
 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
 			@out.Flush();
-			AssertBuffer("0008\x2abc");
+			AssertBuffer("0008\x0002abc");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -97,7 +97,7 @@ namespace NGit.Transport
 				.SMALL_BUF, rawOut);
 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
 			@out.Flush();
-			AssertBuffer("0008\x3abc");
+			AssertBuffer("0008\x0003abc");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -111,7 +111,7 @@ namespace NGit.Transport
 			@out.Write('b');
 			@out.Write('c');
 			@out.Flush();
-			AssertBuffer("0008\x1abc");
+			AssertBuffer("0008\x0001abc");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -124,7 +124,7 @@ namespace NGit.Transport
 			@out.Write('b');
 			@out.Write('c');
 			@out.Flush();
-			AssertBuffer("0006\x1a0006\x1b0006\x1c");
+			AssertBuffer("0006\x0001a0006\x0001b0006\x0001c");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -135,7 +135,7 @@ namespace NGit.Transport
 			@out = new SideBandOutputStream(SideBandOutputStream.CH_DATA, 6, rawOut);
 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
 			@out.Flush();
-			AssertBuffer("0006\x1a0006\x1b0006\x1c");
+			AssertBuffer("0006\x0001a0006\x0001b0006\x0001c");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -147,7 +147,7 @@ namespace NGit.Transport
 			@out.Write('a');
 			@out.Write(new byte[] { (byte)('b'), (byte)('c') });
 			@out.Flush();
-			AssertBuffer("0007\x1ab0006\x1c");
+			AssertBuffer("0007\x0001ab0006\x0001c");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -173,7 +173,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(Sharpen.Runtime.GetStringForBytes(act, 0, 4, "UTF-8"
 				), explen);
 			NUnit.Framework.Assert.AreEqual(1, act[4]);
-			for (int i_1 = 0; i_1 < buf.Length; i_1++, j++)
+			for (int i_1 = 0, j = SideBandOutputStream.HDR_SIZE; i_1 < buf.Length; i_1++, j++)
 			{
 				NUnit.Framework.Assert.AreEqual(buf[i_1], act[j]);
 			}

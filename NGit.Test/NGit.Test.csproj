@@ -216,6 +216,17 @@
     <Compile Include="NGit.Api\CommitOnlyTest.cs" />
     <Compile Include="NGit.Api\StatusCommandTest.cs" />
     <Compile Include="NGit.Api\GitConstructionTest.cs" />
+    <Compile Include="NGit.Transport\URIishTest.cs" />
+    <Compile Include="NGit.Transport\TransportTest.cs" />
+    <Compile Include="NGit.Transport\SideBandOutputStreamTest.cs" />
+    <Compile Include="NGit.Transport\RemoteConfigTest.cs" />
+    <Compile Include="NGit.Transport\RefSpecTest.cs" />
+    <Compile Include="NGit.Transport\ReceivePackRefFilterTest.cs" />
+    <Compile Include="NGit.Transport\PushProcessTest.cs" />
+    <Compile Include="NGit.Transport\PacketLineOutTest.cs" />
+    <Compile Include="NGit.Transport\PacketLineInTest.cs" />
+    <Compile Include="NGit.Transport\LongMapTest.cs" />
+    <Compile Include="NGit.Transport\BundleWriterTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

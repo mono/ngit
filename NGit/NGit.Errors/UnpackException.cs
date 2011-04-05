@@ -58,7 +58,7 @@ namespace NGit.Errors
 		/// <summary>Creates an exception with a root cause.</summary>
 		/// <remarks>Creates an exception with a root cause.</remarks>
 		/// <param name="why">the root cause of the unpacking failure.</param>
-		public UnpackException(Exception why) : base(JGitText.Get().unpackException)
+		public UnpackException(Exception why) : base(JGitText.Get().unpackException, why)
 		{
 			Sharpen.Extensions.InitCause(this, why);
 		}

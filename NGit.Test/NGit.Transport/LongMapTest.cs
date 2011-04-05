@@ -49,13 +49,13 @@ namespace NGit.Transport
 	[NUnit.Framework.TestFixture]
 	public class LongMapTest
 	{
-		private LongMap<long> map;
+		private LongMap<long?> map;
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
 		public virtual void SetUp()
 		{
-			map = new LongMap<long>();
+			map = new LongMap<long?>();
 		}
 
 		[NUnit.Framework.Test]
@@ -75,7 +75,7 @@ namespace NGit.Transport
 			long min = Sharpen.Extensions.ValueOf(long.MinValue);
 			NUnit.Framework.Assert.IsNull(map.Put(long.MinValue, min));
 			NUnit.Framework.Assert.IsTrue(map.ContainsKey(long.MinValue));
-			NUnit.Framework.Assert.AreSame(min, map.Get(long.MinValue));
+			NUnit.Framework.Assert.AreEqual(min, map.Get(long.MinValue));
 			NUnit.Framework.Assert.IsFalse(map.ContainsKey(int.MinValue));
 		}
 
@@ -85,9 +85,9 @@ namespace NGit.Transport
 			long min = Sharpen.Extensions.ValueOf(long.MaxValue);
 			long one = Sharpen.Extensions.ValueOf(1);
 			NUnit.Framework.Assert.IsNull(map.Put(long.MaxValue, min));
-			NUnit.Framework.Assert.AreSame(min, map.Get(long.MaxValue));
-			NUnit.Framework.Assert.AreSame(min, map.Put(long.MaxValue, one));
-			NUnit.Framework.Assert.AreSame(one, map.Get(long.MaxValue));
+			NUnit.Framework.Assert.AreEqual(min, map.Get(long.MaxValue));
+			NUnit.Framework.Assert.AreEqual(min, map.Put(long.MaxValue, one));
+			NUnit.Framework.Assert.AreEqual(one, map.Get(long.MaxValue));
 		}
 
 		[NUnit.Framework.Test]

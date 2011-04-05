@@ -70,7 +70,7 @@ namespace NGit.Transport
 		/// <see cref="ReadString()">ReadString()</see>
 		/// when a flush packet is found.
 		/// </summary>
-		public static readonly string END = new StringBuilder(0).ToString();
+		public static readonly string END = string.Copy ("");
 
 		internal enum AckNackResult
 		{

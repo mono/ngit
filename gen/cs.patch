@@ -715,6 +715,212 @@ index 08446d0..f5b82af 100644
  			{
  				return new ByteArrayInputStream(this._enclosing.@base);
  			}
+diff --git a/NGit.Test/NGit.Transport/LongMapTest.cs b/NGit.Test/NGit.Transport/LongMapTest.cs
+index dfbb919..3b3a164 100644
+--- a/NGit.Test/NGit.Transport/LongMapTest.cs
++++ b/NGit.Test/NGit.Transport/LongMapTest.cs
+@@ -49,13 +49,13 @@ namespace NGit.Transport
+ 	[NUnit.Framework.TestFixture]
+ 	public class LongMapTest
+ 	{
+-		private LongMap<long> map;
++		private LongMap<long?> map;
+ 
+ 		/// <exception cref="System.Exception"></exception>
+ 		[NUnit.Framework.SetUp]
+ 		public virtual void SetUp()
+ 		{
+-			map = new LongMap<long>();
++			map = new LongMap<long?>();
+ 		}
+ 
+ 		[NUnit.Framework.Test]
+@@ -75,7 +75,7 @@ namespace NGit.Transport
+ 			long min = Sharpen.Extensions.ValueOf(long.MinValue);
+ 			NUnit.Framework.Assert.IsNull(map.Put(long.MinValue, min));
+ 			NUnit.Framework.Assert.IsTrue(map.ContainsKey(long.MinValue));
+-			NUnit.Framework.Assert.AreSame(min, map.Get(long.MinValue));
++			NUnit.Framework.Assert.AreEqual(min, map.Get(long.MinValue));
+ 			NUnit.Framework.Assert.IsFalse(map.ContainsKey(int.MinValue));
+ 		}
+ 
+@@ -85,9 +85,9 @@ namespace NGit.Transport
+ 			long min = Sharpen.Extensions.ValueOf(long.MaxValue);
+ 			long one = Sharpen.Extensions.ValueOf(1);
+ 			NUnit.Framework.Assert.IsNull(map.Put(long.MaxValue, min));
+-			NUnit.Framework.Assert.AreSame(min, map.Get(long.MaxValue));
+-			NUnit.Framework.Assert.AreSame(min, map.Put(long.MaxValue, one));
+-			NUnit.Framework.Assert.AreSame(one, map.Get(long.MaxValue));
++			NUnit.Framework.Assert.AreEqual(min, map.Get(long.MaxValue));
++			NUnit.Framework.Assert.AreEqual(min, map.Put(long.MaxValue, one));
++			NUnit.Framework.Assert.AreEqual(one, map.Get(long.MaxValue));
+ 		}
+ 
+ 		[NUnit.Framework.Test]
+diff --git a/NGit.Test/NGit.Transport/PacketLineOutTest.cs b/NGit.Test/NGit.Transport/PacketLineOutTest.cs
+index 9a9e0f0..eda412f 100644
+--- a/NGit.Test/NGit.Transport/PacketLineOutTest.cs
++++ b/NGit.Test/NGit.Transport/PacketLineOutTest.cs
+@@ -165,7 +165,7 @@ namespace NGit.Transport
+ 			NUnit.Framework.Assert.AreEqual(4 + buf.Length, act.Length);
+ 			NUnit.Framework.Assert.AreEqual(Sharpen.Runtime.GetStringForBytes(act, 0, 4, "UTF-8"
+ 				), explen);
+-			for (int i_1 = 0; i_1 < buf.Length; i_1++, j++)
++			for (int i_1 = 0, j = 4; i_1 < buf.Length; i_1++, j++)
+ 			{
+ 				NUnit.Framework.Assert.AreEqual(buf[i_1], act[j]);
+ 			}
+diff --git a/NGit.Test/NGit.Transport/PushProcessTest.cs b/NGit.Test/NGit.Transport/PushProcessTest.cs
+index 999233e..5e9c72a 100644
+--- a/NGit.Test/NGit.Transport/PushProcessTest.cs
++++ b/NGit.Test/NGit.Transport/PushProcessTest.cs
+@@ -370,7 +370,7 @@ namespace NGit.Transport
+ 		/// <exception cref="System.NotSupportedException"></exception>
+ 		/// <exception cref="NGit.Errors.TransportException"></exception>
+ 		private PushResult TestOneUpdateStatus(RemoteRefUpdate rru, Ref advertisedRef, RemoteRefUpdate.Status
+-			 expectedStatus, bool fastForward)
++			 expectedStatus, bool? fastForward)
+ 		{
+ 			refUpdates.AddItem(rru);
+ 			if (advertisedRef != null)
+@@ -381,7 +381,7 @@ namespace NGit.Transport
+ 			NUnit.Framework.Assert.AreEqual(expectedStatus, rru.GetStatus());
+ 			if (fastForward != null)
+ 			{
+-				NUnit.Framework.Assert.AreEqual(fastForward, rru.IsFastForward());
++				NUnit.Framework.Assert.AreEqual(fastForward.Value, rru.IsFastForward());
+ 			}
+ 			return result;
+ 		}
+@@ -394,9 +394,9 @@ namespace NGit.Transport
+ 			return process.Execute(new TextProgressMonitor());
+ 		}
+ 
+-		private class MockTransport : NGit.Transport.Transport
++		public class MockTransport : NGit.Transport.Transport
+ 		{
+-			protected MockTransport(PushProcessTest _enclosing, Repository local, URIish uri)
++			public MockTransport(PushProcessTest _enclosing, Repository local, URIish uri)
+ 				 : base(local, uri)
+ 			{
+ 				this._enclosing = _enclosing;
+@@ -413,7 +413,7 @@ namespace NGit.Transport
+ 			/// <exception cref="NGit.Errors.TransportException"></exception>
+ 			public override PushConnection OpenPush()
+ 			{
+-				return new PushProcessTest.MockPushConnection(this);
++				return new PushProcessTest.MockPushConnection(_enclosing);
+ 			}
+ 
+ 			public override void Close()
+diff --git a/NGit.Test/NGit.Transport/ReceivePackRefFilterTest.cs b/NGit.Test/NGit.Transport/ReceivePackRefFilterTest.cs
+index 0b85d9d..b0ac059 100644
+--- a/NGit.Test/NGit.Transport/ReceivePackRefFilterTest.cs
++++ b/NGit.Test/NGit.Transport/ReceivePackRefFilterTest.cs
+@@ -124,6 +124,7 @@ namespace NGit.Transport
+ 			{
+ 				dst.Close();
+ 			}
++			Release ();
+ 			base.TearDown();
+ 		}
+ 
+@@ -576,7 +577,6 @@ namespace NGit.Transport
+ 
+ 		private ObjectInserter inserter;
+ 
+-		[NUnit.Framework.TearDown]
+ 		public virtual void Release()
+ 		{
+ 			if (inserter != null)
+diff --git a/NGit.Test/NGit.Transport/SideBandOutputStreamTest.cs b/NGit.Test/NGit.Transport/SideBandOutputStreamTest.cs
+index 2b145de..09c937b 100644
+--- a/NGit.Test/NGit.Transport/SideBandOutputStreamTest.cs
++++ b/NGit.Test/NGit.Transport/SideBandOutputStreamTest.cs
+@@ -73,7 +73,7 @@ namespace NGit.Transport
+ 				.SMALL_BUF, rawOut);
+ 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
+ 			@out.Flush();
+-			AssertBuffer("0008\x1abc");
++			AssertBuffer("0008\x0001abc");
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
+@@ -85,7 +85,7 @@ namespace NGit.Transport
+ 				.SMALL_BUF, rawOut);
+ 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
+ 			@out.Flush();
+-			AssertBuffer("0008\x2abc");
++			AssertBuffer("0008\x0002abc");
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
+@@ -97,7 +97,7 @@ namespace NGit.Transport
+ 				.SMALL_BUF, rawOut);
+ 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
+ 			@out.Flush();
+-			AssertBuffer("0008\x3abc");
++			AssertBuffer("0008\x0003abc");
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
+@@ -111,7 +111,7 @@ namespace NGit.Transport
+ 			@out.Write('b');
+ 			@out.Write('c');
+ 			@out.Flush();
+-			AssertBuffer("0008\x1abc");
++			AssertBuffer("0008\x0001abc");
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
+@@ -124,7 +124,7 @@ namespace NGit.Transport
+ 			@out.Write('b');
+ 			@out.Write('c');
+ 			@out.Flush();
+-			AssertBuffer("0006\x1a0006\x1b0006\x1c");
++			AssertBuffer("0006\x0001a0006\x0001b0006\x0001c");
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
+@@ -135,7 +135,7 @@ namespace NGit.Transport
+ 			@out = new SideBandOutputStream(SideBandOutputStream.CH_DATA, 6, rawOut);
+ 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
+ 			@out.Flush();
+-			AssertBuffer("0006\x1a0006\x1b0006\x1c");
++			AssertBuffer("0006\x0001a0006\x0001b0006\x0001c");
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
+@@ -147,7 +147,7 @@ namespace NGit.Transport
+ 			@out.Write('a');
+ 			@out.Write(new byte[] { (byte)('b'), (byte)('c') });
+ 			@out.Flush();
+-			AssertBuffer("0007\x1ab0006\x1c");
++			AssertBuffer("0007\x0001ab0006\x0001c");
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
+@@ -173,7 +173,7 @@ namespace NGit.Transport
+ 			NUnit.Framework.Assert.AreEqual(Sharpen.Runtime.GetStringForBytes(act, 0, 4, "UTF-8"
+ 				), explen);
+ 			NUnit.Framework.Assert.AreEqual(1, act[4]);
+-			for (int i_1 = 0; i_1 < buf.Length; i_1++, j++)
++			for (int i_1 = 0, j = SideBandOutputStream.HDR_SIZE; i_1 < buf.Length; i_1++, j++)
+ 			{
+ 				NUnit.Framework.Assert.AreEqual(buf[i_1], act[j]);
+ 			}
+diff --git a/NGit.Test/NGit.Transport/URIishTest.cs b/NGit.Test/NGit.Transport/URIishTest.cs
+index 64e0b4e..39ff541 100644
+--- a/NGit.Test/NGit.Transport/URIishTest.cs
++++ b/NGit.Test/NGit.Transport/URIishTest.cs
+@@ -348,6 +348,7 @@ namespace NGit.Transport
+ 
+ 		/// <exception cref="System.Exception"></exception>
+ 		[NUnit.Framework.Test]
++		[NUnit.Framework.Ignore ("Resolving ~user is beyond standard Java API and need more support")]
+ 		public virtual void TestFileWithUserHome()
+ 		{
+ 			string str = "~some/p ath";
 diff --git a/NGit.Test/NGit.Util/Base64Test.cs b/NGit.Test/NGit.Util/Base64Test.cs
 index 198f581..8cde1df 100644
 --- a/NGit.Test/NGit.Util/Base64Test.cs
@@ -1327,6 +1533,19 @@ index 4d5263f..ae63e05 100644
 +					inCoreFlags &= unchecked((byte)~UPDATE_NEEDED);
  				}
  			}
+ 		}
+diff --git a/NGit/NGit.Errors/UnpackException.cs b/NGit/NGit.Errors/UnpackException.cs
+index ba4bcf8..9df7846 100644
+--- a/NGit/NGit.Errors/UnpackException.cs
++++ b/NGit/NGit.Errors/UnpackException.cs
+@@ -58,7 +58,7 @@ namespace NGit.Errors
+ 		/// <summary>Creates an exception with a root cause.</summary>
+ 		/// <remarks>Creates an exception with a root cause.</remarks>
+ 		/// <param name="why">the root cause of the unpacking failure.</param>
+-		public UnpackException(Exception why) : base(JGitText.Get().unpackException)
++		public UnpackException(Exception why) : base(JGitText.Get().unpackException, why)
+ 		{
+ 			Sharpen.Extensions.InitCause(this, why);
  		}
 diff --git a/NGit/NGit.Events/RepositoryEvent.cs b/NGit/NGit.Events/RepositoryEvent.cs
 index ecc16a0..c470c28 100644
@@ -2441,7 +2660,7 @@ index 87944c9..e689b4a 100644
  		internal readonly long key;
  
 diff --git a/NGit/NGit.Transport/OpenSshConfig.cs b/NGit/NGit.Transport/OpenSshConfig.cs
-index 39d09ba..9d43f1c 100644
+index 39d09ba..d1cb2e1 100644
 --- a/NGit/NGit.Transport/OpenSshConfig.cs
 +++ b/NGit/NGit.Transport/OpenSshConfig.cs
 @@ -121,7 +121,7 @@ namespace NGit.Transport
@@ -2467,6 +2686,24 @@ index 39d09ba..9d43f1c 100644
  					}
  					lastModified = mtime;
  				}
+@@ -459,7 +459,7 @@ namespace NGit.Transport
+ 
+ 			internal string preferredAuthentications;
+ 
+-			internal bool batchMode;
++			internal bool? batchMode;
+ 
+ 			internal string strictHostKeyChecking;
+ 
+@@ -548,7 +548,7 @@ namespace NGit.Transport
+ 			/// </returns>
+ 			public virtual bool IsBatchMode()
+ 			{
+-				return batchMode != null && batchMode;
++				return batchMode != null && batchMode.Value;
+ 			}
+ 		}
+ 	}
 diff --git a/NGit/NGit.Transport/OperationResult.cs b/NGit/NGit.Transport/OperationResult.cs
 index c547732..85ba51f 100644
 --- a/NGit/NGit.Transport/OperationResult.cs
@@ -2480,6 +2717,19 @@ index c547732..85ba51f 100644
  
  		internal URIish uri;
  
+diff --git a/NGit/NGit.Transport/PacketLineIn.cs b/NGit/NGit.Transport/PacketLineIn.cs
+index 276d875..9b0ece0 100644
+--- a/NGit/NGit.Transport/PacketLineIn.cs
++++ b/NGit/NGit.Transport/PacketLineIn.cs
+@@ -70,7 +70,7 @@ namespace NGit.Transport
+ 		/// <see cref="ReadString()">ReadString()</see>
+ 		/// when a flush packet is found.
+ 		/// </summary>
+-		public static readonly string END = new StringBuilder(0).ToString();
++		public static readonly string END = string.Copy ("");
+ 
+ 		internal enum AckNackResult
+ 		{
 diff --git a/NGit/NGit.Transport/PostReceiveHook.cs b/NGit/NGit.Transport/PostReceiveHook.cs
 index af35c2c..e92be9c 100644
 --- a/NGit/NGit.Transport/PostReceiveHook.cs
