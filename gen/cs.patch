@@ -1221,18 +1221,18 @@ index c81f7c0..111c265 100644
  
  		/// <param name="repo"></param>
 diff --git a/NGit/NGit.Api/MergeCommand.cs b/NGit/NGit.Api/MergeCommand.cs
-index 3ba79a5..96758c2 100644
+index 2f7647d..0fe4495 100644
 --- a/NGit/NGit.Api/MergeCommand.cs
 +++ b/NGit/NGit.Api/MergeCommand.cs
-@@ -178,7 +178,7 @@ namespace NGit.Api
+@@ -179,7 +179,7 @@ namespace NGit.Api
  						repo.WriteMergeHeads(Arrays.AsList(@ref.GetObjectId()));
  						ThreeWayMerger merger = (ThreeWayMerger)mergeStrategy.NewMerger(repo);
  						bool noProblems;
 -						IDictionary<string, MergeResult<object>> lowLevelResults = null;
 +						IDictionary<string, MergeResult<NGit.Diff.Sequence>> lowLevelResults = null;
  						IDictionary<string, ResolveMerger.MergeFailureReason> failingPaths = null;
+ 						IList<string> unmergedPaths = null;
  						if (merger is ResolveMerger)
- 						{
 diff --git a/NGit/NGit.Api/MergeCommandResult.cs b/NGit/NGit.Api/MergeCommandResult.cs
 index 18dc103..b74068e 100644
 --- a/NGit/NGit.Api/MergeCommandResult.cs
@@ -1296,7 +1296,7 @@ index b00c5a1..bbeedae 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index f57420a..4da6c10 100644
+index 9b3982b..36a96b1 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -183,6 +183,7 @@ namespace NGit.Api
@@ -2196,7 +2196,7 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index 1e4af9b..5fec0c1 100644
+index 513e427..1df0253 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
 @@ -332,7 +332,7 @@ namespace NGit.Storage.File
@@ -4244,7 +4244,7 @@ index 8913cf3..3099dbf 100644
  			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
-index a65f903..ab827d2 100644
+index 6279826..e15beca 100644
 --- a/NGit/NGit/Repository.cs
 +++ b/NGit/NGit/Repository.cs
 @@ -918,7 +918,7 @@ namespace NGit

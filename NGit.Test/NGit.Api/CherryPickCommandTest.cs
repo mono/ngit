@@ -116,6 +116,52 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCherryPickConflictResolution()
+		{
+			Git git = new Git(db);
+			RevCommit sideCommit = PrepareCherryPick(git);
+			CherryPickResult result = git.CherryPick().Include(sideCommit.Id).Call();
+			NUnit.Framework.Assert.AreEqual(CherryPickResult.CherryPickStatus.CONFLICTING, result
+				.GetStatus());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, Constants.MERGE_MSG).Exists
+				());
+			NUnit.Framework.Assert.AreEqual("side\n\nConflicts:\n\ta\n", db.ReadMergeCommitMsg
+				());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, Constants.CHERRY_PICK_HEAD
+				).Exists());
+			NUnit.Framework.Assert.AreEqual(sideCommit.Id, db.ReadCherryPickHead());
+			NUnit.Framework.Assert.AreEqual(RepositoryState.CHERRY_PICKING, db.GetRepositoryState
+				());
+			// Resolve
+			WriteTrashFile("a", "a");
+			git.Add().AddFilepattern("a").Call();
+			NUnit.Framework.Assert.AreEqual(RepositoryState.CHERRY_PICKING_RESOLVED, db.GetRepositoryState
+				());
+			git.Commit().SetOnly("a").SetMessage("resolve").Call();
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCherryPickConflictReset()
+		{
+			Git git = new Git(db);
+			RevCommit sideCommit = PrepareCherryPick(git);
+			CherryPickResult result = git.CherryPick().Include(sideCommit.Id).Call();
+			NUnit.Framework.Assert.AreEqual(CherryPickResult.CherryPickStatus.CONFLICTING, result
+				.GetStatus());
+			NUnit.Framework.Assert.AreEqual(RepositoryState.CHERRY_PICKING, db.GetRepositoryState
+				());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, Constants.CHERRY_PICK_HEAD
+				).Exists());
+			git.Reset().SetMode(ResetCommand.ResetType.MIXED).SetRef("HEAD").Call();
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, Constants.CHERRY_PICK_HEAD
+				).Exists());
+		}
+
+		/// <exception cref="System.Exception"></exception>
 		private RevCommit PrepareCherryPick(Git git)
 		{
 			// create, add and commit file a

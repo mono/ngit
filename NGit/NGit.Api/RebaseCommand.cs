@@ -425,6 +425,9 @@ namespace NGit.Api
 				Constants.CHARACTER_ENCODING));
 			CreateFile(rebaseDir, STOPPED_SHA, repo.NewObjectReader().Abbreviate(commitToPick
 				).Name);
+			// Remove cherry pick state file created by CherryPickCommand, it's not
+			// needed for rebase
+			repo.WriteCherryPickHead(null);
 			return new RebaseResult(commitToPick);
 		}
 
@@ -852,6 +855,7 @@ namespace NGit.Api
 				}
 				// cleanup the files
 				FileUtils.Delete(rebaseDir, FileUtils.RECURSIVE);
+				repo.WriteCherryPickHead(null);
 				return result;
 			}
 			finally

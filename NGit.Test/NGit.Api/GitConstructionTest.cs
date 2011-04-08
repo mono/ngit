@@ -74,7 +74,7 @@ namespace NGit.Api
 			Git git = Git.Wrap(db);
 			NUnit.Framework.Assert.AreEqual(1, git.BranchList().Call().Count);
 			git = Git.Wrap(bareRepo);
-			NUnit.Framework.Assert.AreEqual(1, git.BranchList().SetListMode(ListBranchCommand.ListMode
+			NUnit.Framework.Assert.AreEqual(2, git.BranchList().SetListMode(ListBranchCommand.ListMode
 				.ALL).Call().Count);
 			try
 			{
@@ -94,7 +94,7 @@ namespace NGit.Api
 			Git git = Git.Open(db.Directory);
 			NUnit.Framework.Assert.AreEqual(1, git.BranchList().Call().Count);
 			git = Git.Open(bareRepo.Directory);
-			NUnit.Framework.Assert.AreEqual(1, git.BranchList().SetListMode(ListBranchCommand.ListMode
+			NUnit.Framework.Assert.AreEqual(2, git.BranchList().SetListMode(ListBranchCommand.ListMode
 				.ALL).Call().Count);
 			git = Git.Open(db.WorkTree);
 			NUnit.Framework.Assert.AreEqual(1, git.BranchList().SetListMode(ListBranchCommand.ListMode

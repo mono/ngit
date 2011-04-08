@@ -194,6 +194,29 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestMergeMessage()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("a", "1\na(side)\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			git.Commit().SetMessage("side").Call();
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile("a", "1\na(main)\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			git.Commit().SetMessage("main").Call();
+			Ref sideBranch = db.GetRef("side");
+			git.Merge().Include(sideBranch).SetStrategy(MergeStrategy.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual("Merge branch 'side'\n\nConflicts:\n\ta\n", db.ReadMergeCommitMsg
+				());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMergeNonVersionedPaths()
 		{
 			Git git = new Git(db);

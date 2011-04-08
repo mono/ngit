@@ -93,6 +93,16 @@ namespace NGit.Api
 				NUnit.Framework.Assert.IsNotNull(git2);
 				ObjectId id = git2.GetRepository().Resolve("tag-for-blob");
 				NUnit.Framework.Assert.IsNotNull(id);
+				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/test"
+					);
+				NUnit.Framework.Assert.AreEqual("origin", git2.GetRepository().GetConfig().GetString
+					(ConfigConstants.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_REMOTE
+					));
+				NUnit.Framework.Assert.AreEqual("refs/heads/test", git2.GetRepository().GetConfig
+					().GetString(ConfigConstants.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_MERGE
+					));
+				NUnit.Framework.Assert.AreEqual(2, git2.BranchList().SetListMode(ListBranchCommand.ListMode
+					.REMOTE).Call().Count);
 			}
 			catch (Exception e)
 			{
@@ -107,13 +117,37 @@ namespace NGit.Api
 			{
 				FilePath directory = CreateTempDirectory("testCloneRepositoryWithBranch");
 				CloneCommand command = Git.CloneRepository();
-				command.SetBranch("refs/heads/test");
+				command.SetBranch("refs/heads/master");
 				command.SetDirectory(directory);
 				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
 				Git git2 = command.Call();
 				NUnit.Framework.Assert.IsNotNull(git2);
-				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/test"
+				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
 					);
+			}
+			catch (Exception e)
+			{
+				NUnit.Framework.Assert.Fail(e.Message);
+			}
+		}
+
+		[NUnit.Framework.Test]
+		public virtual void TestCloneRepositoryOnlyOneBranch()
+		{
+			try
+			{
+				FilePath directory = CreateTempDirectory("testCloneRepositoryWithBranch");
+				CloneCommand command = Git.CloneRepository();
+				command.SetBranch("refs/heads/master");
+				command.SetBranchesToClone(Collections.SingletonList("refs/heads/master"));
+				command.SetDirectory(directory);
+				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+				Git git2 = command.Call();
+				NUnit.Framework.Assert.IsNotNull(git2);
+				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+					);
+				NUnit.Framework.Assert.AreEqual(1, git2.BranchList().SetListMode(ListBranchCommand.ListMode
+					.REMOTE).Call().Count);
 			}
 			catch (Exception e)
 			{

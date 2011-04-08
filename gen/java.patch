@@ -111,7 +111,7 @@ index 1ec8685..f967a05 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index cf2111e..b345bc5 100644
+index 7e2e677..c2fa530 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -84,6 +84,7 @@
@@ -122,7 +122,7 @@ index cf2111e..b345bc5 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
-@@ -661,30 +662,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
+@@ -664,30 +665,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -159,7 +159,7 @@ index cf2111e..b345bc5 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -905,10 +903,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -909,10 +907,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -310,10 +310,10 @@ index f119c44..d961602 100644
  		private final boolean loose;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
-index e0b5389..c4f8f21 100644
+index 1017062..b18dd8f 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
-@@ -54,99 +54,146 @@
+@@ -54,119 +54,176 @@
   * The granularity and set of states are somewhat arbitrary. The methods
   * on the state are the only supported means of deciding what to do.
   */
@@ -382,6 +382,40 @@ index e0b5389..c4f8f21 100644
 -	},
 +		public String name() {
 +			return "MERGING_RESOLVED";
++		}
++	}
+ 
+ 	/** An unfinished cherry-pick. Must resolve or reset before continuing normally
+ 	 */
+-	CHERRY_PICKING {
++	public static RepositoryState CHERRY_PICKING = new CHERRY_PICKING_Class ();
++	
++	static class CHERRY_PICKING_Class extends RepositoryState {
+ 		public boolean canCheckout() { return false; }
+ 		public boolean canResetHead() { return true; }
+ 		public boolean canCommit() { return false; }
+ 		public String getDescription() { return JGitText.get().repositoryState_conflicts; }
+-	},
++		public String name() {
++			return "CHERRY_PICKING";
++		}
++	}
+ 
+ 	/**
+ 	 * A cherry-pick where all conflicts have been resolved. The index does not
+ 	 * contain any unmerged paths.
+ 	 */
+-	CHERRY_PICKING_RESOLVED {
++	public static RepositoryState CHERRY_PICKING_RESOLVED = new CHERRY_PICKING_RESOLVED_Class ();
++	
++	static class CHERRY_PICKING_RESOLVED_Class extends RepositoryState {
+ 		public boolean canCheckout() { return true; }
+ 		public boolean canResetHead() { return true; }
+ 		public boolean canCommit() { return true; }
+ 		public String getDescription() { return JGitText.get().repositoryState_merged; }
+-	},
++		public String name() {
++			return "CHERRY_PICKING_RESOLVED";
 +		}
 +	}
  
@@ -480,7 +514,7 @@ index e0b5389..c4f8f21 100644
  		/* Changing head is a normal operation when bisecting */
  		public boolean canCheckout() { return true; }
  
-@@ -157,6 +204,9 @@
+@@ -177,6 +234,9 @@
  		public boolean canCommit() { return true; }
  
  		public String getDescription() { return JGitText.get().repositoryState_bisecting; }
@@ -490,7 +524,7 @@ index e0b5389..c4f8f21 100644
  	};
  
  	/**
-@@ -178,4 +228,6 @@
+@@ -198,4 +258,6 @@
  	 * @return a human readable description of the state.
  	 */
  	public abstract String getDescription();

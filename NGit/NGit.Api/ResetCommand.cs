@@ -105,12 +105,11 @@ namespace NGit.Api
 			RevCommit commit;
 			try
 			{
-				bool merging = false;
-				if (repo.GetRepositoryState().Equals(RepositoryState.MERGING) || repo.GetRepositoryState
-					().Equals(RepositoryState.MERGING_RESOLVED))
-				{
-					merging = true;
-				}
+				RepositoryState state = repo.GetRepositoryState();
+				bool merging = state.Equals(RepositoryState.MERGING) || state.Equals(RepositoryState
+					.MERGING_RESOLVED);
+				bool cherryPicking = state.Equals(RepositoryState.CHERRY_PICKING) || state.Equals
+					(RepositoryState.CHERRY_PICKING_RESOLVED);
 				// resolve the ref to a commit
 				ObjectId commitId;
 				try
@@ -177,9 +176,19 @@ namespace NGit.Api
 						throw new NotSupportedException();
 					}
 				}
-				if (mode != ResetCommand.ResetType.SOFT && merging)
+				if (mode != ResetCommand.ResetType.SOFT)
 				{
-					ResetMerge();
+					if (merging)
+					{
+						ResetMerge();
+					}
+					else
+					{
+						if (cherryPicking)
+						{
+							ResetCherryPick();
+						}
+					}
 				}
 				SetCallable(false);
 				r = ru.GetRef();
@@ -261,6 +270,13 @@ namespace NGit.Api
 		private void ResetMerge()
 		{
 			repo.WriteMergeHeads(null);
+			repo.WriteMergeCommitMsg(null);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void ResetCherryPick()
+		{
+			repo.WriteCherryPickHead(null);
 			repo.WriteMergeCommitMsg(null);
 		}
 	}

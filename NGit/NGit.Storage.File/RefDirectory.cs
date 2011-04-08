@@ -93,7 +93,7 @@ namespace NGit.Storage.File
 
 		/// <summary>The names of the additional refs supported by this class</summary>
 		private static readonly string[] additionalRefsNames = new string[] { Constants.MERGE_HEAD
-			, Constants.FETCH_HEAD, Constants.ORIG_HEAD };
+			, Constants.FETCH_HEAD, Constants.ORIG_HEAD, Constants.CHERRY_PICK_HEAD };
 
 		private readonly FileRepository parent;
 
@@ -959,12 +959,12 @@ namespace NGit.Storage.File
 		private void CommitPackedRefs(LockFile lck, RefList<Ref> refs, RefDirectory.PackedRefList
 			 oldPackedList)
 		{
-			new _RefWriter_782(this, lck, oldPackedList, refs, refs).WritePackedRefs();
+			new _RefWriter_783(this, lck, oldPackedList, refs, refs).WritePackedRefs();
 		}
 
-		private sealed class _RefWriter_782 : RefWriter
+		private sealed class _RefWriter_783 : RefWriter
 		{
-			public _RefWriter_782(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
+			public _RefWriter_783(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
 				 oldPackedList, RefList<Ref> refs, RefList<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
