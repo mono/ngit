@@ -271,7 +271,7 @@ index edf138f..89df423 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
-index 674a569..341f1d0 100644
+index 25c8570..30035a7 100644
 --- a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 +++ b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 @@ -224,7 +224,7 @@ namespace NGit.Junit

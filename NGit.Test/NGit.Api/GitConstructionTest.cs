@@ -65,7 +65,7 @@ namespace NGit.Api
 			git.Add().AddFilepattern("Test.txt").Call();
 			git.Commit().SetMessage("Initial commit").Call();
 			bareRepo = Git.CloneRepository().SetBare(true).SetURI(db.Directory.ToURI().ToString
-				()).Call().GetRepository();
+				()).SetDirectory(CreateUniqueTestGitDir(true)).Call().GetRepository();
 		}
 
 		[NUnit.Framework.Test]

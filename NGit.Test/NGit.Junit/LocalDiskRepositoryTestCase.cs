@@ -316,14 +316,27 @@ namespace NGit.Junit
 		/// 	</exception>
 		private FileRepository CreateRepository(bool bare)
 		{
-			string uniqueId = Runtime.CurrentTimeMillis() + "_" + (testCount++);
-			string gitdirName = "test" + uniqueId + (bare ? string.Empty : "/") + Constants.DOT_GIT;
-			FilePath gitdir = new FilePath(trash, gitdirName).GetCanonicalFile();
+			FilePath gitdir = CreateUniqueTestGitDir(bare);
 			FileRepository db = new FileRepository(gitdir);
 			NUnit.Framework.Assert.IsFalse(gitdir.Exists());
 			db.Create();
 			toClose.AddItem(db);
 			return db;
+		}
+
+		/// <summary>Creates a new unique directory for a test repository</summary>
+		/// <param name="bare">
+		/// true for a bare repository; false for a repository with a
+		/// working directory
+		/// </param>
+		/// <returns>a unique directory for a test repository</returns>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		protected internal virtual FilePath CreateUniqueTestGitDir(bool bare)
+		{
+			string uniqueId = Runtime.CurrentTimeMillis() + "_" + (testCount++);
+			string gitdirName = "test" + uniqueId + (bare ? string.Empty : "/") + Constants.DOT_GIT;
+			FilePath gitdir = new FilePath(trash, gitdirName).GetCanonicalFile();
+			return gitdir;
 		}
 
 		/// <summary>Run a hook script in the repository, returning the exit status.</summary>
