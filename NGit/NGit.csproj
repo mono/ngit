@@ -506,6 +506,10 @@
     <Compile Include="NGit.Api\StatusCommand.cs" />
     <Compile Include="NGit.Transport\PreUploadHook.cs" />
     <Compile Include="NGit.Transport\UploadPackMayNotContinueException.cs" />
+    <Compile Include="NGit.Api\AddNoteCommand.cs" />
+    <Compile Include="NGit.Api\ListNotesCommand.cs" />
+    <Compile Include="NGit.Api\RemoveNoteCommand.cs" />
+    <Compile Include="NGit.Api\ShowNoteCommand.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

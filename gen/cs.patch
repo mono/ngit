@@ -3687,10 +3687,10 @@ index 2563b91..a16a698 100644
  			return b.ToString();
  		}
 diff --git a/NGit/NGit.Util/RawParseUtils.cs b/NGit/NGit.Util/RawParseUtils.cs
-index 500118b..9853153 100644
+index 85822bb..c4494dc 100644
 --- a/NGit/NGit.Util/RawParseUtils.cs
 +++ b/NGit/NGit.Util/RawParseUtils.cs
-@@ -55,7 +55,7 @@ namespace NGit.Util
+@@ -56,7 +56,7 @@ namespace NGit.Util
  	{
  		private static readonly byte[] digits10;
  
@@ -3699,7 +3699,7 @@ index 500118b..9853153 100644
  
  		private static readonly byte[] footerLineKeyChars;
  
-@@ -67,19 +67,19 @@ namespace NGit.Util
+@@ -72,19 +72,19 @@ namespace NGit.Util
  			{
  				digits10[i] = unchecked((byte)(i - (byte)('0')));
  			}
@@ -3724,7 +3724,7 @@ index 500118b..9853153 100644
  			}
  			footerLineKeyChars = new byte[(byte)('z') + 1];
  			footerLineKeyChars[(byte)('-')] = 1;
-@@ -402,8 +402,8 @@ namespace NGit.Util
+@@ -407,8 +407,8 @@ namespace NGit.Util
  		/// 	</exception>
  		public static int ParseHexInt4(byte digit)
  		{

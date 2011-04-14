@@ -128,10 +128,14 @@ namespace Sharpen
 		public static Encoding GetEncoding (string name)
 		{
 //			Encoding e = Encoding.GetEncoding (name, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);
-			Encoding e = Encoding.GetEncoding (name.Replace ('_','-'));
-			if (e is UTF8Encoding)
-				return new UTF8Encoding (false, true);
-			return e;
+			try {
+				Encoding e = Encoding.GetEncoding (name.Replace ('_','-'));
+				if (e is UTF8Encoding)
+					return new UTF8Encoding (false, true);
+				return e;
+			} catch (ArgumentException ex) {
+				throw new UnsupportedCharsetException (name);
+			}
 		}
 		
 		public static ICollection<KeyValuePair<T, U>> EntrySet<T, U> (this IDictionary<T, U> s)

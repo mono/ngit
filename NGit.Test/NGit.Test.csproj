@@ -227,6 +227,8 @@
     <Compile Include="NGit.Transport\PacketLineInTest.cs" />
     <Compile Include="NGit.Transport\LongMapTest.cs" />
     <Compile Include="NGit.Transport\BundleWriterTest.cs" />
+    <Compile Include="NGit.Api\NotesCommandTest.cs" />
+    <Compile Include="NGit.Util\RawParseUtilsTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
