@@ -2196,10 +2196,10 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index 513e427..1df0253 100644
+index 2ef54b3..e4c3a21 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
-@@ -332,7 +332,7 @@ namespace NGit.Storage.File
+@@ -334,7 +334,7 @@ namespace NGit.Storage.File
  
  		private RefList<Ref> Upcast<_T0>(RefList<_T0> loose) where _T0:Ref
  		{
@@ -2208,7 +2208,7 @@ index 513e427..1df0253 100644
  		}
  
  		private class LooseScanner
-@@ -1108,7 +1108,7 @@ namespace NGit.Storage.File
+@@ -1110,7 +1110,7 @@ namespace NGit.Storage.File
  				}
  				// possibly truncated ref
  				// trim trailing whitespace
@@ -2217,7 +2217,7 @@ index 513e427..1df0253 100644
  				{
  					n--;
  				}
-@@ -1133,7 +1133,7 @@ namespace NGit.Storage.File
+@@ -1135,7 +1135,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{
@@ -2500,10 +2500,10 @@ index 14f5150..ee19789 100644
  		private bool startedOperation;
  
 diff --git a/NGit/NGit.Transport/BasePackFetchConnection.cs b/NGit/NGit.Transport/BasePackFetchConnection.cs
-index 0d64e5b..9521f45 100644
+index fe9ac1d..65bc7ff 100644
 --- a/NGit/NGit.Transport/BasePackFetchConnection.cs
 +++ b/NGit/NGit.Transport/BasePackFetchConnection.cs
-@@ -682,7 +682,7 @@ SEND_HAVES_break: ;
+@@ -693,7 +693,7 @@ SEND_HAVES_break: ;
  						// A solitary ACK at this point means the remote won't
  						// speak anymore, but is going to send us a pack now.
  						//
@@ -2512,7 +2512,7 @@ index 0d64e5b..9521f45 100644
  					}
  
  					case PacketLineIn.AckNackResult.ACK_CONTINUE:
-@@ -701,7 +701,7 @@ SEND_HAVES_break: ;
+@@ -712,7 +712,7 @@ SEND_HAVES_break: ;
  				}
  READ_RESULT_continue: ;
  			}
@@ -3200,19 +3200,19 @@ index fd116ea..97b957a 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index 887e7b9..c5e402b 100644
+index 81914f2..4a99571 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
-@@ -165,7 +165,7 @@ namespace NGit.Transport
+@@ -167,7 +167,7 @@ namespace NGit.Transport
  		/// <see cref="commonBase">commonBase</see>
  		/// should be examined again.
  		/// </summary>
 -		private bool okToGiveUp;
 +		private bool? okToGiveUp;
  
- 		/// <summary>Objects we sent in our advertisement list, clients can ask for these.</summary>
- 		/// <remarks>Objects we sent in our advertisement list, clients can ask for these.</remarks>
-@@ -828,7 +828,7 @@ namespace NGit.Transport
+ 		private bool sentReady;
+ 
+@@ -845,7 +845,7 @@ namespace NGit.Transport
  			{
  				okToGiveUp = Sharpen.Extensions.ValueOf(OkToGiveUpImp());
  			}
@@ -3221,7 +3221,7 @@ index 887e7b9..c5e402b 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
-@@ -984,8 +984,9 @@ namespace NGit.Transport
+@@ -1001,8 +1001,9 @@ namespace NGit.Transport
  				}
  				if (options.Contains(OPTION_INCLUDE_TAG))
  				{
@@ -4127,10 +4127,10 @@ index 8f686ee..73a6a7c 100644
  				signature = unchecked((int)(0x44495243));
  				version = 2;
 diff --git a/NGit/NGit/IndexDiff.cs b/NGit/NGit/IndexDiff.cs
-index ddd1894..4421c16 100644
+index dec68de..5e3a80d 100644
 --- a/NGit/NGit/IndexDiff.cs
 +++ b/NGit/NGit/IndexDiff.cs
-@@ -82,7 +82,7 @@ namespace NGit
+@@ -83,7 +83,7 @@ namespace NGit
  
  			private readonly int total;
  

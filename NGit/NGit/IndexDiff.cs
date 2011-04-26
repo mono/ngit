@@ -66,6 +66,7 @@ namespace NGit
 	/// <li>removed files</li>
 	/// <li>missing files</li>
 	/// <li>modified files</li>
+	/// <li>conflicting files</li>
 	/// <li>untracked files</li>
 	/// <li>files with assume-unchanged flag</li>
 	/// </ul>
@@ -150,6 +151,8 @@ namespace NGit
 		private ICollection<string> modified = new HashSet<string>();
 
 		private ICollection<string> untracked = new HashSet<string>();
+
+		private ICollection<string> conflicts = new HashSet<string>();
 
 		private ICollection<string> assumeUnchanged;
 
@@ -339,6 +342,11 @@ namespace NGit
 							modified.AddItem(treeWalk.PathString);
 						}
 					}
+					DirCacheEntry dirCacheEntry = dirCacheIterator.GetDirCacheEntry();
+					if (dirCacheEntry != null && dirCacheEntry.Stage > 0)
+					{
+						conflicts.AddItem(treeWalk.PathString);
+					}
 				}
 			}
 			// consume the remaining work
@@ -391,6 +399,12 @@ namespace NGit
 		public virtual ICollection<string> GetUntracked()
 		{
 			return untracked;
+		}
+
+		/// <returns>list of files that are in conflict</returns>
+		public virtual ICollection<string> GetConflicting()
+		{
+			return conflicts;
 		}
 
 		/// <returns>list of files with the flag assume-unchanged</returns>

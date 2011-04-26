@@ -278,6 +278,7 @@ namespace NGit.Storage.File
 			RefList<RefDirectory.LooseRef> loose;
 			if (scan.newLoose != null)
 			{
+				scan.newLoose.Sort();
 				loose = scan.newLoose.ToRefList();
 				if (looseRefs.CompareAndSet(oldLoose, loose))
 				{
@@ -312,6 +313,7 @@ namespace NGit.Storage.File
 					}
 				}
 			}
+			symbolic.Sort();
 			return new RefMap(prefix, packed, Upcast(loose), symbolic.ToRefList());
 		}
 
@@ -959,12 +961,12 @@ namespace NGit.Storage.File
 		private void CommitPackedRefs(LockFile lck, RefList<Ref> refs, RefDirectory.PackedRefList
 			 oldPackedList)
 		{
-			new _RefWriter_783(this, lck, oldPackedList, refs, refs).WritePackedRefs();
+			new _RefWriter_785(this, lck, oldPackedList, refs, refs).WritePackedRefs();
 		}
 
-		private sealed class _RefWriter_783 : RefWriter
+		private sealed class _RefWriter_785 : RefWriter
 		{
-			public _RefWriter_783(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
+			public _RefWriter_785(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
 				 oldPackedList, RefList<Ref> refs, RefList<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;

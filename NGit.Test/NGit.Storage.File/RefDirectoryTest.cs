@@ -416,6 +416,21 @@ namespace NGit.Storage.File
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestGetRefs_LooseSortedCorrectly()
+		{
+			IDictionary<string, Ref> refs;
+			WriteLooseRef("refs/heads/project1/A", A);
+			WriteLooseRef("refs/heads/project1-B", B);
+			refs = refdir.GetRefs(RefDatabase.ALL);
+			NUnit.Framework.Assert.AreEqual(2, refs.Count);
+			NUnit.Framework.Assert.AreEqual(A, refs.Get("refs/heads/project1/A").GetObjectId(
+				));
+			NUnit.Framework.Assert.AreEqual(B, refs.Get("refs/heads/project1-B").GetObjectId(
+				));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_TagsOnly_AllPacked()
 		{
 			IDictionary<string, Ref> tags;

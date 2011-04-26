@@ -45,6 +45,8 @@ using System.IO;
 using NGit;
 using NGit.Api;
 using NGit.Dircache;
+using NGit.Merge;
+using NGit.Revwalk;
 using NGit.Treewalk;
 using Sharpen;
 
@@ -133,6 +135,43 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetAdded().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetMissing().Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestConflicting()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			WriteTrashFile("b", "1\nb\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("b").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			// create side branch with two modifications
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("a", "1\na(side)\n3\n");
+			WriteTrashFile("b", "1\nb\n3\n(side)");
+			git.Add().AddFilepattern("a").AddFilepattern("b").Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			// update a on master to generate conflict
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile("a", "1\na(main)\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			git.Commit().SetMessage("main").Call();
+			// merge side with master
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, result.GetMergeStatus());
+			FileTreeIterator iterator = new FileTreeIterator(db);
+			IndexDiff diff = new IndexDiff(db, Constants.HEAD, iterator);
+			diff.Diff();
+			NUnit.Framework.Assert.AreEqual("[a, b]", new TreeSet<string>(diff.GetChanged()).
+				ToString());
+			NUnit.Framework.Assert.AreEqual("[a]", diff.GetAdded().ToString());
+			NUnit.Framework.Assert.AreEqual("[]", diff.GetRemoved().ToString());
+			NUnit.Framework.Assert.AreEqual("[a]", diff.GetMissing().ToString());
+			NUnit.Framework.Assert.AreEqual("[a]", diff.GetModified().ToString());
+			NUnit.Framework.Assert.AreEqual("[a]", diff.GetConflicting().ToString());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
