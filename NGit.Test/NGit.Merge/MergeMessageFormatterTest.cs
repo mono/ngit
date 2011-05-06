@@ -176,6 +176,17 @@ namespace NGit.Merge
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestIntoHeadOtherThanMaster()
+		{
+			Ref a = db.GetRef("refs/heads/a");
+			Ref b = db.GetRef("refs/heads/b");
+			SymbolicRef head = new SymbolicRef("HEAD", b);
+			string message = formatter.Format(Arrays.AsList(a), head);
+			NUnit.Framework.Assert.AreEqual("Merge branch 'a' into b", message);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestIntoSymbolicRefHeadPointingToMaster()
 		{
 			Ref a = db.GetRef("refs/heads/a");

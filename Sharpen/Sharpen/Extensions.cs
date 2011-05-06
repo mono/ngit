@@ -133,7 +133,7 @@ namespace Sharpen
 				if (e is UTF8Encoding)
 					return new UTF8Encoding (false, true);
 				return e;
-			} catch (ArgumentException ex) {
+			} catch (ArgumentException) {
 				throw new UnsupportedCharsetException (name);
 			}
 		}

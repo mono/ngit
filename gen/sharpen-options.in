@@ -174,6 +174,7 @@
 -methodMapping java.lang.Integer.numberOfTrailingZeros Sharpen.Extensions.NumberOfTrailingZeros
 -methodMapping java.lang.Integer.lowestOneBit Sharpen.Extensions.LowestOneBit
 -methodMapping java.lang.Boolean.valueOf Sharpen.Extensions.ValueOf
+-methodMapping java.lang.Boolean.parseBoolean System.Boolean.Parse
 -methodMapping java.lang.Integer.valueOf Sharpen.Extensions.ValueOf
 -methodMapping java.lang.Integer.toString Sharpen.Extensions.ToString
 -methodMapping java.lang.Long.valueOf Sharpen.Extensions.ValueOf

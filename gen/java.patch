@@ -554,7 +554,7 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index cf96910..3b969e2 100644
+index 8758427..39ed1df 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 @@ -104,7 +104,7 @@

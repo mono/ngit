@@ -471,6 +471,37 @@ namespace NGit.Merge
 				}
 				modifiedFiles.AddItem(tw.PathString);
 			}
+			else
+			{
+				if (modeO != modeT)
+				{
+					// OURS or THEIRS has been deleted
+					if (((modeO != 0 && !tw.IdEqual(T_BASE, T_OURS)) || (modeT != 0 && !tw.IdEqual(T_BASE
+						, T_THEIRS))))
+					{
+						Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
+						Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
+						DirCacheEntry e = Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);
+						// OURS was deleted checkout THEIRS
+						if (modeO == 0)
+						{
+							// Check worktree before checking out THEIRS
+							if (IsWorktreeDirty())
+							{
+								return false;
+							}
+							if (NonTree(modeT))
+							{
+								if (e != null)
+								{
+									toBeCheckedOut.Put(tw.PathString, e);
+								}
+							}
+						}
+						unmergedPaths.AddItem(tw.PathString);
+					}
+				}
+			}
 			return true;
 		}
 

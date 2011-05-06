@@ -290,6 +290,15 @@ namespace NGit
 				DirCacheIterator dirCacheIterator = treeWalk.GetTree<DirCacheIterator>(INDEX);
 				WorkingTreeIterator workingTreeIterator = treeWalk.GetTree<WorkingTreeIterator>(WORKDIR
 					);
+				if (dirCacheIterator != null)
+				{
+					DirCacheEntry dirCacheEntry = dirCacheIterator.GetDirCacheEntry();
+					if (dirCacheEntry != null && dirCacheEntry.Stage > 0)
+					{
+						conflicts.AddItem(treeWalk.PathString);
+						continue;
+					}
+				}
 				if (treeIterator != null)
 				{
 					if (dirCacheIterator != null)
@@ -341,11 +350,6 @@ namespace NGit
 							// in index, in workdir, content differs => modified
 							modified.AddItem(treeWalk.PathString);
 						}
-					}
-					DirCacheEntry dirCacheEntry = dirCacheIterator.GetDirCacheEntry();
-					if (dirCacheEntry != null && dirCacheEntry.Stage > 0)
-					{
-						conflicts.AddItem(treeWalk.PathString);
 					}
 				}
 			}

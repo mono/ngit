@@ -129,7 +129,7 @@ namespace NGit.Merge
 			string targetName = target.GetLeaf().GetName();
 			if (!targetName.Equals(Constants.R_HEADS + Constants.MASTER))
 			{
-				string targetShortName = Repository.ShortenRefName(target.GetName());
+				string targetShortName = Repository.ShortenRefName(targetName);
 				sb.Append(" into " + targetShortName);
 			}
 			return sb.ToString();

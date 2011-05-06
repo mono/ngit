@@ -137,7 +137,7 @@ namespace NGit
 			AssertWorkDir(Mkmap("f", "f()\nside", "G/i", "i()", "untracked", "untracked"));
 			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, git.Merge().Include(master
 				).Call().GetMergeStatus());
-			NUnit.Framework.Assert.AreEqual("[E/h, mode:100644][G/i, mode:100644][f, mode:100644, stage:1][f, mode:100644, stage:2][f, mode:100644, stage:3]"
+			NUnit.Framework.Assert.AreEqual("[D/g, mode:100644, stage:1][D/g, mode:100644, stage:3][E/h, mode:100644][G/i, mode:100644][f, mode:100644, stage:1][f, mode:100644, stage:2][f, mode:100644, stage:3]"
 				, IndexState(0));
 			ResetHard(master);
 			AssertIndex(Mkmap("f", "f()\nmaster", "D/g", "g()\ng2()", "E/h", "h()"));

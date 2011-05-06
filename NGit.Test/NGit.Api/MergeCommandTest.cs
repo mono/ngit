@@ -528,6 +528,67 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestDeletionOnMasterConflict()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			WriteTrashFile("b", "1\nb\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("b").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			// create side branch and modify "a"
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("a", "1\na(side)\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			// delete a on master to generate conflict
+			CheckoutBranch("refs/heads/master");
+			git.Rm().AddFilepattern("a").Call();
+			git.Commit().SetMessage("main").Call();
+			// merge side with master
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, result.GetMergeStatus());
+			// result should be 'a' conflicting with workspace content from side
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "a").Exists());
+			NUnit.Framework.Assert.AreEqual("1\na(side)\n3\n", Read(new FilePath(db.WorkTree, 
+				"a")));
+			NUnit.Framework.Assert.AreEqual("1\nb\n3\n", Read(new FilePath(db.WorkTree, "b"))
+				);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDeletionOnSideConflict()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("a", "1\na\n3\n");
+			WriteTrashFile("b", "1\nb\n3\n");
+			git.Add().AddFilepattern("a").AddFilepattern("b").Call();
+			RevCommit initialCommit = git.Commit().SetMessage("initial").Call();
+			// create side branch and delete "a"
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			git.Rm().AddFilepattern("a").Call();
+			RevCommit secondCommit = git.Commit().SetMessage("side").Call();
+			// update a on master to generate conflict
+			CheckoutBranch("refs/heads/master");
+			WriteTrashFile("a", "1\na(main)\n3\n");
+			git.Add().AddFilepattern("a").Call();
+			git.Commit().SetMessage("main").Call();
+			// merge side with master
+			MergeCommandResult result = git.Merge().Include(secondCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, result.GetMergeStatus());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "a").Exists());
+			NUnit.Framework.Assert.AreEqual("1\na(main)\n3\n", Read(new FilePath(db.WorkTree, 
+				"a")));
+			NUnit.Framework.Assert.AreEqual("1\nb\n3\n", Read(new FilePath(db.WorkTree, "b"))
+				);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestMergeFailingWithDirtyWorkingTree()
 		{
 			Git git = new Git(db);

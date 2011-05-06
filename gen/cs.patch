@@ -1738,10 +1738,10 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index 9108d57..3fe5330 100644
+index 316c75b..0ec2015 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
-@@ -566,7 +566,7 @@ namespace NGit.Merge
+@@ -597,7 +597,7 @@ namespace NGit.Merge
  				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
  				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
  				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);
@@ -3639,7 +3639,7 @@ index 672fa1b..c32292d 100644
  
  			private readonly BlockList<T> _enclosing;
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
-index be1e0e3..df68bb0 100644
+index f0269a6..4173c13 100644
 --- a/NGit/NGit.Util/FS.cs
 +++ b/NGit/NGit.Util/FS.cs
 @@ -90,7 +90,7 @@ namespace NGit.Util
@@ -4127,7 +4127,7 @@ index 8f686ee..73a6a7c 100644
  				signature = unchecked((int)(0x44495243));
  				version = 2;
 diff --git a/NGit/NGit/IndexDiff.cs b/NGit/NGit/IndexDiff.cs
-index dec68de..5e3a80d 100644
+index 0533854..9bbfc6b 100644
 --- a/NGit/NGit/IndexDiff.cs
 +++ b/NGit/NGit/IndexDiff.cs
 @@ -83,7 +83,7 @@ namespace NGit

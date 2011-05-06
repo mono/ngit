@@ -139,8 +139,7 @@ namespace NGit.Api
 				RefUpdate ru = repo.UpdateRef(Constants.HEAD);
 				ru.SetNewObjectId(commitId);
 				string refName = Repository.ShortenRefName(@ref);
-				string message = "reset --" + mode.ToString().ToLower() + " " + refName;
-				//$NON-NLS-1$
+				string message = refName + ": updating " + Constants.HEAD;
 				//$NON-NLS-1$
 				ru.SetRefLogMessage(message, false);
 				if (ru.ForceUpdate() == RefUpdate.Result.LOCK_FAILURE)

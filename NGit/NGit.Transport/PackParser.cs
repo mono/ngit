@@ -656,6 +656,7 @@ namespace NGit.Transport
 				PackedObjectInfo oe;
 				oe = NewInfo(tempObjectId, visit.delta, visit.parent.id);
 				oe.SetOffset(visit.delta.position);
+				OnInflatedObjectData(oe, type, visit.data);
 				AddObjectAndTrack(oe);
 				visit.id = oe;
 				visit.nextChild = FirstChildOf(oe);
@@ -886,6 +887,7 @@ namespace NGit.Transport
 			}
 			objectCount = NB.DecodeUInt32(buf, p + 8);
 			Use(hdrln);
+			OnPackHeader(objectCount);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -1004,6 +1006,7 @@ namespace NGit.Transport
 			objectDigest.Update(unchecked((byte)' '));
 			objectDigest.Update(Constants.EncodeASCII(sz));
 			objectDigest.Update(unchecked((byte)0));
+			byte[] data;
 			bool checkContentLater = false;
 			if (type == Constants.OBJ_BLOB)
 			{
@@ -1023,10 +1026,11 @@ namespace NGit.Transport
 				inf.Close();
 				tempObjectId.FromRaw(objectDigest.Digest(), 0);
 				checkContentLater = IsCheckObjectCollisions() && readCurs.Has(tempObjectId);
+				data = null;
 			}
 			else
 			{
-				byte[] data = InflateAndReturn(PackParser.Source.INPUT, sz);
+				data = InflateAndReturn(PackParser.Source.INPUT, sz);
 				objectDigest.Update(data);
 				tempObjectId.FromRaw(objectDigest.Digest(), 0);
 				VerifySafeObject(tempObjectId, type, data);
@@ -1034,6 +1038,10 @@ namespace NGit.Transport
 			PackedObjectInfo obj = NewInfo(tempObjectId, null, null);
 			obj.SetOffset(pos);
 			OnEndWholeObject(obj);
+			if (data != null)
+			{
+				OnInflatedObjectData(obj, type, data);
+			}
 			AddObjectAndTrack(obj);
 			if (checkContentLater)
 			{
@@ -1323,6 +1331,22 @@ namespace NGit.Transport
 		/// <exception cref="System.IO.IOException">the stream cannot be archived.</exception>
 		protected internal abstract void OnObjectData(PackParser.Source src, byte[] raw, 
 			int pos, int len);
+
+		/// <summary>Invoked for commits, trees, tags, and small blobs.</summary>
+		/// <remarks>Invoked for commits, trees, tags, and small blobs.</remarks>
+		/// <param name="obj">the object info, populated.</param>
+		/// <param name="typeCode">the type of the object.</param>
+		/// <param name="data">inflated data for the object.</param>
+		/// <exception cref="System.IO.IOException">the object cannot be archived.</exception>
+		protected internal abstract void OnInflatedObjectData(PackedObjectInfo obj, int typeCode
+			, byte[] data);
+
+		/// <summary>Provide the implementation with the original stream's pack header.</summary>
+		/// <remarks>Provide the implementation with the original stream's pack header.</remarks>
+		/// <param name="objCnt">number of objects expected in the stream.</param>
+		/// <exception cref="System.IO.IOException">the implementation refuses to work with this many objects.
+		/// 	</exception>
+		protected internal abstract void OnPackHeader(long objCnt);
 
 		/// <summary>Provide the implementation with the original stream's pack footer.</summary>
 		/// <remarks>Provide the implementation with the original stream's pack footer.</remarks>
