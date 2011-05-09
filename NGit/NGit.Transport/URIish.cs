@@ -635,7 +635,16 @@ namespace NGit.Transport
 			{
 				throw new ArgumentException();
 			}
-			string[] elements = GetPath().Split("/");
+			string s = GetPath();
+			string[] elements;
+			if ("file".Equals(scheme) || LOCAL_FILE.Matcher(s).Matches())
+			{
+				elements = s.Split("[\\" + FilePath.separatorChar + "/]");
+			}
+			else
+			{
+				elements = s.Split("/");
+			}
 			if (elements.Length == 0)
 			{
 				throw new ArgumentException();

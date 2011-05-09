@@ -561,6 +561,18 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual("c", humanishName);
 		}
 
+		/// <exception cref="System.ArgumentException"></exception>
+		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestGetWindowsPathHumanishName()
+		{
+			if (FilePath.separatorChar == '\\')
+			{
+				string humanishName = new URIish("file:///C\\a\\b\\c.git/").GetHumanishName();
+				NUnit.Framework.Assert.AreEqual("c", humanishName);
+			}
+		}
+
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestUserPasswordAndPort()

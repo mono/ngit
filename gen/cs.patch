@@ -910,7 +910,7 @@ index 2b145de..09c937b 100644
  				NUnit.Framework.Assert.AreEqual(buf[i_1], act[j]);
  			}
 diff --git a/NGit.Test/NGit.Transport/URIishTest.cs b/NGit.Test/NGit.Transport/URIishTest.cs
-index 64e0b4e..39ff541 100644
+index d8045b2..ee729a1 100644
 --- a/NGit.Test/NGit.Transport/URIishTest.cs
 +++ b/NGit.Test/NGit.Transport/URIishTest.cs
 @@ -348,6 +348,7 @@ namespace NGit.Transport
