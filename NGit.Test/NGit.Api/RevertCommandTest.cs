@@ -48,7 +48,7 @@ using Sharpen;
 
 namespace NGit.Api
 {
-	/// <summary>Test cherry-pick command</summary>
+	/// <summary>Test revert command</summary>
 	[NUnit.Framework.TestFixture]
 	public class RevertCommandTest : RepositoryTestCase
 	{
@@ -79,8 +79,10 @@ namespace NGit.Api
 			CheckFile(new FilePath(db.WorkTree, "a"), "first line\nsec. line\nthird line\nfourth line\n"
 				);
 			Iterator<RevCommit> history = git.Log().Call().Iterator();
-			NUnit.Framework.Assert.AreEqual("Revert \"fixed a\"", history.Next().GetShortMessage
-				());
+			RevCommit revertCommit = history.Next();
+			string expectedMessage = "Revert \"fixed a\"\n\n" + "This reverts commit " + fixingA
+				.Id.GetName() + ".\n";
+			NUnit.Framework.Assert.AreEqual(expectedMessage, revertCommit.GetFullMessage());
 			NUnit.Framework.Assert.AreEqual("fixed b", history.Next().GetFullMessage());
 			NUnit.Framework.Assert.AreEqual("fixed a", history.Next().GetFullMessage());
 			NUnit.Framework.Assert.AreEqual("enlarged a", history.Next().GetFullMessage());

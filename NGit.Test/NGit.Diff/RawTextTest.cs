@@ -158,6 +158,34 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(0, 2, 0, 1), e);
 		}
 
+		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestComparatorReduceCommonStartButLastLineNoEol()
+		{
+			RawText a;
+			RawText b;
+			Edit e;
+			a = new RawText(Sharpen.Runtime.GetBytesForString("start", "UTF-8"));
+			b = new RawText(Sharpen.Runtime.GetBytesForString("start of line", "UTF-8"));
+			e = new Edit(0, 1, 0, 1);
+			e = RawTextComparator.DEFAULT.ReduceCommonStartEnd(a, b, e);
+			NUnit.Framework.Assert.AreEqual(new Edit(0, 1, 0, 1), e);
+		}
+
+		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestComparatorReduceCommonStartButLastLineNoEol_2()
+		{
+			RawText a;
+			RawText b;
+			Edit e;
+			a = new RawText(Sharpen.Runtime.GetBytesForString("start", "UTF-8"));
+			b = new RawText(Sharpen.Runtime.GetBytesForString("start of\nlastline", "UTF-8"));
+			e = new Edit(0, 1, 0, 2);
+			e = RawTextComparator.DEFAULT.ReduceCommonStartEnd(a, b, e);
+			NUnit.Framework.Assert.AreEqual(new Edit(0, 1, 0, 2), e);
+		}
+
 		private static RawText T(string text)
 		{
 			StringBuilder r = new StringBuilder();

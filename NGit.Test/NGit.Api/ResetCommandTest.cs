@@ -107,6 +107,7 @@ namespace NGit.Api
 		public virtual void TestHardReset()
 		{
 			SetupRepository();
+			ObjectId prevHead = db.Resolve(Constants.HEAD);
 			git.Reset().SetMode(ResetCommand.ResetType.HARD).SetRef(initialCommit.GetName()).
 				Call();
 			// check if HEAD points to initial commit now
@@ -119,6 +120,7 @@ namespace NGit.Api
 			string fileInIndexPath = indexFile.GetAbsolutePath();
 			NUnit.Framework.Assert.IsFalse(InHead(fileInIndexPath));
 			NUnit.Framework.Assert.IsFalse(InIndex(indexFile.GetName()));
+			AssertReflog(prevHead, head);
 		}
 
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
@@ -133,6 +135,7 @@ namespace NGit.Api
 		public virtual void TestSoftReset()
 		{
 			SetupRepository();
+			ObjectId prevHead = db.Resolve(Constants.HEAD);
 			git.Reset().SetMode(ResetCommand.ResetType.SOFT).SetRef(initialCommit.GetName()).
 				Call();
 			// check if HEAD points to initial commit now
@@ -145,6 +148,7 @@ namespace NGit.Api
 			string fileInIndexPath = indexFile.GetAbsolutePath();
 			NUnit.Framework.Assert.IsFalse(InHead(fileInIndexPath));
 			NUnit.Framework.Assert.IsTrue(InIndex(indexFile.GetName()));
+			AssertReflog(prevHead, head);
 		}
 
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
@@ -159,6 +163,7 @@ namespace NGit.Api
 		public virtual void TestMixedReset()
 		{
 			SetupRepository();
+			ObjectId prevHead = db.Resolve(Constants.HEAD);
 			git.Reset().SetMode(ResetCommand.ResetType.MIXED).SetRef(initialCommit.GetName())
 				.Call();
 			// check if HEAD points to initial commit now
@@ -171,6 +176,31 @@ namespace NGit.Api
 			string fileInIndexPath = indexFile.GetAbsolutePath();
 			NUnit.Framework.Assert.IsFalse(InHead(fileInIndexPath));
 			NUnit.Framework.Assert.IsFalse(InIndex(indexFile.GetName()));
+			AssertReflog(prevHead, head);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void AssertReflog(ObjectId prevHead, ObjectId head)
+		{
+			// Check the reflog for HEAD
+			string actualHeadMessage = db.GetReflogReader(Constants.HEAD).GetLastEntry().GetComment
+				();
+			string expectedHeadMessage = head.GetName() + ": updating HEAD";
+			NUnit.Framework.Assert.AreEqual(expectedHeadMessage, actualHeadMessage);
+			NUnit.Framework.Assert.AreEqual(head.GetName(), db.GetReflogReader(Constants.HEAD
+				).GetLastEntry().GetNewId().GetName());
+			NUnit.Framework.Assert.AreEqual(prevHead.GetName(), db.GetReflogReader(Constants.
+				HEAD).GetLastEntry().GetOldId().GetName());
+			// The reflog for master contains the same as the one for HEAD
+			string actualMasterMessage = db.GetReflogReader("refs/heads/master").GetLastEntry
+				().GetComment();
+			string expectedMasterMessage = head.GetName() + ": updating HEAD";
+			// yes!
+			NUnit.Framework.Assert.AreEqual(expectedMasterMessage, actualMasterMessage);
+			NUnit.Framework.Assert.AreEqual(head.GetName(), db.GetReflogReader(Constants.HEAD
+				).GetLastEntry().GetNewId().GetName());
+			NUnit.Framework.Assert.AreEqual(prevHead.GetName(), db.GetReflogReader("refs/heads/master"
+				).GetLastEntry().GetOldId().GetName());
 		}
 
 		/// <summary>Checks if a file with the given path exists in the HEAD tree</summary>

@@ -42,9 +42,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
+using NGit.Api;
 using NGit.Diff;
+using NGit.Dircache;
 using NGit.Junit;
 using NGit.Patch;
+using NGit.Treewalk;
+using NGit.Treewalk.Filter;
 using NGit.Util;
 using NGit.Util.IO;
 using Sharpen;
@@ -213,6 +217,33 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(1, fh.GetHunks().Count);
 			HunkHeader hh = fh.GetHunks()[0];
 			NUnit.Framework.Assert.AreEqual(0, hh.ToEditList().Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDiff()
+		{
+			Write(new FilePath(db.Directory.GetParent(), "test.txt"), "test");
+			FilePath folder = new FilePath(db.Directory.GetParent(), "folder");
+			folder.Mkdir();
+			Write(new FilePath(folder, "folder.txt"), "folder");
+			Git git = new Git(db);
+			git.Add().AddFilepattern(".").Call();
+			git.Commit().SetMessage("Initial commit").Call();
+			Write(new FilePath(folder, "folder.txt"), "folder change");
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			DiffFormatter df = new DiffFormatter(new BufferedOutputStream(os));
+			df.SetRepository(db);
+			df.SetPathFilter(PathFilter.Create("folder"));
+			DirCacheIterator oldTree = new DirCacheIterator(db.ReadDirCache());
+			FileTreeIterator newTree = new FileTreeIterator(db);
+			df.Format(oldTree, newTree);
+			df.Flush();
+			string actual = os.ToString();
+			string expected = "diff --git a/folder/folder.txt b/folder/folder.txt\n" + "index 0119635..95c4c65 100644\n"
+				 + "--- a/folder/folder.txt\n" + "+++ b/folder/folder.txt\n" + "@@ -1 +1 @@\n" +
+				 "-folder\n" + "\\ No newline at end of file\n" + "+folder change\n" + "\\ No newline at end of file\n";
+			NUnit.Framework.Assert.AreEqual(expected.ToString(), actual);
 		}
 
 		private string MakeDiffHeader(string pathA, string pathB, ObjectId aId, ObjectId 

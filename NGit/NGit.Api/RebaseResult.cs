@@ -70,6 +70,9 @@ namespace NGit.Api
 		internal static readonly NGit.Api.RebaseResult UP_TO_DATE_RESULT = new NGit.Api.RebaseResult
 			(RebaseResult.Status.UP_TO_DATE);
 
+		internal static readonly NGit.Api.RebaseResult FAST_FORWARD_RESULT = new NGit.Api.RebaseResult
+			(RebaseResult.Status.FAST_FORWARD);
+
 		private readonly RebaseResult.Status mySatus;
 
 		private readonly RevCommit currentCommit;
