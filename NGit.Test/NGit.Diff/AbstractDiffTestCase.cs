@@ -208,7 +208,16 @@ namespace NGit.Diff
 		{
 			EditList r = Diff(T("aq}nb"), T("aCq}nD}nb"));
 			NUnit.Framework.Assert.AreEqual(new Edit(1, 1, 1, 2), r[0]);
-			NUnit.Framework.Assert.AreEqual(new Edit(3, 3, 4, 7), r[1]);
+			NUnit.Framework.Assert.AreEqual(new Edit(4, 4, 5, 8), r[1]);
+			NUnit.Framework.Assert.AreEqual(2, r.Count);
+		}
+
+		[NUnit.Framework.Test]
+		public virtual void TestEdit_LinuxBug()
+		{
+			EditList r = Diff(T("a{bcdE}z"), T("a{0bcdEE}z"));
+			NUnit.Framework.Assert.AreEqual(new Edit(2, 2, 2, 3), r[0]);
+			NUnit.Framework.Assert.AreEqual(new Edit(6, 6, 7, 8), r[1]);
 			NUnit.Framework.Assert.AreEqual(2, r.Count);
 		}
 

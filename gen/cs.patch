@@ -1316,7 +1316,7 @@ index 9b3982b..36a96b1 100644
  							}
  						}
 diff --git a/NGit/NGit.Diff/DiffAlgorithm.cs b/NGit/NGit.Diff/DiffAlgorithm.cs
-index c9cde2c..ae3b1d7 100644
+index efcf596..af77496 100644
 --- a/NGit/NGit.Diff/DiffAlgorithm.cs
 +++ b/NGit/NGit.Diff/DiffAlgorithm.cs
 @@ -81,7 +81,7 @@ namespace NGit.Diff
