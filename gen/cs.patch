@@ -19,10 +19,10 @@ index 2bb9439..cac7103 100644
  		}
  	}
 diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-index aff144a..2da7053 100644
+index 37519ac..328bd04 100644
 --- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
 +++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-@@ -663,9 +663,14 @@ namespace NGit.Api
+@@ -726,9 +726,14 @@ namespace NGit.Api
  				sb.Append(line);
  				sb.Append('\n');
  			}
@@ -271,7 +271,7 @@ index edf138f..89df423 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
-index 25c8570..30035a7 100644
+index 886742a..ba364b0 100644
 --- a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 +++ b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 @@ -224,7 +224,7 @@ namespace NGit.Junit
@@ -283,6 +283,15 @@ index 25c8570..30035a7 100644
  			{
  				return silent;
  			}
+@@ -342,7 +342,7 @@ namespace NGit.Junit
+ 		/// <exception cref="System.IO.IOException"></exception>
+ 		protected internal virtual FilePath CreateTempFile()
+ 		{
+-			return new FilePath(trash, "tmp-" + UUID.RandomUUID()).GetCanonicalFile();
++			return new FilePath(trash, "tmp-" + System.Guid.NewGuid ().ToString ()).GetCanonicalFile();
+ 		}
+ 
+ 		/// <summary>Run a hook script in the repository, returning the exit status.</summary>
 diff --git a/NGit.Test/NGit.Junit/MockSystemReader.cs b/NGit.Test/NGit.Junit/MockSystemReader.cs
 index be657c3..f482dc9 100644
 --- a/NGit.Test/NGit.Junit/MockSystemReader.cs
@@ -453,10 +462,10 @@ index f611b93..12b726e 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-index a6a1bfa..e9fdffe 100644
+index 34da486..ea369ef 100644
 --- a/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
 +++ b/NGit.Test/NGit.Merge/MergeAlgorithmTest.cs
-@@ -221,7 +221,7 @@ namespace NGit.Merge
+@@ -237,7 +237,7 @@ namespace NGit.Merge
  		/// <exception cref="System.IO.IOException"></exception>
  		private string Merge(string commonBase, string ours, string theirs)
  		{
@@ -910,10 +919,10 @@ index 2b145de..09c937b 100644
  				NUnit.Framework.Assert.AreEqual(buf[i_1], act[j]);
  			}
 diff --git a/NGit.Test/NGit.Transport/URIishTest.cs b/NGit.Test/NGit.Transport/URIishTest.cs
-index d8045b2..ee729a1 100644
+index 75617b9..fcbbd5f 100644
 --- a/NGit.Test/NGit.Transport/URIishTest.cs
 +++ b/NGit.Test/NGit.Transport/URIishTest.cs
-@@ -348,6 +348,7 @@ namespace NGit.Transport
+@@ -378,6 +378,7 @@ namespace NGit.Transport
  
  		/// <exception cref="System.Exception"></exception>
  		[NUnit.Framework.Test]
@@ -1296,7 +1305,7 @@ index b00c5a1..bbeedae 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index 9b3982b..36a96b1 100644
+index 695978c..b9da8e9 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -183,6 +183,7 @@ namespace NGit.Api
@@ -1738,10 +1747,19 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index 316c75b..0ec2015 100644
+index 9e245d7..eb1cfdc 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
-@@ -597,7 +597,7 @@ namespace NGit.Merge
+@@ -508,7 +508,7 @@ namespace NGit.Merge
+ 							, db);
+ 						MergeResult<RawText> result = mergeAlgorithm.Merge(RawTextComparator.DEFAULT, baseText
+ 							, ourText, theirsText);
+-						mergeResults.Put(tw.PathString, result);
++						mergeResults.Put(tw.PathString, result.Upcast());
+ 					}
+ 				}
+ 			}
+@@ -607,7 +607,7 @@ namespace NGit.Merge
  				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
  				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
  				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);
@@ -3879,7 +3897,7 @@ index f1ec18e..e576e09 100644
  			{
  				return this.@ref.ToString();
 diff --git a/NGit/NGit.Util/StringUtils.cs b/NGit/NGit.Util/StringUtils.cs
-index 05ff394..74f90dc 100644
+index 582b859..a43bcbc 100644
 --- a/NGit/NGit.Util/StringUtils.cs
 +++ b/NGit/NGit.Util/StringUtils.cs
 @@ -58,7 +58,7 @@ namespace NGit.Util

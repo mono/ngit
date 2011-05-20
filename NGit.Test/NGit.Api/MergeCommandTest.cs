@@ -585,6 +585,42 @@ namespace NGit.Api
 				"a")));
 			NUnit.Framework.Assert.AreEqual("1\nb\n3\n", Read(new FilePath(db.WorkTree, "b"))
 				);
+			NUnit.Framework.Assert.AreEqual(1, result.GetConflicts().Count);
+			NUnit.Framework.Assert.AreEqual(3, result.GetConflicts().Get("a")[0].Length);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestModifiedAndRenamed()
+		{
+			// this test is essentially the same as testDeletionOnSideConflict,
+			// however if once rename support is added this test should result in a
+			// successful merge instead of a conflict
+			Git git = new Git(db);
+			WriteTrashFile("x", "add x");
+			git.Add().AddFilepattern("x").Call();
+			RevCommit initial = git.Commit().SetMessage("add x").Call();
+			CreateBranch(initial, "refs/heads/d1");
+			CreateBranch(initial, "refs/heads/d2");
+			// rename x to y on d1
+			CheckoutBranch("refs/heads/d1");
+			new FilePath(db.WorkTree, "x").RenameTo(new FilePath(db.WorkTree, "y"));
+			git.Rm().AddFilepattern("x").Call();
+			git.Add().AddFilepattern("y").Call();
+			RevCommit d1Commit = git.Commit().SetMessage("d1 rename x -> y").Call();
+			CheckoutBranch("refs/heads/d2");
+			WriteTrashFile("x", "d2 change");
+			git.Add().AddFilepattern("x").Call();
+			RevCommit d2Commit = git.Commit().SetMessage("d2 change in x").Call();
+			CheckoutBranch("refs/heads/master");
+			MergeCommandResult d1Merge = git.Merge().Include(d1Commit).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.FAST_FORWARD, d1Merge.GetMergeStatus(
+				));
+			MergeCommandResult d2Merge = git.Merge().Include(d2Commit).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, d2Merge.GetMergeStatus()
+				);
+			NUnit.Framework.Assert.AreEqual(1, d2Merge.GetConflicts().Count);
+			NUnit.Framework.Assert.AreEqual(3, d2Merge.GetConflicts().Get("x")[0].Length);
 		}
 
 		/// <exception cref="System.Exception"></exception>

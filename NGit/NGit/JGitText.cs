@@ -408,6 +408,8 @@ namespace NGit
 
 		public string exceptionCaughtDuringExecutionOfFetchCommand;
 
+		public string exceptionCaughtDuringExecutionOfLsRemoteCommand;
+
 		public string exceptionCaughtDuringExecutionOfMergeCommand;
 
 		public string exceptionCaughtDuringExecutionOfPushCommand;

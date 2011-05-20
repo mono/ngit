@@ -105,7 +105,7 @@ namespace NGit.Junit
 			{
 				if (shutdownHook == null)
 				{
-					shutdownHook = new _Thread_120(this);
+					shutdownHook = new _Thread_121(this);
 					// On windows accidentally open files or memory
 					// mapped regions may prevent files from being deleted.
 					// Suggesting a GC increases the likelihood that our
@@ -134,9 +134,9 @@ namespace NGit.Junit
 			WindowCache.Reconfigure(c);
 		}
 
-		private sealed class _Thread_120 : Sharpen.Thread
+		private sealed class _Thread_121 : Sharpen.Thread
 		{
-			public _Thread_120(LocalDiskRepositoryTestCase _enclosing)
+			public _Thread_121(LocalDiskRepositoryTestCase _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -337,6 +337,12 @@ namespace NGit.Junit
 			string gitdirName = "test" + uniqueId + (bare ? string.Empty : "/") + Constants.DOT_GIT;
 			FilePath gitdir = new FilePath(trash, gitdirName).GetCanonicalFile();
 			return gitdir;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		protected internal virtual FilePath CreateTempFile()
+		{
+			return new FilePath(trash, "tmp-" + System.Guid.NewGuid ().ToString ()).GetCanonicalFile();
 		}
 
 		/// <summary>Run a hook script in the repository, returning the exit status.</summary>

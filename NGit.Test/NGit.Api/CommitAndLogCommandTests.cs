@@ -98,6 +98,61 @@ namespace NGit.Api
 				));
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
+		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestLogWithFilter()
+		{
+			Git git = new Git(db);
+			// create first file
+			FilePath file = new FilePath(db.WorkTree, "a.txt");
+			FileUtils.CreateNewFile(file);
+			PrintWriter writer = new PrintWriter(file);
+			writer.Write("content1");
+			writer.Close();
+			// First commit - a.txt file
+			git.Add().AddFilepattern("a.txt").Call();
+			git.Commit().SetMessage("commit1").SetCommitter(committer).Call();
+			// create second file
+			file = new FilePath(db.WorkTree, "b.txt");
+			FileUtils.CreateNewFile(file);
+			writer = new PrintWriter(file);
+			writer.Write("content2");
+			writer.Close();
+			// Second commit - b.txt file
+			git.Add().AddFilepattern("b.txt").Call();
+			git.Commit().SetMessage("commit2").SetCommitter(committer).Call();
+			// First log - a.txt filter
+			int count = 0;
+			foreach (RevCommit c in git.Log().AddPath("a.txt").Call())
+			{
+				NUnit.Framework.Assert.AreEqual("commit1", c.GetFullMessage());
+				count++;
+			}
+			NUnit.Framework.Assert.AreEqual(1, count);
+			// Second log - b.txt filter
+			count = 0;
+			foreach (RevCommit c_1 in git.Log().AddPath("b.txt").Call())
+			{
+				NUnit.Framework.Assert.AreEqual("commit2", c_1.GetFullMessage());
+				count++;
+			}
+			NUnit.Framework.Assert.AreEqual(1, count);
+			// Third log - without filter
+			count = 0;
+			foreach (RevCommit c_2 in git.Log().Call())
+			{
+				NUnit.Framework.Assert.AreEqual(committer, c_2.GetCommitterIdent());
+				count++;
+			}
+			NUnit.Framework.Assert.AreEqual(2, count);
+		}
+
 		// try to do a commit without specifying a message. Should fail!
 		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>

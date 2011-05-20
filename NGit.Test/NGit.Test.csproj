@@ -229,6 +229,9 @@
     <Compile Include="NGit.Transport\BundleWriterTest.cs" />
     <Compile Include="NGit.Api\NotesCommandTest.cs" />
     <Compile Include="NGit.Util\RawParseUtilsTest.cs" />
+    <Compile Include="NGit.Api\LsRemoteCommandTest.cs" />
+    <Compile Include="NGit.Api\PathCheckoutCommandTest.cs" />
+    <Compile Include="NGit.Util\RelativeDateFormatterTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

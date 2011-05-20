@@ -43,6 +43,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
+using NGit.Merge;
+using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Transport;
 using Sharpen;
@@ -89,6 +91,39 @@ namespace NGit.Api
 			res = target.Pull().Call();
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.UP_TO_DATE, res.GetRebaseResult
 				().GetStatus());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPullFastForwardWithBranchInSource()
+		{
+			PullResult res = target.Pull().Call();
+			// nothing to update since we don't have different data yet
+			NUnit.Framework.Assert.IsTrue(res.GetFetchResult().GetTrackingRefUpdates().IsEmpty
+				());
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.UP_TO_DATE, res.GetRebaseResult
+				().GetStatus());
+			AssertFileContentsEqual(targetFile, "Hello world");
+			// change the source file
+			WriteToFile(sourceFile, "Another change\n\n\n\nFoo");
+			source.Add().AddFilepattern("SomeFile.txt").Call();
+			RevCommit initialCommit = source.Commit().SetMessage("Some change in remote").Call
+				();
+			// modify the source file in a branch
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			WriteToFile(sourceFile, "Another change\n\n\n\nBoo");
+			source.Add().AddFilepattern("SomeFile.txt").Call();
+			RevCommit sideCommit = source.Commit().SetMessage("Some change in remote").Call();
+			// modify the source file on master
+			CheckoutBranch("refs/heads/master");
+			WriteToFile(sourceFile, "More change\n\n\n\nFoo");
+			source.Add().AddFilepattern("SomeFile.txt").Call();
+			source.Commit().SetMessage("Some change in remote").Call();
+			// merge side into master
+			MergeCommandResult result = source.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
 		}
 
 		/// <exception cref="System.Exception"></exception>

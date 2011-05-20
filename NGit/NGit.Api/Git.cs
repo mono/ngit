@@ -596,6 +596,27 @@ namespace NGit.Api
 			return new ShowNoteCommand(repo);
 		}
 
+		/// <summary>
+		/// Returns a command object to execute a
+		/// <code>ls-remote</code>
+		/// command
+		/// </summary>
+		/// <seealso><a
+		/// *      href="http://www.kernel.org/pub/software/scm/git/docs/git-ls-remote.html"
+		/// *      >Git documentation about ls-remote</a></seealso>
+		/// <returns>
+		/// a
+		/// <see cref="LsRemoteCommand">LsRemoteCommand</see>
+		/// used to collect all optional parameters
+		/// and to finally execute the
+		/// <code>status</code>
+		/// command
+		/// </returns>
+		public virtual LsRemoteCommand LsRemote()
+		{
+			return new LsRemoteCommand(repo);
+		}
+
 		/// <returns>the git repository this class is interacting with</returns>
 		public virtual Repository GetRepository()
 		{

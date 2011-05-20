@@ -218,6 +218,22 @@ namespace NGit.Merge
 				, "AGADEFHIAAAJCAB"));
 		}
 
+		/// <summary>Test situations where (at least) one input value is the empty text</summary>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestEmptyTexts()
+		{
+			// test modification against deletion
+			NUnit.Framework.Assert.AreEqual(T("<AB=>"), Merge("A", "AB", string.Empty));
+			NUnit.Framework.Assert.AreEqual(T("<=AB>"), Merge("A", string.Empty, "AB"));
+			// test unmodified against deletion
+			NUnit.Framework.Assert.AreEqual(T(string.Empty), Merge("AB", "AB", string.Empty));
+			NUnit.Framework.Assert.AreEqual(T(string.Empty), Merge("AB", string.Empty, "AB"));
+			// test deletion against deletion
+			NUnit.Framework.Assert.AreEqual(T(string.Empty), Merge("AB", string.Empty, string.Empty
+				));
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private string Merge(string commonBase, string ours, string theirs)
 		{

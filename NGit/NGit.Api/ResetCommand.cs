@@ -42,12 +42,15 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Dircache;
 using NGit.Revwalk;
+using NGit.Treewalk;
+using NGit.Treewalk.Filter;
 using Sharpen;
 
 namespace NGit.Api
@@ -78,9 +81,11 @@ namespace NGit.Api
 			KEEP
 		}
 
-		private string @ref;
+		private string @ref = Constants.HEAD;
 
 		private ResetCommand.ResetType mode;
+
+		private ICollection<string> filepaths = new List<string>();
 
 		/// <param name="repo"></param>
 		protected internal ResetCommand(Repository repo) : base(repo)
@@ -134,6 +139,13 @@ namespace NGit.Api
 				finally
 				{
 					rw.Release();
+				}
+				if (!filepaths.IsEmpty())
+				{
+					// reset [commit] -- paths
+					ResetIndexForPaths(commit);
+					SetCallable(false);
+					return repo.GetRef(Constants.HEAD);
 				}
 				// write the ref
 				RefUpdate ru = repo.UpdateRef(Constants.HEAD);
@@ -212,8 +224,86 @@ namespace NGit.Api
 		/// <returns>this instance</returns>
 		public virtual NGit.Api.ResetCommand SetMode(ResetCommand.ResetType mode)
 		{
+			if (!filepaths.IsEmpty())
+			{
+				throw new JGitInternalException(MessageFormat.Format(JGitText.Get().illegalCombinationOfArguments
+					, "[--mixed | --soft | --hard]", "<paths>..."));
+			}
 			this.mode = mode;
 			return this;
+		}
+
+		/// <param name="file">the file to add</param>
+		/// <returns>this instance</returns>
+		public virtual NGit.Api.ResetCommand AddPath(string file)
+		{
+			if (mode != null)
+			{
+				throw new JGitInternalException(MessageFormat.Format(JGitText.Get().illegalCombinationOfArguments
+					, "<paths>...", "[--mixed | --soft | --hard]"));
+			}
+			filepaths.AddItem(file);
+			return this;
+		}
+
+		private void ResetIndexForPaths(RevCommit commit)
+		{
+			DirCache dc = null;
+			DirCacheEditor edit;
+			try
+			{
+				dc = repo.LockDirCache();
+				edit = dc.Editor();
+				TreeWalk tw = new TreeWalk(repo);
+				tw.AddTree(new DirCacheIterator(dc));
+				tw.AddTree(commit.Tree);
+				tw.Filter = PathFilterGroup.CreateFromStrings(filepaths);
+				while (tw.Next())
+				{
+					string path = tw.PathString;
+					// DirCacheIterator dci = tw.getTree(0, DirCacheIterator.class);
+					CanonicalTreeParser tree = tw.GetTree<CanonicalTreeParser>(1);
+					if (tree == null)
+					{
+						// file is not in the commit, remove from index
+						edit.Add(new DirCacheEditor.DeletePath(path));
+					}
+					else
+					{
+						// revert index to commit
+						edit.Add(new _PathEdit_281(tree, path));
+					}
+				}
+				edit.Commit();
+			}
+			catch (IOException e)
+			{
+				throw new RuntimeException(e);
+			}
+			finally
+			{
+				if (dc != null)
+				{
+					dc.Unlock();
+				}
+			}
+		}
+
+		private sealed class _PathEdit_281 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_281(CanonicalTreeParser tree, string baseArg1) : base(baseArg1)
+			{
+				this.tree = tree;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = tree.EntryFileMode;
+				ent.SetObjectId(tree.EntryObjectId);
+				ent.LastModified = 0;
+			}
+
+			private readonly CanonicalTreeParser tree;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

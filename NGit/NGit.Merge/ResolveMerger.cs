@@ -499,6 +499,16 @@ namespace NGit.Merge
 							}
 						}
 						unmergedPaths.AddItem(tw.PathString);
+						// generate a MergeResult for the deleted file
+						RawText baseText = @base == null ? RawText.EMPTY_TEXT : GetRawText(@base.EntryObjectId
+							, db);
+						RawText ourText = ours == null ? RawText.EMPTY_TEXT : GetRawText(ours.EntryObjectId
+							, db);
+						RawText theirsText = theirs == null ? RawText.EMPTY_TEXT : GetRawText(theirs.EntryObjectId
+							, db);
+						MergeResult<RawText> result = mergeAlgorithm.Merge(RawTextComparator.DEFAULT, baseText
+							, ourText, theirsText);
+						mergeResults.Put(tw.PathString, result.Upcast());
 					}
 				}
 			}

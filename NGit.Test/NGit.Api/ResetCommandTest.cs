@@ -47,6 +47,7 @@ using NGit.Dircache;
 using NGit.Revwalk;
 using NGit.Treewalk;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Api
@@ -58,9 +59,13 @@ namespace NGit.Api
 
 		private RevCommit initialCommit;
 
+		private RevCommit secondCommit;
+
 		private FilePath indexFile;
 
 		private FilePath untrackedFile;
+
+		private DirCacheEntry prestage;
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
@@ -82,7 +87,9 @@ namespace NGit.Api
 			writer.Flush();
 			// add file and commit it
 			git.Add().AddFilepattern("a.txt").Call();
-			git.Commit().SetMessage("adding a.txt").Call();
+			secondCommit = git.Commit().SetMessage("adding a.txt").Call();
+			prestage = DirCache.Read(db.GetIndexFile(), db.FileSystem).GetEntry(indexFile.GetName
+				());
 			// modify file and add to index
 			writer.Write("new content");
 			writer.Close();
@@ -177,6 +184,60 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsFalse(InHead(fileInIndexPath));
 			NUnit.Framework.Assert.IsFalse(InIndex(indexFile.GetName()));
 			AssertReflog(prevHead, head);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPathsReset()
+		{
+			SetupRepository();
+			DirCacheEntry preReset = DirCache.Read(db.GetIndexFile(), db.FileSystem).GetEntry
+				(indexFile.GetName());
+			NUnit.Framework.Assert.IsNotNull(preReset);
+			git.Add().AddFilepattern(untrackedFile.GetName()).Call();
+			// 'a.txt' has already been modified in setupRepository
+			// 'notAddedToIndex.txt' has been added to repository
+			git.Reset().AddPath(indexFile.GetName()).AddPath(untrackedFile.GetName()).Call();
+			DirCacheEntry postReset = DirCache.Read(db.GetIndexFile(), db.FileSystem).GetEntry
+				(indexFile.GetName());
+			NUnit.Framework.Assert.IsNotNull(postReset);
+			NUnit.Framework.Assert.AreNotSame(preReset.GetObjectId(), postReset.GetObjectId()
+				);
+			NUnit.Framework.Assert.AreEqual(prestage.GetObjectId(), postReset.GetObjectId());
+			// check that HEAD hasn't moved
+			ObjectId head = db.Resolve(Constants.HEAD);
+			NUnit.Framework.Assert.IsTrue(head.Equals(secondCommit));
+			// check if files still exist
+			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
+			NUnit.Framework.Assert.IsTrue(indexFile.Exists());
+			NUnit.Framework.Assert.IsTrue(InHead(indexFile.GetName()));
+			NUnit.Framework.Assert.IsTrue(InIndex(indexFile.GetName()));
+			NUnit.Framework.Assert.IsFalse(InIndex(untrackedFile.GetName()));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPathsResetWithRef()
+		{
+			SetupRepository();
+			DirCacheEntry preReset = DirCache.Read(db.GetIndexFile(), db.FileSystem).GetEntry
+				(indexFile.GetName());
+			NUnit.Framework.Assert.IsNotNull(preReset);
+			git.Add().AddFilepattern(untrackedFile.GetName()).Call();
+			// 'a.txt' has already been modified in setupRepository
+			// 'notAddedToIndex.txt' has been added to repository
+			// reset to the inital commit
+			git.Reset().SetRef(initialCommit.GetName()).AddPath(indexFile.GetName()).AddPath(
+				untrackedFile.GetName()).Call();
+			// check that HEAD hasn't moved
+			ObjectId head = db.Resolve(Constants.HEAD);
+			NUnit.Framework.Assert.IsTrue(head.Equals(secondCommit));
+			// check if files still exist
+			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
+			NUnit.Framework.Assert.IsTrue(indexFile.Exists());
+			NUnit.Framework.Assert.IsTrue(InHead(indexFile.GetName()));
+			NUnit.Framework.Assert.IsFalse(InIndex(indexFile.GetName()));
+			NUnit.Framework.Assert.IsFalse(InIndex(untrackedFile.GetName()));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

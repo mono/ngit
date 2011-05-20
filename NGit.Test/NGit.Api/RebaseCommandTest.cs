@@ -141,6 +141,69 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestRebaseFailsCantCherryPickMergeCommits()
+		{
+			// create file1 on master
+			WriteTrashFile(FILE1, FILE1);
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit first = git.Commit().SetMessage("Add file1").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, FILE1).Exists());
+			// create a topic branch
+			CreateBranch(first, "refs/heads/topic");
+			// update FILE1 on master
+			WriteTrashFile(FILE1, "blah");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("updated file1 on master").Call();
+			CheckoutBranch("refs/heads/topic");
+			WriteTrashFile("file3", "more changess");
+			git.Add().AddFilepattern("file3").Call();
+			RevCommit topicCommit = git.Commit().SetMessage("update file3 on topic").Call();
+			// create a branch from the topic commit
+			CreateBranch(topicCommit, "refs/heads/side");
+			// second commit on topic
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("Add file2").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			// switch to side branch and update file2
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("file3", "more change");
+			git.Add().AddFilepattern("file3").Call();
+			RevCommit sideCommit = git.Commit().SetMessage("update file2 on side").Call();
+			// switch back to topic and merge in side
+			CheckoutBranch("refs/heads/topic");
+			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
+			try
+			{
+				RebaseResult rebase = git.Rebase().SetUpstream("refs/heads/master").Call();
+				NUnit.Framework.Assert.Fail("MultipleParentsNotAllowedException expected: " + rebase
+					.GetStatus());
+			}
+			catch (JGitInternalException)
+			{
+			}
+		}
+
+		// expected
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseParentOntoHeadShouldBeUptoDate()
+		{
+			WriteTrashFile(FILE1, FILE1);
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit parent = git.Commit().SetMessage("parent comment").Call();
+			WriteTrashFile(FILE1, "another change");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("head commit").Call();
+			RebaseResult result = git.Rebase().SetUpstream(parent).Call();
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.UP_TO_DATE, result.GetStatus(
+				));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUpToDate()
 		{
 			// create file1 on master
@@ -1174,6 +1237,47 @@ namespace NGit.Api
 			{
 				br.Close();
 			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFastForwardWithMultipleCommitsOnDifferentBranches()
+		{
+			// create file1 on master
+			WriteTrashFile(FILE1, FILE1);
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit first = git.Commit().SetMessage("Add file1").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, FILE1).Exists());
+			// create a topic branch
+			CreateBranch(first, "refs/heads/topic");
+			// create file2 on master
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			RevCommit second = git.Commit().SetMessage("Add file2").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			// create side branch
+			CreateBranch(second, "refs/heads/side");
+			// update FILE1 on master
+			WriteTrashFile(FILE1, "blah");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("updated file1 on master").Call();
+			// switch to side branch and update file2
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("file2", "more change");
+			git.Add().AddFilepattern("file2").Call();
+			RevCommit fourth = git.Commit().SetMessage("update file2 on side").Call();
+			// switch back to master and merge in side
+			CheckoutBranch("refs/heads/master");
+			MergeCommandResult result = git.Merge().Include(fourth.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
+			// switch back to topic branch and rebase it onto master
+			CheckoutBranch("refs/heads/topic");
+			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			CheckFile(new FilePath(db.WorkTree, "file2"), "more change");
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.FAST_FORWARD, res.GetStatus()
+				);
 		}
 	}
 }

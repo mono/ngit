@@ -510,6 +510,8 @@
     <Compile Include="NGit.Api\ListNotesCommand.cs" />
     <Compile Include="NGit.Api\RemoveNoteCommand.cs" />
     <Compile Include="NGit.Api\ShowNoteCommand.cs" />
+    <Compile Include="NGit.Api\LsRemoteCommand.cs" />
+    <Compile Include="NGit.Util\RelativeDateFormatter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

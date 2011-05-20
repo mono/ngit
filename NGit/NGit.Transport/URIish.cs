@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using System.Text;
 using NGit;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Transport
@@ -214,6 +215,11 @@ namespace NGit.Transport
 			//
 			//
 			//
+			if (StringUtils.IsEmptyOrNull(s))
+			{
+				throw new URISyntaxException("The uri was empty or null", JGitText.Get().cannotParseGitURIish
+					);
+			}
 			Matcher matcher = SINGLE_SLASH_FILE_URI.Matcher(s);
 			if (matcher.Matches())
 			{

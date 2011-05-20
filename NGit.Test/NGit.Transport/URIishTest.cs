@@ -54,6 +54,36 @@ namespace NGit.Transport
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void ShouldRaiseErrorOnEmptyURI()
+		{
+			try
+			{
+				new URIish(string.Empty);
+				NUnit.Framework.Assert.Fail("expecting an exception");
+			}
+			catch (URISyntaxException)
+			{
+			}
+		}
+
+		// expected
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void ShouldRaiseErrorOnNullURI()
+		{
+			try
+			{
+				new URIish((string)null);
+				NUnit.Framework.Assert.Fail("expecting an exception");
+			}
+			catch (URISyntaxException)
+			{
+			}
+		}
+
+		// expected
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestUnixFile()
 		{
 			string str = "/home/m y";

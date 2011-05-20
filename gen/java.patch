@@ -111,7 +111,7 @@ index 1ec8685..f967a05 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 7e2e677..c2fa530 100644
+index 114ef03..db9998f 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -84,6 +84,7 @@
@@ -122,7 +122,7 @@ index 7e2e677..c2fa530 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
-@@ -664,30 +665,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
+@@ -671,30 +672,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -159,7 +159,7 @@ index 7e2e677..c2fa530 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -909,10 +907,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -916,10 +914,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -554,7 +554,7 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index 8758427..39ed1df 100644
+index d347b59..8604e38 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 @@ -104,7 +104,7 @@
