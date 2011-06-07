@@ -653,7 +653,18 @@ namespace NGit.Api
 			// we rewind to the upstream commit
 			monitor.BeginTask(MessageFormat.Format(JGitText.Get().rewinding, upstreamCommit.GetShortMessage
 				()), ProgressMonitor.UNKNOWN);
-			CheckoutCommit(upstreamCommit);
+			bool checkoutOk = false;
+			try
+			{
+				checkoutOk = CheckoutCommit(upstreamCommit);
+			}
+			finally
+			{
+				if (!checkoutOk)
+				{
+					FileUtils.Delete(rebaseDir, FileUtils.RECURSIVE);
+				}
+			}
 			monitor.EndTask();
 			return null;
 		}
@@ -882,7 +893,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		private void CheckoutCommit(RevCommit commit)
+		private bool CheckoutCommit(RevCommit commit)
 		{
 			try
 			{
@@ -916,6 +927,7 @@ namespace NGit.Api
 				walk.Release();
 				monitor.EndTask();
 			}
+			return true;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

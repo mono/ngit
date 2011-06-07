@@ -19,7 +19,7 @@ index 2bb9439..cac7103 100644
  		}
  	}
 diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-index 37519ac..328bd04 100644
+index 639b99e..16f1438 100644
 --- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
 +++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
 @@ -726,9 +726,14 @@ namespace NGit.Api
@@ -197,7 +197,7 @@ index d7d27cd..bdd0234 100644
  					NUnit.Framework.Assert.AreSame(ents[i_3], aContents[j]);
  				}
 diff --git a/NGit.Test/NGit.Fnmatch/FileNameMatcherTest.cs b/NGit.Test/NGit.Fnmatch/FileNameMatcherTest.cs
-index 5392052..e628843 100644
+index 0be32d3..c2a6001 100644
 --- a/NGit.Test/NGit.Fnmatch/FileNameMatcherTest.cs
 +++ b/NGit.Test/NGit.Fnmatch/FileNameMatcherTest.cs
 @@ -523,7 +523,7 @@ namespace NGit.Fnmatch
@@ -271,7 +271,7 @@ index edf138f..89df423 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
-index 886742a..ba364b0 100644
+index 10ba51d..d468661 100644
 --- a/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 +++ b/NGit.Test/NGit.Junit/LocalDiskRepositoryTestCase.cs
 @@ -224,7 +224,7 @@ namespace NGit.Junit
@@ -283,7 +283,7 @@ index 886742a..ba364b0 100644
  			{
  				return silent;
  			}
-@@ -342,7 +342,7 @@ namespace NGit.Junit
+@@ -352,7 +352,7 @@ namespace NGit.Junit
  		/// <exception cref="System.IO.IOException"></exception>
  		protected internal virtual FilePath CreateTempFile()
  		{
@@ -1305,7 +1305,7 @@ index b00c5a1..bbeedae 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index 695978c..b9da8e9 100644
+index 5250329..625ae1b 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -183,6 +183,7 @@ namespace NGit.Api
@@ -1394,7 +1394,7 @@ index e6e0091..8b8f6c4 100644
  							return DiffConfig.RenameDetectionType.TRUE;
  						}
 diff --git a/NGit/NGit.Diff/DiffFormatter.cs b/NGit/NGit.Diff/DiffFormatter.cs
-index 6d35de9..bf3107e 100644
+index 65f5c41..5cab75a 100644
 --- a/NGit/NGit.Diff/DiffFormatter.cs
 +++ b/NGit/NGit.Diff/DiffFormatter.cs
 @@ -524,7 +524,7 @@ namespace NGit.Diff
@@ -2127,10 +2127,10 @@ index 2a0724d..79e77aa 100644
  			public _AsyncRevObjectQueue_914(RevWalk _enclosing, Sharpen.Iterator<RevObject> objItr
  				, AsyncObjectLoaderQueue<T> lItr)
 diff --git a/NGit/NGit.Storage.File/FileSnapshot.cs b/NGit/NGit.Storage.File/FileSnapshot.cs
-index 967eaa5..2c38d91 100644
+index 86bb157..23ddbb0 100644
 --- a/NGit/NGit.Storage.File/FileSnapshot.cs
 +++ b/NGit/NGit.Storage.File/FileSnapshot.cs
-@@ -130,7 +130,7 @@ namespace NGit.Storage.File
+@@ -148,7 +148,7 @@ namespace NGit.Storage.File
  
  		/// <summary>Last wall-clock time the path was read.</summary>
  		/// <remarks>Last wall-clock time the path was read.</remarks>
@@ -2214,7 +2214,7 @@ index 936f98d..fbe057a 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index 2ef54b3..e4c3a21 100644
+index 34dbec9..9b5f280 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
 @@ -334,7 +334,7 @@ namespace NGit.Storage.File
@@ -2226,7 +2226,7 @@ index 2ef54b3..e4c3a21 100644
  		}
  
  		private class LooseScanner
-@@ -1110,7 +1110,7 @@ namespace NGit.Storage.File
+@@ -1105,7 +1105,7 @@ namespace NGit.Storage.File
  				}
  				// possibly truncated ref
  				// trim trailing whitespace
@@ -2235,7 +2235,7 @@ index 2ef54b3..e4c3a21 100644
  				{
  					n--;
  				}
-@@ -1135,7 +1135,7 @@ namespace NGit.Storage.File
+@@ -1142,7 +1142,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{
@@ -3218,7 +3218,7 @@ index fd116ea..97b957a 100644
  				{
  					list = this.ftp.Ls(dir);
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index 81914f2..4a99571 100644
+index 2563ec1..5b4a2f4 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
 @@ -167,7 +167,7 @@ namespace NGit.Transport
@@ -3239,7 +3239,7 @@ index 81914f2..4a99571 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
-@@ -1001,8 +1001,9 @@ namespace NGit.Transport
+@@ -1012,8 +1012,9 @@ namespace NGit.Transport
  				}
  				if (options.Contains(OPTION_INCLUDE_TAG))
  				{
@@ -3819,7 +3819,7 @@ index 0f9d840..5002870 100644
 +	
  }
 diff --git a/NGit/NGit.Util/RefMap.cs b/NGit/NGit.Util/RefMap.cs
-index f1ec18e..e576e09 100644
+index be84b9b..d3f35e5 100644
 --- a/NGit/NGit.Util/RefMap.cs
 +++ b/NGit/NGit.Util/RefMap.cs
 @@ -277,7 +277,7 @@ namespace NGit.Util

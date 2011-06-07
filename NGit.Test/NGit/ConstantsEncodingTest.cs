@@ -65,7 +65,7 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestEncodeASCII_FailOnNonASCII()
 		{
-			string src = "Ūnĭcōde̽";
+			string src = "≈™nƒ≠c≈çdeÃΩ";
 			try
 			{
 				Constants.EncodeASCII(src);
@@ -102,7 +102,7 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestEncode_Unicode()
 		{
-			string src = "Ūnĭcōde̽";
+			string src = "≈™nƒ≠c≈çdeÃΩ";
 			byte[] exp = new byte[] { unchecked((byte)unchecked((int)(0xC5))), unchecked((byte
 				)unchecked((int)(0xAA))), unchecked((int)(0x6E)), unchecked((byte)unchecked((int
 				)(0xC4))), unchecked((byte)unchecked((int)(0xAD))), unchecked((int)(0x63)), unchecked(

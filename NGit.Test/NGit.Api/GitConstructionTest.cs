@@ -66,6 +66,16 @@ namespace NGit.Api
 			git.Commit().SetMessage("Initial commit").Call();
 			bareRepo = Git.CloneRepository().SetBare(true).SetURI(db.Directory.ToURI().ToString
 				()).SetDirectory(CreateUniqueTestGitDir(true)).Call().GetRepository();
+			AddRepoToClose(bareRepo);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.TearDown]
+		public override void TearDown()
+		{
+			db.Close();
+			bareRepo.Close();
+			base.TearDown();
 		}
 
 		[NUnit.Framework.Test]
@@ -74,7 +84,7 @@ namespace NGit.Api
 			Git git = Git.Wrap(db);
 			NUnit.Framework.Assert.AreEqual(1, git.BranchList().Call().Count);
 			git = Git.Wrap(bareRepo);
-			NUnit.Framework.Assert.AreEqual(2, git.BranchList().SetListMode(ListBranchCommand.ListMode
+			NUnit.Framework.Assert.AreEqual(1, git.BranchList().SetListMode(ListBranchCommand.ListMode
 				.ALL).Call().Count);
 			try
 			{
@@ -94,7 +104,7 @@ namespace NGit.Api
 			Git git = Git.Open(db.Directory);
 			NUnit.Framework.Assert.AreEqual(1, git.BranchList().Call().Count);
 			git = Git.Open(bareRepo.Directory);
-			NUnit.Framework.Assert.AreEqual(2, git.BranchList().SetListMode(ListBranchCommand.ListMode
+			NUnit.Framework.Assert.AreEqual(1, git.BranchList().SetListMode(ListBranchCommand.ListMode
 				.ALL).Call().Count);
 			git = Git.Open(db.WorkTree);
 			NUnit.Framework.Assert.AreEqual(1, git.BranchList().SetListMode(ListBranchCommand.ListMode

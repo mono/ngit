@@ -85,6 +85,7 @@ namespace NGit.Api
 				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
 				command.SetCloneAllBranches(true);
 				Git git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
 				LsRemoteCommand lsRemoteCommand = git2.LsRemote();
 				ICollection<Ref> refs = lsRemoteCommand.Call();
 				NUnit.Framework.Assert.IsNotNull(refs);
@@ -107,6 +108,7 @@ namespace NGit.Api
 				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
 				command.SetCloneAllBranches(true);
 				Git git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
 				LsRemoteCommand lsRemoteCommand = git2.LsRemote();
 				lsRemoteCommand.SetTags(true);
 				ICollection<Ref> refs = lsRemoteCommand.Call();
@@ -130,6 +132,7 @@ namespace NGit.Api
 				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
 				command.SetCloneAllBranches(true);
 				Git git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
 				LsRemoteCommand lsRemoteCommand = git2.LsRemote();
 				lsRemoteCommand.SetHeads(true);
 				ICollection<Ref> refs = lsRemoteCommand.Call();

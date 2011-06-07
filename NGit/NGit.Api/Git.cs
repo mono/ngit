@@ -617,6 +617,48 @@ namespace NGit.Api
 			return new LsRemoteCommand(repo);
 		}
 
+		/// <summary>
+		/// Returns a command object to execute a
+		/// <code>clean</code>
+		/// command
+		/// </summary>
+		/// <seealso><a
+		/// *      href="http://www.kernel.org/pub/software/scm/git/docs/git-clean.html"
+		/// *      >Git documentation about Clean</a></seealso>
+		/// <returns>
+		/// a
+		/// <see cref="CleanCommand">CleanCommand</see>
+		/// used to collect all optional parameters
+		/// and to finally execute the
+		/// <code>clean</code>
+		/// command
+		/// </returns>
+		public virtual CleanCommand Clean()
+		{
+			return new CleanCommand(repo);
+		}
+
+		/// <summary>
+		/// Returns a command object to execute a
+		/// <code>blame</code>
+		/// command
+		/// </summary>
+		/// <seealso><a
+		/// *      href="http://www.kernel.org/pub/software/scm/git/docs/git-blame.html"
+		/// *      >Git documentation about Blame</a></seealso>
+		/// <returns>
+		/// a
+		/// <see cref="BlameCommand">BlameCommand</see>
+		/// used to collect all optional parameters
+		/// and to finally execute the
+		/// <code>blame</code>
+		/// command
+		/// </returns>
+		public virtual BlameCommand Blame()
+		{
+			return new BlameCommand(repo);
+		}
+
 		/// <returns>the git repository this class is interacting with</returns>
 		public virtual Repository GetRepository()
 		{

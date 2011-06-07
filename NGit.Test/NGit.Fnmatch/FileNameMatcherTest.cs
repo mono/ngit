@@ -850,7 +850,7 @@ namespace NGit.Fnmatch
 		[NUnit.Framework.Test]
 		public virtual void TestXDigitGroupCase6()
 		{
-			AssertMatch("[[:xdigit:]]", "۹", false, false);
+			AssertMatch("[[:xdigit:]]", "€π", false, false);
 		}
 
 		/// <exception cref="System.Exception"></exception>

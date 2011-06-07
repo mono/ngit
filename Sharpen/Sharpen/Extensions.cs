@@ -550,6 +550,11 @@ namespace Sharpen
 			return Convert.ToString (val, 8);
 		}
 
+		public static string ToHexString (int val)
+		{
+			return Convert.ToString (val, 16);
+		}
+
 		public static string ToString (object val)
 		{
 			return val.ToString ();

@@ -225,57 +225,47 @@ namespace NGit.Transport
 			{
 				scheme = matcher.Group(1);
 				path = CleanLeadingSlashes(matcher.Group(2), scheme);
+				return;
 			}
-			else
+			matcher = FULL_URI.Matcher(s);
+			if (matcher.Matches())
 			{
-				matcher = FULL_URI.Matcher(s);
-				if (matcher.Matches())
+				scheme = matcher.Group(1);
+				user = matcher.Group(2);
+				pass = matcher.Group(3);
+				host = matcher.Group(4);
+				if (matcher.Group(5) != null)
 				{
-					scheme = matcher.Group(1);
-					user = matcher.Group(2);
-					pass = matcher.Group(3);
-					host = matcher.Group(4);
-					if (matcher.Group(5) != null)
-					{
-						port = System.Convert.ToInt32(matcher.Group(5));
-					}
-					path = CleanLeadingSlashes(N2e(matcher.Group(6)) + N2e(matcher.Group(7)), scheme);
+					port = System.Convert.ToInt32(matcher.Group(5));
 				}
-				else
-				{
-					matcher = RELATIVE_SCP_URI.Matcher(s);
-					if (matcher.Matches())
-					{
-						user = matcher.Group(1);
-						pass = matcher.Group(2);
-						host = matcher.Group(3);
-						path = matcher.Group(4);
-					}
-					else
-					{
-						matcher = ABSOLUTE_SCP_URI.Matcher(s);
-						if (matcher.Matches())
-						{
-							user = matcher.Group(1);
-							pass = matcher.Group(2);
-							host = matcher.Group(3);
-							path = matcher.Group(4);
-						}
-						else
-						{
-							matcher = LOCAL_FILE.Matcher(s);
-							if (matcher.Matches())
-							{
-								path = matcher.Group(1);
-							}
-							else
-							{
-								throw new URISyntaxException(s, JGitText.Get().cannotParseGitURIish);
-							}
-						}
-					}
-				}
+				path = CleanLeadingSlashes(N2e(matcher.Group(6)) + N2e(matcher.Group(7)), scheme);
+				return;
 			}
+			matcher = RELATIVE_SCP_URI.Matcher(s);
+			if (matcher.Matches())
+			{
+				user = matcher.Group(1);
+				pass = matcher.Group(2);
+				host = matcher.Group(3);
+				path = matcher.Group(4);
+				return;
+			}
+			matcher = ABSOLUTE_SCP_URI.Matcher(s);
+			if (matcher.Matches())
+			{
+				user = matcher.Group(1);
+				pass = matcher.Group(2);
+				host = matcher.Group(3);
+				path = matcher.Group(4);
+				return;
+			}
+			matcher = LOCAL_FILE.Matcher(s);
+			if (matcher.Matches())
+			{
+				path = matcher.Group(1);
+				return;
+			}
+			throw new URISyntaxException(s, JGitText.Get().cannotParseGitURIish);
 		}
 
 		private string N2e(string s)

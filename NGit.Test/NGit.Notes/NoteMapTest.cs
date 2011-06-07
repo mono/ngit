@@ -496,6 +496,18 @@ namespace NGit.Notes
 			NUnit.Framework.Assert.AreEqual(2, Count(it));
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestShorteningNoteRefName()
+		{
+			string expectedShortName = "review";
+			string noteRefName = Constants.R_NOTES + expectedShortName;
+			NUnit.Framework.Assert.AreEqual(expectedShortName, NoteMap.ShortenRefName(noteRefName
+				));
+			string nonNoteRefName = Constants.R_HEADS + expectedShortName;
+			NUnit.Framework.Assert.AreEqual(nonNoteRefName, NoteMap.ShortenRefName(expectedShortName
+				));
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private RevCommit CommitNoteMap(NoteMap map)
 		{

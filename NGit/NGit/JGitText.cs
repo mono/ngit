@@ -124,6 +124,8 @@ namespace NGit
 
 		public string bareRepositoryNoWorkdirAndIndex;
 
+		public string blameNotCommittedYet;
+
 		public string blobNotFound;
 
 		public string blobNotFoundForPath;

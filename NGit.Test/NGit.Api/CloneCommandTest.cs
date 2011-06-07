@@ -42,7 +42,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using NGit;
 using NGit.Api;
 using NGit.Junit;
@@ -90,6 +92,7 @@ namespace NGit.Api
 				command.SetDirectory(directory);
 				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
 				Git git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
 				NUnit.Framework.Assert.IsNotNull(git2);
 				ObjectId id = git2.GetRepository().Resolve("tag-for-blob");
 				NUnit.Framework.Assert.IsNotNull(id);
@@ -121,9 +124,42 @@ namespace NGit.Api
 				command.SetDirectory(directory);
 				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
 				Git git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
 				NUnit.Framework.Assert.IsNotNull(git2);
 				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
 					);
+				NUnit.Framework.Assert.AreEqual("refs/heads/master, refs/remotes/origin/master, refs/remotes/origin/test"
+					, AllRefNames(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call
+					()));
+				// Same thing, but now without checkout
+				directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
+				command = Git.CloneRepository();
+				command.SetBranch("refs/heads/master");
+				command.SetDirectory(directory);
+				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+				command.SetNoCheckout(true);
+				git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
+				NUnit.Framework.Assert.IsNotNull(git2);
+				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+					);
+				NUnit.Framework.Assert.AreEqual("refs/remotes/origin/master, refs/remotes/origin/test"
+					, AllRefNames(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call
+					()));
+				// Same thing, but now test with bare repo
+				directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
+				command = Git.CloneRepository();
+				command.SetBranch("refs/heads/master");
+				command.SetDirectory(directory);
+				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+				command.SetBare(true);
+				git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
+				NUnit.Framework.Assert.IsNotNull(git2);
+				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+					);
+				NUnit.Framework.Assert.AreEqual("refs/heads/master, refs/heads/test", AllRefNames
+					(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call()));
 			}
 			catch (Exception e)
 			{
@@ -143,16 +179,46 @@ namespace NGit.Api
 				command.SetDirectory(directory);
 				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
 				Git git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
 				NUnit.Framework.Assert.IsNotNull(git2);
 				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
 					);
-				NUnit.Framework.Assert.AreEqual(1, git2.BranchList().SetListMode(ListBranchCommand.ListMode
-					.REMOTE).Call().Count);
+				NUnit.Framework.Assert.AreEqual("refs/remotes/origin/master", AllRefNames(git2.BranchList
+					().SetListMode(ListBranchCommand.ListMode.REMOTE).Call()));
+				// Same thing, but now test with bare repo
+				directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
+				command = Git.CloneRepository();
+				command.SetBranch("refs/heads/master");
+				command.SetBranchesToClone(Collections.SingletonList("refs/heads/master"));
+				command.SetDirectory(directory);
+				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+				command.SetBare(true);
+				git2 = command.Call();
+				AddRepoToClose(git2.GetRepository());
+				NUnit.Framework.Assert.IsNotNull(git2);
+				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+					);
+				NUnit.Framework.Assert.AreEqual("refs/heads/master", AllRefNames(git2.BranchList(
+					).SetListMode(ListBranchCommand.ListMode.ALL).Call()));
 			}
 			catch (Exception e)
 			{
 				NUnit.Framework.Assert.Fail(e.Message);
 			}
+		}
+
+		public static string AllRefNames(IList<Ref> refs)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (Ref f in refs)
+			{
+				if (sb.Length > 0)
+				{
+					sb.Append(", ");
+				}
+				sb.Append(f.GetName());
+			}
+			return sb.ToString();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

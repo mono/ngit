@@ -512,6 +512,15 @@
     <Compile Include="NGit.Api\ShowNoteCommand.cs" />
     <Compile Include="NGit.Api\LsRemoteCommand.cs" />
     <Compile Include="NGit.Util\RelativeDateFormatter.cs" />
+    <Compile Include="NGit.Api\BlameCommand.cs" />
+    <Compile Include="NGit.Api\CleanCommand.cs" />
+    <Compile Include="NGit.Blame\BlameGenerator.cs" />
+    <Compile Include="NGit.Blame\BlameResult.cs" />
+    <Compile Include="NGit.Blame\Candidate.cs" />
+    <Compile Include="NGit.Blame\Region.cs" />
+    <Compile Include="NGit.Blame\ReverseWalk.cs" />
+    <Compile Include="NGit.Diff\PatchIdDiffFormatter.cs" />
+    <Compile Include="NGit.Util.IO\NullOutputStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

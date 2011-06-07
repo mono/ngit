@@ -68,6 +68,7 @@ namespace NGit.Api
 				InitCommand command = new InitCommand();
 				command.SetDirectory(directory);
 				Repository repository = command.Call().GetRepository();
+				AddRepoToClose(repository);
 				NUnit.Framework.Assert.IsNotNull(repository);
 			}
 			catch (Exception e)
@@ -86,6 +87,7 @@ namespace NGit.Api
 				command.SetDirectory(directory);
 				command.SetBare(true);
 				Repository repository = command.Call().GetRepository();
+				AddRepoToClose(repository);
 				NUnit.Framework.Assert.IsNotNull(repository);
 				NUnit.Framework.Assert.IsTrue(repository.IsBare);
 			}

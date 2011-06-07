@@ -127,5 +127,42 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(commit2.Id, db.Resolve(trackingBranch));
 			NUnit.Framework.Assert.AreEqual(commit2.Id, db2.Resolve(branch));
 		}
+
+		/// <summary>Check that pushes over file protocol lead to appropriate ref-updates.</summary>
+		/// <remarks>Check that pushes over file protocol lead to appropriate ref-updates.</remarks>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPushRefUpdate()
+		{
+			Git git = new Git(db);
+			Git git2 = new Git(CreateBareRepository());
+			StoredConfig config = git.GetRepository().GetConfig();
+			RemoteConfig remoteConfig = new RemoteConfig(config, "test");
+			URIish uri = new URIish(git2.GetRepository().Directory.ToURI().ToURL());
+			remoteConfig.AddURI(uri);
+			remoteConfig.AddPushRefSpec(new RefSpec("+refs/heads/*:refs/heads/*"));
+			remoteConfig.Update(config);
+			config.Save();
+			WriteTrashFile("f", "content of f");
+			git.Add().AddFilepattern("f").Call();
+			RevCommit commit = git.Commit().SetMessage("adding f").Call();
+			NUnit.Framework.Assert.AreEqual(null, git2.GetRepository().Resolve("refs/heads/master"
+				));
+			git.Push().SetRemote("test").Call();
+			NUnit.Framework.Assert.AreEqual(commit.Id, git2.GetRepository().Resolve("refs/heads/master"
+				));
+			git.BranchCreate().SetName("refs/heads/test").Call();
+			git.Checkout().SetName("refs/heads/test").Call();
+			for (int i = 0; i < 6; i++)
+			{
+				WriteTrashFile("f" + i, "content of f" + i);
+				git.Add().AddFilepattern("f" + i).Call();
+				commit = git.Commit().SetMessage("adding f" + i).Call();
+				git.Push().SetRemote("test").Call();
+				git2.GetRepository().GetAllRefs();
+				NUnit.Framework.Assert.AreEqual(commit.Id, git2.GetRepository().Resolve("refs/heads/test"
+					), "failed to update on attempt " + i);
+			}
+		}
 	}
 }

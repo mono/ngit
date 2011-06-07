@@ -149,7 +149,6 @@ namespace NGit.Storage.File
 			IDictionary<string, Ref> all;
 			Ref head;
 			WriteLooseRef(Constants.HEAD, A);
-			BUG_WorkAroundRacyGitIssues(Constants.HEAD);
 			all = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(1, all.Count);
 			NUnit.Framework.Assert.IsTrue(all.ContainsKey(Constants.HEAD), "has HEAD");
@@ -169,7 +168,6 @@ namespace NGit.Storage.File
 			Ref master;
 			WriteLooseRef(Constants.HEAD, A);
 			WriteLooseRef("refs/heads/master", B);
-			BUG_WorkAroundRacyGitIssues(Constants.HEAD);
 			all = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(2, all.Count);
 			head = all.Get(Constants.HEAD);
@@ -298,7 +296,6 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsTrue(heads.ContainsKey("refs/heads/B"));
 			NUnit.Framework.Assert.IsTrue(heads.ContainsKey("refs/heads/C"));
 			WriteLooseRef("refs/heads/B", "FAIL\n");
-			BUG_WorkAroundRacyGitIssues("refs/heads/B");
 			heads = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(2, heads.Count);
 			a = heads.Get("refs/heads/A");
@@ -505,7 +502,6 @@ namespace NGit.Storage.File
 			all = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(A, all.Get(Constants.HEAD).GetObjectId());
 			WriteLooseRef("refs/heads/master", B);
-			BUG_WorkAroundRacyGitIssues("refs/heads/master");
 			all = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(B, all.Get(Constants.HEAD).GetObjectId());
 		}
@@ -519,7 +515,6 @@ namespace NGit.Storage.File
 			all = refdir.GetRefs(RefDatabase.ALL);
 			NUnit.Framework.Assert.AreEqual(A, all.Get(Constants.HEAD).GetObjectId());
 			WriteLooseRef("refs/heads/master", B);
-			BUG_WorkAroundRacyGitIssues("refs/heads/master");
 			Ref master = refdir.GetRef("refs/heads/master");
 			NUnit.Framework.Assert.AreEqual(B, master.GetObjectId());
 		}
@@ -705,7 +700,6 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsFalse(r.IsSymbolic());
 			WriteLooseRef("refs/5", "ref: refs/6\n");
 			WriteLooseRef("refs/6", "ref: refs/end\n");
-			BUG_WorkAroundRacyGitIssues("refs/5");
 			all = refdir.GetRefs(RefDatabase.ALL);
 			r = all.Get("refs/1");
 			NUnit.Framework.Assert.IsNull(r, "mising 1 due to cycle");
@@ -1029,26 +1023,6 @@ namespace NGit.Storage.File
 		{
 			FilePath path = new FilePath(diskRepo.Directory, name);
 			NUnit.Framework.Assert.IsTrue(path.Delete(), "deleted " + name);
-		}
-
-		/// <summary>Kick the timestamp of a local file.</summary>
-		/// <remarks>
-		/// Kick the timestamp of a local file.
-		/// <p>
-		/// We shouldn't have to make these method calls. The cache is using file
-		/// system timestamps, and on many systems unit tests run faster than the
-		/// modification clock. Dumping the cache after we make an edit behind
-		/// RefDirectory's back allows the tests to pass.
-		/// </remarks>
-		/// <param name="name">the file in the repository to force a time change on.</param>
-		private void BUG_WorkAroundRacyGitIssues(string name)
-		{
-			FilePath path = new FilePath(diskRepo.Directory, name);
-			long old = path.LastModified();
-			long set = 1250379778668L;
-			// Sat Aug 15 20:12:58 GMT-03:30 2009
-			path.SetLastModified(set);
-			NUnit.Framework.Assert.IsTrue(old != path.LastModified(), "time changed");
 		}
 	}
 }

@@ -967,7 +967,7 @@ namespace NGit.Api
 			git.Commit().SetMessage("commit3").Call();
 			// checkout topic branch / modify file2 and add
 			CheckoutBranch("refs/heads/topic");
-			WriteTrashFile("file2", "uncommitted file2");
+			FilePath uncommittedFile = WriteTrashFile("file2", "uncommitted file2");
 			git.Add().AddFilepattern("file2").Call();
 			// do not commit
 			// rebase
@@ -983,6 +983,9 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsNotNull(exception);
 			NUnit.Framework.Assert.AreEqual("Checkout conflict with files: \nfile2", exception
 				.Message);
+			CheckFile(uncommittedFile, "uncommitted file2");
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, git.GetRepository().GetRepositoryState
+				());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -1278,6 +1281,39 @@ namespace NGit.Api
 			CheckFile(new FilePath(db.WorkTree, "file2"), "more change");
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.FAST_FORWARD, res.GetStatus()
 				);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseShouldLeaveWorkspaceUntouchedWithUnstagedChangesConflict
+			()
+		{
+			WriteTrashFile(FILE1, "initial file");
+			git.Add().AddFilepattern(FILE1).Call();
+			RevCommit initial = git.Commit().SetMessage("initial commit").Call();
+			CreateBranch(initial, "refs/heads/side");
+			WriteTrashFile(FILE1, "updated file");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("updated FILE1 on master").Call();
+			// switch to side, modify the file
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile(FILE1, "side update");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("updated FILE1 on side").Call();
+			FilePath theFile = WriteTrashFile(FILE1, "dirty the file");
+			// and attempt to rebase
+			try
+			{
+				RebaseResult rebaseResult = git.Rebase().SetUpstream("refs/heads/master").Call();
+				NUnit.Framework.Assert.Fail("Checkout with conflict should have occured, not " + 
+					rebaseResult.GetStatus());
+			}
+			catch (JGitInternalException)
+			{
+				CheckFile(theFile, "dirty the file");
+			}
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, git.GetRepository().GetRepositoryState
+				());
 		}
 	}
 }

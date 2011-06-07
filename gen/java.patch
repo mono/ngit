@@ -111,7 +111,7 @@ index 1ec8685..f967a05 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 114ef03..db9998f 100644
+index 1503857..175353e 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -84,6 +84,7 @@
@@ -122,7 +122,7 @@ index 114ef03..db9998f 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
-@@ -671,30 +672,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
+@@ -677,30 +678,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -159,7 +159,7 @@ index 114ef03..db9998f 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -916,10 +914,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -923,10 +921,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -834,10 +834,10 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 50f5713..81e5f93 100644
+index 0e50b93..727f139 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-@@ -184,7 +184,7 @@
+@@ -185,7 +185,7 @@
  
  	private final RevFlagSet SAVE;
  
@@ -846,7 +846,7 @@ index 50f5713..81e5f93 100644
  
  	private boolean noDone;
  
-@@ -636,14 +636,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -637,14 +637,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  				// If both sides have the same object; let the client know.
  				//
  				switch (multiAck) {
@@ -864,7 +864,7 @@ index 50f5713..81e5f93 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -665,12 +665,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -666,12 +666,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  					didOkToGiveUp = true;
  					if (okToGiveUp()) {
  						switch (multiAck) {

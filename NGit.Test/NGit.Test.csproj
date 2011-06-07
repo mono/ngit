@@ -232,6 +232,10 @@
     <Compile Include="NGit.Api\LsRemoteCommandTest.cs" />
     <Compile Include="NGit.Api\PathCheckoutCommandTest.cs" />
     <Compile Include="NGit.Util\RelativeDateFormatterTest.cs" />
+    <Compile Include="NGit.Api.Blame\BlameGeneratorTest.cs" />
+    <Compile Include="NGit.Api\BlameCommandTest.cs" />
+    <Compile Include="NGit.Api\CleanCommandTest.cs" />
+    <Compile Include="NGit.Diff\PatchIdDiffFormatterTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

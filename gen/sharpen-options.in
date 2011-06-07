@@ -169,6 +169,7 @@
 -methodMapping java.util.IList<>.remove RemoveAt
 -methodMapping java.util.ArrayList.remove RemoveAt
 -methodMapping java.lang.Integer.toOctalString Sharpen.Extensions.ToOctalString
+-methodMapping java.lang.Integer.toHexString Sharpen.Extensions.ToHexString
 -methodMapping java.lang.Integer.bitCount Sharpen.Extensions.BitCount
 -methodMapping java.lang.Integer.numberOfLeadingZeros Sharpen.Extensions.NumberOfLeadingZeros
 -methodMapping java.lang.Integer.numberOfTrailingZeros Sharpen.Extensions.NumberOfTrailingZeros

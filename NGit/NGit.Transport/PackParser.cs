@@ -125,6 +125,8 @@ namespace NGit.Transport
 
 		private bool needBaseObjectIds;
 
+		private bool checkEofAfterPackFooter;
+
 		private long objectCount;
 
 		private PackedObjectInfo[] entries;
@@ -296,6 +298,20 @@ namespace NGit.Transport
 		public virtual void SetNeedBaseObjectIds(bool b)
 		{
 			this.needBaseObjectIds = b;
+		}
+
+		/// <returns>true if the EOF should be read from the input after the footer.</returns>
+		public virtual bool IsCheckEofAfterPackFooter()
+		{
+			return checkEofAfterPackFooter;
+		}
+
+		/// <summary>Ensure EOF is read from the input stream after the footer.</summary>
+		/// <remarks>Ensure EOF is read from the input stream after the footer.</remarks>
+		/// <param name="b">true if the EOF should be read; false if it is not checked.</param>
+		public virtual void SetCheckEofAfterPackFooter(bool b)
+		{
+			checkEofAfterPackFooter = b;
 		}
 
 		/// <returns>the new objects that were sent by the user</returns>
@@ -899,6 +915,26 @@ namespace NGit.Transport
 			byte[] srcHash = new byte[20];
 			System.Array.Copy(buf, c, srcHash, 0, 20);
 			Use(20);
+			// The input stream should be at EOF at this point. We do not support
+			// yielding back any remaining buffered data after the pack footer, so
+			// protocols that embed a pack stream are required to either end their
+			// stream with the pack, or embed the pack with a framing system like
+			// the SideBandInputStream does.
+			if (bAvail != 0)
+			{
+				throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().expectedEOFReceived
+					, "\\x" + Sharpen.Extensions.ToHexString(buf[bOffset] & unchecked((int)(0xff))))
+					);
+			}
+			if (IsCheckEofAfterPackFooter())
+			{
+				int eof = @in.Read();
+				if (0 <= eof)
+				{
+					throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().expectedEOFReceived
+						, "\\x" + Sharpen.Extensions.ToHexString(eof)));
+				}
+			}
 			if (!Arrays.Equals(actHash, srcHash))
 			{
 				throw new CorruptObjectException(JGitText.Get().corruptObjectPackfileChecksumIncorrect

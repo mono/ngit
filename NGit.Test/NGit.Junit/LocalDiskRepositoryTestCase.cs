@@ -324,6 +324,16 @@ namespace NGit.Junit
 			return db;
 		}
 
+		/// <summary>
+		/// Adds a repository to the list of repositories which is closed at the end
+		/// of the tests
+		/// </summary>
+		/// <param name="r">the repository to be closed</param>
+		public virtual void AddRepoToClose(Repository r)
+		{
+			toClose.AddItem(r);
+		}
+
 		/// <summary>Creates a new unique directory for a test repository</summary>
 		/// <param name="bare">
 		/// true for a bare repository; false for a repository with a

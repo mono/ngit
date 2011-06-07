@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.IO;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using NGit;
 using NGit.Junit;
@@ -48,6 +49,7 @@ using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Transport;
 using NGit.Util;
+using NGit.Util.IO;
 using NUnit.Framework;
 using Sharpen;
 
@@ -183,6 +185,35 @@ namespace NGit.Transport
 			PackParser p = Index(new ByteArrayInputStream(pack.ToByteArray()));
 			p.SetAllowThin(false);
 			p.Parse(NullProgressMonitor.INSTANCE);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPackWithTrailingGarbage()
+		{
+			TestRepository d = new TestRepository(db);
+			RevBlob a = d.Blob("a");
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
+			PackHeader(pack, 1);
+			pack.Write((Constants.OBJ_REF_DELTA) << 4 | 4);
+			a.CopyRawTo(pack);
+			Deflate(pack, new byte[] { unchecked((int)(0x1)), unchecked((int)(0x1)), unchecked(
+				(int)(0x1)), (byte)('b') });
+			Digest(pack);
+			PackParser p = Index(new UnionInputStream(new ByteArrayInputStream(pack.ToByteArray
+				()), new ByteArrayInputStream(new byte[] { unchecked((int)(0x7e)) })));
+			p.SetAllowThin(true);
+			p.SetCheckEofAfterPackFooter(true);
+			try
+			{
+				p.Parse(NullProgressMonitor.INSTANCE);
+				NUnit.Framework.Assert.Fail("Pack with trailing garbage was accepted");
+			}
+			catch (IOException err)
+			{
+				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().expectedEOFReceived
+					, "\\x73"), err.Message);
+			}
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

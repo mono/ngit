@@ -76,6 +76,8 @@ namespace NGit.Api
 
 		private bool cloneAllBranches;
 
+		private bool noCheckout;
+
 		private ICollection<string> branchesToClone;
 
 		/// <summary>
@@ -97,7 +99,10 @@ namespace NGit.Api
 				URIish u = new URIish(uri);
 				Repository repository = Init(u);
 				FetchResult result = Fetch(repository, u);
-				Checkout(repository, result);
+				if (!noCheckout)
+				{
+					Checkout(repository, result);
+				}
 				return new Git(repository);
 			}
 			catch (IOException ioe)
@@ -135,7 +140,7 @@ namespace NGit.Api
 			// create the remote config and save it
 			RemoteConfig config = new RemoteConfig(repo.GetConfig(), remote);
 			config.AddURI(u);
-			string dst = Constants.R_REMOTES + config.Name;
+			string dst = bare ? Constants.R_HEADS : Constants.R_REMOTES + config.Name;
 			RefSpec refSpec = new RefSpec();
 			refSpec = refSpec.SetForceUpdate(true);
 			refSpec = refSpec.SetSourceDestination(Constants.R_HEADS + "*", dst + "/*");
@@ -396,6 +401,21 @@ namespace NGit.Api
 			)
 		{
 			this.branchesToClone = branchesToClone;
+			return this;
+		}
+
+		/// <param name="noCheckout">
+		/// if set to <code>true</code> no branch will be checked out
+		/// after the clone. This enhances performance of the clone
+		/// command when there is no need for a checked out branch.
+		/// </param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual CloneCommand SetNoCheckout(bool noCheckout)
+		{
+			this.noCheckout = noCheckout;
 			return this;
 		}
 	}

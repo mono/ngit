@@ -907,6 +907,17 @@ namespace NGit.Transport
 		{
 			bool sideband = options.Contains(OPTION_SIDE_BAND) || options.Contains(OPTION_SIDE_BAND_64K
 				);
+			if (!biDirectionalPipe)
+			{
+				// Ensure the request was fully consumed. Any remaining input must
+				// be a protocol error. If we aren't at EOF the implementation is broken.
+				int eof = rawIn.Read();
+				if (0 <= eof)
+				{
+					throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().expectedEOFReceived
+						, "\\x" + Sharpen.Extensions.ToHexString(eof)));
+				}
+			}
 			ProgressMonitor pm = NullProgressMonitor.INSTANCE;
 			OutputStream packOut = rawOut;
 			SideBandOutputStream msgOut = null;
