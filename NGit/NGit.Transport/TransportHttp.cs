@@ -641,7 +641,7 @@ namespace NGit.Transport
 			string expType = "application/x-" + service + "-advertisement";
 			//$NON-NLS-1$ //$NON-NLS-2$
 			string actType = c.GetContentType();
-			return expType.Equals(actType);
+			return actType.StartsWith(expType);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
