@@ -1215,6 +1215,19 @@ index 2d7a662..8ca5c16 100644
  				}
  				sb.Append("]");
  			}
+diff --git a/NGit/NGit.Api/CleanCommand.cs b/NGit/NGit.Api/CleanCommand.cs
+index 205c17e..9e8820d 100644
+--- a/NGit/NGit.Api/CleanCommand.cs
++++ b/NGit/NGit.Api/CleanCommand.cs
+@@ -57,7 +57,7 @@ namespace NGit.Api
+ 	/// *      >Git documentation about Clean</a></seealso>
+ 	public class CleanCommand : GitCommand<ICollection<string>>
+ 	{
+-		private ICollection<string> paths = Sharpen.Collections.EmptySet();
++		private ICollection<string> paths = Sharpen.Collections.EmptySet<string>();
+ 
+ 		private bool dryRun;
+ 
 diff --git a/NGit/NGit.Api/CreateBranchCommand.cs b/NGit/NGit.Api/CreateBranchCommand.cs
 index c81f7c0..111c265 100644
 --- a/NGit/NGit.Api/CreateBranchCommand.cs
@@ -2126,6 +2139,19 @@ index 2a0724d..79e77aa 100644
  		{
  			public _AsyncRevObjectQueue_914(RevWalk _enclosing, Sharpen.Iterator<RevObject> objItr
  				, AsyncObjectLoaderQueue<T> lItr)
+diff --git a/NGit/NGit.Storage.File/FileRepository.cs b/NGit/NGit.Storage.File/FileRepository.cs
+index 3fab83c..8653aa2 100644
+--- a/NGit/NGit.Storage.File/FileRepository.cs
++++ b/NGit/NGit.Storage.File/FileRepository.cs
+@@ -157,7 +157,7 @@ namespace NGit.Storage.File
+ 			{
+ 				string repositoryFormatVersion = ((FileBasedConfig)GetConfig()).GetString(ConfigConstants
+ 					.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_REPO_FORMAT_VERSION);
+-				if (!"0".Equals(repositoryFormatVersion))
++				if (!string.IsNullOrEmpty (repositoryFormatVersion) && !"0".Equals(repositoryFormatVersion))
+ 				{
+ 					throw new IOException(MessageFormat.Format(JGitText.Get().unknownRepositoryFormat2
+ 						, repositoryFormatVersion));
 diff --git a/NGit/NGit.Storage.File/FileSnapshot.cs b/NGit/NGit.Storage.File/FileSnapshot.cs
 index 86bb157..23ddbb0 100644
 --- a/NGit/NGit.Storage.File/FileSnapshot.cs
