@@ -149,7 +149,7 @@ convert: validate-pull
 	@echo -e "$(SB)Applying old patch$(EB)"
 	$(NGIT_GIT) branch -D merged 2> /dev/null || true
 	$(NGIT_GIT) checkout -b merged master
-	patch -d $(NGIT_DIR) -p1 < $(CS_PATCH)
+	patch -d $(NGIT_DIR) -p1 < $(CS_PATCH) || true
 	$(NGIT_GIT) commit -a -m "Merge"
 	@echo -e "$(SB)Merging new changes$(EB)"
 	@echo -e "$(SB)In case of merge conflict, cd to the $(NGIT_DIR) directory, resolve the conflics and use 'git rebase --continue' to finish$(EB)"
