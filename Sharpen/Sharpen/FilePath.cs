@@ -380,12 +380,21 @@ namespace Sharpen
 			try {
 				UnixFileInfo fi = new UnixFileInfo (path);
 				FileAccessPermissions perms = fi.FileAccessPermissions;
-				if ((perms & FileAccessPermissions.UserRead) != 0)
-					perms |= FileAccessPermissions.UserExecute;
-				if ((perms & FileAccessPermissions.OtherRead) != 0)
-					perms |= FileAccessPermissions.OtherExecute;
-				if ((perms & FileAccessPermissions.GroupRead) != 0)
-					perms |= FileAccessPermissions.GroupExecute;
+				if (exec) {
+					if (perms.HasFlag (FileAccessPermissions.UserRead))
+						perms |= FileAccessPermissions.UserExecute;
+					if (perms.HasFlag (FileAccessPermissions.OtherRead))
+						perms |= FileAccessPermissions.OtherExecute;
+					if ((perms.HasFlag (FileAccessPermissions.GroupRead)))
+						perms |= FileAccessPermissions.GroupExecute;
+				} else {
+					if (perms.HasFlag (FileAccessPermissions.UserRead))
+						perms &= ~FileAccessPermissions.UserExecute;
+					if (perms.HasFlag (FileAccessPermissions.OtherRead))
+						perms &= ~FileAccessPermissions.OtherExecute;
+					if ((perms.HasFlag (FileAccessPermissions.GroupRead)))
+						perms &= ~FileAccessPermissions.GroupExecute;
+				}
 				fi.FileAccessPermissions = perms;
 				return true;
 			} catch {
