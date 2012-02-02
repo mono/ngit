@@ -41,10 +41,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using NGit;
 using NGit.Api;
-using NGit.Util;
 using Sharpen;
 
 namespace NGit.Api
@@ -59,52 +57,46 @@ namespace NGit.Api
 			base.SetUp();
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestInitRepository()
 		{
-			try
-			{
-				FilePath directory = CreateTempDirectory("testInitRepository");
-				InitCommand command = new InitCommand();
-				command.SetDirectory(directory);
-				Repository repository = command.Call().GetRepository();
-				AddRepoToClose(repository);
-				NUnit.Framework.Assert.IsNotNull(repository);
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
-		}
-
-		[NUnit.Framework.Test]
-		public virtual void TestInitBareRepository()
-		{
-			try
-			{
-				FilePath directory = CreateTempDirectory("testInitBareRepository");
-				InitCommand command = new InitCommand();
-				command.SetDirectory(directory);
-				command.SetBare(true);
-				Repository repository = command.Call().GetRepository();
-				AddRepoToClose(repository);
-				NUnit.Framework.Assert.IsNotNull(repository);
-				NUnit.Framework.Assert.IsTrue(repository.IsBare);
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			FilePath directory = CreateTempDirectory("testInitRepository");
+			InitCommand command = new InitCommand();
+			command.SetDirectory(directory);
+			Repository repository = command.Call().GetRepository();
+			AddRepoToClose(repository);
+			NUnit.Framework.Assert.IsNotNull(repository);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		public static FilePath CreateTempDirectory(string name)
+		[NUnit.Framework.Test]
+		public virtual void TestInitNonEmptyRepository()
 		{
-			FilePath temp;
-			temp = FilePath.CreateTempFile(name, System.Convert.ToString(Runtime.NanoTime()));
-			FileUtils.Delete(temp);
-			FileUtils.Mkdir(temp);
-			return temp;
+			FilePath directory = CreateTempDirectory("testInitRepository2");
+			FilePath someFile = new FilePath(directory, "someFile");
+			someFile.CreateNewFile();
+			NUnit.Framework.Assert.IsTrue(someFile.Exists());
+			NUnit.Framework.Assert.IsTrue(directory.ListFiles().Length > 0);
+			InitCommand command = new InitCommand();
+			command.SetDirectory(directory);
+			Repository repository = command.Call().GetRepository();
+			AddRepoToClose(repository);
+			NUnit.Framework.Assert.IsNotNull(repository);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestInitBareRepository()
+		{
+			FilePath directory = CreateTempDirectory("testInitBareRepository");
+			InitCommand command = new InitCommand();
+			command.SetDirectory(directory);
+			command.SetBare(true);
+			Repository repository = command.Call().GetRepository();
+			AddRepoToClose(repository);
+			NUnit.Framework.Assert.IsNotNull(repository);
+			NUnit.Framework.Assert.IsTrue(repository.IsBare);
 		}
 	}
 }

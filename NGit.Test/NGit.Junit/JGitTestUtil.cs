@@ -42,8 +42,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.IO;
 using System.Reflection;
 using NGit.Junit;
+using NGit.Storage.File;
 using NGit.Util;
 using NUnit.Framework;
 using Sharpen;
@@ -131,6 +133,47 @@ namespace NGit.Junit
 			string path = Path.Combine (AppDomain.CurrentDomain.BaseDirectory, "resources");
 			path = Path.Combine (path, "global");
 			return new FilePath (Path.Combine (path, fileName));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public static FilePath WriteTrashFile(FileRepository db, string name, string data
+			)
+		{
+			FilePath path = new FilePath(db.WorkTree, name);
+			Write(path, data);
+			return path;
+		}
+
+		/// <summary>Write a string as a UTF-8 file.</summary>
+		/// <remarks>Write a string as a UTF-8 file.</remarks>
+		/// <param name="f">
+		/// file to write the string to. Caller is responsible for making
+		/// sure it is in the trash directory or will otherwise be cleaned
+		/// up at the end of the test. If the parent directory does not
+		/// exist, the missing parent directories are automatically
+		/// created.
+		/// </param>
+		/// <param name="body">content to write to the file.</param>
+		/// <exception cref="System.IO.IOException">the file could not be written.</exception>
+		public static void Write(FilePath f, string body)
+		{
+			FileUtils.Mkdirs(f.GetParentFile(), true);
+			TextWriter w = new OutputStreamWriter(new FileOutputStream(f), "UTF-8");
+			try
+			{
+				w.Write(body);
+			}
+			finally
+			{
+				w.Close();
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public static void DeleteTrashFile(FileRepository db, string name)
+		{
+			FilePath path = new FilePath(db.WorkTree, name);
+			FileUtils.Delete(path);
 		}
 	}
 }

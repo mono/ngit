@@ -45,6 +45,7 @@ using NGit;
 using NGit.Api;
 using NGit.Merge;
 using NGit.Revwalk;
+using NGit.Storage.File;
 using Sharpen;
 
 namespace NGit.Api
@@ -202,6 +203,15 @@ namespace NGit.Api
 			// index shall be unchanged
 			NUnit.Framework.Assert.AreEqual(indexState, IndexState(CONTENT));
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+			if (reason == null)
+			{
+				ReflogReader reader = db.GetReflogReader(Constants.HEAD);
+				NUnit.Framework.Assert.IsTrue(reader.GetLastEntry().GetComment().StartsWith("cherry-pick: "
+					));
+				reader = db.GetReflogReader(db.GetBranch());
+				NUnit.Framework.Assert.IsTrue(reader.GetLastEntry().GetComment().StartsWith("cherry-pick: "
+					));
+			}
 		}
 	}
 }

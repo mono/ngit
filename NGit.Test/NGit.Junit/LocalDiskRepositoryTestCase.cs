@@ -105,7 +105,7 @@ namespace NGit.Junit
 			{
 				if (shutdownHook == null)
 				{
-					shutdownHook = new _Thread_121(this);
+					shutdownHook = new _Thread_118(this);
 					// On windows accidentally open files or memory
 					// mapped regions may prevent files from being deleted.
 					// Suggesting a GC increases the likelihood that our
@@ -134,9 +134,9 @@ namespace NGit.Junit
 			WindowCache.Reconfigure(c);
 		}
 
-		private sealed class _Thread_121 : Sharpen.Thread
+		private sealed class _Thread_118 : Sharpen.Thread
 		{
-			public _Thread_121(LocalDiskRepositoryTestCase _enclosing)
+			public _Thread_118(LocalDiskRepositoryTestCase _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -334,6 +334,24 @@ namespace NGit.Junit
 			toClose.AddItem(r);
 		}
 
+		private string CreateUniqueTestFolderPrefix()
+		{
+			return "test" + (Runtime.CurrentTimeMillis() + "_" + (testCount++));
+		}
+
+		/// <summary>Creates a unique directory for a test</summary>
+		/// <param name="name">a subdirectory</param>
+		/// <returns>a unique directory for a test</returns>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		protected internal virtual FilePath CreateTempDirectory(string name)
+		{
+			string gitdirName = CreateUniqueTestFolderPrefix();
+			FilePath parent = new FilePath(trash, gitdirName);
+			FilePath directory = new FilePath(parent, name);
+			FileUtils.Mkdirs(directory);
+			return directory.GetCanonicalFile();
+		}
+
 		/// <summary>Creates a new unique directory for a test repository</summary>
 		/// <param name="bare">
 		/// true for a bare repository; false for a repository with a
@@ -343,10 +361,14 @@ namespace NGit.Junit
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		protected internal virtual FilePath CreateUniqueTestGitDir(bool bare)
 		{
-			string uniqueId = Runtime.CurrentTimeMillis() + "_" + (testCount++);
-			string gitdirName = "test" + uniqueId + (bare ? string.Empty : "/") + Constants.DOT_GIT;
-			FilePath gitdir = new FilePath(trash, gitdirName).GetCanonicalFile();
-			return gitdir;
+			string gitdirName = CreateUniqueTestFolderPrefix();
+			if (!bare)
+			{
+				gitdirName += "/";
+			}
+			gitdirName += Constants.DOT_GIT;
+			FilePath gitdir = new FilePath(trash, gitdirName);
+			return gitdir.GetCanonicalFile();
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -441,16 +463,7 @@ namespace NGit.Junit
 		/// <exception cref="System.IO.IOException">the file could not be written.</exception>
 		protected internal virtual void Write(FilePath f, string body)
 		{
-			FileUtils.Mkdirs(f.GetParentFile(), true);
-			TextWriter w = new OutputStreamWriter(new FileOutputStream(f), "UTF-8");
-			try
-			{
-				w.Write(body);
-			}
-			finally
-			{
-				w.Close();
-			}
+			JGitTestUtil.Write(f, body);
 		}
 
 		/// <summary>Fully read a UTF-8 file and return as a string.</summary>

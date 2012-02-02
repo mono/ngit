@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using NGit.Junit;
 using NGit.Util;
 using Sharpen;
 
@@ -50,10 +51,16 @@ namespace NGit.Util
 	[NUnit.Framework.TestFixture]
 	public class RelativeDateFormatterTest
 	{
+		[NUnit.Framework.SetUp]
+		public virtual void SetUp()
+		{
+			SystemReader.SetInstance(new MockSystemReader());
+		}
+
 		private void AssertFormat(long ageFromNow, long timeUnit, string expectedFormat)
 		{
-			DateTime d = Sharpen.Extensions.CreateDate(Runtime.CurrentTimeMillis() - ageFromNow
-				 * timeUnit);
+			DateTime d = Sharpen.Extensions.CreateDate(SystemReader.GetInstance().GetCurrentTime
+				() - ageFromNow * timeUnit);
 			string s = RelativeDateFormatter.Format(d);
 			NUnit.Framework.Assert.AreEqual(expectedFormat, s);
 		}
@@ -114,10 +121,10 @@ namespace NGit.Util
 		[NUnit.Framework.Test]
 		public virtual void TestFormatYearsMonths()
 		{
-			AssertFormat(366, RelativeDateFormatter.DAY_IN_MILLIS, "1 year, 0 month ago");
+			AssertFormat(366, RelativeDateFormatter.DAY_IN_MILLIS, "1 year ago");
 			AssertFormat(380, RelativeDateFormatter.DAY_IN_MILLIS, "1 year, 1 month ago");
 			AssertFormat(410, RelativeDateFormatter.DAY_IN_MILLIS, "1 year, 2 months ago");
-			AssertFormat(2, RelativeDateFormatter.YEAR_IN_MILLIS, "2 years, 0 month ago");
+			AssertFormat(2, RelativeDateFormatter.YEAR_IN_MILLIS, "2 years ago");
 			AssertFormat(1824, RelativeDateFormatter.DAY_IN_MILLIS, "4 years, 12 months ago");
 		}
 

@@ -64,7 +64,7 @@ namespace NGit.Transport
 			base.SetUp();
 			home = new FilePath(trash, "home");
 			FileUtils.Mkdir(home);
-			configFile = new FilePath(new FilePath(home, ".ssh"), "config");
+			configFile = new FilePath(new FilePath(home, ".ssh"), Constants.CONFIG);
 			FileUtils.Mkdir(configFile.GetParentFile());
 			Runtime.SetProperty("user.name", "jex_junit");
 			osc = new OpenSshConfig(home, configFile);

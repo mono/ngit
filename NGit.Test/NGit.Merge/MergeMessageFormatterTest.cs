@@ -111,7 +111,8 @@ namespace NGit.Merge
 			Ref remoteA = db.GetRef("refs/remotes/origin/remote-a");
 			Ref master = db.GetRef("refs/heads/master");
 			string message = formatter.Format(Arrays.AsList(remoteA), master);
-			NUnit.Framework.Assert.AreEqual("Merge remote branch 'origin/remote-a'", message);
+			NUnit.Framework.Assert.AreEqual("Merge remote-tracking branch 'origin/remote-a'", 
+				message);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -122,7 +123,7 @@ namespace NGit.Merge
 			Ref remoteA = db.GetRef("refs/remotes/origin/remote-a");
 			Ref master = db.GetRef("refs/heads/master");
 			string message = formatter.Format(Arrays.AsList(c, remoteA), master);
-			NUnit.Framework.Assert.AreEqual("Merge branch 'c', remote branch 'origin/remote-a'"
+			NUnit.Framework.Assert.AreEqual("Merge branch 'c', remote-tracking branch 'origin/remote-a'"
 				, message);
 		}
 

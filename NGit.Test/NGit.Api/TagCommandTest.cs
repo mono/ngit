@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Collections.Generic;
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
@@ -154,6 +155,109 @@ namespace NGit.Api
 			{
 			}
 		}
+
 		// should hit here
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDelete()
+		{
+			Git git = new Git(db);
+			git.Commit().SetMessage("initial commit").Call();
+			RevTag tag = git.Tag().SetName("tag").Call();
+			NUnit.Framework.Assert.AreEqual(1, db.GetTags().Count);
+			IList<string> deleted = git.TagDelete().SetTags(tag.GetTagName()).Call();
+			NUnit.Framework.Assert.AreEqual(1, deleted.Count);
+			NUnit.Framework.Assert.AreEqual(tag.GetTagName(), Repository.ShortenRefName(deleted
+				[0]));
+			NUnit.Framework.Assert.AreEqual(0, db.GetTags().Count);
+			RevTag tag1 = git.Tag().SetName("tag1").Call();
+			RevTag tag2 = git.Tag().SetName("tag2").Call();
+			NUnit.Framework.Assert.AreEqual(2, db.GetTags().Count);
+			deleted = git.TagDelete().SetTags(tag1.GetTagName(), tag2.GetTagName()).Call();
+			NUnit.Framework.Assert.AreEqual(2, deleted.Count);
+			NUnit.Framework.Assert.AreEqual(0, db.GetTags().Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDeleteFullName()
+		{
+			Git git = new Git(db);
+			git.Commit().SetMessage("initial commit").Call();
+			RevTag tag = git.Tag().SetName("tag").Call();
+			NUnit.Framework.Assert.AreEqual(1, db.GetTags().Count);
+			IList<string> deleted = git.TagDelete().SetTags(Constants.R_TAGS + tag.GetTagName
+				()).Call();
+			NUnit.Framework.Assert.AreEqual(1, deleted.Count);
+			NUnit.Framework.Assert.AreEqual(Constants.R_TAGS + tag.GetTagName(), deleted[0]);
+			NUnit.Framework.Assert.AreEqual(0, db.GetTags().Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDeleteEmptyTagNames()
+		{
+			Git git = new Git(db);
+			git.Commit().SetMessage("initial commit").Call();
+			IList<string> deleted = git.TagDelete().SetTags().Call();
+			NUnit.Framework.Assert.AreEqual(0, deleted.Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDeleteNonExisting()
+		{
+			Git git = new Git(db);
+			git.Commit().SetMessage("initial commit").Call();
+			IList<string> deleted = git.TagDelete().SetTags("tag").Call();
+			NUnit.Framework.Assert.AreEqual(0, deleted.Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDeleteBadName()
+		{
+			Git git = new Git(db);
+			git.Commit().SetMessage("initial commit").Call();
+			IList<string> deleted = git.TagDelete().SetTags("bad~tag~name").Call();
+			NUnit.Framework.Assert.AreEqual(0, deleted.Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestShouldNotBlowUpIfThereAreNoTagsInRepository()
+		{
+			Git git = new Git(db);
+			git.Add().AddFilepattern("*").Call();
+			git.Commit().SetMessage("initial commit").Call();
+			IList<RevTag> list = git.TagList().Call();
+			NUnit.Framework.Assert.AreEqual(0, list.Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestShouldNotBlowUpIfThereAreNoCommitsInRepository()
+		{
+			Git git = new Git(db);
+			IList<RevTag> list = git.TagList().Call();
+			NUnit.Framework.Assert.AreEqual(0, list.Count);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestListAllTagsInRepositoryInOrder()
+		{
+			Git git = new Git(db);
+			git.Add().AddFilepattern("*").Call();
+			git.Commit().SetMessage("initial commit").Call();
+			git.Tag().SetName("v3").Call();
+			git.Tag().SetName("v2").Call();
+			git.Tag().SetName("v10").Call();
+			IList<RevTag> list = git.TagList().Call();
+			NUnit.Framework.Assert.AreEqual(3, list.Count);
+			NUnit.Framework.Assert.AreEqual("v10", list[0].GetTagName());
+			NUnit.Framework.Assert.AreEqual("v2", list[1].GetTagName());
+			NUnit.Framework.Assert.AreEqual("v3", list[2].GetTagName());
+		}
 	}
 }

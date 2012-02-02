@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using NGit;
+using NGit.Errors;
 using NGit.Junit;
 using NGit.Revwalk;
 using NGit.Storage.File;
@@ -212,10 +213,112 @@ namespace NGit.Transport
 			catch (IOException err)
 			{
 				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().expectedEOFReceived
-					, "\\x73"), err.Message);
+					, "\\x7e"), err.Message);
 			}
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestMaxObjectSizeFullBlob()
+		{
+			TestRepository d = new TestRepository(db);
+			byte[] data = Constants.Encode("0123456789");
+			d.Blob(data);
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
+			PackHeader(pack, 1);
+			pack.Write((Constants.OBJ_BLOB) << 4 | 10);
+			Deflate(pack, data);
+			Digest(pack);
+			PackParser p = Index(new ByteArrayInputStream(pack.ToByteArray()));
+			p.SetMaxObjectSizeLimit(11);
+			p.Parse(NullProgressMonitor.INSTANCE);
+			p = Index(new ByteArrayInputStream(pack.ToByteArray()));
+			p.SetMaxObjectSizeLimit(10);
+			p.Parse(NullProgressMonitor.INSTANCE);
+			p = Index(new ByteArrayInputStream(pack.ToByteArray()));
+			p.SetMaxObjectSizeLimit(9);
+			try
+			{
+				p.Parse(NullProgressMonitor.INSTANCE);
+				NUnit.Framework.Assert.Fail("PackParser should have failed");
+			}
+			catch (TooLargeObjectInPackException e)
+			{
+				NUnit.Framework.Assert.IsTrue(e.Message.Contains("10"));
+				// obj size
+				NUnit.Framework.Assert.IsTrue(e.Message.Contains("9"));
+			}
+		}
+
+		// max obj size
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestMaxObjectSizeDeltaBlock()
+		{
+			TestRepository d = new TestRepository(db);
+			RevBlob a = d.Blob("a");
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
+			PackHeader(pack, 1);
+			pack.Write((Constants.OBJ_REF_DELTA) << 4 | 14);
+			a.CopyRawTo(pack);
+			Deflate(pack, new byte[] { 1, 11, 11, (byte)('a'), (byte)('0'), (byte)('1'), (byte
+				)('2'), (byte)('3'), (byte)('4'), (byte)('5'), (byte)('6'), (byte)('7'), (byte)(
+				'8'), (byte)('9') });
+			Digest(pack);
+			PackParser p = Index(new ByteArrayInputStream(pack.ToByteArray()));
+			p.SetAllowThin(true);
+			p.SetMaxObjectSizeLimit(14);
+			p.Parse(NullProgressMonitor.INSTANCE);
+			p = Index(new ByteArrayInputStream(pack.ToByteArray()));
+			p.SetAllowThin(true);
+			p.SetMaxObjectSizeLimit(13);
+			try
+			{
+				p.Parse(NullProgressMonitor.INSTANCE);
+				NUnit.Framework.Assert.Fail("PackParser should have failed");
+			}
+			catch (TooLargeObjectInPackException e)
+			{
+				NUnit.Framework.Assert.IsTrue(e.Message.Contains("13"));
+				// max obj size
+				NUnit.Framework.Assert.IsFalse(e.Message.Contains("14"));
+			}
+		}
+
+		// no delta size
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestMaxObjectSizeDeltaResultSize()
+		{
+			TestRepository d = new TestRepository(db);
+			RevBlob a = d.Blob("0123456789");
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
+			PackHeader(pack, 1);
+			pack.Write((Constants.OBJ_REF_DELTA) << 4 | 4);
+			a.CopyRawTo(pack);
+			Deflate(pack, new byte[] { 10, 11, 1, (byte)('a') });
+			Digest(pack);
+			PackParser p = Index(new ByteArrayInputStream(pack.ToByteArray()));
+			p.SetAllowThin(true);
+			p.SetMaxObjectSizeLimit(11);
+			p.Parse(NullProgressMonitor.INSTANCE);
+			p = Index(new ByteArrayInputStream(pack.ToByteArray()));
+			p.SetAllowThin(true);
+			p.SetMaxObjectSizeLimit(10);
+			try
+			{
+				p.Parse(NullProgressMonitor.INSTANCE);
+				NUnit.Framework.Assert.Fail("PackParser should have failed");
+			}
+			catch (TooLargeObjectInPackException e)
+			{
+				NUnit.Framework.Assert.IsTrue(e.Message.Contains("11"));
+				// result obj size
+				NUnit.Framework.Assert.IsTrue(e.Message.Contains("10"));
+			}
+		}
+
+		// max obj size
 		/// <exception cref="System.IO.IOException"></exception>
 		private void PackHeader(TemporaryBuffer.Heap tinyPack, int cnt)
 		{

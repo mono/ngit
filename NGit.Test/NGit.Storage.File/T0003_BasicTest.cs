@@ -307,7 +307,7 @@ namespace NGit.Storage.File
 		[NUnit.Framework.Test]
 		public virtual void Test006_ReadUglyConfig()
 		{
-			FilePath cfg = new FilePath(db.Directory, "config");
+			FilePath cfg = new FilePath(db.Directory, Constants.CONFIG);
 			FileBasedConfig c = new FileBasedConfig(cfg, db.FileSystem);
 			string configStr = "  [core];comment\n\tfilemode = yes\n" + "[user]\n" + "  email = A U Thor <thor@example.com> # Just an example...\n"
 				 + " name = \"A  Thor \\\\ \\\"\\t \"\n" + "    defaultCheckInComment = a many line\\n\\\ncomment\\n\\\n"
@@ -345,7 +345,7 @@ namespace NGit.Storage.File
 		[NUnit.Framework.Test]
 		public virtual void Test008_FailOnWrongVersion()
 		{
-			FilePath cfg = new FilePath(db.Directory, "config");
+			FilePath cfg = new FilePath(db.Directory, Constants.CONFIG);
 			string badvers = "ihopethisisneveraversion";
 			string configStr = "[core]\n" + "\trepositoryFormatVersion=" + badvers + "\n";
 			Write(cfg, configStr);

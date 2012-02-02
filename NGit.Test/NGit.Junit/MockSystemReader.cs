@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using NGit;
 using NGit.Junit;
 using NGit.Storage.File;
@@ -142,7 +143,45 @@ namespace NGit.Junit
 		// Sat Aug 15 20:12:58 GMT-03:30 2009
 		public override int GetTimezone(long when)
 		{
-			return Sharpen.Extensions.GetTimeZone("GMT-03:30").GetOffset(when) / (60 * 1000);
+			return GetTimeZone().GetOffset(when) / (60 * 1000);
+		}
+
+		public override TimeZoneInfo GetTimeZone()
+		{
+			return Sharpen.Extensions.GetTimeZone("GMT-03:30");
+		}
+
+		public override CultureInfo GetLocale()
+		{
+			return CultureInfo.InvariantCulture;
+		}
+
+		/// <summary>Assign some properties for the currently executing platform</summary>
+		public virtual void SetCurrentPlatform()
+		{
+			SetProperty("os.name", Runtime.GetProperty("os.name"));
+			SetProperty("file.separator", Runtime.GetProperty("file.separator"));
+			SetProperty("path.separator", Runtime.GetProperty("path.separator"));
+			SetProperty("line.separator", Runtime.GetProperty("line.separator"));
+		}
+
+		/// <summary>Emulate Windows</summary>
+		public virtual void SetWindows()
+		{
+			SetProperty("os.name", "Windows");
+			SetProperty("file.separator", "\\");
+			SetProperty("path.separator", ";");
+			SetProperty("line.separator", "\r\n");
+		}
+
+		/// <summary>Emulate Unix</summary>
+		public virtual void SetUnix()
+		{
+			SetProperty("os.name", "*nix");
+			// Essentially anything but Windows
+			SetProperty("file.separator", "/");
+			SetProperty("path.separator", ":");
+			SetProperty("line.separator", "\n");
 		}
 	}
 }

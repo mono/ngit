@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
+using NGit.Api.Errors;
 using NGit.Dircache;
 using NGit.Revwalk;
 using NGit.Treewalk;
@@ -79,6 +80,14 @@ namespace NGit.Api
 			// create initial commit
 			git = new Git(db);
 			initialCommit = git.Commit().SetMessage("initial commit").Call();
+			// create nested file
+			FilePath dir = new FilePath(db.WorkTree, "dir");
+			FileUtils.Mkdir(dir);
+			FilePath nestedFile = new FilePath(dir, "b.txt");
+			FileUtils.CreateNewFile(nestedFile);
+			PrintWriter nesterFileWriter = new PrintWriter(nestedFile);
+			nesterFileWriter.Write("content");
+			nesterFileWriter.Flush();
 			// create file
 			indexFile = new FilePath(db.WorkTree, "a.txt");
 			FileUtils.CreateNewFile(indexFile);
@@ -86,14 +95,16 @@ namespace NGit.Api
 			writer.Write("content");
 			writer.Flush();
 			// add file and commit it
-			git.Add().AddFilepattern("a.txt").Call();
-			secondCommit = git.Commit().SetMessage("adding a.txt").Call();
+			git.Add().AddFilepattern("dir").AddFilepattern("a.txt").Call();
+			secondCommit = git.Commit().SetMessage("adding a.txt and dir/b.txt").Call();
 			prestage = DirCache.Read(db.GetIndexFile(), db.FileSystem).GetEntry(indexFile.GetName
 				());
 			// modify file and add to index
 			writer.Write("new content");
 			writer.Close();
-			git.Add().AddFilepattern("a.txt").Call();
+			nesterFileWriter.Write("new content");
+			nesterFileWriter.Close();
+			git.Add().AddFilepattern("a.txt").AddFilepattern("dir").Call();
 			// create a file not added to the index
 			untrackedFile = new FilePath(db.WorkTree, "notAddedToIndex.txt");
 			FileUtils.CreateNewFile(untrackedFile);
@@ -130,6 +141,26 @@ namespace NGit.Api
 			AssertReflog(prevHead, head);
 		}
 
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Errors.AmbiguousObjectException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestResetToNonexistingHEAD()
+		{
+			// create a file in the working tree of a fresh repo
+			git = new Git(db);
+			WriteTrashFile("f", "content");
+			try
+			{
+				git.Reset().SetRef(Constants.HEAD).Call();
+				NUnit.Framework.Assert.Fail("Expected JGitInternalException didn't occur");
+			}
+			catch (JGitInternalException)
+			{
+			}
+		}
+
+		// got the expected exception
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Errors.AmbiguousObjectException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
@@ -213,6 +244,31 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsTrue(InHead(indexFile.GetName()));
 			NUnit.Framework.Assert.IsTrue(InIndex(indexFile.GetName()));
 			NUnit.Framework.Assert.IsFalse(InIndex(untrackedFile.GetName()));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPathsResetOnDirs()
+		{
+			SetupRepository();
+			DirCacheEntry preReset = DirCache.Read(db.GetIndexFile(), db.FileSystem).GetEntry
+				("dir/b.txt");
+			NUnit.Framework.Assert.IsNotNull(preReset);
+			git.Add().AddFilepattern(untrackedFile.GetName()).Call();
+			// 'dir/b.txt' has already been modified in setupRepository
+			git.Reset().AddPath("dir").Call();
+			DirCacheEntry postReset = DirCache.Read(db.GetIndexFile(), db.FileSystem).GetEntry
+				("dir/b.txt");
+			NUnit.Framework.Assert.IsNotNull(postReset);
+			NUnit.Framework.Assert.AreNotSame(preReset.GetObjectId(), postReset.GetObjectId()
+				);
+			// check that HEAD hasn't moved
+			ObjectId head = db.Resolve(Constants.HEAD);
+			NUnit.Framework.Assert.IsTrue(head.Equals(secondCommit));
+			// check if files still exist
+			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
+			NUnit.Framework.Assert.IsTrue(InHead("dir/b.txt"));
+			NUnit.Framework.Assert.IsTrue(InIndex("dir/b.txt"));
 		}
 
 		/// <exception cref="System.Exception"></exception>

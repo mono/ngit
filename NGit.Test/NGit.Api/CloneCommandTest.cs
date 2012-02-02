@@ -41,14 +41,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using NGit;
 using NGit.Api;
+using NGit.Api.Errors;
 using NGit.Junit;
 using NGit.Revwalk;
+using NGit.Submodule;
 using Sharpen;
 
 namespace NGit.Api
@@ -82,129 +82,111 @@ namespace NGit.Api
 			git.Tag().SetName("tag-for-blob").SetObjectId(blob).Call();
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCloneRepository()
 		{
-			try
-			{
-				FilePath directory = CreateTempDirectory("testCloneRepository");
-				CloneCommand command = Git.CloneRepository();
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				Git git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				NUnit.Framework.Assert.IsNotNull(git2);
-				ObjectId id = git2.GetRepository().Resolve("tag-for-blob");
-				NUnit.Framework.Assert.IsNotNull(id);
-				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/test"
-					);
-				NUnit.Framework.Assert.AreEqual("origin", git2.GetRepository().GetConfig().GetString
-					(ConfigConstants.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_REMOTE
-					));
-				NUnit.Framework.Assert.AreEqual("refs/heads/test", git2.GetRepository().GetConfig
-					().GetString(ConfigConstants.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_MERGE
-					));
-				NUnit.Framework.Assert.AreEqual(2, git2.BranchList().SetListMode(ListBranchCommand.ListMode
-					.REMOTE).Call().Count);
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			FilePath directory = CreateTempDirectory("testCloneRepository");
+			CloneCommand command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			Git git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			ObjectId id = git2.GetRepository().Resolve("tag-for-blob");
+			NUnit.Framework.Assert.IsNotNull(id);
+			NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/test"
+				);
+			NUnit.Framework.Assert.AreEqual("origin", git2.GetRepository().GetConfig().GetString
+				(ConfigConstants.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_REMOTE
+				));
+			NUnit.Framework.Assert.AreEqual("refs/heads/test", git2.GetRepository().GetConfig
+				().GetString(ConfigConstants.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_MERGE
+				));
+			NUnit.Framework.Assert.AreEqual(2, git2.BranchList().SetListMode(ListBranchCommand.ListMode
+				.REMOTE).Call().Count);
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCloneRepositoryWithBranch()
 		{
-			try
-			{
-				FilePath directory = CreateTempDirectory("testCloneRepositoryWithBranch");
-				CloneCommand command = Git.CloneRepository();
-				command.SetBranch("refs/heads/master");
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				Git git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				NUnit.Framework.Assert.IsNotNull(git2);
-				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
-					);
-				NUnit.Framework.Assert.AreEqual("refs/heads/master, refs/remotes/origin/master, refs/remotes/origin/test"
-					, AllRefNames(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call
-					()));
-				// Same thing, but now without checkout
-				directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
-				command = Git.CloneRepository();
-				command.SetBranch("refs/heads/master");
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				command.SetNoCheckout(true);
-				git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				NUnit.Framework.Assert.IsNotNull(git2);
-				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
-					);
-				NUnit.Framework.Assert.AreEqual("refs/remotes/origin/master, refs/remotes/origin/test"
-					, AllRefNames(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call
-					()));
-				// Same thing, but now test with bare repo
-				directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
-				command = Git.CloneRepository();
-				command.SetBranch("refs/heads/master");
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				command.SetBare(true);
-				git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				NUnit.Framework.Assert.IsNotNull(git2);
-				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
-					);
-				NUnit.Framework.Assert.AreEqual("refs/heads/master, refs/heads/test", AllRefNames
-					(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call()));
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			FilePath directory = CreateTempDirectory("testCloneRepositoryWithBranch");
+			CloneCommand command = Git.CloneRepository();
+			command.SetBranch("refs/heads/master");
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			Git git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+				);
+			NUnit.Framework.Assert.AreEqual("refs/heads/master, refs/remotes/origin/master, refs/remotes/origin/test"
+				, AllRefNames(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call
+				()));
+			// Same thing, but now without checkout
+			directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
+			command = Git.CloneRepository();
+			command.SetBranch("refs/heads/master");
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			command.SetNoCheckout(true);
+			git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+				);
+			NUnit.Framework.Assert.AreEqual("refs/remotes/origin/master, refs/remotes/origin/test"
+				, AllRefNames(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call
+				()));
+			// Same thing, but now test with bare repo
+			directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
+			command = Git.CloneRepository();
+			command.SetBranch("refs/heads/master");
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			command.SetBare(true);
+			git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+				);
+			NUnit.Framework.Assert.AreEqual("refs/heads/master, refs/heads/test", AllRefNames
+				(git2.BranchList().SetListMode(ListBranchCommand.ListMode.ALL).Call()));
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCloneRepositoryOnlyOneBranch()
 		{
-			try
-			{
-				FilePath directory = CreateTempDirectory("testCloneRepositoryWithBranch");
-				CloneCommand command = Git.CloneRepository();
-				command.SetBranch("refs/heads/master");
-				command.SetBranchesToClone(Collections.SingletonList("refs/heads/master"));
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				Git git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				NUnit.Framework.Assert.IsNotNull(git2);
-				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
-					);
-				NUnit.Framework.Assert.AreEqual("refs/remotes/origin/master", AllRefNames(git2.BranchList
-					().SetListMode(ListBranchCommand.ListMode.REMOTE).Call()));
-				// Same thing, but now test with bare repo
-				directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
-				command = Git.CloneRepository();
-				command.SetBranch("refs/heads/master");
-				command.SetBranchesToClone(Collections.SingletonList("refs/heads/master"));
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				command.SetBare(true);
-				git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				NUnit.Framework.Assert.IsNotNull(git2);
-				NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
-					);
-				NUnit.Framework.Assert.AreEqual("refs/heads/master", AllRefNames(git2.BranchList(
-					).SetListMode(ListBranchCommand.ListMode.ALL).Call()));
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			FilePath directory = CreateTempDirectory("testCloneRepositoryWithBranch");
+			CloneCommand command = Git.CloneRepository();
+			command.SetBranch("refs/heads/master");
+			command.SetBranchesToClone(Collections.SingletonList("refs/heads/master"));
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			Git git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+				);
+			NUnit.Framework.Assert.AreEqual("refs/remotes/origin/master", AllRefNames(git2.BranchList
+				().SetListMode(ListBranchCommand.ListMode.REMOTE).Call()));
+			// Same thing, but now test with bare repo
+			directory = CreateTempDirectory("testCloneRepositoryWithBranch_bare");
+			command = Git.CloneRepository();
+			command.SetBranch("refs/heads/master");
+			command.SetBranchesToClone(Collections.SingletonList("refs/heads/master"));
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			command.SetBare(true);
+			git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			NUnit.Framework.Assert.AreEqual(git2.GetRepository().GetFullBranch(), "refs/heads/master"
+				);
+			NUnit.Framework.Assert.AreEqual("refs/heads/master", AllRefNames(git2.BranchList(
+				).SetListMode(ListBranchCommand.ListMode.ALL).Call()));
 		}
 
 		public static string AllRefNames(IList<Ref> refs)
@@ -222,20 +204,92 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		public static FilePath CreateTempDirectory(string name)
+		[NUnit.Framework.Test]
+		public virtual void TestCloneRepositoryWhenDestinationDirectoryExistsAndIsNotEmpty
+			()
 		{
-			FilePath temp;
-			temp = FilePath.CreateTempFile(name, System.Convert.ToString(Runtime.NanoTime()));
-			if (!(temp.Delete()))
+			string dirName = "testCloneTargetDirectoryNotEmpty";
+			FilePath directory = CreateTempDirectory(dirName);
+			CloneCommand command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			Git git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			// clone again
+			command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			try
 			{
-				throw new IOException("Could not delete temp file: " + temp.GetAbsolutePath());
+				git2 = command.Call();
+				// we shouldn't get here
+				NUnit.Framework.Assert.Fail("destination directory already exists and is not an empty folder, cloning should fail"
+					);
 			}
-			if (!(temp.Mkdir()))
+			catch (JGitInternalException e)
 			{
-				throw new IOException("Could not create temp directory: " + temp.GetAbsolutePath(
-					));
+				NUnit.Framework.Assert.IsTrue(e.Message.Contains("not an empty directory"));
+				NUnit.Framework.Assert.IsTrue(e.Message.Contains(dirName));
 			}
-			return temp;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCloneRepositoryWithMultipleHeadBranches()
+		{
+			git.Checkout().SetName(Constants.MASTER).Call();
+			git.BranchCreate().SetName("a").Call();
+			FilePath directory = CreateTempDirectory("testCloneRepositoryWithMultipleHeadBranches"
+				);
+			CloneCommand clone = Git.CloneRepository();
+			clone.SetDirectory(directory);
+			clone.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			Git git2 = clone.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			NUnit.Framework.Assert.AreEqual(Constants.MASTER, git2.GetRepository().GetBranch(
+				));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCloneRepositoryWithSubmodules()
+		{
+			git.Checkout().SetName(Constants.MASTER).Call();
+			string file = "file.txt";
+			WriteTrashFile(file, "content");
+			git.Add().AddFilepattern(file).Call();
+			RevCommit commit = git.Commit().SetMessage("create file").Call();
+			SubmoduleAddCommand command = new SubmoduleAddCommand(db);
+			string path = "sub";
+			command.SetPath(path);
+			string uri = db.Directory.ToURI().ToString();
+			command.SetURI(uri);
+			Repository repo = command.Call();
+			NUnit.Framework.Assert.IsNotNull(repo);
+			git.Add().AddFilepattern(path).AddFilepattern(Constants.DOT_GIT_MODULES).Call();
+			git.Commit().SetMessage("adding submodule").Call();
+			FilePath directory = CreateTempDirectory("testCloneRepositoryWithSubmodules");
+			CloneCommand clone = Git.CloneRepository();
+			clone.SetDirectory(directory);
+			clone.SetCloneSubmodules(true);
+			clone.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			Git git2 = clone.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			NUnit.Framework.Assert.AreEqual(Constants.MASTER, git2.GetRepository().GetBranch(
+				));
+			NUnit.Framework.Assert.IsTrue(new FilePath(git2.GetRepository().WorkTree, path + 
+				FilePath.separatorChar + file).Exists());
+			SubmoduleStatusCommand status = new SubmoduleStatusCommand(git2.GetRepository());
+			IDictionary<string, SubmoduleStatus> statuses = status.Call();
+			SubmoduleStatus pathStatus = statuses.Get(path);
+			NUnit.Framework.Assert.IsNotNull(pathStatus);
+			NUnit.Framework.Assert.AreEqual(SubmoduleStatusType.INITIALIZED, pathStatus.GetType
+				());
+			NUnit.Framework.Assert.AreEqual(commit, pathStatus.GetHeadId());
+			NUnit.Framework.Assert.AreEqual(commit, pathStatus.GetIndexId());
 		}
 	}
 }

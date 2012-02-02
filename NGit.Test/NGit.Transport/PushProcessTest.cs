@@ -290,7 +290,7 @@ namespace NGit.Transport
 			advertisedRefs.AddItem(refToChange);
 			ExecutePush();
 			NUnit.Framework.Assert.AreEqual(RemoteRefUpdate.Status.OK, rruOk.GetStatus());
-			NUnit.Framework.Assert.AreEqual(true, rruOk.IsFastForward());
+			NUnit.Framework.Assert.IsTrue(rruOk.IsFastForward());
 			NUnit.Framework.Assert.AreEqual(RemoteRefUpdate.Status.NON_EXISTING, rruReject.GetStatus
 				());
 		}
@@ -381,7 +381,8 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(expectedStatus, rru.GetStatus());
 			if (fastForward != null)
 			{
-				NUnit.Framework.Assert.AreEqual(fastForward.Value, rru.IsFastForward());
+				NUnit.Framework.Assert.AreEqual(fastForward, Sharpen.Extensions.ValueOf(rru.IsFastForward
+					()));
 			}
 			return result;
 		}

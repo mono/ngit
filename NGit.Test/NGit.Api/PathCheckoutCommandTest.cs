@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
+using NGit.Dircache;
 using NGit.Revwalk;
 using Sharpen;
 
@@ -58,6 +59,8 @@ namespace NGit.Api
 		private static readonly string FILE1 = "f/Test.txt";
 
 		private static readonly string FILE2 = "Test2.txt";
+
+		private static readonly string FILE3 = "Test3.txt";
 
 		internal Git git;
 
@@ -157,6 +160,88 @@ namespace NGit.Api
 			co.AddPath(FILE1).SetStartPoint("HEAD").Call();
 			NUnit.Framework.Assert.AreEqual("3", Read(written));
 			NUnit.Framework.Assert.AreEqual("c", Read(new FilePath(db.WorkTree, FILE2)));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestUpdateWorkingDirectoryFromIndex2()
+		{
+			CheckoutCommand co = git.Checkout();
+			FsTick(git.GetRepository().GetIndexFile());
+			FilePath written1 = WriteTrashFile(FILE1, "3(modified)");
+			FilePath written2 = WriteTrashFile(FILE2, "a(modified)");
+			FsTick(written2);
+			// make sure that we get unsmudged entries for FILE1 and FILE2
+			WriteTrashFile(FILE3, "foo");
+			git.Add().AddFilepattern(FILE3).Call();
+			FsTick(git.GetRepository().GetIndexFile());
+			git.Add().AddFilepattern(FILE1).AddFilepattern(FILE2).Call();
+			FsTick(git.GetRepository().GetIndexFile());
+			WriteTrashFile(FILE1, "3(modified again)");
+			WriteTrashFile(FILE2, "a(modified again)");
+			FsTick(written2);
+			co.AddPath(FILE1).SetStartPoint(secondCommit).Call();
+			NUnit.Framework.Assert.AreEqual("2", Read(written1));
+			NUnit.Framework.Assert.AreEqual("a(modified again)", Read(written2));
+			ValidateIndex(git);
+		}
+
+		/// <exception cref="NGit.Errors.NoWorkTreeException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		public static void ValidateIndex(Git git)
+		{
+			DirCache dc = git.GetRepository().LockDirCache();
+			ObjectReader r = git.GetRepository().ObjectDatabase.NewReader();
+			try
+			{
+				for (int i = 0; i < dc.GetEntryCount(); ++i)
+				{
+					DirCacheEntry entry = dc.GetEntry(i);
+					if (entry.Length > 0)
+					{
+						NUnit.Framework.Assert.AreEqual(entry.Length, r.GetObjectSize(entry.GetObjectId()
+							, ObjectReader.OBJ_ANY));
+					}
+				}
+			}
+			finally
+			{
+				dc.Unlock();
+				r.Release();
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestCheckoutMixedNewlines()
+		{
+			// "git config core.autocrlf true"
+			StoredConfig config = git.GetRepository().GetConfig();
+			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_AUTOCRLF
+				, true);
+			config.Save();
+			// edit <FILE1>
+			FilePath written = WriteTrashFile(FILE1, "4\r\n4");
+			NUnit.Framework.Assert.AreEqual("4\r\n4", Read(written));
+			// "git add <FILE1>"
+			git.Add().AddFilepattern(FILE1).Call();
+			// "git commit -m 'CRLF'"
+			git.Commit().SetMessage("CRLF").Call();
+			// edit <FILE1>
+			written = WriteTrashFile(FILE1, "4\n4");
+			NUnit.Framework.Assert.AreEqual("4\n4", Read(written));
+			// "git add <FILE1>"
+			git.Add().AddFilepattern(FILE1).Call();
+			// "git checkout -- <FILE1>
+			git.Checkout().AddPath(FILE1).Call();
+			// "git status" => clean
+			Status status = git.Status().Call();
+			NUnit.Framework.Assert.AreEqual(0, status.GetAdded().Count);
+			NUnit.Framework.Assert.AreEqual(0, status.GetChanged().Count);
+			NUnit.Framework.Assert.AreEqual(0, status.GetConflicting().Count);
+			NUnit.Framework.Assert.AreEqual(0, status.GetMissing().Count);
+			NUnit.Framework.Assert.AreEqual(0, status.GetModified().Count);
+			NUnit.Framework.Assert.AreEqual(0, status.GetRemoved().Count);
+			NUnit.Framework.Assert.AreEqual(0, status.GetUntracked().Count);
 		}
 	}
 }

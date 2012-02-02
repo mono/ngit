@@ -102,7 +102,7 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestEncode_Unicode()
 		{
-			string src = "≈™nƒ≠c≈çdeÃΩ";
+			string src = "Ūnĭcōde̽";
 			byte[] exp = new byte[] { unchecked((byte)unchecked((int)(0xC5))), unchecked((byte
 				)unchecked((int)(0xAA))), unchecked((int)(0x6E)), unchecked((byte)unchecked((int
 				)(0xC4))), unchecked((byte)unchecked((int)(0xAD))), unchecked((int)(0x63)), unchecked(
@@ -110,8 +110,8 @@ namespace NGit
 				(int)(0x64)), unchecked((int)(0x65)), unchecked((byte)unchecked((int)(0xCC))), unchecked(
 				(byte)unchecked((int)(0xBD))) };
 			byte[] res = Constants.Encode(src);
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, res));
-			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(res, 0, res
+			NUnit.Framework.CollectionAssert.AreEqual(exp, res);
+			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(exp, 0, exp
 				.Length, "UTF-8"));
 		}
 	}

@@ -174,7 +174,7 @@ namespace NGit.Storage.File
 			FilePath gitDir = GetFile("workdir");
 			try
 			{
-				new FileRepository(gitDir).GetIndex();
+				new FileRepository(gitDir).ReadDirCache();
 				NUnit.Framework.Assert.Fail("Expected NoWorkTreeException missing");
 			}
 			catch (NoWorkTreeException)
@@ -237,7 +237,7 @@ namespace NGit.Storage.File
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
 		private FileBasedConfig ConfigFor(FilePath gitDir)
 		{
-			FilePath configPath = new FilePath(gitDir, "config");
+			FilePath configPath = new FilePath(gitDir, Constants.CONFIG);
 			FileBasedConfig cfg = new FileBasedConfig(configPath, FS.DETECTED);
 			cfg.Load();
 			return cfg;

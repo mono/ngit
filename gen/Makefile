@@ -14,7 +14,7 @@ NGIT_GIT = @cd $(NGIT_DIR) && git
 
 JSCH_SOURCE = $(JGIT_DIR)/jsch/README
 JSCH_RELEASE = 0.1.43
-JSCH_URL = http://downloads.sourceforge.net/project/jsch/jsch/$(JSCH_RELEASE)/jsch-$(JSCH_RELEASE).zip
+JSCH_URL = http://freefr.dl.sourceforge.net/project/jsch/jsch/$(JSCH_RELEASE)/jsch-$(JSCH_RELEASE).zip
 
 JZLIB_SOURCE = $(JGIT_DIR)/jzlib
 JZLIB_RELEASE = 1.0.7
@@ -27,11 +27,12 @@ EB=\033[m
 
 $(JZLIB_SOURCE):
 	@echo -e "$(SB)Getting JZlib sources$(EB)"
-	wget $(JZLIB_URL)
+	curl --remote-name $(JZLIB_URL)
 	@echo -e "$(SB)Unpacking JZlib$(EB)"
 	rm -rf jzlib-$(JZLIB_RELEASE)
 	unzip jzlib-$(JZLIB_RELEASE).zip
 	rm -rf jzlib-$(JZLIB_RELEASE).zip
+	mkdir -p $(JGIT_DIR)
 	mv jzlib-$(JZLIB_RELEASE) $(JGIT_DIR)/jzlib
 	mkdir -p $(JGIT_DIR)/jzlib/src
 	mv $(JGIT_DIR)/jzlib/com $(JGIT_DIR)/jzlib/src
@@ -42,9 +43,9 @@ $(JZLIB_SOURCE):
 	
 $(JSCH_SOURCE):
 	@echo -e "$(SB)Getting JSch sources$(EB)"
-	wget $(JSCH_URL)
-	@echo -e "$(SB)Unpacking JSch$(EB)"
 	rm -rf jsch-$(JSCH_RELEASE)
+	curl --remote-name $(JSCH_URL)
+	@echo -e "$(SB)Unpacking JSch$(EB)"
 	unzip jsch-$(JSCH_RELEASE).zip
 	rm -rf jsch-$(JSCH_RELEASE).zip
 	mkdir -p $(JGIT_DIR)/jsch
@@ -58,7 +59,7 @@ $(JSCH_SOURCE):
 $(JGIT_SOURCE):
 	@echo -e "$(SB)Getting jgit sources$(EB)"
 	mkdir -p $(JGIT_DIR)
-	git clone http://egit.eclipse.org/jgit.git $(JGIT_DIR)
+	git clone git://egit.eclipse.org/jgit.git $(JGIT_DIR)
 	
 
 # The steps for fetching are:
@@ -148,7 +149,7 @@ convert: validate-pull
 	@echo -e "$(SB)Applying old patch$(EB)"
 	$(NGIT_GIT) branch -D merged 2> /dev/null || true
 	$(NGIT_GIT) checkout -b merged master
-	patch -d $(NGIT_DIR) -p1 < $(CS_PATCH)
+	patch -d $(NGIT_DIR) -p1 < $(CS_PATCH) || true
 	$(NGIT_GIT) commit -a -m "Merge"
 	@echo -e "$(SB)Merging new changes$(EB)"
 	@echo -e "$(SB)In case of merge conflict, cd to the $(NGIT_DIR) directory, resolve the conflics and use 'git rebase --continue' to finish$(EB)"
