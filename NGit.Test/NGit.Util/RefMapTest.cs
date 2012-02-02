@@ -448,7 +448,7 @@ namespace NGit.Util
 //			NUnit.Framework.Assert.AreEqual(ent_a.GetHashCode(), "A".GetHashCode());
 			NUnit.Framework.Assert.IsTrue(ent_a.Equals(ent_a));
 			NUnit.Framework.Assert.IsFalse(ent_a.Equals(ent_b));
-			NUnit.Framework.Assert.AreEqual(a.ToString(), ent_a.ToString());
+			NUnit.Framework.Assert.AreEqual(a.ToString(), ent_a.Value.ToString());
 		}
 
 		[NUnit.Framework.Test]
@@ -462,10 +462,15 @@ namespace NGit.Util
 			KeyValuePair<string, Ref> ent = map.EntrySet().Iterator().Next();
 			NUnit.Framework.Assert.AreEqual("A", ent.Key);
 			NUnit.Framework.Assert.AreSame(refA_one, ent.Value);
+			
+			// FIXME: .NET returns an immutable KeyValuePair whereas Java
+			// returns a mutable one. Therefore this test is invalid in .NET
+			// No code does this internally (it's a compile error as SetValue does not exist)
+			// so we are ok to comment this out.
 //			NUnit.Framework.Assert.AreSame(refA_one, ent.SetValue(refA_two));
 //			NUnit.Framework.Assert.AreSame(refA_two, ent.Value);
-			NUnit.Framework.Assert.AreSame(refA_two, map.Get("A"));
-			NUnit.Framework.Assert.AreEqual(1, map.Count);
+//			NUnit.Framework.Assert.AreEqual(refA_two, map.Get("A"));
+//			NUnit.Framework.Assert.AreEqual(1, map.Count);
 		}
 
 		private RefList<Ref> ToList(params Ref[] refs)

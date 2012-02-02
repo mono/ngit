@@ -142,6 +142,16 @@ namespace NGit
 				("49322bb17d3acc9146f98c97d078513228bbf3c0~3").Name);
 			NUnit.Framework.Assert.AreEqual("bab66b48f836ed950c99134ef666436fb07a09a0", db.Resolve
 				("49322bb17d3acc9146f98c97d078513228bbf3c0~03").Name);
+			NUnit.Framework.Assert.AreEqual("6e1475206e57110fcef4b92320436c1e9872a322", db.Resolve
+				("49322bb17d3acc9146f98c97d078513228bbf3c0~").Name);
+			NUnit.Framework.Assert.AreEqual("1203b03dc816ccbb67773f28b3c19318654b0bc8", db.Resolve
+				("49322bb17d3acc9146f98c97d078513228bbf3c0~~").Name);
+			NUnit.Framework.Assert.AreEqual("bab66b48f836ed950c99134ef666436fb07a09a0", db.Resolve
+				("49322bb17d3acc9146f98c97d078513228bbf3c0~~~").Name);
+			NUnit.Framework.Assert.AreEqual("1203b03dc816ccbb67773f28b3c19318654b0bc8", db.Resolve
+				("49322bb17d3acc9146f98c97d078513228bbf3c0~~1").Name);
+			NUnit.Framework.Assert.AreEqual("1203b03dc816ccbb67773f28b3c19318654b0bc8", db.Resolve
+				("49322bb17d3acc9146f98c97d078513228bbf3c0~~~0").Name);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -263,6 +273,10 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NEW, ru.Update());
 			NUnit.Framework.Assert.AreEqual(id, db.Resolve("refs/heads/foo-g032c"));
 			NUnit.Framework.Assert.AreEqual(id, db.Resolve("foo-g032c"));
+			NUnit.Framework.Assert.IsNull(db.Resolve("foo-g032"));
+			NUnit.Framework.Assert.IsNull(db.Resolve("foo-g03"));
+			NUnit.Framework.Assert.IsNull(db.Resolve("foo-g0"));
+			NUnit.Framework.Assert.IsNull(db.Resolve("foo-g"));
 			ru = db.UpdateRef("refs/heads/foo-g032c-dev");
 			ru.SetNewObjectId(id);
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.NEW, ru.Update());
@@ -280,6 +294,10 @@ namespace NGit
 			ObjectId master_txt = Id("82b1d08466e9505f8666b778744f9a3471a70c81");
 			NUnit.Framework.Assert.AreEqual(b2_txt, db.Resolve("b:b/b2.txt"));
 			NUnit.Framework.Assert.AreEqual(b_root, db.Resolve("b:"));
+			NUnit.Framework.Assert.AreEqual(Id("6020a3b8d5d636e549ccbd0c53e2764684bb3125"), db
+				.Resolve("master:"));
+			NUnit.Framework.Assert.AreEqual(Id("10da5895682013006950e7da534b705252b03be6"), db
+				.Resolve("master:b/b2.txt"));
 			NUnit.Framework.Assert.AreEqual(master_txt, db.Resolve(":master.txt"));
 			NUnit.Framework.Assert.AreEqual(b3_b2_txt, db.Resolve("b~3:b/b2.txt"));
 			NUnit.Framework.Assert.IsNull(db.Resolve("b:FOO"), "no FOO");

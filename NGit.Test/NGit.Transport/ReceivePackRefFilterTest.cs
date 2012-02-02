@@ -88,7 +88,7 @@ namespace NGit.Transport
 			dst = CreateBareRepository();
 			// Fill dst with a some common history.
 			//
-			TestRepository d = new TestRepository(dst);
+			TestRepository d = new TestRepository<Repository>(dst);
 			a = d.Blob("a");
 			A = d.Commit(d.Tree(d.File("a", a)));
 			B = d.Commit().Parent(A).Create();
@@ -202,7 +202,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(od.FileFor(b).Exists(), "b not loose");
 			// Now use b but in a different commit than what is hidden.
 			//
-			TestRepository s = new TestRepository(src);
+			TestRepository s = new TestRepository<Repository>(src);
 			RevCommit N = s.Commit().Parent(B).Add("q", b).Create();
 			s.Update(R_MASTER, N);
 			// Push this new content to the remote, doing strict validation.

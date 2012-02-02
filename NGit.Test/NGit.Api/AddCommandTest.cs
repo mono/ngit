@@ -41,11 +41,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Diagnostics;
 using System.IO;
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Dircache;
+using NGit.Revwalk;
+using NGit.Storage.File;
+using NGit.Treewalk;
 using NGit.Util;
 using Sharpen;
 
@@ -92,6 +96,56 @@ namespace NGit.Api
 			git.Add().AddFilepattern("a.txt").Call();
 			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:content]", IndexState
 				(CONTENT));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestAddExistingSingleFileWithNewLine()
+		{
+			FilePath file = new FilePath(db.WorkTree, "a.txt");
+			FileUtils.CreateNewFile(file);
+			PrintWriter writer = new PrintWriter(file);
+			writer.Write("row1\r\nrow2");
+			writer.Close();
+			Git git = new Git(db);
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "false");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:row1\r\nrow2]", IndexState
+				(CONTENT));
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "true");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:row1\nrow2]", IndexState
+				(CONTENT));
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "input");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:row1\nrow2]", IndexState
+				(CONTENT));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestAddExistingSingleBinaryFile()
+		{
+			FilePath file = new FilePath(db.WorkTree, "a.txt");
+			FileUtils.CreateNewFile(file);
+			PrintWriter writer = new PrintWriter(file);
+			writer.Write("row1\r\nrow2\u0000");
+			writer.Close();
+			Git git = new Git(db);
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "false");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:row1\r\nrow2\u0000]"
+				, IndexState(CONTENT));
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "true");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:row1\r\nrow2\u0000]"
+				, IndexState(CONTENT));
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "input");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:row1\r\nrow2\u0000]"
+				, IndexState(CONTENT));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -432,6 +486,121 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:more content," + " assume-unchanged:false][b.txt, mode:100644,"
 				 + string.Empty + string.Empty + " content:content, assume-unchanged:true]", IndexState
 				(CONTENT | ASSUME_UNCHANGED));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestExecutableRetention()
+		{
+			StoredConfig config = ((FileBasedConfig)db.GetConfig());
+			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
+				, true);
+			config.Save();
+			FS executableFs = new _FS_573();
+			Git git = Git.Open(db.Directory, executableFs);
+			string path = "a.txt";
+			WriteTrashFile(path, "content");
+			git.Add().AddFilepattern(path).Call();
+			RevCommit commit1 = git.Commit().SetMessage("commit").Call();
+			TreeWalk walk = TreeWalk.ForPath(db, path, commit1.Tree);
+			NUnit.Framework.Assert.IsNotNull(walk);
+			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
+			FS nonExecutableFs = new _FS_613();
+			config = ((FileBasedConfig)db.GetConfig());
+			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
+				, false);
+			config.Save();
+			Git git2 = Git.Open(db.Directory, nonExecutableFs);
+			WriteTrashFile(path, "content2");
+			git2.Add().AddFilepattern(path).Call();
+			RevCommit commit2 = git2.Commit().SetMessage("commit2").Call();
+			walk = TreeWalk.ForPath(db, path, commit2.Tree);
+			NUnit.Framework.Assert.IsNotNull(walk);
+			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
+		}
+
+		private sealed class _FS_573 : FS
+		{
+			public _FS_573()
+			{
+			}
+
+			public override bool SupportsExecute()
+			{
+				return true;
+			}
+
+			public override bool SetExecute(FilePath f, bool canExec)
+			{
+				return true;
+			}
+
+			public override ProcessStartInfo RunInShell(string cmd, string[] args)
+			{
+				return null;
+			}
+
+			public override bool RetryFailedLockFileCommit()
+			{
+				return false;
+			}
+
+			public override FS NewInstance()
+			{
+				return this;
+			}
+
+			protected internal override FilePath DiscoverGitPrefix()
+			{
+				return null;
+			}
+
+			public override bool CanExecute(FilePath f)
+			{
+				return true;
+			}
+		}
+
+		private sealed class _FS_613 : FS
+		{
+			public _FS_613()
+			{
+			}
+
+			public override bool SupportsExecute()
+			{
+				return false;
+			}
+
+			public override bool SetExecute(FilePath f, bool canExec)
+			{
+				return false;
+			}
+
+			public override ProcessStartInfo RunInShell(string cmd, string[] args)
+			{
+				return null;
+			}
+
+			public override bool RetryFailedLockFileCommit()
+			{
+				return false;
+			}
+
+			public override FS NewInstance()
+			{
+				return this;
+			}
+
+			protected internal override FilePath DiscoverGitPrefix()
+			{
+				return null;
+			}
+
+			public override bool CanExecute(FilePath f)
+			{
+				return false;
+			}
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

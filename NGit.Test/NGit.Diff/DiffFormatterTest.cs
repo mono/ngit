@@ -52,6 +52,7 @@ using NGit.Treewalk.Filter;
 using NGit.Util;
 using NGit.Util.IO;
 using Sharpen;
+using NGit.Storage.File;
 
 namespace NGit.Diff
 {
@@ -77,7 +78,7 @@ namespace NGit.Diff
 		public override void SetUp()
 		{
 			base.SetUp();
-			testDb = new TestRepository(db);
+			testDb = new TestRepository<FileRepository>(db);
 			df = new DiffFormatter(DisabledOutputStream.INSTANCE);
 			df.SetRepository(db);
 			df.SetAbbreviationLength(8);
@@ -232,14 +233,14 @@ namespace NGit.Diff
 			git.Commit().SetMessage("Initial commit").Call();
 			Write(new FilePath(folder, "folder.txt"), "folder change");
 			ByteArrayOutputStream os = new ByteArrayOutputStream();
-			DiffFormatter df = new DiffFormatter(new BufferedOutputStream(os));
+			DiffFormatter df = new DiffFormatter(new SafeBufferedOutputStream(os));
 			df.SetRepository(db);
 			df.SetPathFilter(PathFilter.Create("folder"));
 			DirCacheIterator oldTree = new DirCacheIterator(db.ReadDirCache());
 			FileTreeIterator newTree = new FileTreeIterator(db);
 			df.Format(oldTree, newTree);
 			df.Flush();
-			string actual = os.ToString();
+			string actual = System.Text.Encoding.UTF8.GetString (os.ToByteArray ());
 			string expected = "diff --git a/folder/folder.txt b/folder/folder.txt\n" + "index 0119635..95c4c65 100644\n"
 				 + "--- a/folder/folder.txt\n" + "+++ b/folder/folder.txt\n" + "@@ -1 +1 @@\n" +
 				 "-folder\n" + "\\ No newline at end of file\n" + "+folder change\n" + "\\ No newline at end of file\n";

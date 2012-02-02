@@ -44,8 +44,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Api;
 using NGit.Dircache;
+using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Treewalk;
+using NGit.Treewalk.Filter;
 using NGit.Util;
 using Sharpen;
 
@@ -199,6 +201,216 @@ namespace NGit.Treewalk
 				fti.Next(1);
 			}
 			NUnit.Framework.Assert.IsFalse(fti.IsModified(dce, false));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void SubmoduleHeadMatchesIndex()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit id = git.Commit().SetMessage("create file").Call();
+			string path = "sub";
+			DirCache cache = db.LockDirCache();
+			DirCacheEditor editor = cache.Editor();
+			editor.Add(new _PathEdit_227(id, path));
+			editor.Commit();
+			Git.CloneRepository().SetURI(db.Directory.ToURI().ToString()).SetDirectory(new FilePath
+				(db.WorkTree, path)).Call();
+			TreeWalk walk = new TreeWalk(db);
+			DirCacheIterator indexIter = new DirCacheIterator(db.ReadDirCache());
+			FileTreeIterator workTreeIter = new FileTreeIterator(db);
+			walk.AddTree(indexIter);
+			walk.AddTree(workTreeIter);
+			walk.Filter = PathFilter.Create(path);
+			NUnit.Framework.Assert.IsTrue(walk.Next());
+			NUnit.Framework.Assert.IsTrue(indexIter.IdEqual(workTreeIter));
+		}
+
+		private sealed class _PathEdit_227 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_227(RevCommit id, string baseArg1) : base(baseArg1)
+			{
+				this.id = id;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.GITLINK;
+				ent.SetObjectId(id);
+			}
+
+			private readonly RevCommit id;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void SubmoduleWithNoGitDirectory()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit id = git.Commit().SetMessage("create file").Call();
+			string path = "sub";
+			DirCache cache = db.LockDirCache();
+			DirCacheEditor editor = cache.Editor();
+			editor.Add(new _PathEdit_259(id, path));
+			editor.Commit();
+			FilePath submoduleRoot = new FilePath(db.WorkTree, path);
+			NUnit.Framework.Assert.IsTrue(submoduleRoot.Mkdir());
+			NUnit.Framework.Assert.IsTrue(new FilePath(submoduleRoot, Constants.DOT_GIT).Mkdir
+				());
+			TreeWalk walk = new TreeWalk(db);
+			DirCacheIterator indexIter = new DirCacheIterator(db.ReadDirCache());
+			FileTreeIterator workTreeIter = new FileTreeIterator(db);
+			walk.AddTree(indexIter);
+			walk.AddTree(workTreeIter);
+			walk.Filter = PathFilter.Create(path);
+			NUnit.Framework.Assert.IsTrue(walk.Next());
+			NUnit.Framework.Assert.IsFalse(indexIter.IdEqual(workTreeIter));
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, workTreeIter.EntryObjectId);
+		}
+
+		private sealed class _PathEdit_259 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_259(RevCommit id, string baseArg1) : base(baseArg1)
+			{
+				this.id = id;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.GITLINK;
+				ent.SetObjectId(id);
+			}
+
+			private readonly RevCommit id;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void SubmoduleWithNoHead()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit id = git.Commit().SetMessage("create file").Call();
+			string path = "sub";
+			DirCache cache = db.LockDirCache();
+			DirCacheEditor editor = cache.Editor();
+			editor.Add(new _PathEdit_293(id, path));
+			editor.Commit();
+			NUnit.Framework.Assert.IsNotNull(Git.Init().SetDirectory(new FilePath(db.WorkTree
+				, path)).Call().GetRepository());
+			TreeWalk walk = new TreeWalk(db);
+			DirCacheIterator indexIter = new DirCacheIterator(db.ReadDirCache());
+			FileTreeIterator workTreeIter = new FileTreeIterator(db);
+			walk.AddTree(indexIter);
+			walk.AddTree(workTreeIter);
+			walk.Filter = PathFilter.Create(path);
+			NUnit.Framework.Assert.IsTrue(walk.Next());
+			NUnit.Framework.Assert.IsFalse(indexIter.IdEqual(workTreeIter));
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, workTreeIter.EntryObjectId);
+		}
+
+		private sealed class _PathEdit_293 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_293(RevCommit id, string baseArg1) : base(baseArg1)
+			{
+				this.id = id;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.GITLINK;
+				ent.SetObjectId(id);
+			}
+
+			private readonly RevCommit id;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void SubmoduleDirectoryIterator()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit id = git.Commit().SetMessage("create file").Call();
+			string path = "sub";
+			DirCache cache = db.LockDirCache();
+			DirCacheEditor editor = cache.Editor();
+			editor.Add(new _PathEdit_326(id, path));
+			editor.Commit();
+			Git.CloneRepository().SetURI(db.Directory.ToURI().ToString()).SetDirectory(new FilePath
+				(db.WorkTree, path)).Call();
+			TreeWalk walk = new TreeWalk(db);
+			DirCacheIterator indexIter = new DirCacheIterator(db.ReadDirCache());
+			FileTreeIterator workTreeIter = new FileTreeIterator(db.WorkTree, db.FileSystem, 
+				((FileBasedConfig)db.GetConfig()).Get(WorkingTreeOptions.KEY));
+			walk.AddTree(indexIter);
+			walk.AddTree(workTreeIter);
+			walk.Filter = PathFilter.Create(path);
+			NUnit.Framework.Assert.IsTrue(walk.Next());
+			NUnit.Framework.Assert.IsTrue(indexIter.IdEqual(workTreeIter));
+		}
+
+		private sealed class _PathEdit_326 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_326(RevCommit id, string baseArg1) : base(baseArg1)
+			{
+				this.id = id;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.GITLINK;
+				ent.SetObjectId(id);
+			}
+
+			private readonly RevCommit id;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void SubmoduleNestedWithHeadMatchingIndex()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit id = git.Commit().SetMessage("create file").Call();
+			string path = "sub/dir1/dir2";
+			DirCache cache = db.LockDirCache();
+			DirCacheEditor editor = cache.Editor();
+			editor.Add(new _PathEdit_359(id, path));
+			editor.Commit();
+			Git.CloneRepository().SetURI(db.Directory.ToURI().ToString()).SetDirectory(new FilePath
+				(db.WorkTree, path)).Call();
+			TreeWalk walk = new TreeWalk(db);
+			DirCacheIterator indexIter = new DirCacheIterator(db.ReadDirCache());
+			FileTreeIterator workTreeIter = new FileTreeIterator(db);
+			walk.AddTree(indexIter);
+			walk.AddTree(workTreeIter);
+			walk.Filter = PathFilter.Create(path);
+			NUnit.Framework.Assert.IsTrue(walk.Next());
+			NUnit.Framework.Assert.IsTrue(indexIter.IdEqual(workTreeIter));
+		}
+
+		private sealed class _PathEdit_359 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_359(RevCommit id, string baseArg1) : base(baseArg1)
+			{
+				this.id = id;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.GITLINK;
+				ent.SetObjectId(id);
+			}
+
+			private readonly RevCommit id;
 		}
 
 		private static string NameOf(AbstractTreeIterator i)

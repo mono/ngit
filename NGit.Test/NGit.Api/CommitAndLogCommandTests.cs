@@ -96,6 +96,9 @@ namespace NGit.Api
 			ReflogReader reader = db.GetReflogReader(Constants.HEAD);
 			NUnit.Framework.Assert.IsTrue(reader.GetLastEntry().GetComment().StartsWith("commit:"
 				));
+			reader = db.GetReflogReader(db.GetBranch());
+			NUnit.Framework.Assert.IsTrue(reader.GetLastEntry().GetComment().StartsWith("commit:"
+				));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -275,6 +278,38 @@ namespace NGit.Api
 				(0).GetName());
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
+		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestModeChange()
+		{
+			Git git = new Git(db);
+			// create file
+			FilePath file = new FilePath(db.WorkTree, "a.txt");
+			FileUtils.CreateNewFile(file);
+			PrintWriter writer = new PrintWriter(file);
+			writer.Write("content1");
+			writer.Close();
+			// First commit - a.txt file
+			git.Add().AddFilepattern("a.txt").Call();
+			git.Commit().SetMessage("commit1").SetCommitter(committer).Call();
+			// pure mode change should be committable
+			FS fs = db.FileSystem;
+			fs.SetExecute(file, true);
+			git.Add().AddFilepattern("a.txt").Call();
+			git.Commit().SetMessage("mode change").SetCommitter(committer).Call();
+			// pure mode change should be committable with -o option
+			fs.SetExecute(file, false);
+			git.Add().AddFilepattern("a.txt").Call();
+			git.Commit().SetMessage("mode change").SetCommitter(committer).SetOnly("a.txt").Call
+				();
+		}
+
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
 		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
@@ -336,6 +371,9 @@ namespace NGit.Api
 			}
 			NUnit.Framework.Assert.AreEqual(1, c);
 			ReflogReader reader = db.GetReflogReader(Constants.HEAD);
+			NUnit.Framework.Assert.IsTrue(reader.GetLastEntry().GetComment().StartsWith("commit (amend):"
+				));
+			reader = db.GetReflogReader(db.GetBranch());
 			NUnit.Framework.Assert.IsTrue(reader.GetLastEntry().GetComment().StartsWith("commit (amend):"
 				));
 		}

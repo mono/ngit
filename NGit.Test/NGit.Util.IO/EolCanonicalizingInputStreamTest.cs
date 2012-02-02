@@ -82,6 +82,14 @@ namespace NGit.Util.IO
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestEmpty()
+		{
+			byte[] bytes = AsBytes(string.Empty);
+			Test(bytes, bytes);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
 		private void Test(byte[] input, byte[] expected)
 		{
 			InputStream bis1 = new ByteArrayInputStream(input);

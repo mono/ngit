@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,7 +9,6 @@
     <OutputType>Library</OutputType>
     <RootNamespace>NGit.Test</RootNamespace>
     <AssemblyName>NGit.Test</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,10 +30,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.core, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
-    <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77" />
     <Reference Include="ICSharpCode.SharpZipLib" />
     <Reference Include="System.Core" />
+    <Reference Include="nunit.core">
+      <HintPath>..\..\..\Desktop\NUnit-2.5.10.11092 2\bin\net-2.0\lib\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\..\Desktop\NUnit-2.5.10.11092 2\bin\net-2.0\framework\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="NGit\AbbreviatedObjectIdTest.cs" />
@@ -47,7 +50,6 @@
     <Compile Include="NGit\ObjectIdRefTest.cs" />
     <Compile Include="NGit\ObjectLoaderTest.cs" />
     <Compile Include="NGit\RacyGitTests.cs" />
-    <Compile Include="NGit\ReadTreeTest.cs" />
     <Compile Include="NGit\RefTest.cs" />
     <Compile Include="NGit\ReflogConfigTest.cs" />
     <Compile Include="NGit\RepositoryCacheTest.cs" />
@@ -236,6 +238,30 @@
     <Compile Include="NGit.Api\BlameCommandTest.cs" />
     <Compile Include="NGit.Api\CleanCommandTest.cs" />
     <Compile Include="NGit.Diff\PatchIdDiffFormatterTest.cs" />
+    <Compile Include="NGit.Submodule\SubmoduleAddTest.cs" />
+    <Compile Include="NGit.Submodule\SubmoduleInitTest.cs" />
+    <Compile Include="NGit.Submodule\SubmoduleStatusTest.cs" />
+    <Compile Include="NGit.Submodule\SubmoduleSyncTest.cs" />
+    <Compile Include="NGit.Submodule\SubmoduleUpdateTest.cs" />
+    <Compile Include="NGit.Submodule\SubmoduleWalkTest.cs" />
+    <Compile Include="NGit.Api\CommitCommandTest.cs" />
+    <Compile Include="NGit.Api\DiffCommandTest.cs" />
+    <Compile Include="NGit.Api\LogCommandTest.cs" />
+    <Compile Include="NGit.Api\ReflogCommandTest.cs" />
+    <Compile Include="NGit.Api\StashListCommandTest.cs" />
+    <Compile Include="NGit.Diff\DiffEntryTest.cs" />
+    <Compile Include="NGit.Dircache\DirCachePathEditTest.cs" />
+    <Compile Include="NGit.Revwalk\MaxCountRevFilterTest.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkFollowFilterTest.cs" />
+    <Compile Include="NGit.Revwalk\RevWalkUtilsCountTest.cs" />
+    <Compile Include="NGit.Revwalk\SkipRevFilterTest.cs" />
+    <Compile Include="NGit.Storage.File\LockFileTest.cs" />
+    <Compile Include="NGit.Util.IO\AutoCRLFOutputStreamTest.cs" />
+    <Compile Include="NGit.Util\CPUTimeStopWatch.cs" />
+    <Compile Include="NGit.Util\JGitTestUtil.cs" />
+    <Compile Include="NGit\BranchConfigTest.cs" />
+    <Compile Include="NGit\BranchTrackingStatusTest.cs" />
+    <Compile Include="NGit\ReflogResolveTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -251,6 +277,9 @@
   <ItemGroup>
     <None Include="resources\NGit.Diff\.gitattributes" />
     <None Include="resources\NGit.Patch\.gitattributes" />
+    <None Include="resources\global\dircache.testRemovedSubtree">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

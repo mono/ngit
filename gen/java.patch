@@ -95,10 +95,113 @@ index 201f03b..0000000
 -	}
 -}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-index 1ec8685..f967a05 100644
+index 86e4e78..5af8e7e 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-@@ -293,7 +293,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
+@@ -60,77 +60,73 @@
+  */
+ public class MergeResult {
+ 
+-	/**
+-	 * The status the merge resulted in.
+-	 */
+-	public enum MergeStatus {
+-		/** */
+-		FAST_FORWARD {
+-			@Override
++	public static abstract class MergeStatus {
++		public static MergeStatus FAST_FORWARD = new FAST_FORWARD_Class ();
++		public static MergeStatus ALREADY_UP_TO_DATE = new ALREADY_UP_TO_DATE_Class ();
++		public static MergeStatus FAILED = new FAILED_Class ();
++		public static MergeStatus MERGED = new MERGED_Class ();
++		public static MergeStatus CONFLICTING = new CONFLICTING_Class ();
++		public static MergeStatus NOT_SUPPORTED = new NOT_SUPPORTED_Class ();
++
++		static class FAST_FORWARD_Class extends MergeStatus {
+ 			public String toString() {
+ 				return "Fast-forward";
+ 			}
+ 
+-			@Override
+ 			public boolean isSuccessful() {
+ 				return true;
+ 			}
+-		},
+-		/** */
+-		ALREADY_UP_TO_DATE {
++		}
++
++		static class ALREADY_UP_TO_DATE_Class extends MergeStatus {
+ 			public String toString() {
+ 				return "Already-up-to-date";
+ 			}
+ 
+-			@Override
+ 			public boolean isSuccessful() {
+ 				return true;
+ 			}
+-		},
+-		/** */
+-		FAILED {
++		}
++
++		static class FAILED_Class extends MergeStatus {
+ 			public String toString() {
+ 				return "Failed";
+ 			}
+ 
+-			@Override
+ 			public boolean isSuccessful() {
+ 				return false;
+ 			}
+-		},
+-		/** */
+-		MERGED {
++		}
++
++		static class MERGED_Class extends MergeStatus {
+ 			public String toString() {
+ 				return "Merged";
+ 			}
+ 
+-			@Override
+ 			public boolean isSuccessful() {
+ 				return true;
+ 			}
+-		},
+-		/** */
+-		CONFLICTING {
++		}
++
++		static class CONFLICTING_Class extends MergeStatus {
+ 			public String toString() {
+ 				return "Conflicting";
+ 			}
+ 
+-			@Override
+ 			public boolean isSuccessful() {
+ 				return false;
+ 			}
+-		},
+-		/** */
+-		NOT_SUPPORTED {
++		}
++
++		static class NOT_SUPPORTED_Class extends MergeStatus {
+ 			public String toString() {
+ 				return "Not-yet-supported";
+ 			}
+ 
+-			@Override
+ 			public boolean isSuccessful() {
+ 				return false;
+ 			}
+-		};
++		}
+ 
+ 		/**
+ 		 * @return whether the status indicates a successful result
+@@ -328,7 +324,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
  			}
  		}
  		int currentConflict = -1;
@@ -111,7 +214,7 @@ index 1ec8685..f967a05 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 1503857..175353e 100644
+index 35cccc6..88c7b3e 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -84,6 +84,7 @@
@@ -122,7 +225,7 @@ index 1503857..175353e 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
-@@ -677,30 +678,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
+@@ -680,30 +681,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -159,7 +262,7 @@ index 1503857..175353e 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -923,10 +921,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -926,10 +924,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -173,11 +276,110 @@ index 1503857..175353e 100644
  
  		private Action(String token) {
  			this.token = token;
+diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
+index e389d99..12d114d 100644
+--- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
++++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
+@@ -52,68 +52,51 @@
+  * The result of a {@link RebaseCommand} execution
+  */
+ public class RebaseResult {
+-	/**
+-	 * The overall status
+-	 */
+-	public enum Status {
+-		/**
+-		 * Rebase was successful, HEAD points to the new commit
+-		 */
+-		OK {
+-			@Override
++
++	public static abstract class Status {
++		public static Status OK = new OK_Class ();
++		public static Status ABORTED = new ABORTED_Class ();
++		public static Status STOPPED = new STOPPED_Class ();
++		public static Status FAILED = new FAILED_Class ();
++		public static Status UP_TO_DATE = new UP_TO_DATE_Class ();
++		public static Status FAST_FORWARD = new FAST_FORWARD_Class ();
++
++		static class OK_Class extends Status {
+ 			public boolean isSuccessful() {
+ 				return true;
+ 			}
+-		},
+-		/**
+-		 * Aborted; the original HEAD was restored
+-		 */
+-		ABORTED {
+-			@Override
++		}
++
++		static class ABORTED_Class extends Status {
+ 			public boolean isSuccessful() {
+ 				return false;
+ 			}
+-		},
+-		/**
+-		 * Stopped due to a conflict; must either abort or resolve or skip
+-		 */
+-		STOPPED {
+-			@Override
++		}
++
++		static class STOPPED_Class extends Status {
+ 			public boolean isSuccessful() {
+ 				return false;
+ 			}
+-		},
+-		/**
+-		 * Failed; the original HEAD was restored
+-		 */
+-		FAILED {
+-			@Override
++		}
++
++		static class FAILED_Class extends Status {
+ 			public boolean isSuccessful() {
+ 				return false;
+ 			}
+-		},
+-		/**
+-		 * Already up-to-date
+-		 */
+-		UP_TO_DATE {
+-			@Override
++		}
++
++		static class UP_TO_DATE_Class extends Status {
+ 			public boolean isSuccessful() {
+ 				return true;
+ 			}
+-		},
+-		/**
+-		 * Fast-forward, HEAD points to the new commit
+-		 */
+-		FAST_FORWARD {
+-			@Override
++		}
++
++		static class FAST_FORWARD_Class extends Status {
+ 			public boolean isSuccessful() {
+ 				return true;
+ 			}
+-		};
++		}
+ 
+-		/**
+-		 * @return whether the status indicates a successful result
+-		 */
+ 		public abstract boolean isSuccessful();
+ 	}
+ 
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java b/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java
-index 76d86a9..e8e07a3 100644
+index 424f9ff..321e92b 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java
-@@ -79,7 +79,7 @@
+@@ -80,7 +80,7 @@
  		RENAME,
  
  		/** Copy an existing file to a new location, keeping the original */
@@ -310,10 +512,10 @@ index f119c44..d961602 100644
  		private final boolean loose;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
-index 1017062..b18dd8f 100644
+index 7c8f51d..a6f9840 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
-@@ -54,119 +54,176 @@
+@@ -54,130 +54,187 @@
   * The granularity and set of states are somewhat arbitrary. The methods
   * on the state are the only supported means of deciding what to do.
   */
@@ -327,6 +529,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
  		public boolean canCommit() { return false; }
+ 		public boolean canAmend() { return false; }
  		public String getDescription() { return "Bare"; }
 -	},
 +		public String name() {
@@ -344,6 +547,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return true; }
  		public boolean canResetHead() { return true; }
  		public boolean canCommit() { return true; }
+ 		public boolean canAmend() { return true; }
  		public String getDescription() { return JGitText.get().repositoryState_normal; }
 -	},
 +		public String name() {
@@ -360,6 +564,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return true; }
  		public boolean canCommit() { return false; }
+ 		public boolean canAmend() { return false; }
  		public String getDescription() { return JGitText.get().repositoryState_conflicts; }
 -	},
 +		public String name() {
@@ -378,6 +583,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return true; }
  		public boolean canResetHead() { return true; }
  		public boolean canCommit() { return true; }
+ 		public boolean canAmend() { return false; }
  		public String getDescription() { return JGitText.get().repositoryState_merged; }
 -	},
 +		public String name() {
@@ -394,6 +600,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return true; }
  		public boolean canCommit() { return false; }
+ 		public boolean canAmend() { return false; }
  		public String getDescription() { return JGitText.get().repositoryState_conflicts; }
 -	},
 +		public String name() {
@@ -412,6 +619,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return true; }
  		public boolean canResetHead() { return true; }
  		public boolean canCommit() { return true; }
+ 		public boolean canAmend() { return false; }
  		public String getDescription() { return JGitText.get().repositoryState_merged; }
 -	},
 +		public String name() {
@@ -429,6 +637,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
  		public boolean canCommit() { return true; }
+ 		public boolean canAmend() { return true; }
  		public String getDescription() { return JGitText.get().repositoryState_rebaseOrApplyMailbox; }
 -	},
 +		public String name() {
@@ -446,6 +655,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
  		public boolean canCommit() { return true; }
+ 		public boolean canAmend() { return true; }
  		public String getDescription() { return JGitText.get().repositoryState_rebase; }
 -	},
 +		public String name() {
@@ -463,6 +673,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
  		public boolean canCommit() { return true; }
+ 		public boolean canAmend() { return true; }
  		public String getDescription() { return JGitText.get().repositoryState_applyMailbox; }
 -	},
 +		public String name() {
@@ -480,6 +691,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
  		public boolean canCommit() { return true; }
+ 		public boolean canAmend() { return true; }
  		public String getDescription() { return JGitText.get().repositoryState_rebaseWithMerge; }
 -	},
 +		public String name() {
@@ -497,6 +709,7 @@ index 1017062..b18dd8f 100644
  		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
  		public boolean canCommit() { return true; }
+ 		public boolean canAmend() { return true; }
  		public String getDescription() { return JGitText.get().repositoryState_rebaseInteractive; }
 -	},
 +		public String name() {
@@ -514,8 +727,8 @@ index 1017062..b18dd8f 100644
  		/* Changing head is a normal operation when bisecting */
  		public boolean canCheckout() { return true; }
  
-@@ -177,6 +234,9 @@
- 		public boolean canCommit() { return true; }
+@@ -190,6 +247,9 @@
+ 		public boolean canAmend() { return false; }
  
  		public String getDescription() { return JGitText.get().repositoryState_bisecting; }
 +		public String name() {
@@ -524,7 +737,7 @@ index 1017062..b18dd8f 100644
  	};
  
  	/**
-@@ -198,4 +258,6 @@
+@@ -216,4 +276,6 @@
  	 * @return a human readable description of the state.
  	 */
  	public abstract String getDescription();
@@ -554,10 +767,10 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index d347b59..8604e38 100644
+index fce1f1a..3c5281a 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-@@ -104,7 +104,7 @@
+@@ -105,7 +105,7 @@
  
  	private NameConflictTreeWalk tw;
  
@@ -632,7 +845,7 @@ index f28facb..f8283f2 100644
  		INSERTED, EXISTS_PACKED, EXISTS_LOOSE, FAILURE;
  	}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
-index 96abaee..5135f9f 100644
+index ccd621c..84c4ddb 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
 @@ -68,18 +68,18 @@
@@ -659,11 +872,11 @@ index 96abaee..5135f9f 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index 8a912ae..24b401d 100644
+index a7db92a..909f5ab 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-@@ -139,7 +139,7 @@
- 	private static final int PACK_VERSION_GENERATED = 2;
+@@ -189,7 +189,7 @@ public void remove() {
+ 	}
  
  	@SuppressWarnings("unchecked")
 -	private final BlockList<ObjectToPack> objectsLists[] = new BlockList[Constants.OBJ_TAG + 1];
@@ -671,7 +884,7 @@ index 8a912ae..24b401d 100644
  	{
  		objectsLists[Constants.OBJ_COMMIT] = new BlockList<ObjectToPack>();
  		objectsLists[Constants.OBJ_TREE] = new BlockList<ObjectToPack>();
-@@ -171,7 +171,7 @@
+@@ -229,7 +229,7 @@ public void remove() {
  
  	private List<ObjectToPack> sortedByName;
  
@@ -694,7 +907,7 @@ index 2927cad..52bf920 100644
  	/** The repository this transport fetches into, or pushes out of. */
  	protected final Repository local;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-index 67bedac..ac89684 100644
+index 4a86da7..9524143 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 @@ -140,8 +140,12 @@
@@ -834,19 +1047,19 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 0e50b93..727f139 100644
+index 2fa6e5c..a104c22 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-@@ -185,7 +185,7 @@
+@@ -211,7 +211,7 @@
  
- 	private final RevFlagSet SAVE;
+ 	private RequestPolicy requestPolicy = RequestPolicy.ADVERTISED;
  
 -	private MultiAck multiAck = MultiAck.OFF;
 +	private int multiAck = MultiAck.OFF;
  
  	private boolean noDone;
  
-@@ -637,14 +637,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -781,14 +781,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  				// If both sides have the same object; let the client know.
  				//
  				switch (multiAck) {
@@ -864,7 +1077,7 @@ index 0e50b93..727f139 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -666,12 +666,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -830,12 +830,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  					didOkToGiveUp = true;
  					if (okToGiveUp()) {
  						switch (multiAck) {
@@ -881,7 +1094,7 @@ index 0e50b93..727f139 100644
  							sentReady = true;
  							break;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
-index c683308..09a5bf3 100644
+index c7ae775..b74c23a 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
 @@ -146,7 +146,7 @@ public AbstractTreeIterator createSubtreeIterator(final ObjectReader reader)
@@ -894,11 +1107,11 @@ index c683308..09a5bf3 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index d067e90..4ca2045 100644
+index fa57b71..15e16bd 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-@@ -123,6 +123,12 @@
- 	private IgnoreNode ignoreNode;
+@@ -130,6 +130,12 @@
+ 	protected Repository repository;
  
  	/**
 +	 * Cached value of isEntryIgnored(). 0 if not ignored, 1 if ignored, -1 if
@@ -910,7 +1123,7 @@ index d067e90..4ca2045 100644
  	 * Create a new iterator with no parent.
  	 *
  	 * @param options
-@@ -458,6 +464,8 @@ public boolean isEntryIgnored() throws IOException {
+@@ -529,6 +535,8 @@ public boolean isEntryIgnored() throws IOException {
  	 *             a relevant ignore rule file exists but cannot be read.
  	 */
  	protected boolean isEntryIgnored(final int pLen) throws IOException {
@@ -919,7 +1132,7 @@ index d067e90..4ca2045 100644
  		IgnoreNode rules = getIgnoreNode();
  		if (rules != null) {
  			// The ignore code wants path to start with a '/' if possible.
-@@ -470,15 +478,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
+@@ -541,15 +549,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
  			String p = TreeWalk.pathOf(path, pOff, pLen);
  			switch (rules.isIgnored(p, FileMode.TREE.equals(mode))) {
  			case IGNORED:
@@ -942,7 +1155,7 @@ index d067e90..4ca2045 100644
  		return false;
  	}
  
-@@ -634,8 +647,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
+@@ -705,8 +718,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();
@@ -979,10 +1192,10 @@ index acc1ae6..686d65a 100644
  			return false;
  		}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java b/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
-index ced1d90..ad4f4cd 100644
+index 3afd9e5..37049cd 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
-@@ -63,7 +63,7 @@
+@@ -64,7 +64,7 @@
   */
  public abstract class SystemReader {
  	private static SystemReader INSTANCE = new SystemReader() {
@@ -991,7 +1204,7 @@ index ced1d90..ad4f4cd 100644
  
  		public String getenv(String variable) {
  			return System.getenv(variable);
-@@ -106,7 +106,6 @@ public String getHostname() {
+@@ -107,7 +107,6 @@ public String getHostname() {
  					// we do nothing
  					hostname = "localhost";
  				}

@@ -47,6 +47,7 @@ using NGit;
 using NGit.Diff;
 using NGit.Junit;
 using Sharpen;
+using NGit.Storage.File;
 
 namespace NGit.Diff
 {
@@ -70,7 +71,7 @@ namespace NGit.Diff
 		public override void SetUp()
 		{
 			base.SetUp();
-			testDb = new TestRepository(db);
+			testDb = new TestRepository<FileRepository>(db);
 			rd = new RenameDetector(db);
 		}
 

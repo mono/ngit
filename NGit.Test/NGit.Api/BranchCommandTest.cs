@@ -242,6 +242,30 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestCreateFromLightweightTag()
+		{
+			RefUpdate rup = db.UpdateRef("refs/tags/V10");
+			rup.SetNewObjectId(initialCommit);
+			rup.SetExpectedOldObjectId(ObjectId.ZeroId);
+			rup.Update();
+			Ref branch = git.BranchCreate().SetName("FromLightweightTag").SetStartPoint("refs/tags/V10"
+				).Call();
+			NUnit.Framework.Assert.AreEqual(initialCommit.Id, branch.GetObjectId());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCreateFromAnnotatetdTag()
+		{
+			RevTag tag = git.Tag().SetName("V10").SetObjectId(secondCommit).Call();
+			Ref branch = git.BranchCreate().SetName("FromAnnotatedTag").SetStartPoint("refs/tags/V10"
+				).Call();
+			NUnit.Framework.Assert.IsFalse(tag.Id.Equals(branch.GetObjectId()));
+			NUnit.Framework.Assert.AreEqual(secondCommit.Id, branch.GetObjectId());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDelete()
 		{
 			CreateBranch(git, "ForDelete", false, "master", null);

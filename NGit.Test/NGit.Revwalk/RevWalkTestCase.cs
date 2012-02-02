@@ -142,6 +142,12 @@ namespace NGit.Revwalk
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		protected internal virtual NGit.Junit.CommitBuilder CommitBuilder()
+		{
+			return util.Commit();
+		}
+
+		/// <exception cref="System.Exception"></exception>
 		protected internal virtual T ParseBody<T>(T t) where T:RevObject
 		{
 			return util.ParseBody(t);

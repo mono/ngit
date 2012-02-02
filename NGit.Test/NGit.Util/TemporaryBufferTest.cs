@@ -282,6 +282,21 @@ namespace NGit.Util
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestInCoreInputStream()
+		{
+			int cnt = 256;
+			byte[] test = new TestRng(Sharpen.Extensions.GetTestName()).NextBytes(cnt);
+			TemporaryBuffer.Heap b = new TemporaryBuffer.Heap(cnt + 4);
+			b.Write(test);
+			b.Close();
+			InputStream @in = b.OpenInputStream();
+			byte[] act = new byte[cnt];
+			IOUtil.ReadFully(@in, act, 0, cnt);
+			NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, act));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestInCoreLimit_SwitchOnAppendByte()
 		{
 			TemporaryBuffer b = new TemporaryBuffer.LocalFile();

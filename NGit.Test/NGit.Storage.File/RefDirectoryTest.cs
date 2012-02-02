@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System.Collections.Generic;
 using System.IO;
 using NGit;
+using NGit.Events;
 using NGit.Junit;
 using NGit.Revwalk;
 using NGit.Storage.File;
@@ -73,7 +74,7 @@ namespace NGit.Storage.File
 			base.SetUp();
 			diskRepo = CreateBareRepository();
 			refdir = (RefDirectory)diskRepo.RefDatabase;
-			repo = new TestRepository(diskRepo);
+			repo = new TestRepository<Repository>(diskRepo);
 			A = repo.Commit().Create();
 			B = repo.Commit(repo.GetRevWalk().ParseCommit(A));
 			v1_0 = repo.Tag("v1_0", B);
@@ -424,6 +425,41 @@ namespace NGit.Storage.File
 				));
 			NUnit.Framework.Assert.AreEqual(B, refs.Get("refs/heads/project1-B").GetObjectId(
 				));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestGetRefs_LooseSorting_Bug_348834()
+		{
+			IDictionary<string, Ref> refs;
+			WriteLooseRef("refs/heads/my/a+b", A);
+			WriteLooseRef("refs/heads/my/a/b/c", B);
+			int[] count = new int[1];
+			ListenerHandle listener = Repository.GetGlobalListenerList().AddRefsChangedListener
+				(new _RefsChangedListener_481(count));
+			refs = refdir.GetRefs(RefDatabase.ALL);
+			refs = refdir.GetRefs(RefDatabase.ALL);
+			listener.Remove();
+			NUnit.Framework.Assert.AreEqual(1, count[0]);
+			// Bug 348834 multiple RefsChangedEvents
+			NUnit.Framework.Assert.AreEqual(2, refs.Count);
+			NUnit.Framework.Assert.AreEqual(A, refs.Get("refs/heads/my/a+b").GetObjectId());
+			NUnit.Framework.Assert.AreEqual(B, refs.Get("refs/heads/my/a/b/c").GetObjectId());
+		}
+
+		private sealed class _RefsChangedListener_481 : RefsChangedListener
+		{
+			public _RefsChangedListener_481(int[] count)
+			{
+				this.count = count;
+			}
+
+			public void OnRefsChanged(RefsChangedEvent @event)
+			{
+				count[0]++;
+			}
+
+			private readonly int[] count;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

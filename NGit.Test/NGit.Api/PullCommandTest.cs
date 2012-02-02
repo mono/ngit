@@ -189,6 +189,16 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		public virtual void TestPullEmptyRepository()
+		{
+			Repository empty = CreateWorkRepository();
+			RefUpdate delete = empty.UpdateRef(Constants.HEAD, true);
+			delete.SetForceUpdate(true);
+			delete.Delete();
+			Git.Wrap(empty).Pull().Call();
+		}
+
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.SetUp]
 		public override void SetUp()
 		{

@@ -55,8 +55,7 @@ using NGit.Storage.Pack;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
 using NGit.Util;
-using NUnit.Framework;
-using R = NGit.Repository;
+using NGit.Util.IO;
 using Sharpen;
 
 namespace NGit.Junit
@@ -64,18 +63,27 @@ namespace NGit.Junit
 	/// <summary>Wrapper to make creating test data easier.</summary>
 	/// <remarks>Wrapper to make creating test data easier.</remarks>
 	/// <?></?>
-	public class TestRepository<T>: TestRepository
+	public interface TestRepository
 	{
-		public TestRepository(R db) : base(db)
-		{
-		}
-
-		public TestRepository(R db, RevWalk rw) : base (db, rw)
-		{
-		}
+		DirCacheEntry File(string path, RevBlob blob);
+		RevTree Tree(params DirCacheEntry[] entries);
+		RevTag Tag(string name, RevObject dst);
+		RevCommit Commit(RevTree tree, params RevCommit[] parents);
+		RevCommit Commit(params RevCommit[] parents);
+		RevWalk GetRevWalk();
+		CommitBuilder Commit();
+		ObjectInserter inserter { get; set; }
+		void SetAuthorAndCommitter(NGit.CommitBuilder c);
+		void Tick(int secDelta);
+		T ParseBody<T>(T @object) where T:RevObject;
+		RevWalk pool { get; set; }
+		Repository db { get; set; }
+		T Update<T>(string @ref, T obj) where T:AnyObjectId;
+		void WriteFile(FilePath p, byte[] bin);
+		RevBlob Blob(string content);
 	}
 	
-	public class TestRepository
+	public class TestRepository<R> : TestRepository where R : Repository
 	{
 		private static readonly PersonIdent author;
 
@@ -93,12 +101,21 @@ namespace NGit.Junit
 			string ce = "jcommitter@example.com";
 			committer = new PersonIdent(cn, ce, now, tz);
 		}
+		
+		private Repository storage;
+		Repository TestRepository.db {
+			get { return storage; }
+			set { storage = value; }
+		}
+		
+		private R db {
+			get { return (R) (object) storage; }
+			set { storage = (Repository)(object) value; }
+		}
 
-		private readonly R db;
+		public RevWalk pool { get; set; }
 
-		private readonly RevWalk pool;
-
-		private readonly ObjectInserter inserter;
+		public ObjectInserter inserter { get; set; }
 
 		private long now;
 
@@ -372,9 +389,9 @@ namespace NGit.Junit
 		}
 
 		/// <returns>a new commit builder.</returns>
-		public virtual TestRepository.CommitBuilder Commit()
+		public virtual CommitBuilder Commit()
 		{
-			return new TestRepository.CommitBuilder(this);
+			return new CommitBuilder(this);
 		}
 
 		/// <summary>Construct an annotated tag object pointing at another object.</summary>
@@ -438,7 +455,7 @@ namespace NGit.Junit
 		/// <param name="to">the target object.</param>
 		/// <returns>the target object.</returns>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		public virtual RevCommit Update(string @ref, TestRepository.CommitBuilder to)
+		public virtual RevCommit Update(string @ref, CommitBuilder to)
 		{
 			return Update(@ref, to.Create());
 		}
@@ -520,8 +537,8 @@ namespace NGit.Junit
 		{
 			if (db is FileRepository)
 			{
-				FileRepository fr = (FileRepository)db;
-				RefWriter rw = new _RefWriter_490(this, fr, fr.GetAllRefs().Values);
+				FileRepository fr = (FileRepository)(object)db;
+				RefWriter rw = new _RefWriter_491(this, fr, fr.GetAllRefs().Values);
 				rw.WritePackedRefs();
 				rw.WriteInfoRefs();
 				StringBuilder w = new StringBuilder();
@@ -536,9 +553,9 @@ namespace NGit.Junit
 			}
 		}
 
-		private sealed class _RefWriter_490 : RefWriter
+		private sealed class _RefWriter_491 : RefWriter
 		{
-			public _RefWriter_490(TestRepository _enclosing, FileRepository fr, ICollection
+			public _RefWriter_491(TestRepository<R> _enclosing, FileRepository fr, ICollection
 				<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -589,7 +606,7 @@ namespace NGit.Junit
 		/// be added.
 		/// </param>
 		/// <returns>builder for the named branch.</returns>
-		public virtual TestRepository.BranchBuilder Branch(string @ref)
+		public virtual BranchBuilder Branch(string @ref)
 		{
 			if (Constants.HEAD.Equals(@ref))
 			{
@@ -604,7 +621,7 @@ namespace NGit.Junit
 					@ref = Constants.R_HEADS + @ref;
 				}
 			}
-			return new TestRepository.BranchBuilder(this, @ref);
+			return new BranchBuilder(this, @ref);
 		}
 
 		/// <summary>Run consistency checks against the object database.</summary>
@@ -704,7 +721,7 @@ namespace NGit.Junit
 					ObjectId name = pw.ComputeName();
 					OutputStream @out;
 					pack = NameFor(odb, name, ".pack");
-					@out = new BufferedOutputStream(new FileOutputStream(pack));
+					@out = new SafeBufferedOutputStream(new FileOutputStream(pack));
 					try
 					{
 						pw.WritePack(m, m, @out);
@@ -715,7 +732,7 @@ namespace NGit.Junit
 					}
 					pack.SetReadOnly();
 					idx = NameFor(odb, name, ".idx");
-					@out = new BufferedOutputStream(new FileOutputStream(idx));
+					@out = new SafeBufferedOutputStream(new FileOutputStream(idx));
 					try
 					{
 						pw.WriteIndex(@out);
@@ -756,7 +773,7 @@ namespace NGit.Junit
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Errors.ObjectWritingException"></exception>
-		private void WriteFile(FilePath p, byte[] bin)
+		public void WriteFile(FilePath p, byte[] bin)
 		{
 			LockFile lck = new LockFile(p, db.FileSystem);
 			if (!lck.Lock())
@@ -776,7 +793,7 @@ namespace NGit.Junit
 				throw new ObjectWritingException("Can't write " + p);
 			}
 		}
-
+	}
 		/// <summary>Helper to build a branch with one or more commits</summary>
 		public class BranchBuilder
 		{
@@ -796,9 +813,9 @@ namespace NGit.Junit
 			/// </returns>
 			/// <exception cref="System.Exception">the commit builder can't read the current branch state
 			/// 	</exception>
-			public virtual TestRepository.CommitBuilder Commit()
+			public virtual CommitBuilder Commit()
 			{
-				return new TestRepository.CommitBuilder(_enclosing, this);
+				return new CommitBuilder(_enclosing, this);
 			}
 
 			/// <summary>Forcefully update this branch to a particular commit.</summary>
@@ -810,7 +827,7 @@ namespace NGit.Junit
 			/// .
 			/// </returns>
 			/// <exception cref="System.Exception">System.Exception</exception>
-			public virtual RevCommit Update(TestRepository.CommitBuilder to)
+			public virtual RevCommit Update(CommitBuilder to)
 			{
 				return this.Update(to.Create());
 			}
@@ -836,7 +853,7 @@ namespace NGit.Junit
 		/// <remarks>Helper to generate a commit.</remarks>
 		public class CommitBuilder
 		{
-			private readonly TestRepository.BranchBuilder branch;
+			private readonly BranchBuilder branch;
 
 			private readonly DirCache tree = DirCache.NewInCore();
 
@@ -855,7 +872,7 @@ namespace NGit.Junit
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			internal CommitBuilder(TestRepository _enclosing, TestRepository.BranchBuilder
+			internal CommitBuilder(TestRepository _enclosing, BranchBuilder
 				 b)
 			{
 				this._enclosing = _enclosing;
@@ -868,7 +885,7 @@ namespace NGit.Junit
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			internal CommitBuilder(TestRepository _enclosing, TestRepository.CommitBuilder
+			internal CommitBuilder(TestRepository _enclosing, CommitBuilder
 				 prior)
 			{
 				this._enclosing = _enclosing;
@@ -883,7 +900,7 @@ namespace NGit.Junit
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			public virtual TestRepository.CommitBuilder Parent(RevCommit p)
+			public virtual CommitBuilder Parent(RevCommit p)
 			{
 				if (this.parents.IsEmpty())
 				{
@@ -897,36 +914,36 @@ namespace NGit.Junit
 				return this;
 			}
 
-			public virtual TestRepository.CommitBuilder NoParents()
+			public virtual CommitBuilder NoParents()
 			{
 				this.parents.Clear();
 				return this;
 			}
 
-			public virtual TestRepository.CommitBuilder NoFiles()
+			public virtual CommitBuilder NoFiles()
 			{
 				this.tree.Clear();
 				return this;
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			public virtual TestRepository.CommitBuilder Add(string path, string content)
+			public virtual CommitBuilder Add(string path, string content)
 			{
 				return this.Add(path, this._enclosing.Blob(content));
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			public virtual TestRepository.CommitBuilder Add(string path, RevBlob id)
+			public virtual CommitBuilder Add(string path, RevBlob id)
 			{
 				DirCacheEditor e = this.tree.Editor();
-				e.Add(new _PathEdit_790(id, path));
+				e.Add(new _PathEdit_791(id, path));
 				e.Finish();
 				return this;
 			}
 
-			private sealed class _PathEdit_790 : DirCacheEditor.PathEdit
+			private sealed class _PathEdit_791 : DirCacheEditor.PathEdit
 			{
-				public _PathEdit_790(RevBlob id, string baseArg1) : base(baseArg1)
+				public _PathEdit_791(RevBlob id, string baseArg1) : base(baseArg1)
 				{
 					this.id = id;
 				}
@@ -940,7 +957,7 @@ namespace NGit.Junit
 				private readonly RevBlob id;
 			}
 
-			public virtual TestRepository.CommitBuilder Rm(string path)
+			public virtual CommitBuilder Rm(string path)
 			{
 				DirCacheEditor e = this.tree.Editor();
 				e.Add(new DirCacheEditor.DeletePath(path));
@@ -949,13 +966,13 @@ namespace NGit.Junit
 				return this;
 			}
 
-			public virtual TestRepository.CommitBuilder Message(string m)
+			public virtual CommitBuilder Message(string m)
 			{
 				this.message = m;
 				return this;
 			}
 
-			public virtual TestRepository.CommitBuilder Tick(int secs)
+			public virtual CommitBuilder Tick(int secs)
 			{
 				this.tick = secs;
 				return this;
@@ -993,12 +1010,12 @@ namespace NGit.Junit
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			public virtual TestRepository.CommitBuilder Child()
+			public virtual CommitBuilder Child()
 			{
-				return new TestRepository.CommitBuilder(_enclosing, this);
+				return new CommitBuilder(_enclosing, this);
 			}
 
 			private readonly TestRepository _enclosing;
 		}
-	}
+
 }

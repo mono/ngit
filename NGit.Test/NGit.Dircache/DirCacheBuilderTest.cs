@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System;
 using NGit;
 using NGit.Dircache;
+using NGit.Events;
 using Sharpen;
 
 namespace NGit.Dircache
@@ -178,6 +179,99 @@ namespace NGit.Dircache
 				NUnit.Framework.Assert.AreEqual(lastModified, entOrig.LastModified);
 				NUnit.Framework.Assert.AreEqual(length, entOrig.Length);
 				NUnit.Framework.Assert.IsFalse(entOrig.IsAssumeValid);
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestBuildOneFile_Commit_IndexChangedEvent()
+		{
+			// empty
+			string path = "a-file-path";
+			FileMode mode = FileMode.REGULAR_FILE;
+			// "old" date in 2008
+			long lastModified = 1218123387057L;
+			int length = 1342;
+			DirCacheEntry entOrig;
+			bool receivedEvent = false;
+			DirCache dc = db.LockDirCache();
+			IndexChangedListener listener = new _IndexChangedListener_212();
+			ListenerList l = db.Listeners;
+			l.AddIndexChangedListener(listener);
+			DirCacheBuilder b = dc.Builder();
+			entOrig = new DirCacheEntry(path);
+			entOrig.FileMode = mode;
+			entOrig.LastModified = lastModified;
+			entOrig.SetLength(length);
+			b.Add(entOrig);
+			try
+			{
+				b.Commit();
+			}
+			catch (_T123327308)
+			{
+				receivedEvent = true;
+			}
+			if (!receivedEvent)
+			{
+				NUnit.Framework.Assert.Fail("did not receive IndexChangedEvent");
+			}
+			// do the same again, as this doesn't change index compared to first
+			// round we should get no event this time
+			dc = db.LockDirCache();
+			listener = new _IndexChangedListener_239();
+			l = db.Listeners;
+			l.AddIndexChangedListener(listener);
+			b = dc.Builder();
+			entOrig = new DirCacheEntry(path);
+			entOrig.FileMode = mode;
+			entOrig.LastModified = lastModified;
+			entOrig.SetLength(length);
+			b.Add(entOrig);
+			try
+			{
+				b.Commit();
+			}
+			catch (_T123327308)
+			{
+				NUnit.Framework.Assert.Fail("unexpected IndexChangedEvent");
+			}
+		}
+
+		[System.Serializable]
+		internal sealed class _T123327308 : RuntimeException
+		{
+			private const long serialVersionUID = 1L;
+
+			internal _T123327308(DirCacheBuilderTest _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			private readonly DirCacheBuilderTest _enclosing;
+		}
+
+		private sealed class _IndexChangedListener_212 : IndexChangedListener
+		{
+			public _IndexChangedListener_212()
+			{
+			}
+
+			public void OnIndexChanged(IndexChangedEvent @event)
+			{
+				throw new _T123327308(null);
+			}
+		}
+
+		private sealed class _IndexChangedListener_239 : IndexChangedListener
+		{
+			public _IndexChangedListener_239()
+			{
+			}
+
+			public void OnIndexChanged(IndexChangedEvent @event)
+			{
+				throw new _T123327308(null);
 			}
 		}
 

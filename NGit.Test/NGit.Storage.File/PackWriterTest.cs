@@ -57,8 +57,8 @@ namespace NGit.Storage.File
 	[NUnit.Framework.TestFixture]
 	public class PackWriterTest : SampleDataRepositoryTestCase
 	{
-		private static readonly IList<ObjectId> EMPTY_LIST_OBJECT = Sharpen.Collections.EmptyList
-			<ObjectId>();
+		private static readonly ICollection<ObjectId> EMPTY_SET_OBJECT = Sharpen.Collections
+			.EmptySet<ObjectId>();
 
 		private static readonly IList<RevObject> EMPTY_LIST_REVS = Sharpen.Collections.EmptyList
 			<RevObject>();
@@ -149,7 +149,7 @@ namespace NGit.Storage.File
 		[NUnit.Framework.Test]
 		public virtual void TestWriteEmptyPack1()
 		{
-			CreateVerifyOpenPack(EMPTY_LIST_OBJECT, EMPTY_LIST_OBJECT, false, false);
+			CreateVerifyOpenPack(EMPTY_SET_OBJECT, EMPTY_SET_OBJECT, false, false);
 			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectCount());
 			NUnit.Framework.Assert.AreEqual(0, pack.GetObjectCount());
 			NUnit.Framework.Assert.AreEqual("da39a3ee5e6b4b0d3255bfef95601890afd80709", writer
@@ -189,8 +189,8 @@ namespace NGit.Storage.File
 				);
 			try
 			{
-				CreateVerifyOpenPack(EMPTY_LIST_OBJECT, Sharpen.Collections.NCopies(1, nonExisting
-					), false, false);
+				CreateVerifyOpenPack(EMPTY_SET_OBJECT, Sharpen.Collections.Singleton(nonExisting)
+					, false, false);
 				NUnit.Framework.Assert.Fail("Should have thrown MissingObjectException");
 			}
 			catch (MissingObjectException)
@@ -209,8 +209,8 @@ namespace NGit.Storage.File
 		{
 			ObjectId nonExisting = ObjectId.FromString("0000000000000000000000000000000000000001"
 				);
-			CreateVerifyOpenPack(EMPTY_LIST_OBJECT, Sharpen.Collections.NCopies(1, nonExisting
-				), false, true);
+			CreateVerifyOpenPack(EMPTY_SET_OBJECT, Sharpen.Collections.Singleton(nonExisting)
+				, false, true);
 		}
 
 		// shouldn't throw anything
@@ -481,10 +481,10 @@ namespace NGit.Storage.File
 		/// <exception cref="System.IO.IOException"></exception>
 		private void WriteVerifyPack1()
 		{
-			List<ObjectId> interestings = new List<ObjectId>();
+			HashSet<ObjectId> interestings = new HashSet<ObjectId>();
 			interestings.AddItem(ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
 				));
-			CreateVerifyOpenPack(interestings, EMPTY_LIST_OBJECT, false, false);
+			CreateVerifyOpenPack(interestings, EMPTY_SET_OBJECT, false, false);
 			ObjectId[] expectedOrder = new ObjectId[] { ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
 				), ObjectId.FromString("c59759f143fb1fe21c197981df75a7ee00290799"), ObjectId.FromString
 				("540a36d136cf413e4b064c2b0e0a4db60f77feab"), ObjectId.FromString("aabf2ffaec9b497f0950352b3e582d73035c2035"
@@ -501,10 +501,10 @@ namespace NGit.Storage.File
 		private void WriteVerifyPack2(bool deltaReuse)
 		{
 			config.SetReuseDeltas(deltaReuse);
-			List<ObjectId> interestings = new List<ObjectId>();
+			HashSet<ObjectId> interestings = new HashSet<ObjectId>();
 			interestings.AddItem(ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
 				));
-			List<ObjectId> uninterestings = new List<ObjectId>();
+			HashSet<ObjectId> uninterestings = new HashSet<ObjectId>();
 			uninterestings.AddItem(ObjectId.FromString("540a36d136cf413e4b064c2b0e0a4db60f77feab"
 				));
 			CreateVerifyOpenPack(interestings, uninterestings, false, false);
@@ -529,10 +529,10 @@ namespace NGit.Storage.File
 		/// <exception cref="System.IO.IOException"></exception>
 		private void WriteVerifyPack4(bool thin)
 		{
-			List<ObjectId> interestings = new List<ObjectId>();
+			HashSet<ObjectId> interestings = new HashSet<ObjectId>();
 			interestings.AddItem(ObjectId.FromString("82c6b885ff600be425b4ea96dee75dca255b69e7"
 				));
-			List<ObjectId> uninterestings = new List<ObjectId>();
+			HashSet<ObjectId> uninterestings = new HashSet<ObjectId>();
 			uninterestings.AddItem(ObjectId.FromString("c59759f143fb1fe21c197981df75a7ee00290799"
 				));
 			CreateVerifyOpenPack(interestings, uninterestings, thin, false);

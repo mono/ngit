@@ -4,6 +4,7 @@
 -junitConversion
 -flatDirectoryStructure
 
+-cp @HAMCREST_JAR@
 -cp @NUNIT_JAR@
 -cp @BIN_PATH@
 
