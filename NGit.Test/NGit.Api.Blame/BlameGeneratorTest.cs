@@ -103,6 +103,75 @@ namespace NGit.Api.Blame
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestRenamedBoundLineDelete()
+		{
+			Git git = new Git(db);
+			string FILENAME_1 = "subdir/file1.txt";
+			string FILENAME_2 = "subdir/file2.txt";
+			string[] content1 = new string[] { "first", "second" };
+			WriteTrashFile(FILENAME_1, Join(content1));
+			git.Add().AddFilepattern(FILENAME_1).Call();
+			RevCommit c1 = git.Commit().SetMessage("create file1").Call();
+			// rename it
+			WriteTrashFile(FILENAME_2, Join(content1));
+			git.Add().AddFilepattern(FILENAME_2).Call();
+			DeleteTrashFile(FILENAME_1);
+			git.Rm().AddFilepattern(FILENAME_1).Call();
+			git.Commit().SetMessage("rename file1.txt to file2.txt").Call();
+			// and change the new file
+			string[] content2 = new string[] { "third", "first", "second" };
+			WriteTrashFile(FILENAME_2, Join(content2));
+			git.Add().AddFilepattern(FILENAME_2).Call();
+			RevCommit c2 = git.Commit().SetMessage("change file2").Call();
+			BlameGenerator generator = new BlameGenerator(db, FILENAME_2);
+			try
+			{
+				generator.Push(null, db.Resolve(Constants.HEAD));
+				NUnit.Framework.Assert.AreEqual(3, generator.GetResultContents().Size());
+				NUnit.Framework.Assert.IsTrue(generator.Next());
+				NUnit.Framework.Assert.AreEqual(c2, generator.GetSourceCommit());
+				NUnit.Framework.Assert.AreEqual(1, generator.GetRegionLength());
+				NUnit.Framework.Assert.AreEqual(0, generator.GetResultStart());
+				NUnit.Framework.Assert.AreEqual(1, generator.GetResultEnd());
+				NUnit.Framework.Assert.AreEqual(0, generator.GetSourceStart());
+				NUnit.Framework.Assert.AreEqual(1, generator.GetSourceEnd());
+				NUnit.Framework.Assert.AreEqual(FILENAME_2, generator.GetSourcePath());
+				NUnit.Framework.Assert.IsTrue(generator.Next());
+				NUnit.Framework.Assert.AreEqual(c1, generator.GetSourceCommit());
+				NUnit.Framework.Assert.AreEqual(2, generator.GetRegionLength());
+				NUnit.Framework.Assert.AreEqual(1, generator.GetResultStart());
+				NUnit.Framework.Assert.AreEqual(3, generator.GetResultEnd());
+				NUnit.Framework.Assert.AreEqual(0, generator.GetSourceStart());
+				NUnit.Framework.Assert.AreEqual(2, generator.GetSourceEnd());
+				NUnit.Framework.Assert.AreEqual(FILENAME_1, generator.GetSourcePath());
+				NUnit.Framework.Assert.IsFalse(generator.Next());
+			}
+			finally
+			{
+				generator.Release();
+			}
+			// and test again with other BlameGenerator API:
+			generator = new BlameGenerator(db, FILENAME_2);
+			try
+			{
+				generator.Push(null, db.Resolve(Constants.HEAD));
+				BlameResult result = generator.ComputeBlameResult();
+				NUnit.Framework.Assert.AreEqual(3, result.GetResultContents().Size());
+				NUnit.Framework.Assert.AreEqual(c2, result.GetSourceCommit(0));
+				NUnit.Framework.Assert.AreEqual(FILENAME_2, result.GetSourcePath(0));
+				NUnit.Framework.Assert.AreEqual(c1, result.GetSourceCommit(1));
+				NUnit.Framework.Assert.AreEqual(FILENAME_1, result.GetSourcePath(1));
+				NUnit.Framework.Assert.AreEqual(c1, result.GetSourceCommit(2));
+				NUnit.Framework.Assert.AreEqual(FILENAME_1, result.GetSourcePath(2));
+			}
+			finally
+			{
+				generator.Release();
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestLinesAllDeletedShortenedWalk()
 		{
 			Git git = new Git(db);

@@ -164,5 +164,65 @@ namespace NGit.Api
 					), "failed to update on attempt " + i);
 			}
 		}
+
+		/// <summary>Check that the push refspec is read from config.</summary>
+		/// <remarks>Check that the push refspec is read from config.</remarks>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPushWithRefSpecFromConfig()
+		{
+			Git git = new Git(db);
+			Git git2 = new Git(CreateBareRepository());
+			StoredConfig config = git.GetRepository().GetConfig();
+			RemoteConfig remoteConfig = new RemoteConfig(config, "test");
+			URIish uri = new URIish(git2.GetRepository().Directory.ToURI().ToURL());
+			remoteConfig.AddURI(uri);
+			remoteConfig.AddPushRefSpec(new RefSpec("HEAD:refs/heads/newbranch"));
+			remoteConfig.Update(config);
+			config.Save();
+			WriteTrashFile("f", "content of f");
+			git.Add().AddFilepattern("f").Call();
+			RevCommit commit = git.Commit().SetMessage("adding f").Call();
+			NUnit.Framework.Assert.AreEqual(null, git2.GetRepository().Resolve("refs/heads/master"
+				));
+			git.Push().SetRemote("test").Call();
+			NUnit.Framework.Assert.AreEqual(commit.Id, git2.GetRepository().Resolve("refs/heads/newbranch"
+				));
+		}
+
+		/// <summary>Check that only HEAD is pushed if no refspec is given.</summary>
+		/// <remarks>Check that only HEAD is pushed if no refspec is given.</remarks>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPushWithoutPushRefSpec()
+		{
+			Git git = new Git(db);
+			Git git2 = new Git(CreateBareRepository());
+			StoredConfig config = git.GetRepository().GetConfig();
+			RemoteConfig remoteConfig = new RemoteConfig(config, "test");
+			URIish uri = new URIish(git2.GetRepository().Directory.ToURI().ToURL());
+			remoteConfig.AddURI(uri);
+			remoteConfig.AddFetchRefSpec(new RefSpec("+refs/heads/*:refs/remotes/origin/*"));
+			remoteConfig.Update(config);
+			config.Save();
+			WriteTrashFile("f", "content of f");
+			git.Add().AddFilepattern("f").Call();
+			RevCommit commit = git.Commit().SetMessage("adding f").Call();
+			git.Checkout().SetName("not-pushed").SetCreateBranch(true).Call();
+			git.Checkout().SetName("branchtopush").SetCreateBranch(true).Call();
+			NUnit.Framework.Assert.AreEqual(null, git2.GetRepository().Resolve("refs/heads/branchtopush"
+				));
+			NUnit.Framework.Assert.AreEqual(null, git2.GetRepository().Resolve("refs/heads/not-pushed"
+				));
+			NUnit.Framework.Assert.AreEqual(null, git2.GetRepository().Resolve("refs/heads/master"
+				));
+			git.Push().SetRemote("test").Call();
+			NUnit.Framework.Assert.AreEqual(commit.Id, git2.GetRepository().Resolve("refs/heads/branchtopush"
+				));
+			NUnit.Framework.Assert.AreEqual(null, git2.GetRepository().Resolve("refs/heads/not-pushed"
+				));
+			NUnit.Framework.Assert.AreEqual(null, git2.GetRepository().Resolve("refs/heads/master"
+				));
+		}
 	}
 }

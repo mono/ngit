@@ -90,8 +90,10 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual(str, u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual(str, u.GetPath());
 			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -103,8 +105,10 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual(str, u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual(str, u.GetPath());
 			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -116,8 +120,10 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("D:\\m y", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("D:\\m y", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("D:\\m y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("D:\\m y", u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -129,8 +135,10 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual(str, u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual(str, u.GetPath());
 			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -142,8 +150,10 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("\\\\some\\place", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("\\\\some\\place", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("\\\\some\\place", u.ToString());
+			NUnit.Framework.Assert.AreEqual("\\\\some\\place", u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -155,8 +165,55 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("file", u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/home/m y", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/home/m y", u.GetPath());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("file:///home/m y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("file:///home/m%20y", u.ToASCIIString());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestURIEncode_00()
+		{
+			string str = "file:///home/m%00y";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("file", u.GetScheme());
+			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/home/m%00y", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/home/m\u0000y", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("file:///home/m%00y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("file:///home/m%00y", u.ToASCIIString());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestURIEncode_0a()
+		{
+			string str = "file:///home/m%0ay";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("file", u.GetScheme());
+			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/home/m%0ay", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/home/m\ny", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("file:///home/m%0ay", u.ToString());
+			NUnit.Framework.Assert.AreEqual("file:///home/m%0ay", u.ToASCIIString());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestURIEncode_unicode()
+		{
+			string str = "file:///home/m%c3%a5y";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("file", u.GetScheme());
+			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/home/m%c3%a5y", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/home/m\u00e5y", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("file:///home/m%c3%a5y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("file:///home/m%c3%a5y", u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -168,8 +225,10 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("file", u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("D:/m y", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("D:/m y", u.GetPath());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("file:///D:/m y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("file:///D:/m%20y", u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -182,8 +241,11 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual("git", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.AreEqual("/home/m y", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/home/m y", u.GetPath());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("git://example.com/home/m y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("git://example.com/home/m%20y", u.ToASCIIString()
+				);
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -196,9 +258,12 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual("git", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.AreEqual("/home/m y", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/home/m y", u.GetPath());
 			NUnit.Framework.Assert.AreEqual(333, u.GetPort());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("git://example.com:333/home/m y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("git://example.com:333/home/m%20y", u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -210,10 +275,13 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("git", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("D:/m y", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("D:/m y", u.GetPath());
 			NUnit.Framework.Assert.AreEqual(338, u.GetPort());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("git://example.com:338/D:/m y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("git://example.com:338/D:/m%20y", u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -225,10 +293,29 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("git", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("D:/m y", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("D:/m y", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
+			NUnit.Framework.Assert.AreEqual("git://example.com/D:/m y", u.ToString());
+			NUnit.Framework.Assert.AreEqual("git://example.com/D:/m%20y", u.ToASCIIString());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestScpStyleNoURIDecoding()
+		{
+			string str = "example.com:some/p%20ath";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.IsNull(u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("some/p%20ath", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("some/p%20ath", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -240,10 +327,12 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -255,10 +344,12 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -270,11 +361,13 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("user", u.GetUser());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToASCIIString());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -286,10 +379,13 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("git+ssh", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("git+ssh://example.com/some/p ath", u.ToString());
+			NUnit.Framework.Assert.AreEqual("git+ssh://example.com/some/p%20ath", u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -301,10 +397,13 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("ssh+git", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("ssh+git://example.com/some/p ath", u.ToString());
+			NUnit.Framework.Assert.AreEqual("ssh+git://example.com/some/p%20ath", u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -316,10 +415,13 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("ssh", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("ssh://example.com/some/p ath", u.ToString());
+			NUnit.Framework.Assert.AreEqual("ssh://example.com/some/p%20ath", u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -331,12 +433,16 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("ssh", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual("user", u.GetUser());
 			NUnit.Framework.Assert.IsNull(u.GetPass());
 			NUnit.Framework.Assert.AreEqual(33, u.GetPort());
-			NUnit.Framework.Assert.AreEqual(str, u.ToString());
+			NUnit.Framework.Assert.AreEqual("ssh://user@example.com:33/some/p ath", u.ToString
+				());
+			NUnit.Framework.Assert.AreEqual("ssh://user@example.com:33/some/p%20ath", u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -348,13 +454,91 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("ssh", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.AreEqual("user", u.GetUser());
 			NUnit.Framework.Assert.AreEqual("pass", u.GetPass());
 			NUnit.Framework.Assert.AreEqual(33, u.GetPort());
-			NUnit.Framework.Assert.AreEqual(str, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual("ssh://user:pass@example.com:33/some/p ath", u.ToPrivateString
+				());
+			NUnit.Framework.Assert.AreEqual("ssh://user:pass@example.com:33/some/p%20ath", u.
+				ToPrivateASCIIString());
 			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateASCIIString(), u.ToASCIIString
+				());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSshProtoWithADUserPassAndPort()
+		{
+			string str = "ssh://DOMAIN\\user:pass@example.com:33/some/p ath";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("ssh", u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.AreEqual("DOMAIN\\user", u.GetUser());
+			NUnit.Framework.Assert.AreEqual("pass", u.GetPass());
+			NUnit.Framework.Assert.AreEqual(33, u.GetPort());
+			NUnit.Framework.Assert.AreEqual("ssh://DOMAIN\\user:pass@example.com:33/some/p ath"
+				, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual("ssh://DOMAIN\\user:pass@example.com:33/some/p%20ath"
+				, u.ToPrivateASCIIString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateASCIIString(), u.ToASCIIString
+				());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSshProtoWithEscapedADUserPassAndPort()
+		{
+			string str = "ssh://DOMAIN%5c\u00fcser:pass@example.com:33/some/p ath";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("ssh", u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/some/p ath", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.AreEqual("DOMAIN\\\u00fcser", u.GetUser());
+			NUnit.Framework.Assert.AreEqual("pass", u.GetPass());
+			NUnit.Framework.Assert.AreEqual(33, u.GetPort());
+			NUnit.Framework.Assert.AreEqual("ssh://DOMAIN\\\u00fcser:pass@example.com:33/some/p ath"
+				, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual("ssh://DOMAIN\\%c3%bcser:pass@example.com:33/some/p%20ath"
+				, u.ToPrivateASCIIString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateASCIIString(), u.ToASCIIString
+				());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestURIEncodeDecode()
+		{
+			string str = "ssh://%3ax%25:%40%41x@example.com:33/some%c3%a5/p%20a th";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("ssh", u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some%c3%a5/p%20a th", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/some\u00e5/p a th", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.AreEqual(":x%", u.GetUser());
+			NUnit.Framework.Assert.AreEqual("@Ax", u.GetPass());
+			NUnit.Framework.Assert.AreEqual(33, u.GetPort());
+			NUnit.Framework.Assert.AreEqual("ssh://%3ax%25:%40Ax@example.com:33/some%c3%a5/p%20a th"
+				, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual("ssh://%3ax%25:%40Ax@example.com:33/some%c3%a5/p%20a%20th"
+				, u.ToPrivateASCIIString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateASCIIString(), u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -366,13 +550,19 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("git", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("~some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("~some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.IsNull(u.GetUser());
 			NUnit.Framework.Assert.IsNull(u.GetPass());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
-			NUnit.Framework.Assert.AreEqual(str, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual("git://example.com/~some/p ath", u.ToPrivateString
+				());
+			NUnit.Framework.Assert.AreEqual("git://example.com/~some/p%20ath", u.ToPrivateASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateASCIIString(), u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -385,13 +575,17 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("git", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("~some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("~some/p ath", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
 			NUnit.Framework.Assert.IsNull(u.GetUser());
 			NUnit.Framework.Assert.IsNull(u.GetPass());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.AreEqual(str, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToPrivateASCIIString());
 			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateASCIIString(), u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -403,13 +597,17 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.IsNull(u.GetScheme());
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/~some/p ath", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/~some/p ath", u.GetPath());
 			NUnit.Framework.Assert.IsNull(u.GetHost());
 			NUnit.Framework.Assert.IsNull(u.GetUser());
 			NUnit.Framework.Assert.IsNull(u.GetPass());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.AreEqual(str, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual(str, u.ToPrivateASCIIString());
 			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateASCIIString(), u.ToASCIIString
+				());
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
@@ -456,6 +654,36 @@ namespace NGit.Transport
 		}
 
 		// expected
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestGetSet()
+		{
+			string str = "ssh://DOMAIN\\user:pass@example.com:33/some/p ath%20";
+			URIish u = new URIish(str);
+			u = u.SetHost(u.GetHost());
+			u = u.SetPass(u.GetPass());
+			u = u.SetPort(u.GetPort());
+			NUnit.Framework.Assert.AreEqual("ssh", u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			u = u.SetRawPath(u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/some/p ath%20", u.GetRawPath());
+			u = u.SetPath(u.GetPath());
+			NUnit.Framework.Assert.AreEqual("/some/p ath ", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/some/p ath ", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("example.com", u.GetHost());
+			NUnit.Framework.Assert.AreEqual("DOMAIN\\user", u.GetUser());
+			NUnit.Framework.Assert.AreEqual("pass", u.GetPass());
+			NUnit.Framework.Assert.AreEqual(33, u.GetPort());
+			NUnit.Framework.Assert.AreEqual("ssh://DOMAIN\\user:pass@example.com:33/some/p ath "
+				, u.ToPrivateString());
+			NUnit.Framework.Assert.AreEqual("ssh://DOMAIN\\user:pass@example.com:33/some/p%20ath%20"
+				, u.ToPrivateASCIIString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateString(), u.ToString());
+			NUnit.Framework.Assert.AreEqual(u.SetPass(null).ToPrivateASCIIString(), u.ToASCIIString
+				());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
 		[NUnit.Framework.Test]
@@ -611,6 +839,7 @@ namespace NGit.Transport
 			URIish u = new URIish(str);
 			NUnit.Framework.Assert.AreEqual("http", u.GetScheme());
 			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some/path", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/some/path", u.GetPath());
 			NUnit.Framework.Assert.AreEqual("host.xy", u.GetHost());
 			NUnit.Framework.Assert.AreEqual(80, u.GetPort());
@@ -629,6 +858,28 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
 		}
 
+		/// <summary>Exemplify what happens with the special case of encoding '/' as %2F.</summary>
+		/// <remarks>
+		/// Exemplify what happens with the special case of encoding '/' as %2F. Web
+		/// services in general parse path components before decoding the characters.
+		/// </remarks>
+		/// <exception cref="Sharpen.URISyntaxException">Sharpen.URISyntaxException</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPathSeparator()
+		{
+			string str = "http://user:secret@host.xy:80/some%2Fpath";
+			URIish u = new URIish(str);
+			NUnit.Framework.Assert.AreEqual("http", u.GetScheme());
+			NUnit.Framework.Assert.IsTrue(u.IsRemote());
+			NUnit.Framework.Assert.AreEqual("/some%2Fpath", u.GetRawPath());
+			NUnit.Framework.Assert.AreEqual("/some/path", u.GetPath());
+			NUnit.Framework.Assert.AreEqual("host.xy", u.GetHost());
+			NUnit.Framework.Assert.AreEqual(80, u.GetPort());
+			NUnit.Framework.Assert.AreEqual("user", u.GetUser());
+			NUnit.Framework.Assert.AreEqual("secret", u.GetPass());
+			NUnit.Framework.Assert.AreEqual(u, new URIish(str));
+		}
+
 		/// <exception cref="System.ArgumentException"></exception>
 		/// <exception cref="Sharpen.URISyntaxException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
@@ -641,6 +892,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
 			NUnit.Framework.Assert.IsNull(u.GetHost());
 			NUnit.Framework.Assert.IsNull(u.GetPass());
+			NUnit.Framework.Assert.AreEqual("/a/b.txt", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/a/b.txt", u.GetPath());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.IsNull(u.GetUser());
@@ -660,6 +912,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.IsFalse(u.IsRemote());
 			NUnit.Framework.Assert.IsNull(u.GetHost());
 			NUnit.Framework.Assert.IsNull(u.GetPass());
+			NUnit.Framework.Assert.AreEqual("/a/b.txt", u.GetRawPath());
 			NUnit.Framework.Assert.AreEqual("/a/b.txt", u.GetPath());
 			NUnit.Framework.Assert.AreEqual(-1, u.GetPort());
 			NUnit.Framework.Assert.IsNull(u.GetUser());
@@ -673,6 +926,69 @@ namespace NGit.Transport
 			string incorrectSshUrl = "ssh://some-host:/path/to/repository.git";
 			URIish u = new URIish(incorrectSshUrl);
 			NUnit.Framework.Assert.IsFalse(TransportGitSsh.PROTO_SSH.CanHandle(u));
+		}
+
+		/// <exception cref="Sharpen.URISyntaxException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestALot()
+		{
+			// user pass host port path
+			// 1 2 3 4 5
+			string[][] tests = new string[][] { new string[] { "%1$s://%2$s:%3$s@%4$s:%5$s/%6$s"
+				, "%1$s", "%2$s", "%3$s", "%4$s", "%5$s", "%6$s" }, new string[] { "%1$s://%2$s@%4$s:%5$s/%6$s"
+				, "%1$s", "%2$s", null, "%4$s", "%5$s", "%6$s" }, new string[] { "%1$s://%2$s@%4$s/%6$s"
+				, "%1$s", "%2$s", null, "%4$s", null, "%6$s" }, new string[] { "%1$s://%4$s/%6$s"
+				, "%1$s", null, null, "%4$s", null, "%6$s" } };
+			
+			for (int i = 0; i < tests.Length; i++) {
+				for (int j = 0; j < tests [i].Length; j++) {
+					for (int k = 0; k < 10; k++) {
+						if (tests[i][j] != null)
+							tests [i][j] = tests[i][j].Replace ("%" + k + "$s", "{" + (k - 1) + "}");
+					}
+				}
+			}
+			
+			string[] schemes = new string[] { "ssh", "ssh+git", "http", "https" };
+			string[] users = new string[] { "me", "l usr\\example.com", "lusr\\example" };
+			string[] passes = new string[] { "wtf" };
+			string[] hosts = new string[] { "example.com", "1.2.3.4" };
+			string[] ports = new string[] { "1234", "80" };
+			string[] paths = new string[] { "/", "/abc", "D:/x", "D:\\x" };
+			foreach (string[] test in tests)
+			{
+				string fmt = test[0];
+				foreach (string scheme in schemes)
+				{
+					foreach (string user in users)
+					{
+						foreach (string pass in passes)
+						{
+							foreach (string host in hosts)
+							{
+								foreach (string port in ports)
+								{
+									foreach (string path in paths)
+									{
+										string url = string.Format(fmt, scheme, user, pass, host, port, path);
+										string[] expect = new string[test.Length];
+										for (int i = 1; i < expect.Length; ++i)
+										{
+											if (test[i] != null)
+											{
+												expect[i] = string.Format(test[i], scheme, user, pass, host, port, path);
+											}
+										}
+										URIish urIish = new URIish(url);
+										NUnit.Framework.Assert.AreEqual(expect[1], urIish.GetScheme(), url);
+										NUnit.Framework.Assert.AreEqual(expect[2], urIish.GetUser(), url);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 }

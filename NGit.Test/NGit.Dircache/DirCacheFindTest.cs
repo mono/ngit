@@ -93,6 +93,15 @@ namespace NGit.Dircache
 					NUnit.Framework.Assert.AreSame(ents[i_3], aContents[j]);
 				}
 			}
+			{
+				DirCacheEntry[] aContents = dc.GetEntriesWithin(string.Empty);
+				NUnit.Framework.Assert.IsNotNull(aContents);
+				NUnit.Framework.Assert.AreEqual(ents.Length, aContents.Length);
+				for (int i_3 = 0; i_3 < ents.Length; i_3++)
+				{
+					NUnit.Framework.Assert.AreSame(ents[i_3], aContents[i_3]);
+				}
+			}
 			NUnit.Framework.Assert.IsNotNull(dc.GetEntriesWithin("a."));
 			NUnit.Framework.Assert.AreEqual(0, dc.GetEntriesWithin("a.").Length);
 			NUnit.Framework.Assert.IsNotNull(dc.GetEntriesWithin("a0b"));

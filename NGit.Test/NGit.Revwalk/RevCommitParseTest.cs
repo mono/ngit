@@ -107,7 +107,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual((long)authorTime * 1000, cAuthor.GetWhen().GetTime
 				());
 			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.GetTimeZone("GMT" + authorTimeZone
-				), cAuthor.GetTimeZone());
+				).BaseUtcOffset, cAuthor.GetTimeZone().BaseUtcOffset);
 			PersonIdent cCommitter = c.GetCommitterIdent();
 			NUnit.Framework.Assert.IsNotNull(cCommitter);
 			NUnit.Framework.Assert.AreEqual(committerName, cCommitter.GetName());
@@ -115,7 +115,7 @@ namespace NGit.Revwalk
 			NUnit.Framework.Assert.AreEqual((long)committerTime * 1000, cCommitter.GetWhen().
 				GetTime());
 			NUnit.Framework.Assert.AreEqual(Sharpen.Extensions.GetTimeZone("GMT" + committerTimeZone
-				), cCommitter.GetTimeZone());
+				).BaseUtcOffset, cCommitter.GetTimeZone().BaseUtcOffset);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -148,6 +148,24 @@ namespace NGit.Revwalk
 				"UTF-8"));
 			NUnit.Framework.Assert.AreEqual(string.Empty, c.GetFullMessage());
 			NUnit.Framework.Assert.AreEqual(string.Empty, c.GetShortMessage());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestParse_incompleteAuthorAndCommitter()
+		{
+			StringBuilder b = new StringBuilder();
+			b.Append("tree 9788669ad918b6fcce64af8882fc9a81cb6aba67\n");
+			b.Append("author <a_u_thor@example.com> 1218123387 +0700\n");
+			b.Append("committer <> 1218123390 -0500\n");
+			RevCommit c;
+			c = new RevCommit(Id("9473095c4cb2f12aefe1db8a355fe3fafba42f67"));
+			c.ParseCanonical(new RevWalk(db), Sharpen.Runtime.GetBytesForString(b.ToString(), 
+				"UTF-8"));
+			NUnit.Framework.Assert.AreEqual(new PersonIdent(string.Empty, "a_u_thor@example.com"
+				, 1218123387000l, 7), c.GetAuthorIdent());
+			NUnit.Framework.Assert.AreEqual(new PersonIdent(string.Empty, string.Empty, 1218123390000l
+				, -5), c.GetCommitterIdent());
 		}
 
 		/// <exception cref="System.Exception"></exception>

@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Api;
 using NGit.Revwalk;
+using NGit.Storage.File;
 using Sharpen;
 
 namespace NGit.Api
@@ -89,6 +90,12 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("create b", history.Next().GetFullMessage());
 			NUnit.Framework.Assert.AreEqual("create a", history.Next().GetFullMessage());
 			NUnit.Framework.Assert.IsFalse(history.HasNext());
+			ReflogReader reader = db.GetReflogReader(Constants.HEAD);
+			NUnit.Framework.Assert.IsTrue(reader.GetLastEntry().GetComment().StartsWith("revert: Revert \""
+				));
+			reader = db.GetReflogReader(db.GetBranch());
+			NUnit.Framework.Assert.IsTrue(reader.GetLastEntry().GetComment().StartsWith("revert: Revert \""
+				));
 		}
 	}
 }

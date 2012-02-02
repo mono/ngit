@@ -46,13 +46,17 @@ using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Merge;
 using NGit.Revwalk;
+using NGit.Util;
 using Sharpen;
+using NUnit.Framework;
 
 namespace NGit.Api
 {
 	[NUnit.Framework.TestFixture]
 	public class MergeCommandTest : RepositoryTestCase
 	{
+		public static MergeStrategy[] mergeStrategies = MergeStrategy.Get();
+
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestMergeInItself()
@@ -62,6 +66,11 @@ namespace NGit.Api
 			MergeCommandResult result = git.Merge().Include(db.GetRef(Constants.HEAD)).Call();
 			NUnit.Framework.Assert.AreEqual(MergeStatus.ALREADY_UP_TO_DATE, result.GetMergeStatus
 				());
+			// no reflog entry written by merge
+			NUnit.Framework.Assert.AreEqual("commit: initial commit", db.GetReflogReader(Constants
+				.HEAD).GetLastEntry().GetComment());
+			NUnit.Framework.Assert.AreEqual("commit: initial commit", db.GetReflogReader(db.GetBranch
+				()).GetLastEntry().GetComment());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -77,6 +86,11 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(MergeStatus.ALREADY_UP_TO_DATE, result.GetMergeStatus
 				());
 			NUnit.Framework.Assert.AreEqual(second, result.GetNewHead());
+			// no reflog entry written by merge
+			NUnit.Framework.Assert.AreEqual("commit: second commit", db.GetReflogReader(Constants
+				.HEAD).GetLastEntry().GetComment());
+			NUnit.Framework.Assert.AreEqual("commit: second commit", db.GetReflogReader(db.GetBranch
+				()).GetLastEntry().GetComment());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -93,6 +107,10 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(MergeStatus.FAST_FORWARD, result.GetMergeStatus()
 				);
 			NUnit.Framework.Assert.AreEqual(second, result.GetNewHead());
+			NUnit.Framework.Assert.AreEqual("merge refs/heads/master: Fast-forward", db.GetReflogReader
+				(Constants.HEAD).GetLastEntry().GetComment());
+			NUnit.Framework.Assert.AreEqual("merge refs/heads/master: Fast-forward", db.GetReflogReader
+				(db.GetBranch()).GetLastEntry().GetComment());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -118,6 +136,10 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(MergeStatus.FAST_FORWARD, result.GetMergeStatus()
 				);
 			NUnit.Framework.Assert.AreEqual(second, result.GetNewHead());
+			NUnit.Framework.Assert.AreEqual("merge refs/heads/master: Fast-forward", db.GetReflogReader
+				(Constants.HEAD).GetLastEntry().GetComment());
+			NUnit.Framework.Assert.AreEqual("merge refs/heads/master: Fast-forward", db.GetReflogReader
+				(db.GetBranch()).GetLastEntry().GetComment());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -153,6 +175,31 @@ namespace NGit.Api
 		}
 
 		// expected this exception
+		/// <exception cref="System.Exception"></exception>
+		[Theory]
+		public virtual void TestMergeSuccessAllStrategies(MergeStrategy mergeStrategy)
+		{
+			Git git = new Git(db);
+			RevCommit first = git.Commit().SetMessage("first").Call();
+			CreateBranch(first, "refs/heads/side");
+			WriteTrashFile("a", "a");
+			git.Add().AddFilepattern("a").Call();
+			git.Commit().SetMessage("second").Call();
+			CheckoutBranch("refs/heads/side");
+			WriteTrashFile("b", "b");
+			git.Add().AddFilepattern("b").Call();
+			git.Commit().SetMessage("third").Call();
+			MergeCommandResult result = git.Merge().SetStrategy(mergeStrategy).Include(db.GetRef
+				(Constants.MASTER)).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
+			NUnit.Framework.Assert.AreEqual("merge refs/heads/master: Merge made by " + mergeStrategy
+				.GetName() + ".", db.GetReflogReader(Constants.HEAD).GetLastEntry().GetComment()
+				);
+			NUnit.Framework.Assert.AreEqual("merge refs/heads/master: Merge made by " + mergeStrategy
+				.GetName() + ".", db.GetReflogReader(db.GetBranch()).GetLastEntry().GetComment()
+				);
+		}
+
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestContentMerge()
@@ -304,6 +351,10 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
 			NUnit.Framework.Assert.AreEqual("1\nb(1)\n3\n", Read(new FilePath(db.WorkTree, "b"
 				)));
+			NUnit.Framework.Assert.AreEqual("merge " + secondCommit.Id.GetName() + ": Merge made by resolve."
+				, db.GetReflogReader(Constants.HEAD).GetLastEntry().GetComment());
+			NUnit.Framework.Assert.AreEqual("merge " + secondCommit.Id.GetName() + ": Merge made by resolve."
+				, db.GetReflogReader(db.GetBranch()).GetLastEntry().GetComment());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -817,6 +868,123 @@ namespace NGit.Api
 				.RESOLVE).Call();
 			CheckMergeFailedResult(result, ResolveMerger.MergeFailureReason.DIRTY_WORKTREE, indexState
 				, fileA);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestMergeRemovingFolders()
+		{
+			FilePath folder1 = new FilePath(db.WorkTree, "folder1");
+			FilePath folder2 = new FilePath(db.WorkTree, "folder2");
+			FileUtils.Mkdir(folder1);
+			FileUtils.Mkdir(folder2);
+			FilePath file = new FilePath(folder1, "file1.txt");
+			Write(file, "folder1--file1.txt");
+			file = new FilePath(folder1, "file2.txt");
+			Write(file, "folder1--file2.txt");
+			file = new FilePath(folder2, "file1.txt");
+			Write(file, "folder--file1.txt");
+			file = new FilePath(folder2, "file2.txt");
+			Write(file, "folder2--file2.txt");
+			Git git = new Git(db);
+			git.Add().AddFilepattern(folder1.GetName()).AddFilepattern(folder2.GetName()).Call
+				();
+			RevCommit commit1 = git.Commit().SetMessage("adding folders").Call();
+			RecursiveDelete(folder1);
+			RecursiveDelete(folder2);
+			git.Rm().AddFilepattern("folder1/file1.txt").AddFilepattern("folder1/file2.txt").
+				AddFilepattern("folder2/file1.txt").AddFilepattern("folder2/file2.txt").Call();
+			RevCommit commit2 = git.Commit().SetMessage("removing folders on 'branch'").Call(
+				);
+			git.Checkout().SetName(commit1.Name).Call();
+			MergeCommandResult result = git.Merge().Include(commit2.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.FAST_FORWARD, result.GetMergeStatus()
+				);
+			NUnit.Framework.Assert.AreEqual(commit2, result.GetNewHead());
+			NUnit.Framework.Assert.IsFalse(folder1.Exists());
+			NUnit.Framework.Assert.IsFalse(folder2.Exists());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFileModeMerge()
+		{
+			if (!FS.DETECTED.SupportsExecute())
+			{
+				return;
+			}
+			// Only Java6
+			Git git = new Git(db);
+			WriteTrashFile("mergeableMode", "a");
+			SetExecutable(git, "mergeableMode", false);
+			WriteTrashFile("conflictingModeWithBase", "a");
+			SetExecutable(git, "conflictingModeWithBase", false);
+			RevCommit initialCommit = AddAllAndCommit(git);
+			// switch branch
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			SetExecutable(git, "mergeableMode", true);
+			WriteTrashFile("conflictingModeNoBase", "b");
+			SetExecutable(git, "conflictingModeNoBase", true);
+			RevCommit sideCommit = AddAllAndCommit(git);
+			// switch branch
+			CreateBranch(initialCommit, "refs/heads/side2");
+			CheckoutBranch("refs/heads/side2");
+			SetExecutable(git, "mergeableMode", false);
+			NUnit.Framework.Assert.IsFalse(new FilePath(git.GetRepository().WorkTree, "conflictingModeNoBase"
+				).Exists());
+			WriteTrashFile("conflictingModeNoBase", "b");
+			SetExecutable(git, "conflictingModeNoBase", false);
+			AddAllAndCommit(git);
+			// merge
+			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, result.GetMergeStatus());
+			NUnit.Framework.Assert.IsTrue(CanExecute(git, "mergeableMode"));
+			NUnit.Framework.Assert.IsFalse(CanExecute(git, "conflictingModeNoBase"));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFileModeMergeWithDirtyWorkTree()
+		{
+			if (!FS.DETECTED.SupportsExecute())
+			{
+				return;
+			}
+			// Only Java6 (or set x bit in index)
+			Git git = new Git(db);
+			WriteTrashFile("mergeableButDirty", "a");
+			SetExecutable(git, "mergeableButDirty", false);
+			RevCommit initialCommit = AddAllAndCommit(git);
+			// switch branch
+			CreateBranch(initialCommit, "refs/heads/side");
+			CheckoutBranch("refs/heads/side");
+			SetExecutable(git, "mergeableButDirty", true);
+			RevCommit sideCommit = AddAllAndCommit(git);
+			// switch branch
+			CreateBranch(initialCommit, "refs/heads/side2");
+			CheckoutBranch("refs/heads/side2");
+			SetExecutable(git, "mergeableButDirty", false);
+			AddAllAndCommit(git);
+			WriteTrashFile("mergeableButDirty", "b");
+			// merge
+			MergeCommandResult result = git.Merge().Include(sideCommit.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.FAILED, result.GetMergeStatus());
+			NUnit.Framework.Assert.IsFalse(CanExecute(git, "mergeableButDirty"));
+		}
+
+		private void SetExecutable(Git git, string path, bool executable)
+		{
+			FS.DETECTED.SetExecute(new FilePath(git.GetRepository().WorkTree, path), executable
+				);
+		}
+
+		private bool CanExecute(Git git, string path)
+		{
+			return FS.DETECTED.CanExecute(new FilePath(git.GetRepository().WorkTree, path));
 		}
 
 		/// <exception cref="System.Exception"></exception>

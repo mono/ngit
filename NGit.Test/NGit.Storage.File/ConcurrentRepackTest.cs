@@ -48,6 +48,7 @@ using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Storage.Pack;
 using NGit.Util;
+using NGit.Util.IO;
 using Sharpen;
 
 namespace NGit.Storage.File
@@ -220,7 +221,7 @@ namespace NGit.Storage.File
 			long begin = files[0].GetParentFile().LastModified();
 			NullProgressMonitor m = NullProgressMonitor.INSTANCE;
 			OutputStream @out;
-			@out = new BufferedOutputStream(new FileOutputStream(files[0]));
+			@out = new SafeBufferedOutputStream(new FileOutputStream(files[0]));
 			try
 			{
 				pw.WritePack(m, m, @out);
@@ -229,7 +230,7 @@ namespace NGit.Storage.File
 			{
 				@out.Close();
 			}
-			@out = new BufferedOutputStream(new FileOutputStream(files[1]));
+			@out = new SafeBufferedOutputStream(new FileOutputStream(files[1]));
 			try
 			{
 				pw.WriteIndex(@out);

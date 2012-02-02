@@ -77,13 +77,16 @@ namespace NGit.Storage.File
 			"da85355dfc525c9f6f3927b876f379f46ccf826e 3e7549db262d1e836d9bf0af7e22355468f1717c A O Thor Too <authortoo@wri.tr> 1243028200 +0200\n"
 			);
 
+		internal static byte[] switchBranch = Sharpen.Runtime.GetBytesForString("0d43a6890a19fd657faad1c4cfbe3cb1b47851c3 4809df9c0d8bce5b00955563f77c5a9f25aa0d12 A O Thor Too <authortoo@wri.tr> 1315088009 +0200\tcheckout: moving from new/work to master\n"
+			);
+
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestReadOneLine()
 		{
 			SetupReflog("logs/refs/heads/master", oneLine);
 			ReflogReader reader = new ReflogReader(db, "refs/heads/master");
-			ReflogReader.Entry e = reader.GetLastEntry();
+			ReflogEntry e = reader.GetLastEntry();
 			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("da85355dfc525c9f6f3927b876f379f46ccf826e"
 				), e.GetOldId());
 			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("3e7549db262d1e836d9bf0af7e22355468f1717c"
@@ -110,9 +113,9 @@ namespace NGit.Storage.File
 		{
 			SetupReflog("logs/refs/heads/master", twoLine);
 			ReflogReader reader = new ReflogReader(db, "refs/heads/master");
-			IList<ReflogReader.Entry> reverseEntries = reader.GetReverseEntries();
+			IList<ReflogEntry> reverseEntries = reader.GetReverseEntries();
 			NUnit.Framework.Assert.AreEqual(2, reverseEntries.Count);
-			ReflogReader.Entry e = reverseEntries[0];
+			ReflogEntry e = reverseEntries[0];
 			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"
 				), e.GetOldId());
 			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("54794942a18a237c57a80719afed44bb78172b10"
@@ -144,9 +147,9 @@ namespace NGit.Storage.File
 		{
 			SetupReflog("logs/refs/heads/master", twoLineWithAppendInProgress);
 			ReflogReader reader = new ReflogReader(db, "refs/heads/master");
-			IList<ReflogReader.Entry> reverseEntries = reader.GetReverseEntries();
+			IList<ReflogEntry> reverseEntries = reader.GetReverseEntries();
 			NUnit.Framework.Assert.AreEqual(2, reverseEntries.Count);
-			ReflogReader.Entry e = reverseEntries[0];
+			ReflogEntry e = reverseEntries[0];
 			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"
 				), e.GetOldId());
 			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("54794942a18a237c57a80719afed44bb78172b10"
@@ -183,7 +186,7 @@ namespace NGit.Storage.File
 		{
 			SetupReflog("logs/refs/heads/master", oneLineWithoutComment);
 			ReflogReader reader = db.GetReflogReader("master");
-			ReflogReader.Entry e = reader.GetLastEntry();
+			ReflogEntry e = reader.GetLastEntry();
 			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("da85355dfc525c9f6f3927b876f379f46ccf826e"
 				), e.GetOldId());
 			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("3e7549db262d1e836d9bf0af7e22355468f1717c"
@@ -202,6 +205,54 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(0, db.GetReflogReader("master").GetReverseEntries
 				().Count);
 			NUnit.Framework.Assert.IsNull(db.GetReflogReader("master").GetLastEntry());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckout()
+		{
+			SetupReflog("logs/HEAD", switchBranch);
+			IList<ReflogEntry> entries = db.GetReflogReader(Constants.HEAD).GetReverseEntries
+				();
+			NUnit.Framework.Assert.AreEqual(1, entries.Count);
+			ReflogEntry entry = entries[0];
+			CheckoutEntry checkout = entry.ParseCheckout();
+			NUnit.Framework.Assert.IsNotNull(checkout);
+			NUnit.Framework.Assert.AreEqual("master", checkout.GetToBranch());
+			NUnit.Framework.Assert.AreEqual("new/work", checkout.GetFromBranch());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSpecificEntryNumber()
+		{
+			SetupReflog("logs/refs/heads/master", twoLine);
+			ReflogReader reader = new ReflogReader(db, "refs/heads/master");
+			ReflogEntry e = reader.GetReverseEntry(0);
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"
+				), e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("54794942a18a237c57a80719afed44bb78172b10"
+				), e.GetNewId());
+			NUnit.Framework.Assert.AreEqual("Same A U Thor", e.GetWho().GetName());
+			NUnit.Framework.Assert.AreEqual("same.author@example.com", e.GetWho().GetEmailAddress
+				());
+			NUnit.Framework.Assert.AreEqual(60, e.GetWho().GetTimeZoneOffset());
+			NUnit.Framework.Assert.AreEqual("2009-05-22T22:36:42", Iso(e.GetWho()));
+			NUnit.Framework.Assert.AreEqual("rebase finished: refs/heads/rr/renamebranch5 onto c6e3b9fe2da0293f11eae202ec35fb343191a82d"
+				, e.GetComment());
+			e = reader.GetReverseEntry(1);
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("0000000000000000000000000000000000000000"
+				), e.GetOldId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("c6734895958052a9dbc396cff4459dc1a25029ab"
+				), e.GetNewId());
+			NUnit.Framework.Assert.AreEqual("A U Thor", e.GetWho().GetName());
+			NUnit.Framework.Assert.AreEqual("thor@committer.au", e.GetWho().GetEmailAddress()
+				);
+			NUnit.Framework.Assert.AreEqual(-60, e.GetWho().GetTimeZoneOffset());
+			NUnit.Framework.Assert.AreEqual("2009-05-22T20:36:41", Iso(e.GetWho()));
+			NUnit.Framework.Assert.AreEqual("branch: Created from rr/renamebranchv4", e.GetComment
+				());
+			NUnit.Framework.Assert.IsNull(reader.GetReverseEntry(3));
 		}
 
 		/// <exception cref="System.IO.FileNotFoundException"></exception>

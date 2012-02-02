@@ -82,52 +82,33 @@ namespace NGit.Api
 			secondCommit = git.Commit().SetMessage("Second commit").Call();
 		}
 
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestSimpleCheckout()
 		{
-			try
-			{
-				git.Checkout().SetName("test").Call();
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			git.Checkout().SetName("test").Call();
 		}
 
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCheckout()
 		{
-			try
-			{
-				git.Checkout().SetName("test").Call();
-				NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Some change]", IndexState
-					(CONTENT));
-				Ref result = git.Checkout().SetName("master").Call();
-				NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Hello world]", IndexState
-					(CONTENT));
-				NUnit.Framework.Assert.AreEqual("refs/heads/master", result.GetName());
-				NUnit.Framework.Assert.AreEqual("refs/heads/master", git.GetRepository().GetFullBranch
-					());
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			git.Checkout().SetName("test").Call();
+			NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Some change]", IndexState
+				(CONTENT));
+			Ref result = git.Checkout().SetName("master").Call();
+			NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Hello world]", IndexState
+				(CONTENT));
+			NUnit.Framework.Assert.AreEqual("refs/heads/master", result.GetName());
+			NUnit.Framework.Assert.AreEqual("refs/heads/master", git.GetRepository().GetFullBranch
+				());
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCreateBranchOnCheckout()
 		{
-			try
-			{
-				git.Checkout().SetCreateBranch(true).SetName("test2").Call();
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			git.Checkout().SetCreateBranch(true).SetName("test2").Call();
 			NUnit.Framework.Assert.IsNotNull(db.GetRef("test2"));
 		}
 
@@ -216,52 +197,40 @@ namespace NGit.Api
 			}
 		}
 
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCheckoutCommit()
 		{
-			try
-			{
-				Ref result = git.Checkout().SetName(initialCommit.Name).Call();
-				NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Hello world]", IndexState
-					(CONTENT));
-				NUnit.Framework.Assert.IsNull(result);
-				NUnit.Framework.Assert.AreEqual(initialCommit.Name, git.GetRepository().GetFullBranch
-					());
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			Ref result = git.Checkout().SetName(initialCommit.Name).Call();
+			NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Hello world]", IndexState
+				(CONTENT));
+			NUnit.Framework.Assert.IsNull(result);
+			NUnit.Framework.Assert.AreEqual(initialCommit.Name, git.GetRepository().GetFullBranch
+				());
 		}
 
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCheckoutRemoteTrackingWithoutLocalBranch()
 		{
-			try
-			{
-				// create second repository
-				Repository db2 = CreateWorkRepository();
-				Git git2 = new Git(db2);
-				// setup the second repository to fetch from the first repository
-				StoredConfig config = db2.GetConfig();
-				RemoteConfig remoteConfig = new RemoteConfig(config, "origin");
-				URIish uri = new URIish(db.Directory.ToURI().ToURL());
-				remoteConfig.AddURI(uri);
-				remoteConfig.Update(config);
-				config.Save();
-				// fetch from first repository
-				RefSpec spec = new RefSpec("+refs/heads/*:refs/remotes/origin/*");
-				git2.Fetch().SetRemote("origin").SetRefSpecs(spec).Call();
-				// checkout remote tracking branch in second repository
-				// (no local branches exist yet in second repository)
-				git2.Checkout().SetName("remotes/origin/test").Call();
-				NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Some change]", IndexState
-					(db2, CONTENT));
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			// create second repository
+			Repository db2 = CreateWorkRepository();
+			Git git2 = new Git(db2);
+			// setup the second repository to fetch from the first repository
+			StoredConfig config = db2.GetConfig();
+			RemoteConfig remoteConfig = new RemoteConfig(config, "origin");
+			URIish uri = new URIish(db.Directory.ToURI().ToURL());
+			remoteConfig.AddURI(uri);
+			remoteConfig.Update(config);
+			config.Save();
+			// fetch from first repository
+			RefSpec spec = new RefSpec("+refs/heads/*:refs/remotes/origin/*");
+			git2.Fetch().SetRemote("origin").SetRefSpecs(spec).Call();
+			// checkout remote tracking branch in second repository
+			// (no local branches exist yet in second repository)
+			git2.Checkout().SetName("remotes/origin/test").Call();
+			NUnit.Framework.Assert.AreEqual("[Test.txt, mode:100644, content:Some change]", IndexState
+				(db2, CONTENT));
 		}
 
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>

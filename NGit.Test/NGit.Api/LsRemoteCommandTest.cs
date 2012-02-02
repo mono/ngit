@@ -41,9 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using NGit;
 using NGit.Api;
 using Sharpen;
@@ -74,92 +72,57 @@ namespace NGit.Api
 			git.Tag().SetName("tag3").Call();
 		}
 
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestLsRemote()
 		{
-			try
-			{
-				FilePath directory = CreateTempDirectory("testRepository");
-				CloneCommand command = Git.CloneRepository();
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				command.SetCloneAllBranches(true);
-				Git git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				LsRemoteCommand lsRemoteCommand = git2.LsRemote();
-				ICollection<Ref> refs = lsRemoteCommand.Call();
-				NUnit.Framework.Assert.IsNotNull(refs);
-				NUnit.Framework.Assert.AreEqual(6, refs.Count);
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			FilePath directory = CreateTempDirectory("testRepository");
+			CloneCommand command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			command.SetCloneAllBranches(true);
+			Git git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			LsRemoteCommand lsRemoteCommand = git2.LsRemote();
+			ICollection<Ref> refs = lsRemoteCommand.Call();
+			NUnit.Framework.Assert.IsNotNull(refs);
+			NUnit.Framework.Assert.AreEqual(6, refs.Count);
 		}
 
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestLsRemoteWithTags()
 		{
-			try
-			{
-				FilePath directory = CreateTempDirectory("testRepository");
-				CloneCommand command = Git.CloneRepository();
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				command.SetCloneAllBranches(true);
-				Git git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				LsRemoteCommand lsRemoteCommand = git2.LsRemote();
-				lsRemoteCommand.SetTags(true);
-				ICollection<Ref> refs = lsRemoteCommand.Call();
-				NUnit.Framework.Assert.IsNotNull(refs);
-				NUnit.Framework.Assert.AreEqual(3, refs.Count);
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
+			FilePath directory = CreateTempDirectory("testRepository");
+			CloneCommand command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			command.SetCloneAllBranches(true);
+			Git git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			LsRemoteCommand lsRemoteCommand = git2.LsRemote();
+			lsRemoteCommand.SetTags(true);
+			ICollection<Ref> refs = lsRemoteCommand.Call();
+			NUnit.Framework.Assert.IsNotNull(refs);
+			NUnit.Framework.Assert.AreEqual(3, refs.Count);
 		}
 
+		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestLsRemoteWithHeads()
 		{
-			try
-			{
-				FilePath directory = CreateTempDirectory("testRepository");
-				CloneCommand command = Git.CloneRepository();
-				command.SetDirectory(directory);
-				command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
-				command.SetCloneAllBranches(true);
-				Git git2 = command.Call();
-				AddRepoToClose(git2.GetRepository());
-				LsRemoteCommand lsRemoteCommand = git2.LsRemote();
-				lsRemoteCommand.SetHeads(true);
-				ICollection<Ref> refs = lsRemoteCommand.Call();
-				NUnit.Framework.Assert.IsNotNull(refs);
-				NUnit.Framework.Assert.AreEqual(2, refs.Count);
-			}
-			catch (Exception e)
-			{
-				NUnit.Framework.Assert.Fail(e.Message);
-			}
-		}
-
-		/// <exception cref="System.IO.IOException"></exception>
-		public static FilePath CreateTempDirectory(string name)
-		{
-			FilePath temp;
-			temp = FilePath.CreateTempFile(name, System.Convert.ToString(Runtime.NanoTime()));
-			if (!(temp.Delete()))
-			{
-				throw new IOException("Could not delete temp file: " + temp.GetAbsolutePath());
-			}
-			if (!(temp.Mkdir()))
-			{
-				throw new IOException("Could not create temp directory: " + temp.GetAbsolutePath(
-					));
-			}
-			return temp;
+			FilePath directory = CreateTempDirectory("testRepository");
+			CloneCommand command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			command.SetCloneAllBranches(true);
+			Git git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			LsRemoteCommand lsRemoteCommand = git2.LsRemote();
+			lsRemoteCommand.SetHeads(true);
+			ICollection<Ref> refs = lsRemoteCommand.Call();
+			NUnit.Framework.Assert.IsNotNull(refs);
+			NUnit.Framework.Assert.AreEqual(2, refs.Count);
 		}
 	}
 }

@@ -117,32 +117,89 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestRename()
 		{
+			TestRename("file1.txt", "file2.txt");
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRenameInSubDir()
+		{
+			TestRename("subdir/file1.txt", "subdir/file2.txt");
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestMoveToOtherDir()
+		{
+			TestRename("subdir/file1.txt", "otherdir/file1.txt");
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		private void TestRename(string sourcePath, string destPath)
+		{
 			Git git = new Git(db);
 			string[] content1 = new string[] { "a", "b", "c" };
+			WriteTrashFile(sourcePath, Join(content1));
+			git.Add().AddFilepattern(sourcePath).Call();
+			RevCommit commit1 = git.Commit().SetMessage("create file").Call();
+			WriteTrashFile(destPath, Join(content1));
+			git.Add().AddFilepattern(destPath).Call();
+			git.Rm().AddFilepattern(sourcePath).Call();
+			git.Commit().SetMessage("moving file").Call();
+			string[] content2 = new string[] { "a", "b", "c2" };
+			WriteTrashFile(destPath, Join(content2));
+			git.Add().AddFilepattern(destPath).Call();
+			RevCommit commit3 = git.Commit().SetMessage("editing file").Call();
+			BlameCommand command = new BlameCommand(db);
+			command.SetFollowFileRenames(true);
+			command.SetFilePath(destPath);
+			BlameResult lines = command.Call();
+			NUnit.Framework.Assert.AreEqual(commit1, lines.GetSourceCommit(0));
+			NUnit.Framework.Assert.AreEqual(0, lines.GetSourceLine(0));
+			NUnit.Framework.Assert.AreEqual(sourcePath, lines.GetSourcePath(0));
+			NUnit.Framework.Assert.AreEqual(commit1, lines.GetSourceCommit(1));
+			NUnit.Framework.Assert.AreEqual(1, lines.GetSourceLine(1));
+			NUnit.Framework.Assert.AreEqual(sourcePath, lines.GetSourcePath(1));
+			NUnit.Framework.Assert.AreEqual(commit3, lines.GetSourceCommit(2));
+			NUnit.Framework.Assert.AreEqual(2, lines.GetSourceLine(2));
+			NUnit.Framework.Assert.AreEqual(destPath, lines.GetSourcePath(2));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestTwoRenames()
+		{
+			Git git = new Git(db);
+			// Commit 1: Add file.txt
+			string[] content1 = new string[] { "a" };
 			WriteTrashFile("file.txt", Join(content1));
 			git.Add().AddFilepattern("file.txt").Call();
 			RevCommit commit1 = git.Commit().SetMessage("create file").Call();
+			// Commit 2: Rename to file1.txt
 			WriteTrashFile("file1.txt", Join(content1));
 			git.Add().AddFilepattern("file1.txt").Call();
 			git.Rm().AddFilepattern("file.txt").Call();
 			git.Commit().SetMessage("moving file").Call();
-			string[] content2 = new string[] { "a", "b", "c2" };
+			// Commit 3: Edit file1.txt
+			string[] content2 = new string[] { "a", "b" };
 			WriteTrashFile("file1.txt", Join(content2));
 			git.Add().AddFilepattern("file1.txt").Call();
 			RevCommit commit3 = git.Commit().SetMessage("editing file").Call();
+			// Commit 4: Rename to file2.txt
+			WriteTrashFile("file2.txt", Join(content2));
+			git.Add().AddFilepattern("file2.txt").Call();
+			git.Rm().AddFilepattern("file1.txt").Call();
+			git.Commit().SetMessage("moving file again").Call();
 			BlameCommand command = new BlameCommand(db);
 			command.SetFollowFileRenames(true);
-			command.SetFilePath("file1.txt");
+			command.SetFilePath("file2.txt");
 			BlameResult lines = command.Call();
 			NUnit.Framework.Assert.AreEqual(commit1, lines.GetSourceCommit(0));
 			NUnit.Framework.Assert.AreEqual(0, lines.GetSourceLine(0));
 			NUnit.Framework.Assert.AreEqual("file.txt", lines.GetSourcePath(0));
-			NUnit.Framework.Assert.AreEqual(commit1, lines.GetSourceCommit(1));
+			NUnit.Framework.Assert.AreEqual(commit3, lines.GetSourceCommit(1));
 			NUnit.Framework.Assert.AreEqual(1, lines.GetSourceLine(1));
-			NUnit.Framework.Assert.AreEqual("file.txt", lines.GetSourcePath(1));
-			NUnit.Framework.Assert.AreEqual(commit3, lines.GetSourceCommit(2));
-			NUnit.Framework.Assert.AreEqual(2, lines.GetSourceLine(2));
-			NUnit.Framework.Assert.AreEqual("file1.txt", lines.GetSourcePath(2));
+			NUnit.Framework.Assert.AreEqual("file1.txt", lines.GetSourcePath(1));
 		}
 
 		/// <exception cref="System.Exception"></exception>
