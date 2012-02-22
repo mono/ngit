@@ -6944,7 +6944,7 @@ index 672fa1b..c32292d 100644
  
  			private readonly BlockList<T> _enclosing;
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
-index 3177f8a..dbfb301 100644
+index 3177f8a..56397f5 100644
 --- a/NGit/NGit.Util/FS.cs
 +++ b/NGit/NGit.Util/FS.cs
 @@ -90,7 +90,7 @@ namespace NGit.Util
@@ -6965,6 +6965,25 @@ index 3177f8a..dbfb301 100644
  				{
  					return new FS_Win32_Cygwin();
  				}
+@@ -288,10 +288,14 @@ namespace NGit.Util
+ 			{
+ 				foreach (string command in lookFor)
+ 				{
+-					FilePath e = new FilePath(p, command);
+-					if (e.IsFile())
+-					{
+-						return e.GetAbsoluteFile();
++					try {
++						FilePath e = new FilePath(p, command);
++						if (e.IsFile())
++						{
++							return e.GetAbsoluteFile();
++						}
++					} catch {
++						Console.WriteLine ("NGit Error: Could not combine: {0} and {1}", p, command);
+ 					}
+ 				}
+ 			}
 diff --git a/NGit/NGit.Util/FS_POSIX_Java6.cs b/NGit/NGit.Util/FS_POSIX_Java6.cs
 index e1ae417..e71eaad 100644
 --- a/NGit/NGit.Util/FS_POSIX_Java6.cs
