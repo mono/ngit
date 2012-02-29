@@ -268,8 +268,7 @@ namespace NSch
 			{
 				while (IsConnected() && thread != null && io != null && io.@in != null)
 				{
-					i = io.@in.Read(buf.buffer, 14, buf.buffer.Length - 14 - 32 - 20);
-					// padding and mac
+					i = io.@in.Read(buf.buffer, 14, buf.buffer.Length - 14 - Session.buffer_margin);
 					if (i == 0)
 					{
 						continue;

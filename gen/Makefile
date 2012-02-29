@@ -13,7 +13,7 @@ NGIT_DIR = generated
 NGIT_GIT = @cd $(NGIT_DIR) && git
 
 JSCH_SOURCE = $(JGIT_DIR)/jsch/README
-JSCH_RELEASE = 0.1.43
+JSCH_RELEASE = 0.1.46
 JSCH_URL = http://freefr.dl.sourceforge.net/project/jsch/jsch/$(JSCH_RELEASE)/jsch-$(JSCH_RELEASE).zip
 
 JZLIB_SOURCE = $(JGIT_DIR)/jzlib
@@ -50,6 +50,9 @@ $(JSCH_SOURCE):
 	rm -rf jsch-$(JSCH_RELEASE).zip
 	mkdir -p $(JGIT_DIR)/jsch
 	mv jsch-$(JSCH_RELEASE)/* $(JGIT_DIR)/jsch
+	# Move the java source so the directory structure matches the package name
+	# This ensures that sharpen does not go crazy and break when doing the conversion
+	mv $(JGIT_DIR)/jsch/src/main/java/* $(JGIT_DIR)/jsch/src
 	rm -rf jsch-$(JSCH_RELEASE)
 	@echo -e "$(SB)Building JSch$(EB)"
 	find $(JGIT_DIR)/jsch/src -name *.java > resp

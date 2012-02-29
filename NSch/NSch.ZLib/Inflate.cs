@@ -440,7 +440,6 @@ namespace NSch.ZLib
 					default:
 					{
 						return Z_STREAM_ERROR;
-						break;
 					}
 				}
 			}

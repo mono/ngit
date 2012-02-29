@@ -158,7 +158,7 @@ namespace NSch.ZLib
 		{
 			int j;
 			// temporary storage
-			int[] t;
+			//int[] t;
 			// temporary pointer
 			int tindex;
 			// temporary pointer
@@ -570,7 +570,6 @@ namespace NSch.ZLib
 						z.next_in_index = p;
 						s.write = q;
 						return s.Inflate_flush(z, r);
-						break;
 					}
 				}
 			}
