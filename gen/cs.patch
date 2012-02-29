@@ -6586,10 +6586,18 @@ index a18e2d2..56260a6 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index a90c904..ebbcbc5 100644
+index a90c904..bac780c 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-@@ -571,6 +571,7 @@ namespace NGit.Treewalk
+@@ -462,7 +462,6 @@ namespace NGit.Treewalk
+ 				}
+ 
+ 				case CoreConfig.AutoCRLF.TRUE:
+-				case CoreConfig.AutoCRLF.INPUT:
+ 				{
+ 					return true;
+ 				}
+@@ -571,6 +570,7 @@ namespace NGit.Treewalk
  
  		private void ParseEntry()
  		{
@@ -6597,7 +6605,7 @@ index a90c904..ebbcbc5 100644
  			WorkingTreeIterator.Entry e = entries[ptr];
  			mode = e.GetMode().GetBits();
  			int nameLen = e.encodedNameLen;
-@@ -647,10 +648,16 @@ namespace NGit.Treewalk
+@@ -647,10 +647,16 @@ namespace NGit.Treewalk
  		/// 	</exception>
  		protected internal virtual bool IsEntryIgnored(int pLen)
  		{
@@ -6616,7 +6624,7 @@ index a90c904..ebbcbc5 100644
  			IgnoreNode rules = GetIgnoreNode();
  			if (rules != null)
  			{
-@@ -668,13 +675,11 @@ namespace NGit.Treewalk
+@@ -668,13 +674,11 @@ namespace NGit.Treewalk
  				{
  					case IgnoreNode.MatchResult.IGNORED:
  					{
@@ -6630,7 +6638,7 @@ index a90c904..ebbcbc5 100644
  						return false;
  					}
  
-@@ -686,14 +691,11 @@ namespace NGit.Treewalk
+@@ -686,14 +690,11 @@ namespace NGit.Treewalk
  			}
  			if (parent is NGit.Treewalk.WorkingTreeIterator)
  			{
@@ -6647,7 +6655,7 @@ index a90c904..ebbcbc5 100644
  		/// <exception cref="System.IO.IOException"></exception>
  		private IgnoreNode GetIgnoreNode()
  		{
-@@ -1098,7 +1100,7 @@ namespace NGit.Treewalk
+@@ -1098,7 +1099,7 @@ namespace NGit.Treewalk
  
  		/// <summary>A single entry within a working directory tree.</summary>
  		/// <remarks>A single entry within a working directory tree.</remarks>
