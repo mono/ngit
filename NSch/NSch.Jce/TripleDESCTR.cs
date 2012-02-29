@@ -80,7 +80,7 @@ namespace NSch.Jce
 				cipher.Init((mode == ENCRYPT_MODE ? Sharpen.Cipher.ENCRYPT_MODE : Sharpen.Cipher.
 					DECRYPT_MODE), _key, new IvParameterSpec(iv));
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				cipher = null;
 				throw;

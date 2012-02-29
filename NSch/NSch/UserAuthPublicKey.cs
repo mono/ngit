@@ -41,7 +41,7 @@ namespace NSch
 		public override bool Start(Session session)
 		{
 			base.Start(session);
-			ArrayList identities = session.jsch.identities;
+			ArrayList identities = session.jsch.GetIdentityRepository().GetIdentities();
 			byte[] passphrase = null;
 			byte[] _username = null;
 			int command;
@@ -54,6 +54,10 @@ namespace NSch
 				_username = Util.Str2byte(username);
 				for (int i = 0; i < identities.Count; i++)
 				{
+					if (session.auth_failures >= session.max_auth_tries)
+					{
+						return false;
+					}
 					Identity identity = (Identity)(identities[i]);
 					byte[] pubkeyblob = identity.GetPublicKeyBlob();
 					//System.err.println("UserAuthPublicKey: "+identity+" "+pubkeyblob);
@@ -97,7 +101,7 @@ namespace NSch
 										buf.GetByte();
 										buf.GetByte();
 										byte[] _message = buf.GetString();
-										byte[] lang = buf.GetString();
+										//byte[] lang = buf.GetString();
 										string message = Util.Byte2str(_message);
 										if (userinfo != null)
 										{
@@ -115,7 +119,7 @@ namespace NSch
 							}
 loop1_continue: ;
 						}
-loop1_break: ;
+//loop1_break: ;
 						if (command != SSH_MSG_USERAUTH_PK_OK)
 						{
 							continue;
@@ -226,7 +230,7 @@ loop1_break: ;
 								buf.GetByte();
 								buf.GetByte();
 								byte[] _message = buf.GetString();
-								byte[] lang = buf.GetString();
+								//byte[] lang = buf.GetString();
 								string message = Util.Byte2str(_message);
 								if (userinfo != null)
 								{
@@ -249,6 +253,7 @@ loop1_break: ;
 									{
 										throw new JSchPartialAuthException(Util.Byte2str(foo));
 									}
+									session.auth_failures++;
 									break;
 								}
 							}
@@ -258,7 +263,7 @@ loop1_break: ;
 						break;
 loop2_continue: ;
 					}
-loop2_break: ;
+//loop2_break: ;
 				}
 			}
 			return false;
