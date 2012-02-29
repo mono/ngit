@@ -56,7 +56,7 @@ namespace NSch.Jce
 		/// <exception cref="System.Exception"></exception>
 		public override void Init(int mode, byte[] key, byte[] iv)
 		{
-			string pad = "NoPadding";
+			//string pad = "NoPadding";
 			byte[] tmp;
 			if (key.Length > bsize)
 			{
@@ -71,7 +71,7 @@ namespace NSch.Jce
 				cipher.Init((mode == ENCRYPT_MODE ? Sharpen.Cipher.ENCRYPT_MODE : Sharpen.Cipher.
 					DECRYPT_MODE), _key);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				cipher = null;
 				throw;
