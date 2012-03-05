@@ -7635,6 +7635,23 @@ index 6d6b146..facf659 100644
  			//System.err.println("frst: "+frst+", scnd: "+scnd);
  			int length = sig.Length + 6 + frst + scnd;
  			tmp = new byte[length];
+diff --git a/NSch/NSch.Jce/SignatureRSA.cs b/NSch/NSch.Jce/SignatureRSA.cs
+index 0a99902..5600cb7 100644
+--- a/NSch/NSch.Jce/SignatureRSA.cs
++++ b/NSch/NSch.Jce/SignatureRSA.cs
+@@ -57,10 +57,10 @@ namespace NSch.Jce
+ 		}
+ 
+ 		/// <exception cref="System.Exception"></exception>
+-		public virtual void SetPrvKey(byte[] d, byte[] n)
++		public virtual void SetPrvKey(byte[] d, byte[] n, byte[] e)
+ 		{
+ 			RSAPrivateKeySpec rsaPrivKeySpec = new RSAPrivateKeySpec(new BigInteger(n), new BigInteger
+-				(d));
++				(d), new BigInteger (e));
+ 			PrivateKey prvKey = keyFactory.GeneratePrivate(rsaPrivKeySpec);
+ 			signature.InitSign(prvKey);
+ 		}
 diff --git a/NSch/NSch.Jcraft/HMACMD5.cs b/NSch/NSch.Jcraft/HMACMD5.cs
 index 2b80101..aed6e53 100644
 --- a/NSch/NSch.Jcraft/HMACMD5.cs
@@ -8040,7 +8057,7 @@ index a4b9e36..50ad82d 100644
  							sig.SetPubKey(f, p, q, g);
  							sig.Update(H);
 diff --git a/NSch/NSch/IdentityFile.cs b/NSch/NSch/IdentityFile.cs
-index 344fd4a..ec6897b 100644
+index 344fd4a..62636a0 100644
 --- a/NSch/NSch/IdentityFile.cs
 +++ b/NSch/NSch/IdentityFile.cs
 @@ -451,9 +451,9 @@ namespace NSch
@@ -8064,6 +8081,15 @@ index 344fd4a..ec6897b 100644
  						{
  							_buf.GetInt();
  							//_buf.getInt();
+@@ -753,7 +753,7 @@ namespace NSch
+ 				Type c = Sharpen.Runtime.GetType((string)JSch.GetConfig("signature.rsa"));
+ 				NSch.SignatureRSA rsa = (NSch.SignatureRSA)(System.Activator.CreateInstance(c));
+ 				rsa.Init();
+-				rsa.SetPrvKey(d_array, n_array);
++				rsa.SetPrvKey(d_array, n_array, e_array);
+ 				rsa.Update(data);
+ 				byte[] sig = rsa.Sign();
+ 				Buffer buf = new Buffer("ssh-rsa".Length + 4 + sig.Length + 4);
 diff --git a/NSch/NSch/JSch.cs b/NSch/NSch/JSch.cs
 index 67f29f5..6a98061 100644
 --- a/NSch/NSch/JSch.cs
@@ -8263,6 +8289,19 @@ index 0137177..b2b8af9 100644
 -		}
  	}
  }
+diff --git a/NSch/NSch/SignatureRSA.cs b/NSch/NSch/SignatureRSA.cs
+index 775955a..9863892 100644
+--- a/NSch/NSch/SignatureRSA.cs
++++ b/NSch/NSch/SignatureRSA.cs
+@@ -42,7 +42,7 @@ namespace NSch
+ 		void SetPubKey(byte[] e, byte[] n);
+ 
+ 		/// <exception cref="System.Exception"></exception>
+-		void SetPrvKey(byte[] d, byte[] n);
++		void SetPrvKey(byte[] d, byte[] n, byte[] e);
+ 
+ 		/// <exception cref="System.Exception"></exception>
+ 		void Update(byte[] H);
 diff --git a/NSch/NSch/Util.cs b/NSch/NSch/Util.cs
 index 1dd7c60..394e130 100644
 --- a/NSch/NSch/Util.cs
