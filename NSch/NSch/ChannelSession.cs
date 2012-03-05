@@ -238,9 +238,9 @@ namespace NSch
 			}
 			if (env != null)
 			{
-				for (IEnumerator _env = env.Keys.GetEnumerator (); _env.MoveNext(); )
+				foreach (var v in env.Keys)
 				{
-					object name = _env.Current;
+					object name = v;
 					object value = env[name];
 					request = new RequestEnv();
 					((RequestEnv)request).SetEnv(ToByteArray(name), ToByteArray(value));
