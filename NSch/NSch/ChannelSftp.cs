@@ -164,7 +164,7 @@ namespace NSch
 
 		private int server_version = 3;
 
-		private string version;
+		//private string version = client_version.ToString();
 
 		private Hashtable extensions = null;
 
@@ -2623,10 +2623,10 @@ loop_break: ;
 			return lcwd;
 		}
 
-		public virtual string Version()
-		{
-			return version;
-		}
+//		public virtual string Version()
+//		{
+//			return version;
+//		}
 
 		/// <exception cref="NSch.SftpException"></exception>
 		public virtual string GetHome()

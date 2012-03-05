@@ -451,9 +451,9 @@ namespace NSch
 					byte[] _type = _buf.GetString();
 					//System.err.println("type: "+new String(_type)); 
 					byte[] _cipher = _buf.GetString();
-					string cipher2 = Util.Byte2str(_cipher);
+					string cipherStr = Util.Byte2str(_cipher);
 					//System.err.println("cipher: "+cipher); 
-					if (cipher2.Equals("3des-cbc"))
+					if (cipherStr.Equals("3des-cbc"))
 					{
 						_buf.GetInt();
 						byte[] foo = new byte[encoded_data.Length - _buf.GetOffSet()];
@@ -464,7 +464,7 @@ namespace NSch
 					}
 					else
 					{
-						if (cipher2.Equals("none"))
+						if (cipherStr.Equals("none"))
 						{
 							_buf.GetInt();
 							//_buf.getInt();
@@ -1219,11 +1219,6 @@ namespace NSch
 			}
 			NSch.IdentityFile foo = (NSch.IdentityFile)o;
 			return GetName().Equals(foo.GetName());
-		}
-		
-		public override int GetHashCode ()
-		{
-			 return (GetName () ?? "").GetHashCode ();
 		}
 
 		public virtual void Clear()

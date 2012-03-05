@@ -101,7 +101,7 @@ namespace NSch
 										buf.GetByte();
 										buf.GetByte();
 										byte[] _message = buf.GetString();
-										//byte[] lang = buf.GetString();
+										byte[] lang = buf.GetString();
 										string message = Util.Byte2str(_message);
 										if (userinfo != null)
 										{
@@ -119,7 +119,7 @@ namespace NSch
 							}
 loop1_continue: ;
 						}
-//loop1_break: ;
+loop1_break: ;
 						if (command != SSH_MSG_USERAUTH_PK_OK)
 						{
 							continue;
@@ -230,7 +230,7 @@ loop1_continue: ;
 								buf.GetByte();
 								buf.GetByte();
 								byte[] _message = buf.GetString();
-								//byte[] lang = buf.GetString();
+								byte[] lang = buf.GetString();
 								string message = Util.Byte2str(_message);
 								if (userinfo != null)
 								{
@@ -263,7 +263,7 @@ loop1_continue: ;
 						break;
 loop2_continue: ;
 					}
-//loop2_break: ;
+loop2_break: ;
 				}
 			}
 			return false;

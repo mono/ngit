@@ -463,7 +463,7 @@ namespace NSch
 				}
 				catch (Exception e)
 				{
-					string message = e.Message;
+					string message = e.ToString();
 					if (e is Exception)
 					{
 						throw new JSchException(message, (Exception)e);
@@ -634,7 +634,7 @@ namespace NSch
 				}
 loop_continue: ;
 			}
-//loop_break: ;
+loop_break: ;
 			return result;
 		}
 
