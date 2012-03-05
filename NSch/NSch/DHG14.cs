@@ -202,6 +202,7 @@ namespace NSch
 		public override void Init(Session session, byte[] V_S, byte[] V_C, byte[] I_S, byte
 			[] I_C)
 		{
+			throw new NotSupportedException (); // The crypto for this method is unusably slow
 			this.session = session;
 			this.V_S = V_S;
 			this.V_C = V_C;
@@ -215,7 +216,7 @@ namespace NSch
 			}
 			catch (Exception ex)
 			{
-				System.Console.Error.WriteLine(ex);
+				System.Console.Error.WriteLine(e);
 			}
 			buf = new Buffer();
 			packet = new Packet(buf);
@@ -225,7 +226,7 @@ namespace NSch
 				dh = (NSch.DH)(System.Activator.CreateInstance(c));
 				dh.Init();
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				//System.err.println(e);
 				throw;

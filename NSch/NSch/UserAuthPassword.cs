@@ -187,7 +187,7 @@ namespace NSch
 						}
 loop_continue: ;
 					}
-//loop_break: ;
+loop_break: ;
 					if (password != null)
 					{
 						Util.Bzero(password);
