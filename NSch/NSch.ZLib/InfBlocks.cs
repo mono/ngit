@@ -537,7 +537,7 @@ namespace NSch.ZLib
 							{
 								break;
 							}
-							//int[] h;
+							int[] h;
 							int i;
 							int j;
 							int c;
@@ -746,6 +746,7 @@ namespace NSch.ZLib
 						z.next_in_index = p;
 						write = q;
 						return Inflate_flush(z, r);
+						break;
 					}
 				}
 			}

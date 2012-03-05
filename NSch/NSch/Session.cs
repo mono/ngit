@@ -2278,9 +2278,9 @@ loop_break: ;
 				{
 					config = new Hashtable();
 				}
-				for (IEnumerator e = newconf.Keys.GetEnumerator (); e.MoveNext(); )
+				foreach (var e in newconf.Keys)
 				{
-					string key = (string)(e.Current);
+					string key = (string)(e);
 					config.Put(key, (string)(newconf[key]));
 				}
 			}

@@ -77,7 +77,7 @@ namespace NSch.Jce
 					cipher.Update(foo, 0, 1, foo, 0);
 				}
 			}
-			catch (Exception)
+			catch (Exception e)
 			{
 				cipher = null;
 				throw;

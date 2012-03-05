@@ -35,7 +35,7 @@ using Sharpen;
 
 namespace NSch
 {
-	public class ChannelSubsystem : ChannelSession
+	class ChannelSubsystem : ChannelSession
 	{
 		internal bool xforwading = false;
 
