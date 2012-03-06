@@ -5,6 +5,7 @@ SHARPEN=$(prefix)/sharpen.sh
 JAVA_PATCH=$(prefix)/java.patch
 CS_PATCH=$(prefix)/cs.patch
 
+JGIT_GIT_REPO = git://git.eclipse.org/gitroot/jgit/jgit.git
 JGIT_DIR = source
 JGIT_SOURCE = $(JGIT_DIR)/README
 JGIT_GIT = @cd $(JGIT_DIR) && git
@@ -62,7 +63,7 @@ $(JSCH_SOURCE):
 $(JGIT_SOURCE):
 	@echo -e "$(SB)Getting jgit sources$(EB)"
 	mkdir -p $(JGIT_DIR)
-	git clone git://egit.eclipse.org/jgit.git $(JGIT_DIR)
+	git clone $(JGIT_GIT_REPO) $(JGIT_DIR)
 	
 
 # The steps for fetching are:
