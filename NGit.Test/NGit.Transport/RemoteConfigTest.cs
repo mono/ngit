@@ -423,5 +423,78 @@ namespace NGit.Transport
 			CheckConfig("[remote \"origin\"]\n" + "\turl = /some/dir\n" + "\tfetch = +refs/heads/*:refs/remotes/origin/*\n"
 				 + "\ttimeout = 60\n");
 		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void NoInsteadOf()
+		{
+			config.SetString("remote", "origin", "url", "short:project.git");
+			config.SetString("url", "https://server/repos/", "name", "short:");
+			RemoteConfig rc = new RemoteConfig(config, "origin");
+			NUnit.Framework.Assert.IsFalse(rc.URIs.IsEmpty());
+			NUnit.Framework.Assert.AreEqual("short:project.git", rc.URIs[0].ToASCIIString());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void SingleInsteadOf()
+		{
+			config.SetString("remote", "origin", "url", "short:project.git");
+			config.SetString("url", "https://server/repos/", "insteadOf", "short:");
+			RemoteConfig rc = new RemoteConfig(config, "origin");
+			NUnit.Framework.Assert.IsFalse(rc.URIs.IsEmpty());
+			NUnit.Framework.Assert.AreEqual("https://server/repos/project.git", rc.URIs[0].ToASCIIString
+				());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void MultipleInsteadOf()
+		{
+			config.SetString("remote", "origin", "url", "prefixproject.git");
+			config.SetStringList("url", "https://server/repos/", "insteadOf", Arrays.AsList("pre"
+				, "prefix", "pref", "perf"));
+			RemoteConfig rc = new RemoteConfig(config, "origin");
+			NUnit.Framework.Assert.IsFalse(rc.URIs.IsEmpty());
+			NUnit.Framework.Assert.AreEqual("https://server/repos/project.git", rc.URIs[0].ToASCIIString
+				());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void NoPushInsteadOf()
+		{
+			config.SetString("remote", "origin", "pushurl", "short:project.git");
+			config.SetString("url", "https://server/repos/", "name", "short:");
+			RemoteConfig rc = new RemoteConfig(config, "origin");
+			NUnit.Framework.Assert.IsFalse(rc.PushURIs.IsEmpty());
+			NUnit.Framework.Assert.AreEqual("short:project.git", rc.PushURIs[0].ToASCIIString
+				());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void SinglePushInsteadOf()
+		{
+			config.SetString("remote", "origin", "pushurl", "short:project.git");
+			config.SetString("url", "https://server/repos/", "pushInsteadOf", "short:");
+			RemoteConfig rc = new RemoteConfig(config, "origin");
+			NUnit.Framework.Assert.IsFalse(rc.PushURIs.IsEmpty());
+			NUnit.Framework.Assert.AreEqual("https://server/repos/project.git", rc.PushURIs[0
+				].ToASCIIString());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void MultiplePushInsteadOf()
+		{
+			config.SetString("remote", "origin", "pushurl", "prefixproject.git");
+			config.SetStringList("url", "https://server/repos/", "pushInsteadOf", Arrays.AsList
+				("pre", "prefix", "pref", "perf"));
+			RemoteConfig rc = new RemoteConfig(config, "origin");
+			NUnit.Framework.Assert.IsFalse(rc.PushURIs.IsEmpty());
+			NUnit.Framework.Assert.AreEqual("https://server/repos/project.git", rc.PushURIs[0
+				].ToASCIIString());
+		}
 	}
 }

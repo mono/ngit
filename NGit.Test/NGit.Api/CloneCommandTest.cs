@@ -48,7 +48,9 @@ using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Junit;
 using NGit.Revwalk;
+using NGit.Storage.File;
 using NGit.Submodule;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Api
@@ -290,6 +292,44 @@ namespace NGit.Api
 				());
 			NUnit.Framework.Assert.AreEqual(commit, pathStatus.GetHeadId());
 			NUnit.Framework.Assert.AreEqual(commit, pathStatus.GetIndexId());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCloneWithAutoSetupRebase()
+		{
+			FilePath directory = CreateTempDirectory("testCloneRepository1");
+			CloneCommand command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			Git git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsFalse(git2.GetRepository().GetConfig().GetBoolean(ConfigConstants
+				.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_REBASE, false));
+			FileBasedConfig userConfig = SystemReader.GetInstance().OpenUserConfig(null, git.
+				GetRepository().FileSystem);
+			userConfig.SetString(ConfigConstants.CONFIG_BRANCH_SECTION, null, ConfigConstants
+				.CONFIG_KEY_AUTOSETUPREBASE, ConfigConstants.CONFIG_KEY_ALWAYS);
+			userConfig.Save();
+			directory = CreateTempDirectory("testCloneRepository2");
+			command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsTrue(git2.GetRepository().GetConfig().GetBoolean(ConfigConstants
+				.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_REBASE, false));
+			userConfig.SetString(ConfigConstants.CONFIG_BRANCH_SECTION, null, ConfigConstants
+				.CONFIG_KEY_AUTOSETUPREBASE, ConfigConstants.CONFIG_KEY_REMOTE);
+			userConfig.Save();
+			directory = CreateTempDirectory("testCloneRepository2");
+			command = Git.CloneRepository();
+			command.SetDirectory(directory);
+			command.SetURI("file://" + git.GetRepository().WorkTree.GetPath());
+			git2 = command.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsTrue(git2.GetRepository().GetConfig().GetBoolean(ConfigConstants
+				.CONFIG_BRANCH_SECTION, "test", ConfigConstants.CONFIG_KEY_REBASE, false));
 		}
 	}
 }

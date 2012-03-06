@@ -218,6 +218,9 @@ namespace NGit.Util
 			catch (InvalidOperationException)
 			{
 			}
+			catch (Exception ex) {
+				Console.WriteLine ("Caught: {0}", ex.GetType ().Name);
+			}
 		}
 
 		// expected

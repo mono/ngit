@@ -186,6 +186,42 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.AreEqual(new Edit(0, 1, 0, 2), e);
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestLineDelimiter()
+		{
+			RawText rt = new RawText(Constants.EncodeASCII("foo\n"));
+			NUnit.Framework.Assert.AreEqual("\n", rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsFalse(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII("foo\r\n"));
+			NUnit.Framework.Assert.AreEqual("\r\n", rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsFalse(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII("foo\nbar"));
+			NUnit.Framework.Assert.AreEqual("\n", rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsTrue(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII("foo\r\nbar"));
+			NUnit.Framework.Assert.AreEqual("\r\n", rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsTrue(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII("foo\nbar\r\n"));
+			NUnit.Framework.Assert.AreEqual("\n", rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsFalse(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII("foo\r\nbar\n"));
+			NUnit.Framework.Assert.AreEqual("\r\n", rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsFalse(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII("foo"));
+			NUnit.Framework.Assert.IsNull(rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsTrue(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII(string.Empty));
+			NUnit.Framework.Assert.IsNull(rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsTrue(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII("\n"));
+			NUnit.Framework.Assert.AreEqual("\n", rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsFalse(rt.IsMissingNewlineAtEnd());
+			rt = new RawText(Constants.EncodeASCII("\r\n"));
+			NUnit.Framework.Assert.AreEqual("\r\n", rt.GetLineDelimiter());
+			NUnit.Framework.Assert.IsFalse(rt.IsMissingNewlineAtEnd());
+		}
+
 		private static RawText T(string text)
 		{
 			StringBuilder r = new StringBuilder();
