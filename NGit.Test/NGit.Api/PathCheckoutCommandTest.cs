@@ -243,5 +243,17 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(0, status.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(0, status.GetUntracked().Count);
 		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutRepository()
+		{
+			CheckoutCommand co = git.Checkout();
+			FilePath test = WriteTrashFile(FILE1, string.Empty);
+			FilePath test2 = WriteTrashFile(FILE2, string.Empty);
+			co.SetStartPoint("HEAD~2").SetAllPaths(true).Call();
+			NUnit.Framework.Assert.AreEqual("1", Read(test));
+			NUnit.Framework.Assert.AreEqual("a", Read(test2));
+		}
 	}
 }

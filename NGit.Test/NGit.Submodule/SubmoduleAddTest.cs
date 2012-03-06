@@ -47,6 +47,7 @@ using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Dircache;
 using NGit.Revwalk;
+using NGit.Storage.File;
 using NGit.Submodule;
 using Sharpen;
 
@@ -153,7 +154,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_153(id, path));
+			editor.Add(new _PathEdit_154(id, path));
 			editor.Commit();
 			SubmoduleAddCommand command = new SubmoduleAddCommand(db);
 			command.SetPath(path);
@@ -170,9 +171,9 @@ namespace NGit.Submodule
 			}
 		}
 
-		private sealed class _PathEdit_153 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_154 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_153(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_154(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -222,6 +223,40 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsTrue(status.GetAdded().Contains(Constants.DOT_GIT_MODULES
 				));
 			NUnit.Framework.Assert.IsTrue(status.GetAdded().Contains(path));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void AddSubmoduleWithExistingSubmoduleDefined()
+		{
+			string path1 = "sub1";
+			string url1 = "git://server/repo1.git";
+			string path2 = "sub2";
+			FileBasedConfig modulesConfig = new FileBasedConfig(new FilePath(db.WorkTree, Constants
+				.DOT_GIT_MODULES), db.FileSystem);
+			modulesConfig.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path1, ConfigConstants
+				.CONFIG_KEY_PATH, path1);
+			modulesConfig.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path1, ConfigConstants
+				.CONFIG_KEY_URL, url1);
+			modulesConfig.Save();
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("create file").Call());
+			SubmoduleAddCommand command = new SubmoduleAddCommand(db);
+			command.SetPath(path2);
+			string url2 = db.Directory.ToURI().ToString();
+			command.SetURI(url2);
+			NUnit.Framework.Assert.IsNotNull(command.Call());
+			modulesConfig.Load();
+			NUnit.Framework.Assert.AreEqual(path1, modulesConfig.GetString(ConfigConstants.CONFIG_SUBMODULE_SECTION
+				, path1, ConfigConstants.CONFIG_KEY_PATH));
+			NUnit.Framework.Assert.AreEqual(url1, modulesConfig.GetString(ConfigConstants.CONFIG_SUBMODULE_SECTION
+				, path1, ConfigConstants.CONFIG_KEY_URL));
+			NUnit.Framework.Assert.AreEqual(path2, modulesConfig.GetString(ConfigConstants.CONFIG_SUBMODULE_SECTION
+				, path2, ConfigConstants.CONFIG_KEY_PATH));
+			NUnit.Framework.Assert.AreEqual(url2, modulesConfig.GetString(ConfigConstants.CONFIG_SUBMODULE_SECTION
+				, path2, ConfigConstants.CONFIG_KEY_URL));
 		}
 	}
 }

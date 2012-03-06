@@ -935,10 +935,10 @@ index 4a86da7..9524143 100644
  	private boolean thinPack;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
-index 60ebeab..859ca28 100644
+index b5ee206..b3dfb3d 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
-@@ -76,7 +76,7 @@
+@@ -83,7 +83,7 @@
  		UPDATE_NONFASTFORWARD,
  
  		/** Delete an existing ref; the ref should already exist. */
@@ -948,10 +948,10 @@ index 60ebeab..859ca28 100644
  
  	/** Result of the update command. */
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/RemoteConfig.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/RemoteConfig.java
-index 3df56c6..7bb166b 100644
+index f75ac70..90ddadc 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/RemoteConfig.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/RemoteConfig.java
-@@ -120,6 +120,8 @@
+@@ -127,6 +127,8 @@
  
  	private String name;
  
@@ -960,7 +960,7 @@ index 3df56c6..7bb166b 100644
  	private List<URIish> uris;
  
  	private List<URIish> pushURIs;
-@@ -156,6 +158,7 @@
+@@ -163,6 +165,7 @@
  	public RemoteConfig(final Config rc, final String remoteName)
  			throws URISyntaxException {
  		name = remoteName;
@@ -968,7 +968,7 @@ index 3df56c6..7bb166b 100644
  
  		String[] vlst;
  		String val;
-@@ -230,6 +233,11 @@ public void update(final Config rc) {
+@@ -240,6 +243,11 @@ public void update(final Config rc) {
  		set(rc, KEY_TAGOPT, getTagOpt().option(), TagOpt.AUTO_FOLLOW.option());
  		set(rc, KEY_MIRROR, mirror, DEFAULT_MIRROR);
  		set(rc, KEY_TIMEOUT, timeout, 0);
@@ -980,7 +980,7 @@ index 3df56c6..7bb166b 100644
  	}
  
  	private void set(final Config rc, final String key,
-@@ -270,6 +278,16 @@ public String getName() {
+@@ -309,6 +317,16 @@ public String getName() {
  	}
  
  	/**
@@ -1047,10 +1047,10 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 2fa6e5c..a104c22 100644
+index c61a23c..01284aa 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-@@ -211,7 +211,7 @@
+@@ -214,7 +214,7 @@
  
  	private RequestPolicy requestPolicy = RequestPolicy.ADVERTISED;
  
@@ -1059,7 +1059,7 @@ index 2fa6e5c..a104c22 100644
  
  	private boolean noDone;
  
-@@ -781,14 +781,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -822,14 +822,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  				// If both sides have the same object; let the client know.
  				//
  				switch (multiAck) {
@@ -1077,7 +1077,7 @@ index 2fa6e5c..a104c22 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -830,12 +830,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -871,12 +871,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  					didOkToGiveUp = true;
  					if (okToGiveUp()) {
  						switch (multiAck) {
@@ -1094,7 +1094,7 @@ index 2fa6e5c..a104c22 100644
  							sentReady = true;
  							break;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
-index c7ae775..b74c23a 100644
+index 315d909..98cedfa 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/FileTreeIterator.java
 @@ -146,7 +146,7 @@ public AbstractTreeIterator createSubtreeIterator(final ObjectReader reader)
@@ -1107,7 +1107,7 @@ index c7ae775..b74c23a 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index fa57b71..15e16bd 100644
+index 8940399..340f4bb 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 @@ -130,6 +130,12 @@
@@ -1123,7 +1123,7 @@ index fa57b71..15e16bd 100644
  	 * Create a new iterator with no parent.
  	 *
  	 * @param options
-@@ -529,6 +535,8 @@ public boolean isEntryIgnored() throws IOException {
+@@ -527,6 +533,8 @@ public boolean isEntryIgnored() throws IOException {
  	 *             a relevant ignore rule file exists but cannot be read.
  	 */
  	protected boolean isEntryIgnored(final int pLen) throws IOException {
@@ -1132,7 +1132,7 @@ index fa57b71..15e16bd 100644
  		IgnoreNode rules = getIgnoreNode();
  		if (rules != null) {
  			// The ignore code wants path to start with a '/' if possible.
-@@ -541,15 +549,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
+@@ -539,15 +547,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
  			String p = TreeWalk.pathOf(path, pOff, pLen);
  			switch (rules.isIgnored(p, FileMode.TREE.equals(mode))) {
  			case IGNORED:
@@ -1155,7 +1155,7 @@ index fa57b71..15e16bd 100644
  		return false;
  	}
  
-@@ -705,8 +718,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
+@@ -703,8 +716,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();
@@ -1192,10 +1192,10 @@ index acc1ae6..686d65a 100644
  			return false;
  		}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java b/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
-index 3afd9e5..37049cd 100644
+index 4181a2f..1784cbc 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
-@@ -64,7 +64,7 @@
+@@ -67,7 +67,7 @@
   */
  public abstract class SystemReader {
  	private static SystemReader INSTANCE = new SystemReader() {
@@ -1204,7 +1204,7 @@ index 3afd9e5..37049cd 100644
  
  		public String getenv(String variable) {
  			return System.getenv(variable);
-@@ -107,7 +107,6 @@ public String getHostname() {
+@@ -110,7 +110,6 @@ public String getHostname() {
  					// we do nothing
  					hostname = "localhost";
  				}

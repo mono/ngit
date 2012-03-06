@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
@@ -101,7 +102,7 @@ namespace NGit.Api
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
 		[NUnit.Framework.Test]
-		public virtual void TestAddExistingSingleFileWithNewLine()
+		public virtual void TestAddExistingSingleSmallFileWithNewLine()
 		{
 			FilePath file = new FilePath(db.WorkTree, "a.txt");
 			FileUtils.CreateNewFile(file);
@@ -120,6 +121,38 @@ namespace NGit.Api
 			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "input");
 			git.Add().AddFilepattern("a.txt").Call();
 			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:row1\nrow2]", IndexState
+				(CONTENT));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestAddExistingSingleMediumSizeFileWithNewLine()
+		{
+			FilePath file = new FilePath(db.WorkTree, "a.txt");
+			FileUtils.CreateNewFile(file);
+			StringBuilder data = new StringBuilder();
+			for (int i = 0; i < 1000; ++i)
+			{
+				data.Append("row1\r\nrow2");
+			}
+			string crData = data.ToString();
+			PrintWriter writer = new PrintWriter(file);
+			writer.Write(crData);
+			writer.Close();
+			string lfData = data.ToString().ReplaceAll("\r", string.Empty);
+			Git git = new Git(db);
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "false");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:" + data + "]", IndexState
+				(CONTENT));
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "true");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:" + lfData + "]", IndexState
+				(CONTENT));
+			((FileBasedConfig)db.GetConfig()).SetString("core", null, "autocrlf", "input");
+			git.Add().AddFilepattern("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, content:" + lfData + "]", IndexState
 				(CONTENT));
 		}
 
@@ -496,7 +529,7 @@ namespace NGit.Api
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, true);
 			config.Save();
-			FS executableFs = new _FS_573();
+			FS executableFs = new _FS_602();
 			Git git = Git.Open(db.Directory, executableFs);
 			string path = "a.txt";
 			WriteTrashFile(path, "content");
@@ -505,7 +538,7 @@ namespace NGit.Api
 			TreeWalk walk = TreeWalk.ForPath(db, path, commit1.Tree);
 			NUnit.Framework.Assert.IsNotNull(walk);
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
-			FS nonExecutableFs = new _FS_613();
+			FS nonExecutableFs = new _FS_642();
 			config = ((FileBasedConfig)db.GetConfig());
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, false);
@@ -519,9 +552,9 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
 		}
 
-		private sealed class _FS_573 : FS
+		private sealed class _FS_602 : FS
 		{
-			public _FS_573()
+			public _FS_602()
 			{
 			}
 
@@ -561,9 +594,9 @@ namespace NGit.Api
 			}
 		}
 
-		private sealed class _FS_613 : FS
+		private sealed class _FS_642 : FS
 		{
-			public _FS_613()
+			public _FS_642()
 			{
 			}
 

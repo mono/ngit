@@ -41,12 +41,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using NGit;
 using NGit.Api;
+using NGit.Diff;
 using NGit.Revwalk;
 using NGit.Storage.File;
+using NGit.Submodule;
 using NGit.Treewalk;
+using NGit.Treewalk.Filter;
 using NGit.Util;
 using Sharpen;
 
@@ -67,7 +71,7 @@ namespace NGit.Api
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, true);
 			config.Save();
-			FS executableFs = new _FS_71();
+			FS executableFs = new _FS_81();
 			Git git = Git.Open(db.Directory, executableFs);
 			string path = "a.txt";
 			WriteTrashFile(path, "content");
@@ -76,7 +80,7 @@ namespace NGit.Api
 			TreeWalk walk = TreeWalk.ForPath(db, path, commit1.Tree);
 			NUnit.Framework.Assert.IsNotNull(walk);
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
-			FS nonExecutableFs = new _FS_111();
+			FS nonExecutableFs = new _FS_121();
 			config = ((FileBasedConfig)db.GetConfig());
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, false);
@@ -89,9 +93,9 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
 		}
 
-		private sealed class _FS_71 : FS
+		private sealed class _FS_81 : FS
 		{
-			public _FS_71()
+			public _FS_81()
 			{
 			}
 
@@ -131,9 +135,9 @@ namespace NGit.Api
 			}
 		}
 
-		private sealed class _FS_111 : FS
+		private sealed class _FS_121 : FS
 		{
-			public _FS_111()
+			public _FS_121()
 			{
 			}
 
@@ -171,6 +175,98 @@ namespace NGit.Api
 			{
 				return false;
 			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void CommitNewSubmodule()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit commit = git.Commit().SetMessage("create file").Call();
+			SubmoduleAddCommand command = new SubmoduleAddCommand(db);
+			string path = "sub";
+			command.SetPath(path);
+			string uri = db.Directory.ToURI().ToString();
+			command.SetURI(uri);
+			Repository repo = command.Call();
+			NUnit.Framework.Assert.IsNotNull(repo);
+			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
+			NUnit.Framework.Assert.IsTrue(generator.Next());
+			NUnit.Framework.Assert.AreEqual(path, generator.GetPath());
+			NUnit.Framework.Assert.AreEqual(commit, generator.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(uri, generator.GetModulesUrl());
+			NUnit.Framework.Assert.AreEqual(path, generator.GetModulesPath());
+			NUnit.Framework.Assert.AreEqual(uri, generator.GetConfigUrl());
+			NUnit.Framework.Assert.IsNotNull(generator.GetRepository());
+			NUnit.Framework.Assert.AreEqual(commit, repo.Resolve(Constants.HEAD));
+			RevCommit submoduleCommit = git.Commit().SetMessage("submodule add").SetOnly(path
+				).Call();
+			NUnit.Framework.Assert.IsNotNull(submoduleCommit);
+			TreeWalk walk = new TreeWalk(db);
+			walk.AddTree(commit.Tree);
+			walk.AddTree(submoduleCommit.Tree);
+			walk.Filter = TreeFilter.ANY_DIFF;
+			IList<DiffEntry> diffs = DiffEntry.Scan(walk);
+			NUnit.Framework.Assert.AreEqual(1, diffs.Count);
+			DiffEntry subDiff = diffs[0];
+			NUnit.Framework.Assert.AreEqual(FileMode.MISSING, subDiff.GetOldMode());
+			NUnit.Framework.Assert.AreEqual(FileMode.GITLINK, subDiff.GetNewMode());
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, subDiff.GetOldId().ToObjectId());
+			NUnit.Framework.Assert.AreEqual(commit, subDiff.GetNewId().ToObjectId());
+			NUnit.Framework.Assert.AreEqual(path, subDiff.GetNewPath());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void CommitSubmoduleUpdate()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit commit = git.Commit().SetMessage("create file").Call();
+			WriteTrashFile("file.txt", "content2");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit commit2 = git.Commit().SetMessage("edit file").Call();
+			SubmoduleAddCommand command = new SubmoduleAddCommand(db);
+			string path = "sub";
+			command.SetPath(path);
+			string uri = db.Directory.ToURI().ToString();
+			command.SetURI(uri);
+			Repository repo = command.Call();
+			NUnit.Framework.Assert.IsNotNull(repo);
+			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
+			NUnit.Framework.Assert.IsTrue(generator.Next());
+			NUnit.Framework.Assert.AreEqual(path, generator.GetPath());
+			NUnit.Framework.Assert.AreEqual(commit2, generator.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(uri, generator.GetModulesUrl());
+			NUnit.Framework.Assert.AreEqual(path, generator.GetModulesPath());
+			NUnit.Framework.Assert.AreEqual(uri, generator.GetConfigUrl());
+			NUnit.Framework.Assert.IsNotNull(generator.GetRepository());
+			NUnit.Framework.Assert.AreEqual(commit2, repo.Resolve(Constants.HEAD));
+			RevCommit submoduleAddCommit = git.Commit().SetMessage("submodule add").SetOnly(path
+				).Call();
+			NUnit.Framework.Assert.IsNotNull(submoduleAddCommit);
+			RefUpdate update = repo.UpdateRef(Constants.HEAD);
+			update.SetNewObjectId(commit);
+			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, update.ForceUpdate());
+			RevCommit submoduleEditCommit = git.Commit().SetMessage("submodule add").SetOnly(
+				path).Call();
+			NUnit.Framework.Assert.IsNotNull(submoduleEditCommit);
+			TreeWalk walk = new TreeWalk(db);
+			walk.AddTree(submoduleAddCommit.Tree);
+			walk.AddTree(submoduleEditCommit.Tree);
+			walk.Filter = TreeFilter.ANY_DIFF;
+			IList<DiffEntry> diffs = DiffEntry.Scan(walk);
+			NUnit.Framework.Assert.AreEqual(1, diffs.Count);
+			DiffEntry subDiff = diffs[0];
+			NUnit.Framework.Assert.AreEqual(FileMode.GITLINK, subDiff.GetOldMode());
+			NUnit.Framework.Assert.AreEqual(FileMode.GITLINK, subDiff.GetNewMode());
+			NUnit.Framework.Assert.AreEqual(commit2, subDiff.GetOldId().ToObjectId());
+			NUnit.Framework.Assert.AreEqual(commit, subDiff.GetNewId().ToObjectId());
+			NUnit.Framework.Assert.AreEqual(path, subDiff.GetNewPath());
+			NUnit.Framework.Assert.AreEqual(path, subDiff.GetOldPath());
 		}
 	}
 }
