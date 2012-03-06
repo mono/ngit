@@ -156,6 +156,16 @@ namespace NGit.Junit
 			return CultureInfo.InvariantCulture;
 		}
 
+		public override SimpleDateFormat GetSimpleDateFormat(string pattern)
+		{
+			return new SimpleDateFormat(pattern, GetLocale());
+		}
+
+		public override DateFormat GetDateTimeInstance(int dateStyle, int timeStyle)
+		{
+			return DateFormat.GetDateTimeInstance(dateStyle, timeStyle, GetLocale());
+		}
+
 		/// <summary>Assign some properties for the currently executing platform</summary>
 		public virtual void SetCurrentPlatform()
 		{

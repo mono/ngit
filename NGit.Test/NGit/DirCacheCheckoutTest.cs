@@ -46,10 +46,12 @@ using System.Collections.Generic;
 using System.IO;
 using NGit;
 using NGit.Api;
+using NGit.Api.Errors;
 using NGit.Dircache;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Treewalk;
+using NGit.Util;
 using NUnit.Framework;
 using Sharpen;
 
@@ -277,15 +279,15 @@ namespace NGit
 					ObjectInserter inserter = db.NewObjectInserter();
 					ObjectId id = inserter.Insert(Constants.OBJ_BLOB, Constants.Encode(e.Value));
 					editor.Add(new DirCacheEditor.DeletePath(e.Key));
-					editor.Add(new _PathEdit_284(id, e.Key));
+					editor.Add(new _PathEdit_289(id, e.Key));
 				}
 				NUnit.Framework.Assert.IsTrue(editor.Commit());
 			}
 		}
 
-		private sealed class _PathEdit_284 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_289 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_284(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_289(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -963,6 +965,189 @@ namespace NGit
 				NUnit.Framework.Assert.IsTrue(GetConflicts().Equals(Arrays.AsList("foo")));
 				NUnit.Framework.Assert.IsTrue(new FilePath(trash, "foo").IsFile());
 			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFileModeChangeWithNoContentChangeUpdate()
+		{
+			if (!FS.DETECTED.SupportsExecute())
+			{
+				return;
+			}
+			Git git = Git.Wrap(db);
+			// Add non-executable file
+			FilePath file = WriteTrashFile("file.txt", "a");
+			git.Add().AddFilepattern("file.txt").Call();
+			git.Commit().SetMessage("commit1").Call();
+			NUnit.Framework.Assert.IsFalse(db.FileSystem.CanExecute(file));
+			// Create branch
+			git.BranchCreate().SetName("b1").Call();
+			// Make file executable
+			db.FileSystem.SetExecute(file, true);
+			git.Add().AddFilepattern("file.txt").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// Verify executable and working directory is clean
+			Status status = git.Status().Call();
+			NUnit.Framework.Assert.IsTrue(status.GetModified().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetChanged().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(db.FileSystem.CanExecute(file));
+			// Switch branches
+			git.Checkout().SetName("b1").Call();
+			// Verify not executable and working directory is clean
+			status = git.Status().Call();
+			NUnit.Framework.Assert.IsTrue(status.GetModified().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetChanged().IsEmpty());
+			NUnit.Framework.Assert.IsFalse(db.FileSystem.CanExecute(file));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFileModeChangeAndContentChangeConflict()
+		{
+			if (!FS.DETECTED.SupportsExecute())
+			{
+				return;
+			}
+			Git git = Git.Wrap(db);
+			// Add non-executable file
+			FilePath file = WriteTrashFile("file.txt", "a");
+			git.Add().AddFilepattern("file.txt").Call();
+			git.Commit().SetMessage("commit1").Call();
+			NUnit.Framework.Assert.IsFalse(db.FileSystem.CanExecute(file));
+			// Create branch
+			git.BranchCreate().SetName("b1").Call();
+			// Make file executable
+			db.FileSystem.SetExecute(file, true);
+			git.Add().AddFilepattern("file.txt").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// Verify executable and working directory is clean
+			Status status = git.Status().Call();
+			NUnit.Framework.Assert.IsTrue(status.GetModified().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetChanged().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(db.FileSystem.CanExecute(file));
+			WriteTrashFile("file.txt", "b");
+			// Switch branches
+			CheckoutCommand checkout = git.Checkout().SetName("b1");
+			try
+			{
+				checkout.Call();
+				NUnit.Framework.Assert.Fail("Checkout exception not thrown");
+			}
+			catch (JGitInternalException)
+			{
+				CheckoutResult result = checkout.GetResult();
+				NUnit.Framework.Assert.IsNotNull(result);
+				NUnit.Framework.Assert.IsNotNull(result.GetConflictList());
+				NUnit.Framework.Assert.AreEqual(1, result.GetConflictList().Count);
+				NUnit.Framework.Assert.IsTrue(result.GetConflictList().Contains("file.txt"));
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDirtyFileModeEqualHeadMerge()
+		{
+			if (!FS.DETECTED.SupportsExecute())
+			{
+				return;
+			}
+			Git git = Git.Wrap(db);
+			// Add non-executable file
+			FilePath file = WriteTrashFile("file.txt", "a");
+			git.Add().AddFilepattern("file.txt").Call();
+			git.Commit().SetMessage("commit1").Call();
+			NUnit.Framework.Assert.IsFalse(db.FileSystem.CanExecute(file));
+			// Create branch
+			git.BranchCreate().SetName("b1").Call();
+			// Create second commit and don't touch file
+			WriteTrashFile("file2.txt", string.Empty);
+			git.Add().AddFilepattern("file2.txt").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// stage a mode change
+			WriteTrashFile("file.txt", "a");
+			db.FileSystem.SetExecute(file, true);
+			git.Add().AddFilepattern("file.txt").Call();
+			// dirty the file
+			WriteTrashFile("file.txt", "b");
+			NUnit.Framework.Assert.AreEqual("[file.txt, mode:100755, content:a][file2.txt, mode:100644, content:]"
+				, IndexState(CONTENT));
+			AssertWorkDir(Mkmap("file.txt", "b", "file2.txt", string.Empty));
+			// Switch branches and check that the dirty file survived in worktree
+			// and index
+			git.Checkout().SetName("b1").Call();
+			NUnit.Framework.Assert.AreEqual("[file.txt, mode:100755, content:a]", IndexState(
+				CONTENT));
+			AssertWorkDir(Mkmap("file.txt", "b"));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDirtyFileModeEqualIndexMerge()
+		{
+			if (!FS.DETECTED.SupportsExecute())
+			{
+				return;
+			}
+			Git git = Git.Wrap(db);
+			// Add non-executable file
+			FilePath file = WriteTrashFile("file.txt", "a");
+			git.Add().AddFilepattern("file.txt").Call();
+			git.Commit().SetMessage("commit1").Call();
+			NUnit.Framework.Assert.IsFalse(db.FileSystem.CanExecute(file));
+			// Create branch
+			git.BranchCreate().SetName("b1").Call();
+			// Create second commit with executable file
+			file = WriteTrashFile("file.txt", "b");
+			db.FileSystem.SetExecute(file, true);
+			git.Add().AddFilepattern("file.txt").Call();
+			git.Commit().SetMessage("commit2").Call();
+			// stage the same content as in the branch we want to switch to
+			WriteTrashFile("file.txt", "a");
+			db.FileSystem.SetExecute(file, false);
+			git.Add().AddFilepattern("file.txt").Call();
+			// dirty the file
+			WriteTrashFile("file.txt", "c");
+			db.FileSystem.SetExecute(file, true);
+			NUnit.Framework.Assert.AreEqual("[file.txt, mode:100644, content:a]", IndexState(
+				CONTENT));
+			AssertWorkDir(Mkmap("file.txt", "c"));
+			// Switch branches and check that the dirty file survived in worktree
+			// and index
+			git.Checkout().SetName("b1").Call();
+			NUnit.Framework.Assert.AreEqual("[file.txt, mode:100644, content:a]", IndexState(
+				CONTENT));
+			AssertWorkDir(Mkmap("file.txt", "c"));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestFileModeChangeAndContentChangeNoConflict()
+		{
+			if (!FS.DETECTED.SupportsExecute())
+			{
+				return;
+			}
+			Git git = Git.Wrap(db);
+			// Add first file
+			FilePath file1 = WriteTrashFile("file1.txt", "a");
+			git.Add().AddFilepattern("file1.txt").Call();
+			git.Commit().SetMessage("commit1").Call();
+			NUnit.Framework.Assert.IsFalse(db.FileSystem.CanExecute(file1));
+			// Add second file
+			FilePath file2 = WriteTrashFile("file2.txt", "b");
+			git.Add().AddFilepattern("file2.txt").Call();
+			git.Commit().SetMessage("commit2").Call();
+			NUnit.Framework.Assert.IsFalse(db.FileSystem.CanExecute(file2));
+			// Create branch from first commit
+			NUnit.Framework.Assert.IsNotNull(git.Checkout().SetCreateBranch(true).SetName("b1"
+				).SetStartPoint(Constants.HEAD + "~1").Call());
+			// Change content and file mode in working directory and index
+			file1 = WriteTrashFile("file1.txt", "c");
+			db.FileSystem.SetExecute(file1, true);
+			git.Add().AddFilepattern("file1.txt").Call();
+			// Switch back to 'master'
+			NUnit.Framework.Assert.IsNotNull(git.Checkout().SetName(Constants.MASTER).Call());
 		}
 
 		/// <exception cref="NGit.Errors.CorruptObjectException"></exception>
