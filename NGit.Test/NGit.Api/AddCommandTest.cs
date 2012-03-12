@@ -529,7 +529,7 @@ namespace NGit.Api
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, true);
 			config.Save();
-			FS executableFs = new _FS_602();
+			FS executableFs = new _FS_605();
 			Git git = Git.Open(db.Directory, executableFs);
 			string path = "a.txt";
 			WriteTrashFile(path, "content");
@@ -538,7 +538,7 @@ namespace NGit.Api
 			TreeWalk walk = TreeWalk.ForPath(db, path, commit1.Tree);
 			NUnit.Framework.Assert.IsNotNull(walk);
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
-			FS nonExecutableFs = new _FS_642();
+			FS nonExecutableFs = new _FS_645();
 			config = ((FileBasedConfig)db.GetConfig());
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, false);
@@ -552,9 +552,9 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
 		}
 
-		private sealed class _FS_602 : FS
+		private sealed class _FS_605 : FS
 		{
-			public _FS_602()
+			public _FS_605()
 			{
 			}
 
@@ -594,9 +594,9 @@ namespace NGit.Api
 			}
 		}
 
-		private sealed class _FS_642 : FS
+		private sealed class _FS_645 : FS
 		{
-			public _FS_642()
+			public _FS_645()
 			{
 			}
 
@@ -634,6 +634,38 @@ namespace NGit.Api
 			{
 				return false;
 			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSubmoduleDeleteNotStagedWithUpdate()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("create file").Call());
+			SubmoduleAddCommand command = new SubmoduleAddCommand(db);
+			string path = "sub";
+			command.SetPath(path);
+			string uri = db.Directory.ToURI().ToString();
+			command.SetURI(uri);
+			Repository repo = command.Call();
+			NUnit.Framework.Assert.IsNotNull(repo);
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("add submodule").Call());
+			NUnit.Framework.Assert.IsTrue(git.Status().Call().IsClean());
+			FileUtils.Delete(repo.WorkTree, FileUtils.RECURSIVE);
+			FileUtils.Mkdir(new FilePath(db.WorkTree, path), false);
+			NUnit.Framework.Assert.IsNotNull(git.Add().AddFilepattern(".").SetUpdate(true).Call
+				());
+			Status status = git.Status().Call();
+			NUnit.Framework.Assert.IsFalse(status.IsClean());
+			NUnit.Framework.Assert.IsTrue(status.GetAdded().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetChanged().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetRemoved().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetUntracked().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetModified().IsEmpty());
+			NUnit.Framework.Assert.AreEqual(1, status.GetMissing().Count);
+			NUnit.Framework.Assert.AreEqual(path, status.GetMissing().Iterator().Next());
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

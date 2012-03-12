@@ -55,7 +55,7 @@ namespace NGit.Util.IO
 		public virtual void TestLF()
 		{
 			byte[] bytes = AsBytes("1\n2\n3");
-			Test(bytes, bytes);
+			Test(bytes, bytes, false);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -63,14 +63,14 @@ namespace NGit.Util.IO
 		public virtual void TestCR()
 		{
 			byte[] bytes = AsBytes("1\r2\r3");
-			Test(bytes, bytes);
+			Test(bytes, bytes, false);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCRLF()
 		{
-			Test(AsBytes("1\r\n2\r\n3"), AsBytes("1\n2\n3"));
+			Test(AsBytes("1\r\n2\r\n3"), AsBytes("1\n2\n3"), false);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -78,7 +78,7 @@ namespace NGit.Util.IO
 		public virtual void TestLFCR()
 		{
 			byte[] bytes = AsBytes("1\n\r2\n\r3");
-			Test(bytes, bytes);
+			Test(bytes, bytes, false);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -86,14 +86,29 @@ namespace NGit.Util.IO
 		public virtual void TestEmpty()
 		{
 			byte[] bytes = AsBytes(string.Empty);
-			Test(bytes, bytes);
+			Test(bytes, bytes, false);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		private void Test(byte[] input, byte[] expected)
+		[NUnit.Framework.Test]
+		public virtual void TestBinaryDetect()
+		{
+			byte[] bytes = AsBytes("1\r\n2\r\n3\x0");
+			Test(bytes, bytes, true);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestBinaryDontDetect()
+		{
+			Test(AsBytes("1\r\n2\r\n3\x0"), AsBytes("1\n2\n3\x0"), false);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void Test(byte[] input, byte[] expected, bool detectBinary)
 		{
 			InputStream bis1 = new ByteArrayInputStream(input);
-			InputStream cis1 = new EolCanonicalizingInputStream(bis1);
+			InputStream cis1 = new EolCanonicalizingInputStream(bis1, detectBinary);
 			int index1 = 0;
 			for (int b = cis1.Read(); b != -1; b = cis1.Read())
 			{
@@ -105,7 +120,7 @@ namespace NGit.Util.IO
 			{
 				byte[] buffer = new byte[bufferSize];
 				InputStream bis2 = new ByteArrayInputStream(input);
-				InputStream cis2 = new EolCanonicalizingInputStream(bis2);
+				InputStream cis2 = new EolCanonicalizingInputStream(bis2, detectBinary);
 				int read = 0;
 				for (int readNow = cis2.Read(buffer, 0, buffer.Length); readNow != -1 && read < expected
 					.Length; readNow = cis2.Read(buffer, 0, buffer.Length))

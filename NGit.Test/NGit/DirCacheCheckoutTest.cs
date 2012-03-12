@@ -46,7 +46,6 @@ using System.Collections.Generic;
 using System.IO;
 using NGit;
 using NGit.Api;
-using NGit.Api.Errors;
 using NGit.Dircache;
 using NGit.Revwalk;
 using NGit.Storage.File;
@@ -279,15 +278,15 @@ namespace NGit
 					ObjectInserter inserter = db.NewObjectInserter();
 					ObjectId id = inserter.Insert(Constants.OBJ_BLOB, Constants.Encode(e.Value));
 					editor.Add(new DirCacheEditor.DeletePath(e.Key));
-					editor.Add(new _PathEdit_289(id, e.Key));
+					editor.Add(new _PathEdit_288(id, e.Key));
 				}
 				NUnit.Framework.Assert.IsTrue(editor.Commit());
 			}
 		}
 
-		private sealed class _PathEdit_289 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_288 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_289(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_288(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -1034,7 +1033,7 @@ namespace NGit
 				checkout.Call();
 				NUnit.Framework.Assert.Fail("Checkout exception not thrown");
 			}
-			catch (JGitInternalException)
+			catch (NGit.Api.Errors.CheckoutConflictException)
 			{
 				CheckoutResult result = checkout.GetResult();
 				NUnit.Framework.Assert.IsNotNull(result);

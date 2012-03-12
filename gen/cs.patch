@@ -1,5 +1,5 @@
 diff --git a/NGit.Test/NGit.Api/AddCommandTest.cs b/NGit.Test/NGit.Api/AddCommandTest.cs
-index 89b84e7..c18e5b1 100644
+index fe8ce3d..7095da4 100644
 --- a/NGit.Test/NGit.Api/AddCommandTest.cs
 +++ b/NGit.Test/NGit.Api/AddCommandTest.cs
 @@ -583,7 +583,7 @@ namespace NGit.Api
@@ -84,10 +84,10 @@ index 3559b87..03cba8c 100644
  
  		/// <exception cref="System.Exception"></exception>
 diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-index 639b99e..16f1438 100644
+index 86c896f..d44cd75 100644
 --- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
 +++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-@@ -726,9 +726,14 @@ namespace NGit.Api
+@@ -776,9 +776,14 @@ namespace NGit.Api
  				sb.Append(line);
  				sb.Append('\n');
  			}
@@ -1340,44 +1340,6 @@ index 3cc3256..00ce82e 100644
  			}
  
  			public override void Close()
-diff --git a/NGit.Test/NGit.Transport/ReceivePackRefFilterTest.cs b/NGit.Test/NGit.Transport/ReceivePackRefFilterTest.cs
-index 0b85d9d..d23edeb 100644
---- a/NGit.Test/NGit.Transport/ReceivePackRefFilterTest.cs
-+++ b/NGit.Test/NGit.Transport/ReceivePackRefFilterTest.cs
-@@ -88,7 +88,7 @@ namespace NGit.Transport
- 			dst = CreateBareRepository();
- 			// Fill dst with a some common history.
- 			//
--			TestRepository d = new TestRepository(dst);
-+			TestRepository d = new TestRepository<Repository>(dst);
- 			a = d.Blob("a");
- 			A = d.Commit(d.Tree(d.File("a", a)));
- 			B = d.Commit().Parent(A).Create();
-@@ -124,6 +124,7 @@ namespace NGit.Transport
- 			{
- 				dst.Close();
- 			}
-+			Release ();
- 			base.TearDown();
- 		}
- 
-@@ -201,7 +202,7 @@ namespace NGit.Transport
- 			NUnit.Framework.Assert.IsFalse(od.FileFor(b).Exists(), "b not loose");
- 			// Now use b but in a different commit than what is hidden.
- 			//
--			TestRepository s = new TestRepository(src);
-+			TestRepository s = new TestRepository<Repository>(src);
- 			RevCommit N = s.Commit().Parent(B).Add("q", b).Create();
- 			s.Update(R_MASTER, N);
- 			// Push this new content to the remote, doing strict validation.
-@@ -576,7 +577,6 @@ namespace NGit.Transport
- 
- 		private ObjectInserter inserter;
- 
--		[NUnit.Framework.TearDown]
- 		public virtual void Release()
- 		{
- 			if (inserter != null)
 diff --git a/NGit.Test/NGit.Transport/SideBandOutputStreamTest.cs b/NGit.Test/NGit.Transport/SideBandOutputStreamTest.cs
 index 2b145de..09c937b 100644
 --- a/NGit.Test/NGit.Transport/SideBandOutputStreamTest.cs
@@ -1903,10 +1865,10 @@ index 22e896a..6d7c2df 100644
  		}
  	}
 diff --git a/NGit.Test/NGit/DirCacheCheckoutTest.cs b/NGit.Test/NGit/DirCacheCheckoutTest.cs
-index 90b17a5..a586241 100644
+index f6e2ea0..e543517 100644
 --- a/NGit.Test/NGit/DirCacheCheckoutTest.cs
 +++ b/NGit.Test/NGit/DirCacheCheckoutTest.cs
-@@ -1182,7 +1182,8 @@ namespace NGit
+@@ -1181,7 +1181,8 @@ namespace NGit
  						offset += numRead;
  					}
  					@is.Close();
@@ -2332,7 +2294,7 @@ index 46960b2..6944c26 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index 0b27d77..977edfc 100644
+index 023c6fe..19f8fb4 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -183,6 +183,7 @@ namespace NGit.Api
@@ -2343,7 +2305,7 @@ index 0b27d77..977edfc 100644
  					}
  				}
  				if (monitor.IsCancelled())
-@@ -252,6 +253,7 @@ namespace NGit.Api
+@@ -261,6 +262,7 @@ namespace NGit.Api
  								case CherryPickResult.CherryPickStatus.OK:
  								{
  									newHead = cherryPickResult.GetNewHead();
@@ -4104,10 +4066,10 @@ index 34619f4..f8a0396 100644
  		// Do nothing.
  		/// <summary>Advertise refs for upload-pack.</summary>
 diff --git a/NGit/NGit.Transport/AmazonS3.cs b/NGit/NGit.Transport/AmazonS3.cs
-index 29085b4..e69de29 100644
+index bebdc8b..e69de29 100644
 --- a/NGit/NGit.Transport/AmazonS3.cs
 +++ b/NGit/NGit.Transport/AmazonS3.cs
-@@ -1,897 +0,0 @@
+@@ -1,902 +0,0 @@
 -/*
 -This code is derived from jgit (http://eclipse.org/jgit).
 -Copyright owners are documented in jgit's IP log.
@@ -4720,11 +4682,16 @@ index 29085b4..e69de29 100644
 -		{
 -			IOException err = new IOException(MessageFormat.Format(JGitText.Get().amazonS3ActionFailed
 -				, action, key, HttpSupport.Response(c), c.GetResponseMessage()));
+-			InputStream errorStream = c.GetErrorStream();
+-			if (errorStream == null)
+-			{
+-				return err;
+-			}
 -			ByteArrayOutputStream b = new ByteArrayOutputStream();
 -			byte[] buf = new byte[2048];
 -			for (; ; )
 -			{
--				int n = c.GetErrorStream().Read(buf);
+-				int n = errorStream.Read(buf);
 -				if (n < 0)
 -				{
 -					break;
@@ -5019,10 +4986,10 @@ index 14f5150..ee19789 100644
  		private bool startedOperation;
  
 diff --git a/NGit/NGit.Transport/BasePackFetchConnection.cs b/NGit/NGit.Transport/BasePackFetchConnection.cs
-index 02e68ca..acb1b4f 100644
+index f3ad746..2f23b5f 100644
 --- a/NGit/NGit.Transport/BasePackFetchConnection.cs
 +++ b/NGit/NGit.Transport/BasePackFetchConnection.cs
-@@ -697,7 +697,7 @@ SEND_HAVES_break: ;
+@@ -717,7 +717,7 @@ SEND_HAVES_break: ;
  						// A solitary ACK at this point means the remote won't
  						// speak anymore, but is going to send us a pack now.
  						//
@@ -5031,7 +4998,7 @@ index 02e68ca..acb1b4f 100644
  					}
  
  					case PacketLineIn.AckNackResult.ACK_CONTINUE:
-@@ -716,7 +716,7 @@ SEND_HAVES_break: ;
+@@ -736,7 +736,7 @@ SEND_HAVES_break: ;
  				}
  READ_RESULT_continue: ;
  			}
@@ -5041,10 +5008,10 @@ index 02e68ca..acb1b4f 100644
  
  		/// <exception cref="System.IO.IOException"></exception>
 diff --git a/NGit/NGit.Transport/BasePackPushConnection.cs b/NGit/NGit.Transport/BasePackPushConnection.cs
-index 372c660..a00cc04 100644
+index 97d421c..c41bdcd 100644
 --- a/NGit/NGit.Transport/BasePackPushConnection.cs
 +++ b/NGit/NGit.Transport/BasePackPushConnection.cs
-@@ -138,7 +138,7 @@ namespace NGit.Transport
+@@ -146,7 +146,7 @@ namespace NGit.Transport
  			{
  				transport.OpenFetch().Close();
  			}
@@ -6328,10 +6295,19 @@ index 576b210..76b425b 100644
  			string ui = u.GetUserInfo();
  			if (ui != null)
 diff --git a/NGit/NGit.Transport/UploadPack.cs b/NGit/NGit.Transport/UploadPack.cs
-index fb2ad1d..eeb5459 100644
+index 38e45bc..d903ecb 100644
 --- a/NGit/NGit.Transport/UploadPack.cs
 +++ b/NGit/NGit.Transport/UploadPack.cs
-@@ -193,7 +193,7 @@ namespace NGit.Transport
+@@ -118,7 +118,7 @@ namespace NGit.Transport
+ 				else
+ 				{
+ 					this.line = line;
+-					this.options = Sharpen.Collections.EmptySet();
++					this.options = Sharpen.Collections.EmptySet<string>();
+ 				}
+ 			}
+ 
+@@ -241,7 +241,7 @@ namespace NGit.Transport
  		/// <see cref="commonBase">commonBase</see>
  		/// should be examined again.
  		/// </summary>
@@ -6340,7 +6316,7 @@ index fb2ad1d..eeb5459 100644
  
  		private bool sentReady;
  
-@@ -558,7 +558,7 @@ namespace NGit.Transport
+@@ -629,7 +629,7 @@ namespace NGit.Transport
  			{
  				if (requestPolicy == UploadPack.RequestPolicy.ANY)
  				{
@@ -6349,7 +6325,7 @@ index fb2ad1d..eeb5459 100644
  				}
  				else
  				{
-@@ -661,7 +661,7 @@ namespace NGit.Transport
+@@ -732,7 +732,7 @@ namespace NGit.Transport
  		/// <exception cref="System.IO.IOException"></exception>
  		private void ProcessShallow()
  		{
@@ -6358,7 +6334,7 @@ index fb2ad1d..eeb5459 100644
  				);
  			// Find all the commits which will be shallow
  			foreach (ObjectId o in wantIds)
-@@ -678,7 +678,7 @@ namespace NGit.Transport
+@@ -749,7 +749,7 @@ namespace NGit.Transport
  			RevCommit o_1;
  			while ((o_1 = depthWalk.Next()) != null)
  			{
@@ -6367,7 +6343,7 @@ index fb2ad1d..eeb5459 100644
  				// Commits at the boundary which aren't already shallow in
  				// the client need to be marked as such
  				if (c.GetDepth() == depth && !clientShallowCommits.Contains(c))
-@@ -1145,7 +1145,7 @@ namespace NGit.Transport
+@@ -1209,7 +1209,7 @@ namespace NGit.Transport
  			{
  				okToGiveUp = Sharpen.Extensions.ValueOf(OkToGiveUpImp());
  			}
@@ -6376,7 +6352,7 @@ index fb2ad1d..eeb5459 100644
  		}
  
  		/// <exception cref="NGit.Errors.PackProtocolException"></exception>
-@@ -1387,8 +1387,9 @@ namespace NGit.Transport
+@@ -1451,8 +1451,9 @@ namespace NGit.Transport
  				}
  				if (options.Contains(OPTION_INCLUDE_TAG) && refs != null)
  				{
@@ -6648,7 +6624,7 @@ index a18e2d2..56260a6 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index a988a1a..2e8fa32 100644
+index c6422e3..ac12949 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 @@ -459,7 +459,6 @@ namespace NGit.Treewalk
@@ -7089,10 +7065,10 @@ index 9e5ee5f..514aa29 100644
  					{
  						tz = SystemReader.GetInstance().GetTimeZone();
 diff --git a/NGit/NGit.Util/IOUtil.cs b/NGit/NGit.Util/IOUtil.cs
-index a495554..7230a15 100644
+index 663f350..0b74f54 100644
 --- a/NGit/NGit.Util/IOUtil.cs
 +++ b/NGit/NGit.Util/IOUtil.cs
-@@ -236,36 +236,6 @@ namespace NGit.Util
+@@ -230,36 +230,6 @@ namespace NGit.Util
  			}
  		}
  

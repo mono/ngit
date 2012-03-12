@@ -214,10 +214,10 @@ index 86e4e78..5af8e7e 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 35cccc6..88c7b3e 100644
+index 936f5ca..c6ca962 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-@@ -84,6 +84,7 @@
+@@ -85,6 +85,7 @@
  import org.eclipse.jgit.lib.ProgressMonitor;
  import org.eclipse.jgit.lib.Ref;
  import org.eclipse.jgit.lib.RefUpdate;
@@ -225,7 +225,7 @@ index 35cccc6..88c7b3e 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
-@@ -680,30 +681,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
+@@ -693,30 +694,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -262,7 +262,7 @@ index 35cccc6..88c7b3e 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -926,10 +924,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -939,10 +937,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -277,10 +277,10 @@ index 35cccc6..88c7b3e 100644
  		private Action(String token) {
  			this.token = token;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
-index e389d99..12d114d 100644
+index 4739f16..d05fa4e 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
-@@ -52,68 +52,51 @@
+@@ -52,78 +52,58 @@
   * The result of a {@link RebaseCommand} execution
   */
  public class RebaseResult {
@@ -301,6 +301,7 @@ index e389d99..12d114d 100644
 +		public static Status FAILED = new FAILED_Class ();
 +		public static Status UP_TO_DATE = new UP_TO_DATE_Class ();
 +		public static Status FAST_FORWARD = new FAST_FORWARD_Class ();
++		public static Status NOTHING_TO_COMMIT = new NOTHING_TO_COMMIT_Class ();
 +
 +		static class OK_Class extends Status {
  			public boolean isSuccessful() {
@@ -365,6 +366,18 @@ index e389d99..12d114d 100644
 +		static class FAST_FORWARD_Class extends Status {
  			public boolean isSuccessful() {
  				return true;
+ 			}
+-		},
++		}
+ 
+-		/**
+-		 * Continue with nothing left to commit (possibly want skip).
+-		 */
+-		NOTHING_TO_COMMIT {
+-			@Override
++		static class NOTHING_TO_COMMIT_Class extends Status {
+ 			public boolean isSuccessful() {
+ 				return false;
  			}
 -		};
 +		}
@@ -907,12 +920,12 @@ index 2927cad..52bf920 100644
  	/** The repository this transport fetches into, or pushes out of. */
  	protected final Repository local;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-index 4a86da7..9524143 100644
+index e71b64f..70c8a5a 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-@@ -140,8 +140,12 @@
- 
- 	static final String OPTION_NO_DONE = "no-done";
+@@ -150,8 +150,12 @@
+ 	/** The client supports receiving a pack before it has sent "done". */
+ 	public static final String OPTION_NO_DONE = "no-done";
  
 -	static enum MultiAck {
 -		OFF, CONTINUE, DETAILED;
@@ -925,7 +938,7 @@ index 4a86da7..9524143 100644
  	}
  
  	private final RevWalk walk;
-@@ -161,7 +165,7 @@
+@@ -171,7 +175,7 @@
  	/** Marks a commit listed in the advertised refs. */
  	final RevFlag ADVERTISED;
  
@@ -1047,10 +1060,10 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index c61a23c..01284aa 100644
+index cefe628..9d85ad5 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-@@ -214,7 +214,7 @@
+@@ -252,7 +252,7 @@ public String getLine() {
  
  	private RequestPolicy requestPolicy = RequestPolicy.ADVERTISED;
  
@@ -1059,7 +1072,7 @@ index c61a23c..01284aa 100644
  
  	private boolean noDone;
  
-@@ -822,14 +822,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -875,14 +875,14 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  				// If both sides have the same object; let the client know.
  				//
  				switch (multiAck) {
@@ -1077,7 +1090,7 @@ index c61a23c..01284aa 100644
  					pckOut.writeString("ACK " + obj.name() + " common\n");
  					break;
  				}
-@@ -871,12 +871,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
+@@ -924,12 +924,12 @@ private ObjectId processHaveLines(List<ObjectId> peerHas, ObjectId last)
  					didOkToGiveUp = true;
  					if (okToGiveUp()) {
  						switch (multiAck) {
@@ -1107,7 +1120,7 @@ index 315d909..98cedfa 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index 8940399..340f4bb 100644
+index aaaf81b..36962b4 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 @@ -130,6 +130,12 @@

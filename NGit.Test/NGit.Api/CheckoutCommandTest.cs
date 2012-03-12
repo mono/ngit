@@ -115,6 +115,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.RefAlreadyExistsException"></exception>
 		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
+		/// <exception cref="NGit.Api.Errors.CheckoutConflictException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCheckoutToNonExistingBranch()
 		{
@@ -238,6 +239,7 @@ namespace NGit.Api
 		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
 		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.CheckoutConflictException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestDetachedHeadOnCheckout()
 		{

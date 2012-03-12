@@ -451,6 +451,50 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestStopOnConflictAndContinueWithNoDeltaToMaster()
+		{
+			// create file1 on master
+			RevCommit firstInMaster = WriteFileAndCommit(FILE1, "Add file1", "1", "2", "3");
+			// change in master
+			WriteFileAndCommit(FILE1, "change file1 in master", "1master", "2", "3");
+			CheckFile(FILE1, "1master", "2", "3");
+			// create a topic branch based on the first commit
+			CreateBranch(firstInMaster, "refs/heads/topic");
+			CheckoutBranch("refs/heads/topic");
+			// we have the old content again
+			CheckFile(FILE1, "1", "2", "3");
+			// change first line (conflicting)
+			WriteFileAndCommit(FILE1, "change file1 in topic\n\nThis is conflicting", "1topic"
+				, "2", "3", "4topic");
+			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
+			// continue should throw a meaningful exception
+			try
+			{
+				res = git.Rebase().SetOperation(RebaseCommand.Operation.CONTINUE).Call();
+				NUnit.Framework.Assert.Fail("Expected Exception not thrown");
+			}
+			catch (UnmergedPathsException)
+			{
+			}
+			// expected
+			// merge the file; the second topic commit should go through
+			WriteFileAndAdd(FILE1, "1master", "2", "3");
+			res = git.Rebase().SetOperation(RebaseCommand.Operation.CONTINUE).Call();
+			NUnit.Framework.Assert.IsNotNull(res);
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.NOTHING_TO_COMMIT, res.GetStatus
+				());
+			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, db.GetRepositoryState
+				());
+			git.Rebase().SetOperation(RebaseCommand.Operation.SKIP).Call();
+			ObjectId headId = db.Resolve(Constants.HEAD);
+			RevWalk rw = new RevWalk(db);
+			RevCommit rc = rw.ParseCommit(headId);
+			NUnit.Framework.Assert.AreEqual("change file1 in master", rc.GetFullMessage());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestStopOnConflictAndFailContinueIfFileIsDirty()
 		{
 			// create file1 on master
@@ -678,8 +722,14 @@ namespace NGit.Api
 				);
 			res = git.Rebase().SetOperation(RebaseCommand.Operation.CONTINUE).Call();
 			NUnit.Framework.Assert.IsNotNull(res);
-			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.OK, res.GetStatus());
-			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+			// nothing to commit. this leaves the repo state in rebase, so that the
+			// user can decide what to do. if he accidentally committed, reset soft,
+			// and continue, if he really has nothing to commit, skip.
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.NOTHING_TO_COMMIT, res.GetStatus
+				());
+			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, db.GetRepositoryState
+				());
+			git.Rebase().SetOperation(RebaseCommand.Operation.SKIP).Call();
 			ObjectId headId = db.Resolve(Constants.HEAD);
 			RevWalk rw = new RevWalk(db);
 			RevCommit rc = rw.ParseCommit(headId);
