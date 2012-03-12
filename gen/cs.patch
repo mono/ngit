@@ -8345,6 +8345,21 @@ index 775955a..9863892 100644
  
  		/// <exception cref="System.Exception"></exception>
  		void Update(byte[] H);
+diff --git a/NSch/NSch/UserAuthPublicKey.cs b/NSch/NSch/UserAuthPublicKey.cs
+index ace5b76..5bd27ee 100644
+--- a/NSch/NSch/UserAuthPublicKey.cs
++++ b/NSch/NSch/UserAuthPublicKey.cs
+@@ -154,6 +154,10 @@ loop1_break: ;
+ 							{
+ 								break;
+ 							}
++							else
++							{
++								throw new System.Exception ("Invalid passphrase supplied for the ssh key");
++							}
+ 						}
+ 						Util.Bzero(passphrase);
+ 						passphrase = null;
 diff --git a/NSch/NSch/Util.cs b/NSch/NSch/Util.cs
 index 1dd7c60..394e130 100644
 --- a/NSch/NSch/Util.cs
