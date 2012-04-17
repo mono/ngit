@@ -209,9 +209,9 @@ namespace NGit.Util
 			// loose should have added newRef("HEAD", "refs/heads/master")
 			resolved = ToList(headR);
 			RefMap map = new RefMap(string.Empty, packed, loose, resolved);
-			Iterator<Ref> itr = map.Values.Iterator();
 			try
 			{
+				Iterator<Ref> itr = map.Values.Iterator();
 				itr.HasNext();
 				NUnit.Framework.Assert.Fail("iterator did not catch bad input");
 			}
