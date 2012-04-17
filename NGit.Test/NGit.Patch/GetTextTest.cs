@@ -80,6 +80,7 @@ namespace NGit.Patch
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
+		[NUnit.Framework.Ignore ("Test relies on java regex and java character escape codes")]
 		public virtual void TestGetText_Convert()
 		{
 			Encoding csOld = Sharpen.Extensions.GetEncoding("ISO-8859-1");
@@ -100,6 +101,7 @@ namespace NGit.Patch
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
+		[NUnit.Framework.Ignore ("Test relies on java regex and java character escape codes")]
 		public virtual void TestGetText_DiffCc()
 		{
 			Encoding csOld = Sharpen.Extensions.GetEncoding("ISO-8859-1");

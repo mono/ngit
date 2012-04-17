@@ -78,6 +78,7 @@ namespace NGit.Nls
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		[NUnit.Framework.Ignore (".NET does not have inherited thread locals")]
 		public virtual void TestThreadTranslationBundleInheritance()
 		{
 			NLS.SetLocale(NLS.ROOT_LOCALE);
