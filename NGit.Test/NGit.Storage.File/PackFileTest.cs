@@ -362,6 +362,7 @@ namespace NGit.Storage.File
 			if (inserter != null)
 			{
 				inserter.Release();
+				inserter = null;
 			}
 		}
 
