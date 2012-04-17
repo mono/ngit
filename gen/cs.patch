@@ -7532,7 +7532,7 @@ index cd8e6be..029e230 100644
  		}
  
 diff --git a/NGit/NGit/ConfigSnapshot.cs b/NGit/NGit/ConfigSnapshot.cs
-index 7ae2f50..aa73148 100644
+index 7ae2f50..304027f 100644
 --- a/NGit/NGit/ConfigSnapshot.cs
 +++ b/NGit/NGit/ConfigSnapshot.cs
 @@ -83,7 +83,7 @@ namespace NGit
@@ -7544,7 +7544,17 @@ index 7ae2f50..aa73148 100644
  			}
  			return Sharpen.Collections.UnmodifiableSet(r);
  		}
-@@ -263,7 +263,7 @@ namespace NGit
+@@ -249,7 +249,8 @@ namespace NGit
+ 		{
+ 			public virtual int Compare(ConfigLine a, ConfigLine b)
+ 			{
+-				return Compare2(a.section, a.subsection, a.name, b.section, b.subsection, b.name);
++				var value = Compare2(a.section, a.subsection, a.name, b.section, b.subsection, b.name);
++				return value != 0 ? value : string.CompareOrdinal (a.value, b.value);
+ 			}
+ 		}
+ 
+@@ -263,7 +264,7 @@ namespace NGit
  			return n;
  		}
  
@@ -7553,7 +7563,7 @@ index 7ae2f50..aa73148 100644
  		{
  			internal readonly ConfigSnapshot.CaseFoldingSet sections;
  
-@@ -306,7 +306,7 @@ namespace NGit
+@@ -306,7 +307,7 @@ namespace NGit
  			}
  		}
  

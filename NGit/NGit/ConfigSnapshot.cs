@@ -249,7 +249,8 @@ namespace NGit
 		{
 			public virtual int Compare(ConfigLine a, ConfigLine b)
 			{
-				return Compare2(a.section, a.subsection, a.name, b.section, b.subsection, b.name);
+				var value = Compare2(a.section, a.subsection, a.name, b.section, b.subsection, b.name);
+				return value != 0 ? value : string.CompareOrdinal (a.value, b.value);
 			}
 		}
 
