@@ -411,9 +411,9 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(names.Contains("repositoryformatversion"), "Core section should contain \"repositoryformatversion\""
 				);
 			Iterator<string> itr = names.Iterator();
-			NUnit.Framework.Assert.AreEqual("repositoryFormatVersion", itr.Next());
 			NUnit.Framework.Assert.AreEqual("filemode", itr.Next());
 			NUnit.Framework.Assert.AreEqual("logAllRefUpdates", itr.Next());
+			NUnit.Framework.Assert.AreEqual("repositoryFormatVersion", itr.Next());
 			NUnit.Framework.Assert.IsFalse(itr.HasNext());
 		}
 

@@ -41,43 +41,27 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.IO;
-using System.Text;
-using NGit.Internal;
+using System;
+using NGit.Api.Errors;
 using Sharpen;
 
-namespace NGit.Errors
+namespace NGit.Api.Errors
 {
-	/// <summary>Exception thrown if a conflict occurs during a merge checkout.</summary>
-	/// <remarks>Exception thrown if a conflict occurs during a merge checkout.</remarks>
+	/// <summary>Exception thrown when transport operation failed</summary>
 	[System.Serializable]
-	public class CheckoutConflictException : IOException
+	public class TransportException : GitAPIException
 	{
 		private const long serialVersionUID = 1L;
 
-		/// <summary>Construct a CheckoutConflictException for the specified file</summary>
-		/// <param name="file"></param>
-		public CheckoutConflictException(string file) : base(MessageFormat.Format(JGitText
-			.Get().checkoutConflictWithFile, file))
+		/// <param name="msg">message describing the transport failure.</param>
+		public TransportException(string msg) : base(msg)
 		{
 		}
 
-		/// <summary>Construct a CheckoutConflictException for the specified set of files</summary>
-		/// <param name="files"></param>
-		public CheckoutConflictException(string[] files) : base(MessageFormat.Format(JGitText
-			.Get().checkoutConflictWithFiles, BuildList(files)))
+		/// <param name="msg">message describing the transport exception.</param>
+		/// <param name="cause">why the transport failed.</param>
+		public TransportException(string msg, Exception cause) : base(msg, cause)
 		{
-		}
-
-		private static string BuildList(string[] files)
-		{
-			StringBuilder builder = new StringBuilder();
-			foreach (string f in files)
-			{
-				builder.Append("\n");
-				builder.Append(f);
-			}
-			return builder.ToString();
 		}
 	}
 }

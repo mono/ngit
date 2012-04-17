@@ -72,13 +72,14 @@ namespace NGit.Api
 			config.Save();
 			// create some refs via commits and tag
 			RevCommit commit = git2.Commit().SetMessage("initial commit").Call();
-			RevTag tag = git2.Tag().SetName("tag").Call();
+			Ref tagRef = git2.Tag().SetName("tag").Call();
 			Git git1 = new Git(db);
 			RefSpec spec = new RefSpec("refs/heads/master:refs/heads/x");
 			git1.Fetch().SetRemote("test").SetRefSpecs(spec).Call();
 			NUnit.Framework.Assert.AreEqual(commit.Id, db.Resolve(commit.Id.GetName() + "^{commit}"
 				));
-			NUnit.Framework.Assert.AreEqual(tag.Id, db.Resolve(tag.Id.GetName()));
+			NUnit.Framework.Assert.AreEqual(tagRef.GetObjectId(), db.Resolve(tagRef.GetObjectId
+				().GetName()));
 		}
 	}
 }

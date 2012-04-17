@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Errors;
+using NGit.Internal;
 using NGit.Junit;
 using NGit.Storage.File;
 using NGit.Util;

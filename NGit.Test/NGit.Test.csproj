@@ -257,6 +257,7 @@
     <Compile Include="NGit\BranchConfigTest.cs" />
     <Compile Include="NGit\BranchTrackingStatusTest.cs" />
     <Compile Include="NGit\ReflogResolveTest.cs" />
+    <Compile Include="NGit.Transport\SpiTransport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

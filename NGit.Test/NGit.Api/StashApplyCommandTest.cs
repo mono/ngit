@@ -43,6 +43,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
+using NGit.Api.Errors;
+using NGit.Internal;
 using NGit.Revwalk;
 using NGit.Util;
 using Sharpen;
@@ -319,6 +321,125 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsTrue(status.GetRemoved().Contains(PATH));
 			NUnit.Framework.Assert.AreEqual(1, status.GetAdded().Count);
 			NUnit.Framework.Assert.IsTrue(status.GetAdded().Contains(addedPath));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void WorkingDirectoryContentConflict()
+		{
+			WriteTrashFile(PATH, "content2");
+			RevCommit stashed = git.StashCreate().Call();
+			NUnit.Framework.Assert.IsNotNull(stashed);
+			NUnit.Framework.Assert.AreEqual("content", Read(committedFile));
+			NUnit.Framework.Assert.IsTrue(git.Status().Call().IsClean());
+			WriteTrashFile(PATH, "content3");
+			try
+			{
+				git.StashApply().Call();
+				NUnit.Framework.Assert.Fail("Exception not thrown");
+			}
+			catch (JGitInternalException e)
+			{
+				NUnit.Framework.Assert.IsTrue(e.InnerException is NGit.Errors.CheckoutConflictException
+					);
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void IndexContentConflict()
+		{
+			WriteTrashFile(PATH, "content2");
+			RevCommit stashed = git.StashCreate().Call();
+			NUnit.Framework.Assert.IsNotNull(stashed);
+			NUnit.Framework.Assert.AreEqual("content", Read(committedFile));
+			NUnit.Framework.Assert.IsTrue(git.Status().Call().IsClean());
+			WriteTrashFile(PATH, "content3");
+			git.Add().AddFilepattern(PATH).Call();
+			WriteTrashFile(PATH, "content2");
+			try
+			{
+				git.StashApply().Call();
+				NUnit.Framework.Assert.Fail("Exception not thrown");
+			}
+			catch (JGitInternalException e)
+			{
+				NUnit.Framework.Assert.IsTrue(e.InnerException is NGit.Errors.CheckoutConflictException
+					);
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void WorkingDirectoryEditPreCommit()
+		{
+			WriteTrashFile(PATH, "content2");
+			RevCommit stashed = git.StashCreate().Call();
+			NUnit.Framework.Assert.IsNotNull(stashed);
+			NUnit.Framework.Assert.AreEqual("content", Read(committedFile));
+			NUnit.Framework.Assert.IsTrue(git.Status().Call().IsClean());
+			string path2 = "file2.txt";
+			WriteTrashFile(path2, "content3");
+			git.Add().AddFilepattern(path2).Call();
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("adding file").Call());
+			ObjectId unstashed = git.StashApply().Call();
+			NUnit.Framework.Assert.AreEqual(stashed, unstashed);
+			Status status = git.Status().Call();
+			NUnit.Framework.Assert.IsTrue(status.GetAdded().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetChanged().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetConflicting().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetMissing().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetRemoved().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetUntracked().IsEmpty());
+			NUnit.Framework.Assert.AreEqual(1, status.GetModified().Count);
+			NUnit.Framework.Assert.IsTrue(status.GetModified().Contains(PATH));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void UnstashNonStashCommit()
+		{
+			try
+			{
+				git.StashApply().SetStashRef(head.Name).Call();
+				NUnit.Framework.Assert.Fail("Exception not thrown");
+			}
+			catch (JGitInternalException e)
+			{
+				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().stashCommitMissingTwoParents
+					, head.Name), e.Message);
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void UnstashNoHead()
+		{
+			Repository repo = CreateWorkRepository();
+			try
+			{
+				Git.Wrap(repo).StashApply().Call();
+				NUnit.Framework.Assert.Fail("Exception not thrown");
+			}
+			catch (NoHeadException e)
+			{
+				NUnit.Framework.Assert.IsNotNull(e.Message);
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void NoStashedCommits()
+		{
+			try
+			{
+				git.StashApply().Call();
+				NUnit.Framework.Assert.Fail("Exception not thrown");
+			}
+			catch (InvalidRefNameException e)
+			{
+				NUnit.Framework.Assert.IsNotNull(e.Message);
+			}
 		}
 	}
 }

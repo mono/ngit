@@ -83,7 +83,7 @@ namespace NGit
 			}
 			if (r == null)
 			{
-				return Sharpen.Collections.EmptySet();
+				return Sharpen.Collections.EmptySet<string>();
 			}
 			return Sharpen.Collections.UnmodifiableSet(r);
 		}
@@ -263,7 +263,7 @@ namespace NGit
 			return n;
 		}
 
-		private class SectionNames
+		internal class SectionNames
 		{
 			internal readonly ConfigSnapshot.CaseFoldingSet sections;
 
@@ -306,7 +306,7 @@ namespace NGit
 			}
 		}
 
-		private class CaseFoldingSet : AbstractSet<string>
+		internal class CaseFoldingSet : AbstractSet<string>
 		{
 			private readonly IDictionary<string, string> names;
 

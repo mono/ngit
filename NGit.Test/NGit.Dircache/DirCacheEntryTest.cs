@@ -168,5 +168,55 @@ namespace NGit.Dircache
 				NUnit.Framework.Assert.AreEqual("Invalid mode 40000 for path a", err.Message);
 			}
 		}
+
+		[NUnit.Framework.Test]
+		public virtual void TestCopyMetaDataWithStage()
+		{
+			CopyMetaDataHelper(false);
+		}
+
+		[NUnit.Framework.Test]
+		public virtual void TestCopyMetaDataWithoutStage()
+		{
+			CopyMetaDataHelper(true);
+		}
+
+		private void CopyMetaDataHelper(bool keepStage)
+		{
+			DirCacheEntry e = new DirCacheEntry("some/path", DirCacheEntry.STAGE_2);
+			e.IsAssumeValid = false;
+			e.SetCreationTime(2L);
+			e.FileMode = FileMode.EXECUTABLE_FILE;
+			e.LastModified = 3L;
+			e.SetLength(100L);
+			e.SetObjectId(ObjectId.FromString("0123456789012345678901234567890123456789"));
+			e.IsUpdateNeeded = true;
+			DirCacheEntry f = new DirCacheEntry("someother/path", DirCacheEntry.STAGE_1);
+			f.IsAssumeValid = true;
+			f.SetCreationTime(10L);
+			f.FileMode = FileMode.SYMLINK;
+			f.LastModified = 20L;
+			f.SetLength(100000000L);
+			f.SetObjectId(ObjectId.FromString("1234567890123456789012345678901234567890"));
+			f.IsUpdateNeeded = true;
+			e.CopyMetaData(f, keepStage);
+			NUnit.Framework.Assert.IsTrue(e.IsAssumeValid);
+			NUnit.Framework.Assert.AreEqual(10L, e.GetCreationTime());
+			NUnit.Framework.Assert.AreEqual(ObjectId.FromString("1234567890123456789012345678901234567890"
+				), e.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(FileMode.SYMLINK, e.FileMode);
+			NUnit.Framework.Assert.AreEqual(20L, e.LastModified);
+			NUnit.Framework.Assert.AreEqual(100000000L, e.Length);
+			if (keepStage)
+			{
+				NUnit.Framework.Assert.AreEqual(DirCacheEntry.STAGE_2, e.Stage);
+			}
+			else
+			{
+				NUnit.Framework.Assert.AreEqual(DirCacheEntry.STAGE_1, e.Stage);
+			}
+			NUnit.Framework.Assert.IsTrue(e.IsUpdateNeeded);
+			NUnit.Framework.Assert.AreEqual("some/path", e.PathString);
+		}
 	}
 }

@@ -639,7 +639,7 @@ namespace NGit.Storage.File
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
 			NUnit.Framework.Assert.IsFalse(rb.Equals(oldHead), "precondition for this test, branch b != HEAD"
 				);
-			WriteReflog(db, rb, rb, "Just a message", "refs/heads/b");
+			WriteReflog(db, rb, "Just a message", "refs/heads/b");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/b").Exists
 				(), "log on old branch");
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
@@ -668,7 +668,7 @@ namespace NGit.Storage.File
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
 			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead), "internal test condition, b == HEAD"
 				);
-			WriteReflog(db, rb, rb, "Just a message", "refs/heads/b");
+			WriteReflog(db, rb, "Just a message", "refs/heads/b");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/b").Exists
 				(), "log on old branch");
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
@@ -705,7 +705,7 @@ namespace NGit.Storage.File
 				);
 			NUnit.Framework.Assert.AreEqual(RefStorage.LOOSE, db.GetRef("refs/heads/b").GetStorage
 				());
-			WriteReflog(db, rb, rb, "Just a message", "refs/heads/b");
+			WriteReflog(db, rb, "Just a message", "refs/heads/b");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/b").Exists
 				(), "log on old branch");
 			RefRename renameRef = db.RenameRef("refs/heads/b", "refs/heads/new/name");
@@ -739,7 +739,7 @@ namespace NGit.Storage.File
 			WriteSymref(Constants.HEAD, headPointsTo);
 			ObjectId oldfromId = db.Resolve(fromName);
 			ObjectId oldHeadId = db.Resolve(Constants.HEAD);
-			WriteReflog(db, oldfromId, oldfromId, "Just a message", fromName);
+			WriteReflog(db, oldfromId, "Just a message", fromName);
 			IList<ReflogEntry> oldFromLog = db.GetReflogReader(fromName).GetReverseEntries();
 			IList<ReflogEntry> oldHeadLog = oldHeadId != null ? db.GetReflogReader(Constants.
 				HEAD).GetReverseEntries() : null;
@@ -861,7 +861,7 @@ namespace NGit.Storage.File
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
 			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead));
 			// assumption for this test
-			WriteReflog(db, rb, rb, "Just a message", "refs/heads/a");
+			WriteReflog(db, rb, "Just a message", "refs/heads/a");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/a").Exists
 				(), "internal check, we have a log");
 			// Now this is our test
@@ -898,7 +898,7 @@ namespace NGit.Storage.File
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
 			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead));
 			// assumption for this test
-			WriteReflog(db, rb, rb, "Just a message", "refs/heads/prefix/a");
+			WriteReflog(db, rb, "Just a message", "refs/heads/prefix/a");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/prefix/a"
 				).Exists(), "internal check, we have a log");
 			// Now this is our test
@@ -920,8 +920,8 @@ namespace NGit.Storage.File
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		private void WriteReflog(Repository db, ObjectId oldId, ObjectId newId, string msg
-			, string refName)
+		private void WriteReflog(Repository db, ObjectId newId, string msg, string refName
+			)
 		{
 			RefDirectory refs = (RefDirectory)db.RefDatabase;
 			RefDirectoryUpdate update = ((RefDirectoryUpdate)refs.NewUpdate(refName, true));

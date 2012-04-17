@@ -42,8 +42,8 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
-using System.IO;
 using NGit;
+using NGit.Internal;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Util;
@@ -354,10 +354,9 @@ namespace NGit.Storage.File
 				new FileRepository(db.Directory);
 				NUnit.Framework.Assert.Fail("incorrectly opened a bad repository");
 			}
-			catch (IOException ioe)
+			catch (ArgumentException ioe)
 			{
-				NUnit.Framework.Assert.IsTrue(ioe.Message.IndexOf("format") > 0);
-				NUnit.Framework.Assert.IsTrue(ioe.Message.IndexOf(badvers) > 0);
+				NUnit.Framework.Assert.IsNotNull(ioe.Message);
 			}
 		}
 

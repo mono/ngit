@@ -257,10 +257,10 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestCreateFromAnnotatetdTag()
 		{
-			RevTag tag = git.Tag().SetName("V10").SetObjectId(secondCommit).Call();
+			Ref tagRef = git.Tag().SetName("V10").SetObjectId(secondCommit).Call();
 			Ref branch = git.BranchCreate().SetName("FromAnnotatedTag").SetStartPoint("refs/tags/V10"
 				).Call();
-			NUnit.Framework.Assert.IsFalse(tag.Id.Equals(branch.GetObjectId()));
+			NUnit.Framework.Assert.IsFalse(tagRef.GetObjectId().Equals(branch.GetObjectId()));
 			NUnit.Framework.Assert.AreEqual(secondCommit.Id, branch.GetObjectId());
 		}
 

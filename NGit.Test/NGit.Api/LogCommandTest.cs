@@ -89,11 +89,11 @@ namespace NGit.Api
 			WriteTrashFile("Test.txt", "Hello world");
 			git.Add().AddFilepattern("Test.txt").Call();
 			commits.AddItem(git.Commit().SetMessage("commit#1").Call());
-			WriteTrashFile("Test1.txt", "Hello world!");
-			git.Add().AddFilepattern("Test1.txt").Call();
+			WriteTrashFile("Test.txt", "Hello world!");
+			git.Add().AddFilepattern("Test.txt").Call();
 			commits.AddItem(git.Commit().SetMessage("commit#2").Call());
-			WriteTrashFile("Test2.txt", "Hello world!!");
-			git.Add().AddFilepattern("Test2.txt").Call();
+			WriteTrashFile("Test1.txt", "Hello world!!");
+			git.Add().AddFilepattern("Test1.txt").Call();
 			commits.AddItem(git.Commit().SetMessage("commit#3").Call());
 			return commits;
 		}
@@ -113,6 +113,36 @@ namespace NGit.Api
 			commit = log.Next();
 			NUnit.Framework.Assert.IsTrue(commits.Contains(commit));
 			NUnit.Framework.Assert.AreEqual("commit#2", commit.GetShortMessage());
+			NUnit.Framework.Assert.IsFalse(log.HasNext());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void LogPathWithMaxCount()
+		{
+			Git git = Git.Wrap(db);
+			IList<RevCommit> commits = CreateCommits(git);
+			Iterator<RevCommit> log = git.Log().AddPath("Test.txt").SetMaxCount(1).Call().Iterator
+				();
+			NUnit.Framework.Assert.IsTrue(log.HasNext());
+			RevCommit commit = log.Next();
+			NUnit.Framework.Assert.IsTrue(commits.Contains(commit));
+			NUnit.Framework.Assert.AreEqual("commit#2", commit.GetShortMessage());
+			NUnit.Framework.Assert.IsFalse(log.HasNext());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void LogPathWithSkip()
+		{
+			Git git = Git.Wrap(db);
+			IList<RevCommit> commits = CreateCommits(git);
+			Iterator<RevCommit> log = git.Log().AddPath("Test.txt").SetSkip(1).Call().Iterator
+				();
+			NUnit.Framework.Assert.IsTrue(log.HasNext());
+			RevCommit commit = log.Next();
+			NUnit.Framework.Assert.IsTrue(commits.Contains(commit));
+			NUnit.Framework.Assert.AreEqual("commit#1", commit.GetShortMessage());
 			NUnit.Framework.Assert.IsFalse(log.HasNext());
 		}
 

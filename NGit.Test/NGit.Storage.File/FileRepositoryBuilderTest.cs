@@ -41,6 +41,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
+using System.IO;
+using NGit;
 using NGit.Junit;
 using NGit.Storage.File;
 using NGit.Util;
@@ -60,6 +63,58 @@ namespace NGit.Storage.File
 			FileUtils.Mkdir(d);
 			NUnit.Framework.Assert.AreEqual(r.Directory, new FileRepositoryBuilder().FindGitDir
 				(d).GetGitDir());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void EmptyRepositoryFormatVersion()
+		{
+			FileRepository r = CreateWorkRepository();
+			FileBasedConfig config = ((FileBasedConfig)r.GetConfig());
+			config.SetString(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_REPO_FORMAT_VERSION
+				, string.Empty);
+			config.Save();
+			new FileRepository(r.Directory);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void InvalidRepositoryFormatVersion()
+		{
+			FileRepository r = CreateWorkRepository();
+			FileBasedConfig config = ((FileBasedConfig)r.GetConfig());
+			config.SetString(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_REPO_FORMAT_VERSION
+				, "notanumber");
+			config.Save();
+			try
+			{
+				new FileRepository(r.Directory);
+				NUnit.Framework.Assert.Fail("IllegalArgumentException not thrown");
+			}
+			catch (ArgumentException e)
+			{
+				NUnit.Framework.Assert.IsNotNull(e.Message);
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void UnknownRepositoryFormatVersion()
+		{
+			FileRepository r = CreateWorkRepository();
+			FileBasedConfig config = ((FileBasedConfig)r.GetConfig());
+			config.SetLong(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_REPO_FORMAT_VERSION
+				, 1);
+			config.Save();
+			try
+			{
+				new FileRepository(r.Directory);
+				NUnit.Framework.Assert.Fail("IOException not thrown");
+			}
+			catch (IOException e)
+			{
+				NUnit.Framework.Assert.IsNotNull(e.Message);
+			}
 		}
 	}
 }

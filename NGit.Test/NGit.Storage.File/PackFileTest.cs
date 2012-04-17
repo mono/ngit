@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using NGit;
 using NGit.Errors;
+using NGit.Internal;
 using NGit.Junit;
 using NGit.Revwalk;
 using NGit.Storage.File;

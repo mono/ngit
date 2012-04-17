@@ -73,7 +73,7 @@ namespace NGit.Api
 			Git git1 = new Git(db);
 			// create some refs via commits and tag
 			RevCommit commit = git1.Commit().SetMessage("initial commit").Call();
-			RevTag tag = git1.Tag().SetName("tag").Call();
+			Ref tagRef = git1.Tag().SetName("tag").Call();
 			try
 			{
 				db2.Resolve(commit.Id.GetName() + "^{commit}");
@@ -87,7 +87,8 @@ namespace NGit.Api
 			git1.Push().SetRemote("test").SetRefSpecs(spec).Call();
 			NUnit.Framework.Assert.AreEqual(commit.Id, db2.Resolve(commit.Id.GetName() + "^{commit}"
 				));
-			NUnit.Framework.Assert.AreEqual(tag.Id, db2.Resolve(tag.Id.GetName()));
+			NUnit.Framework.Assert.AreEqual(tagRef.GetObjectId(), db2.Resolve(tagRef.GetObjectId
+				().GetName()));
 		}
 
 		/// <exception cref="System.Exception"></exception>

@@ -296,6 +296,87 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestCloneRepositoryWithNestedSubmodules()
+		{
+			git.Checkout().SetName(Constants.MASTER).Call();
+			// Create submodule 1
+			FilePath submodule1 = CreateTempDirectory("testCloneRepositoryWithNestedSubmodules1"
+				);
+			Git sub1Git = Git.Init().SetDirectory(submodule1).Call();
+			NUnit.Framework.Assert.IsNotNull(sub1Git);
+			Repository sub1 = sub1Git.GetRepository();
+			NUnit.Framework.Assert.IsNotNull(sub1);
+			AddRepoToClose(sub1);
+			string file = "file.txt";
+			string path = "sub";
+			Write(new FilePath(sub1.WorkTree, file), "content");
+			sub1Git.Add().AddFilepattern(file).Call();
+			RevCommit commit = sub1Git.Commit().SetMessage("create file").Call();
+			NUnit.Framework.Assert.IsNotNull(commit);
+			// Create submodule 2
+			FilePath submodule2 = CreateTempDirectory("testCloneRepositoryWithNestedSubmodules2"
+				);
+			Git sub2Git = Git.Init().SetDirectory(submodule2).Call();
+			NUnit.Framework.Assert.IsNotNull(sub2Git);
+			Repository sub2 = sub2Git.GetRepository();
+			NUnit.Framework.Assert.IsNotNull(sub2);
+			AddRepoToClose(sub2);
+			Write(new FilePath(sub2.WorkTree, file), "content");
+			sub2Git.Add().AddFilepattern(file).Call();
+			RevCommit sub2Head = sub2Git.Commit().SetMessage("create file").Call();
+			NUnit.Framework.Assert.IsNotNull(sub2Head);
+			// Add submodule 2 to submodule 1
+			NUnit.Framework.Assert.IsNotNull(sub1Git.SubmoduleAdd().SetPath(path).SetURI(sub2
+				.Directory.ToURI().ToString()).Call());
+			RevCommit sub1Head = sub1Git.Commit().SetAll(true).SetMessage("Adding submodule")
+				.Call();
+			NUnit.Framework.Assert.IsNotNull(sub1Head);
+			// Add submodule 1 to default repository
+			NUnit.Framework.Assert.IsNotNull(git.SubmoduleAdd().SetPath(path).SetURI(sub1.Directory
+				.ToURI().ToString()).Call());
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetAll(true).SetMessage("Adding submodule"
+				).Call());
+			// Clone default repository and include submodules
+			FilePath directory = CreateTempDirectory("testCloneRepositoryWithNestedSubmodules"
+				);
+			CloneCommand clone = Git.CloneRepository();
+			clone.SetDirectory(directory);
+			clone.SetCloneSubmodules(true);
+			clone.SetURI(git.GetRepository().Directory.ToURI().ToString());
+			Git git2 = clone.Call();
+			AddRepoToClose(git2.GetRepository());
+			NUnit.Framework.Assert.IsNotNull(git2);
+			NUnit.Framework.Assert.AreEqual(Constants.MASTER, git2.GetRepository().GetBranch(
+				));
+			NUnit.Framework.Assert.IsTrue(new FilePath(git2.GetRepository().WorkTree, path + 
+				FilePath.separatorChar + file).Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(git2.GetRepository().WorkTree, path + 
+				FilePath.separatorChar + path + FilePath.separatorChar + file).Exists());
+			SubmoduleStatusCommand status = new SubmoduleStatusCommand(git2.GetRepository());
+			IDictionary<string, SubmoduleStatus> statuses = status.Call();
+			SubmoduleStatus pathStatus = statuses.Get(path);
+			NUnit.Framework.Assert.IsNotNull(pathStatus);
+			NUnit.Framework.Assert.AreEqual(SubmoduleStatusType.INITIALIZED, pathStatus.GetType
+				());
+			NUnit.Framework.Assert.AreEqual(sub1Head, pathStatus.GetHeadId());
+			NUnit.Framework.Assert.AreEqual(sub1Head, pathStatus.GetIndexId());
+			SubmoduleWalk walk = SubmoduleWalk.ForIndex(git2.GetRepository());
+			NUnit.Framework.Assert.IsTrue(walk.Next());
+			Repository clonedSub1 = walk.GetRepository();
+			NUnit.Framework.Assert.IsNotNull(clonedSub1);
+			status = new SubmoduleStatusCommand(clonedSub1);
+			statuses = status.Call();
+			pathStatus = statuses.Get(path);
+			NUnit.Framework.Assert.IsNotNull(pathStatus);
+			NUnit.Framework.Assert.AreEqual(SubmoduleStatusType.INITIALIZED, pathStatus.GetType
+				());
+			NUnit.Framework.Assert.AreEqual(sub2Head, pathStatus.GetHeadId());
+			NUnit.Framework.Assert.AreEqual(sub2Head, pathStatus.GetIndexId());
+			NUnit.Framework.Assert.IsFalse(walk.Next());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestCloneWithAutoSetupRebase()
 		{
 			FilePath directory = CreateTempDirectory("testCloneRepository1");

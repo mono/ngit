@@ -46,6 +46,7 @@ using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Dircache;
+using NGit.Internal;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Submodule;
