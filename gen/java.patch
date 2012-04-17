@@ -1,6 +1,6 @@
 diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java
 deleted file mode 100644
-index 201f03b..0000000
+index 04d95f4..0000000
 --- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java
 +++ /dev/null
 @@ -1,90 +0,0 @@
@@ -49,10 +49,10 @@ index 201f03b..0000000
 -
 -package org.eclipse.jgit.nls;
 -
--import org.eclipse.jgit.JGitText;
 -import org.eclipse.jgit.awtui.UIText;
 -import org.eclipse.jgit.console.ConsoleText;
 -import org.eclipse.jgit.http.server.HttpServerText;
+-import org.eclipse.jgit.internal.JGitText;
 -import org.eclipse.jgit.iplog.IpLogText;
 -import org.eclipse.jgit.pgm.CLIText;
 -import org.junit.Before;
@@ -95,10 +95,19 @@ index 201f03b..0000000
 -	}
 -}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-index 86e4e78..5af8e7e 100644
+index fcc3bb6..5af8e7e 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-@@ -60,77 +60,73 @@
+@@ -47,7 +47,7 @@
+ import java.util.HashMap;
+ import java.util.Map;
+ 
+-import org.eclipse.jgit.internal.JGitText;
++import org.eclipse.jgit.JGitText;
+ import org.eclipse.jgit.lib.ObjectId;
+ import org.eclipse.jgit.merge.MergeChunk;
+ import org.eclipse.jgit.merge.MergeChunk.ConflictState;
+@@ -60,82 +60,73 @@
   */
  public class MergeResult {
  
@@ -129,6 +138,7 @@ index 86e4e78..5af8e7e 100644
 -		},
 -		/** */
 -		ALREADY_UP_TO_DATE {
+-			@Override
 +		}
 +
 +		static class ALREADY_UP_TO_DATE_Class extends MergeStatus {
@@ -143,6 +153,7 @@ index 86e4e78..5af8e7e 100644
 -		},
 -		/** */
 -		FAILED {
+-			@Override
 +		}
 +
 +		static class FAILED_Class extends MergeStatus {
@@ -157,6 +168,7 @@ index 86e4e78..5af8e7e 100644
 -		},
 -		/** */
 -		MERGED {
+-			@Override
 +		}
 +
 +		static class MERGED_Class extends MergeStatus {
@@ -171,6 +183,7 @@ index 86e4e78..5af8e7e 100644
 -		},
 -		/** */
 -		CONFLICTING {
+-			@Override
 +		}
 +
 +		static class CONFLICTING_Class extends MergeStatus {
@@ -185,6 +198,7 @@ index 86e4e78..5af8e7e 100644
 -		},
 -		/** */
 -		NOT_SUPPORTED {
+-			@Override
 +		}
 +
 +		static class NOT_SUPPORTED_Class extends MergeStatus {
@@ -201,7 +215,7 @@ index 86e4e78..5af8e7e 100644
  
  		/**
  		 * @return whether the status indicates a successful result
-@@ -328,7 +324,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
+@@ -333,7 +324,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
  			}
  		}
  		int currentConflict = -1;
@@ -214,7 +228,7 @@ index 86e4e78..5af8e7e 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 936f5ca..c6ca962 100644
+index aa65726..7e8d8ec 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -85,6 +85,7 @@
@@ -389,7 +403,7 @@ index 4739f16..d05fa4e 100644
  	}
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java b/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java
-index 424f9ff..321e92b 100644
+index 5084e9d..5c43d86 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/diff/DiffEntry.java
 @@ -80,7 +80,7 @@
@@ -525,10 +539,19 @@ index f119c44..d961602 100644
  		private final boolean loose;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
-index 7c8f51d..a6f9840 100644
+index 7e3ba51..a6f9840 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
-@@ -54,130 +54,187 @@
+@@ -46,7 +46,7 @@
+ 
+ package org.eclipse.jgit.lib;
+ 
+-import org.eclipse.jgit.internal.JGitText;
++import org.eclipse.jgit.JGitText;
+ /**
+  * Important state of the repository that affects what can and cannot bed
+  * done. This is things like unhandled conflicted merges and unfinished rebase.
+@@ -54,246 +54,202 @@
   * The granularity and set of states are somewhat arbitrary. The methods
   * on the state are the only supported means of deciding what to do.
   */
@@ -536,13 +559,22 @@ index 7c8f51d..a6f9840 100644
 +public abstract class RepositoryState {
  	/** Has no work tree and cannot be used for normal editing. */
 -	BARE {
+-		@Override
+-		public boolean canCheckout() { return false; }
 +	public static RepositoryState BARE = new BARE_Class ();
-+
+ 
+-		@Override
 +	static class BARE_Class extends RepositoryState {
- 		public boolean canCheckout() { return false; }
++		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
+-
+-		@Override
  		public boolean canCommit() { return false; }
+-
+-		@Override
  		public boolean canAmend() { return false; }
+-
+-		@Override
  		public String getDescription() { return "Bare"; }
 -	},
 +		public String name() {
@@ -554,13 +586,22 @@ index 7c8f51d..a6f9840 100644
  	 * A safe state for working normally
  	 * */
 -	SAFE {
+-		@Override
+-		public boolean canCheckout() { return true; }
 +	public static RepositoryState SAFE = new SAFE_Class ();
-+
+ 
+-		@Override
 +	static class SAFE_Class extends RepositoryState {
- 		public boolean canCheckout() { return true; }
++		public boolean canCheckout() { return true; }
  		public boolean canResetHead() { return true; }
+-
+-		@Override
  		public boolean canCommit() { return true; }
+-
+-		@Override
  		public boolean canAmend() { return true; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_normal; }
 -	},
 +		public String name() {
@@ -571,13 +612,22 @@ index 7c8f51d..a6f9840 100644
  	/** An unfinished merge. Must resolve or reset before continuing normally
  	 */
 -	MERGING {
+-		@Override
+-		public boolean canCheckout() { return false; }
 +	public static RepositoryState MERGING = new MERGING_Class ();
-+
+ 
+-		@Override
 +	static class MERGING_Class extends RepositoryState {
- 		public boolean canCheckout() { return false; }
++		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return true; }
+-
+-		@Override
  		public boolean canCommit() { return false; }
+-
+-		@Override
  		public boolean canAmend() { return false; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_conflicts; }
 -	},
 +		public String name() {
@@ -590,13 +640,22 @@ index 7c8f51d..a6f9840 100644
  	 * contain any unmerged paths.
  	 */
 -	MERGING_RESOLVED {
+-		@Override
+-		public boolean canCheckout() { return true; }
 +	public static RepositoryState MERGING_RESOLVED = new MERGING_RESOLVED_Class ();
-+
+ 
+-		@Override
 +	static class MERGING_RESOLVED_Class extends RepositoryState {
- 		public boolean canCheckout() { return true; }
++		public boolean canCheckout() { return true; }
  		public boolean canResetHead() { return true; }
+-
+-		@Override
  		public boolean canCommit() { return true; }
+-
+-		@Override
  		public boolean canAmend() { return false; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_merged; }
 -	},
 +		public String name() {
@@ -607,13 +666,22 @@ index 7c8f51d..a6f9840 100644
  	/** An unfinished cherry-pick. Must resolve or reset before continuing normally
  	 */
 -	CHERRY_PICKING {
+-		@Override
 +	public static RepositoryState CHERRY_PICKING = new CHERRY_PICKING_Class ();
 +	
 +	static class CHERRY_PICKING_Class extends RepositoryState {
  		public boolean canCheckout() { return false; }
+-
+-		@Override
  		public boolean canResetHead() { return true; }
+-
+-		@Override
  		public boolean canCommit() { return false; }
+-
+-		@Override
  		public boolean canAmend() { return false; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_conflicts; }
 -	},
 +		public String name() {
@@ -626,13 +694,22 @@ index 7c8f51d..a6f9840 100644
  	 * contain any unmerged paths.
  	 */
 -	CHERRY_PICKING_RESOLVED {
+-		@Override
 +	public static RepositoryState CHERRY_PICKING_RESOLVED = new CHERRY_PICKING_RESOLVED_Class ();
 +	
 +	static class CHERRY_PICKING_RESOLVED_Class extends RepositoryState {
  		public boolean canCheckout() { return true; }
+-
+-		@Override
  		public boolean canResetHead() { return true; }
+-
+-		@Override
  		public boolean canCommit() { return true; }
+-
+-		@Override
  		public boolean canAmend() { return false; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_merged; }
 -	},
 +		public String name() {
@@ -644,13 +721,22 @@ index 7c8f51d..a6f9840 100644
  	 * An unfinished rebase or am. Must resolve, skip or abort before normal work can take place
  	 */
 -	REBASING {
+-		@Override
+-		public boolean canCheckout() { return false; }
 +	public static RepositoryState REBASING = new REBASING_Class ();
-+
+ 
+-		@Override
 +	static class REBASING_Class extends RepositoryState {
- 		public boolean canCheckout() { return false; }
++		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
+-
+-		@Override
  		public boolean canCommit() { return true; }
+-
+-		@Override
  		public boolean canAmend() { return true; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_rebaseOrApplyMailbox; }
 -	},
 +		public String name() {
@@ -662,13 +748,22 @@ index 7c8f51d..a6f9840 100644
  	 * An unfinished rebase. Must resolve, skip or abort before normal work can take place
  	 */
 -	REBASING_REBASING {
+-		@Override
+-		public boolean canCheckout() { return false; }
 +	public static RepositoryState REBASING_REBASING = new REBASING_REBASING_Class ();
-+
+ 
+-		@Override
 +	static class REBASING_REBASING_Class extends RepositoryState {
- 		public boolean canCheckout() { return false; }
++		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
+-
+-		@Override
  		public boolean canCommit() { return true; }
+-
+-		@Override
  		public boolean canAmend() { return true; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_rebase; }
 -	},
 +		public String name() {
@@ -680,13 +775,22 @@ index 7c8f51d..a6f9840 100644
  	 * An unfinished apply. Must resolve, skip or abort before normal work can take place
  	 */
 -	APPLY {
+-		@Override
+-		public boolean canCheckout() { return false; }
 +	public static RepositoryState APPLY = new APPLY_Class ();
-+
+ 
+-		@Override
 +	static class APPLY_Class extends RepositoryState {
- 		public boolean canCheckout() { return false; }
++		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
+-
+-		@Override
  		public boolean canCommit() { return true; }
+-
+-		@Override
  		public boolean canAmend() { return true; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_applyMailbox; }
 -	},
 +		public String name() {
@@ -698,13 +802,22 @@ index 7c8f51d..a6f9840 100644
  	 * An unfinished rebase with merge. Must resolve, skip or abort before normal work can take place
  	 */
 -	REBASING_MERGE {
+-		@Override
+-		public boolean canCheckout() { return false; }
 +	public static RepositoryState REBASING_MERGE = new REBASING_MERGE_Class ();
-+
+ 
+-		@Override
 +	static class REBASING_MERGE_Class extends RepositoryState {
- 		public boolean canCheckout() { return false; }
++		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
+-
+-		@Override
  		public boolean canCommit() { return true; }
+-
+-		@Override
  		public boolean canAmend() { return true; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_rebaseWithMerge; }
 -	},
 +		public String name() {
@@ -716,13 +829,22 @@ index 7c8f51d..a6f9840 100644
  	 * An unfinished interactive rebase. Must resolve, skip or abort before normal work can take place
  	 */
 -	REBASING_INTERACTIVE {
+-		@Override
+-		public boolean canCheckout() { return false; }
 +	public static RepositoryState REBASING_INTERACTIVE = new REBASING_INTERACTIVE_Class ();
-+
+ 
+-		@Override
 +	static class REBASING_INTERACTIVE_Class extends RepositoryState {
- 		public boolean canCheckout() { return false; }
++		public boolean canCheckout() { return false; }
  		public boolean canResetHead() { return false; }
+-
+-		@Override
  		public boolean canCommit() { return true; }
+-
+-		@Override
  		public boolean canAmend() { return true; }
+-
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_rebaseInteractive; }
 -	},
 +		public String name() {
@@ -738,11 +860,21 @@ index 7c8f51d..a6f9840 100644
 +
 +	static class BISECTING_Class extends RepositoryState {
  		/* Changing head is a normal operation when bisecting */
+-		@Override
  		public boolean canCheckout() { return true; }
  
-@@ -190,6 +247,9 @@
+ 		/* Do not reset, checkout instead */
+-		@Override
+ 		public boolean canResetHead() { return false; }
+ 
+ 		/* Commit during bisect is useful */
+-		@Override
+ 		public boolean canCommit() { return true; }
+ 
+-		@Override
  		public boolean canAmend() { return false; }
  
+-		@Override
  		public String getDescription() { return JGitText.get().repositoryState_bisecting; }
 +		public String name() {
 +			return "BISECTING";
@@ -750,7 +882,7 @@ index 7c8f51d..a6f9840 100644
  	};
  
  	/**
-@@ -216,4 +276,6 @@
+@@ -320,4 +276,6 @@
  	 * @return a human readable description of the state.
  	 */
  	public abstract String getDescription();
@@ -780,7 +912,7 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index fce1f1a..3c5281a 100644
+index 339dbdd..8ceb6f5 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 @@ -105,7 +105,7 @@
@@ -858,7 +990,7 @@ index f28facb..f8283f2 100644
  		INSERTED, EXISTS_PACKED, EXISTS_LOOSE, FAILURE;
  	}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
-index ccd621c..84c4ddb 100644
+index 180bf60..1271b87 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
 @@ -68,18 +68,18 @@
@@ -885,7 +1017,7 @@ index ccd621c..84c4ddb 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index a7db92a..909f5ab 100644
+index 1a056e3..fdb6de7 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 @@ -189,7 +189,7 @@ public void remove() {
@@ -907,7 +1039,7 @@ index a7db92a..909f5ab 100644
  	private boolean deltaBaseAsOffset;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackConnection.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackConnection.java
-index 2927cad..52bf920 100644
+index c7cee1e..d16e1c0 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackConnection.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackConnection.java
 @@ -76,7 +76,7 @@
@@ -920,7 +1052,7 @@ index 2927cad..52bf920 100644
  	/** The repository this transport fetches into, or pushes out of. */
  	protected final Repository local;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-index e71b64f..70c8a5a 100644
+index 347fd93..56d70fb 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 @@ -150,8 +150,12 @@
@@ -948,7 +1080,7 @@ index e71b64f..70c8a5a 100644
  	private boolean thinPack;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
-index b5ee206..b3dfb3d 100644
+index 0a0de5b..4b5ec22 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
 @@ -83,7 +83,7 @@
@@ -1011,11 +1143,11 @@ index f75ac70..90ddadc 100644
  	 *
  	 * @return the set of URIs known to this remote.
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/TagOpt.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/TagOpt.java
-index 82a5f23..7620326 100644
+index 3b25870..9b7b7ac 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/TagOpt.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/TagOpt.java
 @@ -49,7 +49,7 @@
- import org.eclipse.jgit.JGitText;
+ import org.eclipse.jgit.internal.JGitText;
  
  /** Specification of annotated tag behavior during fetch. */
 -public enum TagOpt {
@@ -1060,7 +1192,7 @@ index 82a5f23..7620326 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index cefe628..9d85ad5 100644
+index 32b8302..8069698 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 @@ -252,7 +252,7 @@ public String getLine() {
@@ -1120,11 +1252,11 @@ index 315d909..98cedfa 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index aaaf81b..36962b4 100644
+index 027101b..4c8b4b8 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-@@ -130,6 +130,12 @@
- 	protected Repository repository;
+@@ -132,6 +132,12 @@
+ 	private long canonLen = -1;
  
  	/**
 +	 * Cached value of isEntryIgnored(). 0 if not ignored, 1 if ignored, -1 if
@@ -1136,7 +1268,7 @@ index aaaf81b..36962b4 100644
  	 * Create a new iterator with no parent.
  	 *
  	 * @param options
-@@ -527,6 +533,8 @@ public boolean isEntryIgnored() throws IOException {
+@@ -561,6 +567,8 @@ public boolean isEntryIgnored() throws IOException {
  	 *             a relevant ignore rule file exists but cannot be read.
  	 */
  	protected boolean isEntryIgnored(final int pLen) throws IOException {
@@ -1145,7 +1277,7 @@ index aaaf81b..36962b4 100644
  		IgnoreNode rules = getIgnoreNode();
  		if (rules != null) {
  			// The ignore code wants path to start with a '/' if possible.
-@@ -539,15 +547,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
+@@ -573,15 +581,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
  			String p = TreeWalk.pathOf(path, pOff, pLen);
  			switch (rules.isIgnored(p, FileMode.TREE.equals(mode))) {
  			case IGNORED:
@@ -1168,7 +1300,7 @@ index aaaf81b..36962b4 100644
  		return false;
  	}
  
-@@ -703,8 +716,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
+@@ -737,8 +750,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();
