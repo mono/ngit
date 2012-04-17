@@ -579,7 +579,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <EmbeddedResource Include="resources\JGitText.properties">
-      <LogicalName>NGit.JGitText.properties</LogicalName>
+      <LogicalName>NGit.Internal.JGitText.properties</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
