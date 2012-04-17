@@ -21,7 +21,7 @@ namespace Sharpen.Test
 			future.Get ();
 			double elapsed = (DateTime.Now - tim).TotalMilliseconds;
 			Assert.IsTrue (elapsed >= 50, "Elapsed: " + elapsed);
-			Assert.IsTrue (elapsed < 50 + delayDif, "Elapsed: " + elapsed);
+			Assert.IsTrue (elapsed < 60 + delayDif, "Elapsed: " + elapsed);
 			e.ShutdownNow ();
 		}
 		
