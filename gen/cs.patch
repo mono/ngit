@@ -2196,18 +2196,10 @@ index 6bd8fe5..2756d6f 100644
  						IList<string> unmergedPaths = null;
  						if (merger is ResolveMerger)
 diff --git a/NGit/NGit.Api/MergeCommandResult.cs b/NGit/NGit.Api/MergeCommandResult.cs
-index 3e7b1b4..c0d04c4 100644
+index a668a83..34ce28d 100644
 --- a/NGit/NGit.Api/MergeCommandResult.cs
 +++ b/NGit/NGit.Api/MergeCommandResult.cs
-@@ -46,6 +46,7 @@ using System.Text;
- using NGit;
- using NGit.Api;
- using NGit.Diff;
-+using NGit.Internal;
- using NGit.Merge;
- using Sharpen;
- 
-@@ -92,7 +93,7 @@ namespace NGit.Api
+@@ -93,7 +93,7 @@ namespace NGit.Api
  		/// <see cref="NGit.Merge.MergeStrategy">NGit.Merge.MergeStrategy</see>
  		/// </param>
  		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
@@ -2216,7 +2208,7 @@ index 3e7b1b4..c0d04c4 100644
  			, MergeStrategy mergeStrategy) : this(newHead, @base, mergedCommits, mergeStatus
  			, mergeStrategy, lowLevelResults, null)
  		{
-@@ -118,7 +119,7 @@ namespace NGit.Api
+@@ -119,7 +119,7 @@ namespace NGit.Api
  		/// <param name="description">a user friendly description of the merge result</param>
  		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
  			, MergeStatus mergeStatus, MergeStrategy mergeStrategy, IDictionary<string, MergeResult
@@ -2225,7 +2217,7 @@ index 3e7b1b4..c0d04c4 100644
  			, mergeStatus, mergeStrategy, lowLevelResults, null, null)
  		{
  		}
-@@ -148,7 +149,7 @@ namespace NGit.Api
+@@ -149,7 +149,7 @@ namespace NGit.Api
  		/// <param name="description">a user friendly description of the merge result</param>
  		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
  			, MergeStatus mergeStatus, MergeStrategy mergeStrategy, IDictionary<string, MergeResult
@@ -2234,7 +2226,7 @@ index 3e7b1b4..c0d04c4 100644
  			 failingPaths, string description)
  		{
  			this.newHead = newHead;
-@@ -160,7 +161,7 @@ namespace NGit.Api
+@@ -161,7 +161,7 @@ namespace NGit.Api
  			this.failingPaths = failingPaths;
  			if (lowLevelResults != null)
  			{
@@ -2243,33 +2235,34 @@ index 3e7b1b4..c0d04c4 100644
  					())
  				{
  					AddConflict(result.Key, result.Value);
-@@ -351,20 +352,20 @@ namespace NGit.Api
+@@ -352,21 +352,17 @@ namespace NGit.Api
  
  	public abstract class MergeStatus
  	{
 -		public static MergeStatus FAST_FORWARD = new MergeResult.MergeStatus.FAST_FORWARD_Class
-+		public static MergeStatus FAST_FORWARD = new MergeStatus.FAST_FORWARD_Class
- 			();
+-			();
++		public static MergeStatus FAST_FORWARD = new FAST_FORWARD_Class();
  
 -		public static MergeStatus ALREADY_UP_TO_DATE = new MergeResult.MergeStatus.ALREADY_UP_TO_DATE_Class
-+		public static MergeStatus ALREADY_UP_TO_DATE = new MergeStatus.ALREADY_UP_TO_DATE_Class
- 			();
+-			();
++		public static MergeStatus ALREADY_UP_TO_DATE = new ALREADY_UP_TO_DATE_Class();
  
 -		public static MergeStatus FAILED = new MergeResult.MergeStatus.FAILED_Class();
-+		public static MergeStatus FAILED = new MergeStatus.FAILED_Class();
++		public static MergeStatus FAILED = new FAILED_Class();
  
 -		public static MergeStatus MERGED = new MergeResult.MergeStatus.MERGED_Class();
-+		public static MergeStatus MERGED = new MergeStatus.MERGED_Class();
++		public static MergeStatus MERGED = new MERGED_Class();
  
 -		public static MergeStatus CONFLICTING = new MergeResult.MergeStatus.CONFLICTING_Class
-+		public static MergeStatus CONFLICTING = new MergeStatus.CONFLICTING_Class
- 			();
+-			();
++		public static MergeStatus CONFLICTING = new CONFLICTING_Class();
  
 -		public static MergeStatus NOT_SUPPORTED = new MergeResult.MergeStatus.NOT_SUPPORTED_Class
-+		public static MergeStatus NOT_SUPPORTED = new MergeStatus.NOT_SUPPORTED_Class
- 			();
+-			();
++		public static MergeStatus NOT_SUPPORTED = new NOT_SUPPORTED_Class();
  
  		internal class FAST_FORWARD_Class : MergeStatus
+ 		{
 diff --git a/NGit/NGit.Api/PushCommand.cs b/NGit/NGit.Api/PushCommand.cs
 index 0188510..3cf5c04 100644
 --- a/NGit/NGit.Api/PushCommand.cs
@@ -7719,18 +7712,6 @@ index de9d80a..4a2d21a 100644
  				AnyObjectId target = @ref.GetPeeledObjectId();
  				if (target == null)
  				{
-diff --git a/NGit/NGit/RepositoryState.cs b/NGit/NGit/RepositoryState.cs
-index a4d5c52..90dd605 100644
---- a/NGit/NGit/RepositoryState.cs
-+++ b/NGit/NGit/RepositoryState.cs
-@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
- 
- using NGit;
-+using NGit.Internal;
- using Sharpen;
- 
- namespace NGit
 diff --git a/NGit/NGit/Tree.cs b/NGit/NGit/Tree.cs
 index 5516577..c723ab9 100644
 --- a/NGit/NGit/Tree.cs
