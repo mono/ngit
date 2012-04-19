@@ -176,7 +176,7 @@ namespace NGit.Api
 
 		// expected this exception
 		/// <exception cref="System.Exception"></exception>
-		[Theory]
+//		[Theory]
 		public virtual void TestMergeSuccessAllStrategies(MergeStrategy mergeStrategy)
 		{
 			Git git = new Git(db);
