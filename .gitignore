@@ -1,4 +1,6 @@
 *.pidb
+*.suo
+*.user
 NSch/obj
 NGit.Test/obj
 NGit.Test/test-results
