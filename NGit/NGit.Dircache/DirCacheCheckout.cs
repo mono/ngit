@@ -298,6 +298,10 @@ namespace NGit.Dircache
 		{
 			if (m != null)
 			{
+				if (!IsValidPath(m))
+				{
+					throw new InvalidPathException(m.EntryPathString);
+				}
 				// There is an entry in the merge commit. Means: we want to update
 				// what's currently in the index and working-tree to that one
 				if (i == null)
@@ -554,11 +558,15 @@ namespace NGit.Dircache
 		/// <param name="i">the entry for the index</param>
 		/// <param name="f">the file in the working tree</param>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
-		internal virtual void ProcessEntry(AbstractTreeIterator h, AbstractTreeIterator m
-			, DirCacheBuildIterator i, WorkingTreeIterator f)
+		internal virtual void ProcessEntry(CanonicalTreeParser h, CanonicalTreeParser m, 
+			DirCacheBuildIterator i, WorkingTreeIterator f)
 		{
 			DirCacheEntry dce = i != null ? i.GetDirCacheEntry() : null;
 			string name = walk.PathString;
+			if (m != null && !IsValidPath(m))
+			{
+				throw new InvalidPathException(m.EntryPathString);
+			}
 			if (i == null && m == null && h == null)
 			{
 				// File/Directory conflict case #20
@@ -1166,6 +1174,160 @@ namespace NGit.Dircache
 				// AutoCRLF wants on-disk-size
 				entry.SetLength((int)ol.GetSize());
 			}
+		}
+
+		private static byte[][] forbidden;
+
+		static DirCacheCheckout()
+		{
+			string[] list = new string[] { "AUX", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6"
+				, "COM7", "COM8", "COM9", "CON", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", 
+				"LPT7", "LPT8", "LPT9", "NUL", "PRN" };
+			forbidden = new byte[list.Length][];
+			for (int i = 0; i < list.Length; ++i)
+			{
+				forbidden[i] = Constants.EncodeASCII(list[i]);
+			}
+		}
+
+		private static bool IsValidPath(CanonicalTreeParser t)
+		{
+			for (CanonicalTreeParser i = t; i != null; i = i.GetParent())
+			{
+				if (!IsValidPathSegment(i))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		private static bool IsValidPathSegment(CanonicalTreeParser t)
+		{
+			bool isWindows = "Windows".Equals(SystemReader.GetInstance().GetProperty("os.name"
+				));
+			bool isOSX = "Mac OS X".Equals(SystemReader.GetInstance().GetProperty("os.name"));
+			bool ignCase = isOSX || isWindows;
+			int ptr = t.GetNameOffset();
+			byte[] raw = t.GetEntryPathBuffer();
+			int end = ptr + t.NameLength;
+			// Validate path component at this level of the tree
+			int start = ptr;
+			while (ptr < end)
+			{
+				if (raw[ptr] == '/')
+				{
+					return false;
+				}
+				if (isWindows)
+				{
+					if (raw[ptr] == '\\')
+					{
+						return false;
+					}
+					if (raw[ptr] == ':')
+					{
+						return false;
+					}
+				}
+				ptr++;
+			}
+			// '.' and '.'' are invalid here
+			if (ptr - start == 1)
+			{
+				if (raw[start] == '.')
+				{
+					return false;
+				}
+			}
+			else
+			{
+				if (ptr - start == 2)
+				{
+					if (raw[start] == '.')
+					{
+						if (raw[start + 1] == '.')
+						{
+							return false;
+						}
+					}
+				}
+				else
+				{
+					if (ptr - start == 4)
+					{
+						// .git (possibly case insensitive) is disallowed
+						if (raw[start] == '.')
+						{
+							if (raw[start + 1] == 'g' || (ignCase && raw[start + 1] == 'G'))
+							{
+								if (raw[start + 2] == 'i' || (ignCase && raw[start + 2] == 'I'))
+								{
+									if (raw[start + 3] == 't' || (ignCase && raw[start + 3] == 'T'))
+									{
+										return false;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			if (isWindows)
+			{
+				// Space or period at end of file name is ignored by Windows.
+				// Treat this as a bad path for now. We may want to handle
+				// this as case insensitivity in the future.
+				if (raw[ptr - 1] == '.' || raw[ptr - 1] == ' ')
+				{
+					return false;
+				}
+				int i;
+				// Bad names, eliminate suffix first
+				for (i = start; i < ptr; ++i)
+				{
+					if (raw[i] == '.')
+					{
+						break;
+					}
+				}
+				int len = i - start;
+				if (len == 3 || len == 4)
+				{
+					for (int j = 0; j < forbidden.Length; ++j)
+					{
+						if (forbidden[j].Length == len)
+						{
+							if (((sbyte)ToUpper(raw[start])) < forbidden[j][0])
+							{
+								break;
+							}
+							int k;
+							for (k = 0; k < len; ++k)
+							{
+								if (ToUpper(raw[start + k]) != forbidden[j][k])
+								{
+									break;
+								}
+							}
+							if (k == len)
+							{
+								return false;
+							}
+						}
+					}
+				}
+			}
+			return true;
+		}
+
+		private static byte ToUpper(byte b)
+		{
+			if (b >= 'a' && ((sbyte)b) <= 'z')
+			{
+				return unchecked((byte)(b - ('a' - 'A')));
+			}
+			return b;
 		}
 	}
 }

@@ -113,6 +113,13 @@ namespace NGit.Treewalk
 		{
 		}
 
+		/// <returns>the parent of this tree parser</returns>
+		/// <internal></internal>
+		public virtual NGit.Treewalk.CanonicalTreeParser GetParent()
+		{
+			return (NGit.Treewalk.CanonicalTreeParser)parent;
+		}
+
 		/// <summary>Reset this parser to walk through the given tree data.</summary>
 		/// <remarks>Reset this parser to walk through the given tree data.</remarks>
 		/// <param name="treeData">the raw tree content.</param>

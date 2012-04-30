@@ -22,5 +22,6 @@ sed -e s:@NUNIT_JAR@:$NUNIT_JAR: -e s:@HAMCREST_JAR@:$HAMCREST_JAR: -e s:@BIN_PA
 echo prefix=`pwd` > config.make
 echo ECLIPSE_PATH=$ECLIPSE_PATH >> config.make
 echo NUNIT_JAR=$NUNIT_JAR >> config.make
+echo HAMCREST_JAR=$HAMCREST_JAR >> config.make
 echo Eclipse path: $ECLIPSE_PATH
 

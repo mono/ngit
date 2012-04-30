@@ -93,6 +93,7 @@ namespace NGit.Junit
 			Init(Constants.GIT_COMMITTER_EMAIL_KEY);
 			userGitConfig = new MockSystemReader.MockConfig(this, null, null);
 			systemGitConfig = new MockSystemReader.MockConfig(this, null, null);
+			SetCurrentPlatform();
 		}
 
 		private void Init(string n)

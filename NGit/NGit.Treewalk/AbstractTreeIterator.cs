@@ -773,12 +773,31 @@ namespace NGit.Treewalk
 			}
 		}
 
-		/// <summary>Get the name component of the current entry path into the provided buffer.
-		/// 	</summary>
-		/// <remarks>Get the name component of the current entry path into the provided buffer.
-		/// 	</remarks>
-		/// <param name="buffer">the buffer to get the name into, it is assumed that buffer can hold the name
-		/// 	</param>
+		/// <summary>
+		/// JGit internal API for use by
+		/// <see cref="NGit.Dircache.DirCacheCheckout">NGit.Dircache.DirCacheCheckout</see>
+		/// </summary>
+		/// <returns>
+		/// start of name component part within
+		/// <see cref="GetEntryPathBuffer()">GetEntryPathBuffer()</see>
+		/// </returns>
+		public virtual int GetNameOffset()
+		{
+			return pathOffset;
+		}
+
+		/// <summary>
+		/// Get the name component of the current entry path into the provided
+		/// buffer.
+		/// </summary>
+		/// <remarks>
+		/// Get the name component of the current entry path into the provided
+		/// buffer.
+		/// </remarks>
+		/// <param name="buffer">
+		/// the buffer to get the name into, it is assumed that buffer can
+		/// hold the name
+		/// </param>
 		/// <param name="offset">the offset of the name in the buffer</param>
 		/// <seealso cref="NameLength()">NameLength()</seealso>
 		public virtual void GetName(byte[] buffer, int offset)

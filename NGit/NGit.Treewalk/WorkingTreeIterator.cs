@@ -890,7 +890,7 @@ namespace NGit.Treewalk
 			{
 				return WorkingTreeIterator.MetadataDiff.DIFFER_BY_METADATA;
 			}
-			if (!entry.IsSmudged && (GetEntryLength() != entry.Length))
+			if (!entry.IsSmudged && entry.Length != (int)GetEntryLength())
 			{
 				return WorkingTreeIterator.MetadataDiff.DIFFER_BY_METADATA;
 			}

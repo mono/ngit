@@ -575,6 +575,7 @@
     <Compile Include="NGit\ConfigLine.cs" />
     <Compile Include="NGit.Api\StashDropCommand.cs" />
     <Compile Include="NGit.Storage.File\ReflogWriter.cs" />
+    <Compile Include="NGit.Dircache\InvalidPathException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

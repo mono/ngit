@@ -72,6 +72,11 @@ namespace Sharpen
 			stream.SetLength (len);
 		}
 
+		public void Write (int value)
+		{
+			stream.Write (BitConverter.GetBytes (value), 0, 4);
+		}
+		
 		public void Write (byte[] buffer)
 		{
 			stream.Write (buffer, 0, buffer.Length);

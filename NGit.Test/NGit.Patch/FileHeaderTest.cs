@@ -133,7 +133,7 @@ namespace NGit.Patch
 		[NUnit.Framework.Ignore ("This test does not pass and am not sure why")]
 		public virtual void TestParseGitFileName_DqFooSpLfNulBar()
 		{
-			string name = "foo \n\0bar";
+			string name = "foo \n\x0bar";
 			string dqName = "foo \\n\\0bar";
 			FileHeader fh = DqHeader(dqName);
 			NUnit.Framework.Assert.AreEqual(DqGitLine(dqName).Length, fh.ParseGitFileName(0, 

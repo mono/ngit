@@ -42,7 +42,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using NGit.Internal;
 using NGit.Util;
 using Sharpen;
@@ -307,6 +309,49 @@ namespace NGit.Util
 				}
 				toSkip -= r;
 			}
+		}
+
+		/// <summary>Divides the given string into lines.</summary>
+		/// <remarks>Divides the given string into lines.</remarks>
+		/// <param name="s">the string to read</param>
+		/// <returns>the string divided into lines</returns>
+		public static IList<string> ReadLines(string s)
+		{
+			IList<string> l = new AList<string>();
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < s.Length; i++)
+			{
+				char c = s[i];
+				if (c == '\n')
+				{
+					l.AddItem(sb.ToString());
+					sb.Length = 0;
+					continue;
+				}
+				if (c == '\r')
+				{
+					if (i + 1 < s.Length)
+					{
+						c = s[++i];
+						l.AddItem(sb.ToString());
+						sb.Length = 0;
+						if (c != '\n')
+						{
+							sb.Append(c);
+						}
+						continue;
+					}
+					else
+					{
+						// EOF
+						l.AddItem(sb.ToString());
+						break;
+					}
+				}
+				sb.Append(c);
+			}
+			l.AddItem(sb.ToString());
+			return l;
 		}
 
 		public IOUtil()
