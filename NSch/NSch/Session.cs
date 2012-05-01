@@ -595,6 +595,7 @@ loop_break: ;
 						{
 							connectThread.SetDaemon(daemon_thread);
 						}
+						connectThread.SetDaemon (true);
 						connectThread.Start();
 					}
 				}

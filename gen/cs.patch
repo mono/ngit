@@ -8498,10 +8498,18 @@ index 44cea0d..da9c695 100644
  		private string subsystem = null;
  
 diff --git a/NSch/NSch/Session.cs b/NSch/NSch/Session.cs
-index a39b045..24c9586 100644
+index a39b045..6561ba1 100644
 --- a/NSch/NSch/Session.cs
 +++ b/NSch/NSch/Session.cs
-@@ -1371,7 +1371,7 @@ loop_break: ;
+@@ -595,6 +595,7 @@ loop_break: ;
+ 						{
+ 							connectThread.SetDaemon(daemon_thread);
+ 						}
++						connectThread.SetDaemon (true);
+ 						connectThread.Start();
+ 					}
+ 				}
+@@ -1371,7 +1372,7 @@ loop_break: ;
  						}
  						command = packet.buffer.GetCommand();
  						recipient = c.GetRecipient();
@@ -8510,7 +8518,7 @@ index a39b045..24c9586 100644
  						c.rwsize -= len;
  						sendit = true;
  					}
-@@ -1597,7 +1597,7 @@ loop_break: ;
+@@ -1597,7 +1598,7 @@ loop_break: ;
  								break;
  							}
  							channel.Write_ext(foo, start[0], length[0]);
@@ -8519,7 +8527,7 @@ index a39b045..24c9586 100644
  							channel.SetLocalWindowSize(channel.lwsize - len);
  							if (channel.lwsize < channel.lwsize_max / 2)
  							{
-@@ -1800,7 +1800,7 @@ loop_break: ;
+@@ -1800,7 +1801,7 @@ loop_break: ;
  							buf.GetShort();
  							foo = buf.GetString();
  							// request name
@@ -8528,7 +8536,7 @@ index a39b045..24c9586 100644
  							if (reply)
  							{
  								packet.Reset();
-@@ -2278,9 +2278,9 @@ loop_break: ;
+@@ -2278,9 +2279,9 @@ loop_break: ;
  				{
  					config = new Hashtable();
  				}
