@@ -326,7 +326,7 @@ namespace NGit.Util
 			RefList<Ref> one = ToList(REF_A);
 			RefList<Ref> two = one.Remove(1);
 			NUnit.Framework.Assert.AreNotSame(one, two);
-			NUnit.Framework.CollectionAssert.AreEqual(two, RefList.EmptyList<Ref>());
+			NUnit.Framework.CollectionAssert.AreEquivalent(two, RefList.EmptyList<Ref>());
 		}
 
 		[NUnit.Framework.Test]

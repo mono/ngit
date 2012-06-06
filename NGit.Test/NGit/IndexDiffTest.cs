@@ -111,7 +111,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetChanged().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetModified().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetRemoved().Count);
-			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -141,7 +141,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetChanged().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetModified().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetAdded().Count);
-			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -175,7 +175,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetAdded().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetMissing().Count);
-			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -324,7 +324,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetMissing().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetModified().Count);
-			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -381,7 +381,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetMissing().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetModified().Count);
-			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -421,7 +421,7 @@ namespace NGit
 			diff.Diff();
 			NUnit.Framework.Assert.IsTrue(diff.GetRemoved().Contains(path));
 			NUnit.Framework.Assert.IsTrue(diff.GetUntracked().Contains(path));
-			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -432,7 +432,7 @@ namespace NGit
 			Git git = new Git(db);
 			IndexDiff diff = new IndexDiff(db, Constants.HEAD, new FileTreeIterator(db));
 			diff.Diff();
-			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 			WriteTrashFile("readme", string.Empty);
 			WriteTrashFile("src/com/A.java", string.Empty);
@@ -447,7 +447,7 @@ namespace NGit
 			git.Commit().SetMessage("initial").Call();
 			diff = new IndexDiff(db, Constants.HEAD, new FileTreeIterator(db));
 			diff.Diff();
-			NUnit.Framework.Assert.AreEqual(new HashSet<string>(Arrays.AsList("target")), diff
+			NUnit.Framework.CollectionAssert.AreEquivalent(new HashSet<string>(Arrays.AsList("target")), diff
 				.GetUntrackedFolders());
 			WriteTrashFile("src/tst/A.java", string.Empty);
 			WriteTrashFile("src/tst/B.java", string.Empty);
@@ -460,7 +460,7 @@ namespace NGit
 			WriteTrashFile("src/org/C.java", string.Empty);
 			diff = new IndexDiff(db, Constants.HEAD, new FileTreeIterator(db));
 			diff.Diff();
-			NUnit.Framework.Assert.AreEqual(new HashSet<string>(Arrays.AsList("src/org", "src/tst"
+			NUnit.Framework.CollectionAssert.AreEquivalent(new HashSet<string>(Arrays.AsList("src/org", "src/tst"
 				, "target")), diff.GetUntrackedFolders());
 		}
 
@@ -496,7 +496,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(1, diff.GetChanged().Count);
 			NUnit.Framework.Assert.IsTrue(diff.GetAssumeUnchanged().Contains("file2"));
 			NUnit.Framework.Assert.IsTrue(diff.GetChanged().Contains("file"));
-			NUnit.Framework.Assert.AreEqual(Sharpen.Collections<string>.EMPTY_SET, diff.GetUntrackedFolders
+			NUnit.Framework.CollectionAssert.AreEquivalent(0, diff.GetUntrackedFolders
 				());
 		}
 
