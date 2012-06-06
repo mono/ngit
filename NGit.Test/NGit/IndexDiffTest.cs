@@ -496,7 +496,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(1, diff.GetChanged().Count);
 			NUnit.Framework.Assert.IsTrue(diff.GetAssumeUnchanged().Contains("file2"));
 			NUnit.Framework.Assert.IsTrue(diff.GetChanged().Contains("file"));
-			NUnit.Framework.CollectionAssert.AreEquivalent(0, diff.GetUntrackedFolders
+			NUnit.Framework.CollectionAssert.AreEquivalent(Sharpen.Collections<string>.EMPTY_SET, diff.GetUntrackedFolders
 				());
 		}
 
