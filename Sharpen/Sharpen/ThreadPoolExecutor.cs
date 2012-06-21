@@ -111,7 +111,10 @@ namespace Sharpen
 						r.Run ();
 				}
 				catch (ST.ThreadAbortException) {
-					ST.Thread.ResetAbort ();
+					// Do not catch a thread abort. If we've been aborted just let the thread die.
+					// Currently reseting an abort which was issued because the appdomain is being
+					// torn down results in the process living forever and consuming 100% cpu time.
+					return;
 				}
 				catch {
 				}
