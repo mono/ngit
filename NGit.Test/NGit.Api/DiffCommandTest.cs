@@ -186,6 +186,25 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(expected.ToString(), actual);
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestNoOutputStreamSet()
+		{
+			FilePath file = WriteTrashFile("test.txt", "a");
+			NUnit.Framework.Assert.IsTrue(file.SetLastModified(file.LastModified() - 5000));
+			Git git = new Git(db);
+			git.Add().AddFilepattern(".").Call();
+			Write(file, "b");
+			IList<DiffEntry> diffs = git.Diff().Call();
+			NUnit.Framework.Assert.IsNotNull(diffs);
+			NUnit.Framework.Assert.AreEqual(1, diffs.Count);
+			DiffEntry diff = diffs[0];
+			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.MODIFY, diff.GetChangeType()
+				);
+			NUnit.Framework.Assert.AreEqual("test.txt", diff.GetOldPath());
+			NUnit.Framework.Assert.AreEqual("test.txt", diff.GetNewPath());
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private AbstractTreeIterator GetTreeIterator(string name)
 		{

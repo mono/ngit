@@ -98,7 +98,7 @@ namespace NGit.Api
 			}
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override IDictionary<string, string> Call()
 		{
 			CheckCallable();
@@ -127,23 +127,32 @@ namespace NGit.Api
 					{
 						continue;
 					}
-					StoredConfig subConfig = subRepo.GetConfig();
-					// Get name of remote associated with current branch and
-					// fall back to default remote name as last resort
-					string branch = GetHeadBranch(subRepo);
-					string remote = null;
-					if (branch != null)
+					StoredConfig subConfig;
+					string branch;
+					try
 					{
-						remote = subConfig.GetString(ConfigConstants.CONFIG_BRANCH_SECTION, branch, ConfigConstants
-							.CONFIG_KEY_REMOTE);
+						subConfig = subRepo.GetConfig();
+						// Get name of remote associated with current branch and
+						// fall back to default remote name as last resort
+						branch = GetHeadBranch(subRepo);
+						string remote = null;
+						if (branch != null)
+						{
+							remote = subConfig.GetString(ConfigConstants.CONFIG_BRANCH_SECTION, branch, ConfigConstants
+								.CONFIG_KEY_REMOTE);
+						}
+						if (remote == null)
+						{
+							remote = Constants.DEFAULT_REMOTE_NAME;
+						}
+						subConfig.SetString(ConfigConstants.CONFIG_REMOTE_SECTION, remote, ConfigConstants
+							.CONFIG_KEY_URL, remoteUrl);
+						subConfig.Save();
 					}
-					if (remote == null)
+					finally
 					{
-						remote = Constants.DEFAULT_REMOTE_NAME;
+						subRepo.Close();
 					}
-					subConfig.SetString(ConfigConstants.CONFIG_REMOTE_SECTION, remote, ConfigConstants
-						.CONFIG_KEY_URL, remoteUrl);
-					subConfig.Save();
 				}
 				if (!synced.IsEmpty())
 				{

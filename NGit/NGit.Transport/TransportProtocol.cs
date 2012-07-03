@@ -41,8 +41,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using NGit;
+using NGit.Internal;
 using NGit.Transport;
 using Sharpen;
 
@@ -319,5 +321,19 @@ namespace NGit.Transport
 		/// 	</exception>
 		public abstract NGit.Transport.Transport Open(URIish uri, Repository local, string
 			 remoteName);
+
+		/// <summary>Open a new transport instance to the remote repository.</summary>
+		/// <remarks>
+		/// Open a new transport instance to the remote repository. Use default
+		/// configuration instead of reading from configuration files.
+		/// </remarks>
+		/// <param name="uri"></param>
+		/// <returns>new Transport</returns>
+		/// <exception cref="System.NotSupportedException">System.NotSupportedException</exception>
+		/// <exception cref="NGit.Errors.TransportException">NGit.Errors.TransportException</exception>
+		public virtual NGit.Transport.Transport Open(URIish uri)
+		{
+			throw new NotSupportedException(JGitText.Get().transportNeedsRepository);
+		}
 	}
 }

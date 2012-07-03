@@ -96,9 +96,10 @@ namespace NGit.Api
 		/// if the provided name is <code>null</code> or otherwise
 		/// invalid
 		/// </exception>
+		/// <exception cref="NGit.Api.Errors.CheckoutConflictException">if the checkout results in a conflict
+		/// 	</exception>
 		/// <returns>the newly created branch</returns>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.CheckoutConflictException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override Ref Call()
 		{
 			CheckCallable();
@@ -265,6 +266,7 @@ namespace NGit.Api
 		/// 
 		/// <code>this</code>
 		/// </returns>
+		/// <since>2.0</since>
 		public virtual NGit.Api.CheckoutCommand SetAllPaths(bool all)
 		{
 			checkoutAllPaths = all;
@@ -306,7 +308,7 @@ namespace NGit.Api
 					{
 						ObjectId blobId = startWalk.GetObjectId(0);
 						FileMode mode = startWalk.GetFileMode(0);
-						editor.Add(new _PathEdit_292(this, blobId, mode, workTree, r, startWalk.PathString
+						editor.Add(new _PathEdit_296(this, blobId, mode, workTree, r, startWalk.PathString
 							));
 					}
 					editor.Commit();
@@ -325,9 +327,9 @@ namespace NGit.Api
 			return this;
 		}
 
-		private sealed class _PathEdit_292 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_296 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_292(CheckoutCommand _enclosing, ObjectId blobId, FileMode mode, 
+			public _PathEdit_296(CheckoutCommand _enclosing, ObjectId blobId, FileMode mode, 
 				FilePath workTree, ObjectReader r, string baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;

@@ -227,14 +227,15 @@ SCAN_break: ;
 				{
 					int missingCnt = o_1.lineCount - cmp;
 					script.Error(buf, startOffset, MessageFormat.Format(JGitText.Get().truncatedHunkLinesMissingForAncestor
-						, missingCnt, (ancestor_1 + 1)));
+						, Sharpen.Extensions.ValueOf(missingCnt), Sharpen.Extensions.ValueOf(ancestor_1 
+						+ 1)));
 				}
 			}
 			if (nContext + nAdded < newLineCount)
 			{
 				int missingCount = newLineCount - (nContext + nAdded);
 				script.Error(buf, startOffset, MessageFormat.Format(JGitText.Get().truncatedHunkNewLinesMissing
-					, missingCount));
+					, Sharpen.Extensions.ValueOf(missingCount)));
 			}
 			return c;
 		}

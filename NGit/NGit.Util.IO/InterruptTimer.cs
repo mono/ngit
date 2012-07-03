@@ -125,8 +125,8 @@ namespace NGit.Util.IO
 		{
 			if (timeout <= 0)
 			{
-				throw new ArgumentException(MessageFormat.Format(JGitText.Get().invalidTimeout, timeout
-					));
+				throw new ArgumentException(MessageFormat.Format(JGitText.Get().invalidTimeout, Sharpen.Extensions.ValueOf
+					(timeout)));
 			}
 			Sharpen.Thread.Interrupted();
 			state.Begin(timeout);

@@ -61,12 +61,13 @@ namespace NGit.Submodule
 	[NUnit.Framework.TestFixture]
 	public class SubmoduleAddTest : RepositoryTestCase
 	{
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void CommandWithNullPath()
 		{
 			try
 			{
-				new SubmoduleAddCommand(db).SetURI("uri").Call();
+				new SubmoduleAddCommand(db).SetURI("uri").Call().Close();
 				NUnit.Framework.Assert.Fail("Exception not thrown");
 			}
 			catch (ArgumentException e)
@@ -75,12 +76,13 @@ namespace NGit.Submodule
 			}
 		}
 
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void CommandWithEmptyPath()
 		{
 			try
 			{
-				new SubmoduleAddCommand(db).SetPath(string.Empty).SetURI("uri").Call();
+				new SubmoduleAddCommand(db).SetPath(string.Empty).SetURI("uri").Call().Close();
 				NUnit.Framework.Assert.Fail("Exception not thrown");
 			}
 			catch (ArgumentException e)
@@ -89,12 +91,13 @@ namespace NGit.Submodule
 			}
 		}
 
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void CommandWithNullUri()
 		{
 			try
 			{
-				new SubmoduleAddCommand(db).SetPath("sub").Call();
+				new SubmoduleAddCommand(db).SetPath("sub").Call().Close();
 				NUnit.Framework.Assert.Fail("Exception not thrown");
 			}
 			catch (ArgumentException e)
@@ -103,12 +106,13 @@ namespace NGit.Submodule
 			}
 		}
 
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void CommandWithEmptyUri()
 		{
 			try
 			{
-				new SubmoduleAddCommand(db).SetPath("sub").SetURI(string.Empty).Call();
+				new SubmoduleAddCommand(db).SetPath("sub").SetURI(string.Empty).Call().Close();
 				NUnit.Framework.Assert.Fail("Exception not thrown");
 			}
 			catch (ArgumentException e)
@@ -132,6 +136,7 @@ namespace NGit.Submodule
 			command.SetURI(uri);
 			Repository repo = command.Call();
 			NUnit.Framework.Assert.IsNotNull(repo);
+			AddRepoToClose(repo);
 			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
 			NUnit.Framework.Assert.AreEqual(path, generator.GetPath());
@@ -139,7 +144,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.AreEqual(uri, generator.GetModulesUrl());
 			NUnit.Framework.Assert.AreEqual(path, generator.GetModulesPath());
 			NUnit.Framework.Assert.AreEqual(uri, generator.GetConfigUrl());
-			NUnit.Framework.Assert.IsNotNull(generator.GetRepository());
+			Repository subModRepo = generator.GetRepository();
+			AddRepoToClose(subModRepo);
+			NUnit.Framework.Assert.IsNotNull(subModRepo);
 			NUnit.Framework.Assert.AreEqual(commit, repo.Resolve(Constants.HEAD));
 			Status status = Git.Wrap(db).Status().Call();
 			NUnit.Framework.Assert.IsTrue(status.GetAdded().Contains(Constants.DOT_GIT_MODULES
@@ -155,14 +162,14 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_154(id, path));
+			editor.Add(new _PathEdit_160(id, path));
 			editor.Commit();
 			SubmoduleAddCommand command = new SubmoduleAddCommand(db);
 			command.SetPath(path);
 			command.SetURI("git://server/repo.git");
 			try
 			{
-				command.Call();
+				command.Call().Close();
 				NUnit.Framework.Assert.Fail("Exception not thrown");
 			}
 			catch (JGitInternalException e)
@@ -172,9 +179,9 @@ namespace NGit.Submodule
 			}
 		}
 
-		private sealed class _PathEdit_154 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_160 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_154(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_160(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -203,6 +210,7 @@ namespace NGit.Submodule
 			command.SetURI(uri);
 			Repository repo = command.Call();
 			NUnit.Framework.Assert.IsNotNull(repo);
+			AddRepoToClose(repo);
 			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
 			NUnit.Framework.Assert.AreEqual(path, generator.GetPath());
@@ -215,10 +223,12 @@ namespace NGit.Submodule
 				fullUri = fullUri.Replace('\\', '/');
 			}
 			NUnit.Framework.Assert.AreEqual(fullUri, generator.GetConfigUrl());
-			NUnit.Framework.Assert.IsNotNull(generator.GetRepository());
-			NUnit.Framework.Assert.AreEqual(fullUri, generator.GetRepository().GetConfig().GetString
-				(ConfigConstants.CONFIG_REMOTE_SECTION, Constants.DEFAULT_REMOTE_NAME, ConfigConstants
-				.CONFIG_KEY_URL));
+			Repository subModRepo = generator.GetRepository();
+			AddRepoToClose(subModRepo);
+			NUnit.Framework.Assert.IsNotNull(subModRepo);
+			NUnit.Framework.Assert.AreEqual(fullUri, subModRepo.GetConfig().GetString(ConfigConstants
+				.CONFIG_REMOTE_SECTION, Constants.DEFAULT_REMOTE_NAME, ConfigConstants.CONFIG_KEY_URL
+				));
 			NUnit.Framework.Assert.AreEqual(commit, repo.Resolve(Constants.HEAD));
 			Status status = Git.Wrap(db).Status().Call();
 			NUnit.Framework.Assert.IsTrue(status.GetAdded().Contains(Constants.DOT_GIT_MODULES
@@ -248,7 +258,9 @@ namespace NGit.Submodule
 			command.SetPath(path2);
 			string url2 = db.Directory.ToURI().ToString();
 			command.SetURI(url2);
-			NUnit.Framework.Assert.IsNotNull(command.Call());
+			Repository r = command.Call();
+			NUnit.Framework.Assert.IsNotNull(r);
+			AddRepoToClose(r);
 			modulesConfig.Load();
 			NUnit.Framework.Assert.AreEqual(path1, modulesConfig.GetString(ConfigConstants.CONFIG_SUBMODULE_SECTION
 				, path1, ConfigConstants.CONFIG_KEY_PATH));

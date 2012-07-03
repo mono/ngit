@@ -41,8 +41,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.IO;
 using NGit;
 using NGit.Api;
+using NGit.Api.Errors;
 using NGit.Treewalk;
 using Sharpen;
 
@@ -86,7 +88,7 @@ namespace NGit.Api
 		/// object telling about each path where working
 		/// tree, index or HEAD differ from each other.
 		/// </returns>
-		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		/// <exception cref="NGit.Errors.NoWorkTreeException"></exception>
 		public override Status Call()
 		{
@@ -94,9 +96,16 @@ namespace NGit.Api
 			{
 				workingTreeIt = new FileTreeIterator(repo);
 			}
-			IndexDiff diff = new IndexDiff(repo, Constants.HEAD, workingTreeIt);
-			diff.Diff();
-			return new Status(diff);
+			try
+			{
+				IndexDiff diff = new IndexDiff(repo, Constants.HEAD, workingTreeIt);
+				diff.Diff();
+				return new Status(diff);
+			}
+			catch (IOException e)
+			{
+				throw new JGitInternalException(e.Message, e);
+			}
 		}
 
 		/// <summary>

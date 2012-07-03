@@ -1,9 +1,9 @@
 diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/DirCacheCheckoutMaliciousPathTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/DirCacheCheckoutMaliciousPathTest.java
 deleted file mode 100644
-index 65d0418..0000000
+index fb9cc2c..0000000
 --- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/DirCacheCheckoutMaliciousPathTest.java
 +++ /dev/null
-@@ -1,420 +0,0 @@
+@@ -1,405 +0,0 @@
 -/*
 - * Copyright (C) 2011, Robin Rosenberg <robin.rosenberg@dewire.com>
 - * and other copyright owners as documented in the project's IP log.
@@ -52,14 +52,8 @@ index 65d0418..0000000
 -import java.util.Arrays;
 -
 -import org.eclipse.jgit.api.Git;
--import org.eclipse.jgit.api.errors.CheckoutConflictException;
--import org.eclipse.jgit.api.errors.InvalidRefNameException;
--import org.eclipse.jgit.api.errors.JGitInternalException;
--import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
--import org.eclipse.jgit.api.errors.RefNotFoundException;
+-import org.eclipse.jgit.api.errors.GitAPIException;
 -import org.eclipse.jgit.dircache.InvalidPathException;
--import org.eclipse.jgit.errors.IncorrectObjectTypeException;
--import org.eclipse.jgit.errors.MissingObjectException;
 -import org.eclipse.jgit.junit.MockSystemReader;
 -import org.eclipse.jgit.revwalk.RevWalk;
 -import org.eclipse.jgit.util.SystemReader;
@@ -344,20 +338,11 @@ index 65d0418..0000000
 -	 *            perform the actual test on the second checkout
 -	 * @param path
 -	 *            to the blob, one or more levels
+-	 * @throws GitAPIException
 -	 * @throws IOException
--	 * @throws RefAlreadyExistsException
--	 * @throws RefNotFoundException
--	 * @throws InvalidRefNameException
--	 * @throws MissingObjectException
--	 * @throws IncorrectObjectTypeException
--	 * @throws CheckoutConflictException
--	 * @throws JGitInternalException
 -	 */
--	private void testMaliciousPath(boolean good, boolean secondCheckout, String... path)
--			throws IOException, RefAlreadyExistsException,
--			RefNotFoundException, InvalidRefNameException,
--			MissingObjectException, IncorrectObjectTypeException,
--			JGitInternalException, CheckoutConflictException {
+-	private void testMaliciousPath(boolean good, boolean secondCheckout,
+-			String... path) throws GitAPIException, IOException {
 -		Git git = new Git(db);
 -		ObjectInserter newObjectInserter;
 -		newObjectInserter = git.getRepository().newObjectInserter();
@@ -426,10 +411,10 @@ index 65d0418..0000000
 -}
 diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java
 deleted file mode 100644
-index 04d95f4..0000000
+index 4e694b6..0000000
 --- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/nls/RootLocaleTest.java
 +++ /dev/null
-@@ -1,90 +0,0 @@
+@@ -1,84 +0,0 @@
 -/*
 - * Copyright (C) 2010, Sasa Zivkov <sasa.zivkov@sap.com>
 - * and other copyright owners as documented in the project's IP log.
@@ -477,7 +462,6 @@ index 04d95f4..0000000
 -
 -import org.eclipse.jgit.awtui.UIText;
 -import org.eclipse.jgit.console.ConsoleText;
--import org.eclipse.jgit.http.server.HttpServerText;
 -import org.eclipse.jgit.internal.JGitText;
 -import org.eclipse.jgit.iplog.IpLogText;
 -import org.eclipse.jgit.pgm.CLIText;
@@ -493,11 +477,6 @@ index 04d95f4..0000000
 -	@Test
 -	public void testJGitText() {
 -		NLS.getBundleFor(JGitText.class);
--	}
--
--	@Test
--	public void testHttpServerText() {
--		NLS.getBundleFor(HttpServerText.class);
 -	}
 -
 -	@Test
@@ -521,10 +500,10 @@ index 04d95f4..0000000
 -	}
 -}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-index fcc3bb6..872b58d 100644
+index 484039e..fb36482 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/MergeResult.java
-@@ -60,82 +60,73 @@
+@@ -60,110 +60,95 @@
   */
  public class MergeResult {
  
@@ -537,9 +516,11 @@ index fcc3bb6..872b58d 100644
 -			@Override
 +	public static abstract class MergeStatus {
 +		public static MergeStatus FAST_FORWARD = new FAST_FORWARD_Class ();
++		public static MergeStatus FAST_FORWARD_SQUASHED = new FAST_FORWARD_SQUASHED_Class ();
 +		public static MergeStatus ALREADY_UP_TO_DATE = new ALREADY_UP_TO_DATE_Class ();
 +		public static MergeStatus FAILED = new FAILED_Class ();
 +		public static MergeStatus MERGED = new MERGED_Class ();
++		public static MergeStatus MERGED_SQUASHED = new MERGED_SQUASHED_Class ();
 +		public static MergeStatus CONFLICTING = new CONFLICTING_Class ();
 +		public static MergeStatus NOT_SUPPORTED = new NOT_SUPPORTED_Class ();
 +
@@ -550,6 +531,25 @@ index fcc3bb6..872b58d 100644
  
 -			@Override
  			public boolean isSuccessful() {
+ 				return true;
+ 			}
+-		},
+-		/**
+-		 * @since 2.0
+-		 */
+-		FAST_FORWARD_SQUASHED {
+-			@Override
+-			public String toString() {
++		}
++
++		static class FAST_FORWARD_SQUASHED_Class extends MergeStatus {
++			public String toString () {
+ 				return "Fast-forward-squashed";
+ 			}
+ 
+-			@Override
+-			public boolean isSuccessful() {
++			public boolean isSuccessful () {
  				return true;
  			}
 -		},
@@ -598,6 +598,23 @@ index fcc3bb6..872b58d 100644
  				return true;
  			}
 -		},
+-		/**
+-		 * @since 2.0
+-		 */
+-		MERGED_SQUASHED {
+-			@Override
++		}
++
++		static class MERGED_SQUASHED_Class extends MergeStatus {
+ 			public String toString() {
+ 				return "Merged-squashed";
+ 			}
+ 
+-			@Override
+ 			public boolean isSuccessful() {
+ 				return true;
+ 			}
+-		},
 -		/** */
 -		CONFLICTING {
 -			@Override
@@ -632,7 +649,7 @@ index fcc3bb6..872b58d 100644
  
  		/**
  		 * @return whether the status indicates a successful result
-@@ -333,7 +324,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
+@@ -363,7 +348,10 @@ public void addConflict(String path, org.eclipse.jgit.merge.MergeResult<?> lowLe
  			}
  		}
  		int currentConflict = -1;
@@ -645,7 +662,7 @@ index fcc3bb6..872b58d 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index aa65726..7e8d8ec 100644
+index 6f0c3eb..71089ab 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -85,6 +85,7 @@
@@ -656,7 +673,7 @@ index aa65726..7e8d8ec 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
-@@ -693,30 +694,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
+@@ -696,30 +697,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -693,7 +710,7 @@ index aa65726..7e8d8ec 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -939,10 +937,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -942,10 +940,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -708,10 +725,10 @@ index aa65726..7e8d8ec 100644
  		private Action(String token) {
  			this.token = token;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
-index 4739f16..d05fa4e 100644
+index a09f8c2..d05fa4e 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseResult.java
-@@ -52,78 +52,58 @@
+@@ -52,80 +52,58 @@
   * The result of a {@link RebaseCommand} execution
   */
  public class RebaseResult {
@@ -799,13 +816,16 @@ index 4739f16..d05fa4e 100644
  				return true;
  			}
 -		},
-+		}
- 
+-
 -		/**
 -		 * Continue with nothing left to commit (possibly want skip).
+-		 *
+-		 * @since 2.0
 -		 */
 -		NOTHING_TO_COMMIT {
 -			@Override
++		}
++
 +		static class NOTHING_TO_COMMIT_Class extends Status {
  			public boolean isSuccessful() {
  				return false;
@@ -1320,10 +1340,10 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index 339dbdd..8ceb6f5 100644
+index 2410d6f..8dfe0a3 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-@@ -105,7 +105,7 @@
+@@ -104,7 +104,7 @@
  
  	private NameConflictTreeWalk tw;
  
@@ -1398,7 +1418,7 @@ index f28facb..f8283f2 100644
  		INSERTED, EXISTS_PACKED, EXISTS_LOOSE, FAILURE;
  	}
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
-index 180bf60..1271b87 100644
+index 990106b..20aafab 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/file/PackReverseIndex.java
 @@ -68,18 +68,18 @@
@@ -1425,7 +1445,7 @@ index 180bf60..1271b87 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index 1a056e3..fdb6de7 100644
+index d93e2d6..989e8ba 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 @@ -189,7 +189,7 @@ public void remove() {
@@ -1460,11 +1480,11 @@ index c7cee1e..d16e1c0 100644
  	/** The repository this transport fetches into, or pushes out of. */
  	protected final Repository local;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-index 347fd93..56d70fb 100644
+index 582b75a..f02608a 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/BasePackFetchConnection.java
-@@ -150,8 +150,12 @@
- 	/** The client supports receiving a pack before it has sent "done". */
+@@ -180,8 +180,12 @@
+ 	 */
  	public static final String OPTION_NO_DONE = "no-done";
  
 -	static enum MultiAck {
@@ -1478,7 +1498,7 @@ index 347fd93..56d70fb 100644
  	}
  
  	private final RevWalk walk;
-@@ -171,7 +175,7 @@
+@@ -201,7 +205,7 @@
  	/** Marks a commit listed in the advertised refs. */
  	final RevFlag ADVERTISED;
  
@@ -1488,10 +1508,10 @@ index 347fd93..56d70fb 100644
  	private boolean thinPack;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
-index 0a0de5b..4b5ec22 100644
+index 4c7ffec..493d059 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/ReceiveCommand.java
-@@ -83,7 +83,7 @@
+@@ -87,7 +87,7 @@
  		UPDATE_NONFASTFORWARD,
  
  		/** Delete an existing ref; the ref should already exist. */
@@ -1660,7 +1680,7 @@ index 315d909..98cedfa 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index 54eaeb9..3e56fb0 100644
+index ebe9f73..b19689f 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 @@ -132,6 +132,12 @@
@@ -1708,7 +1728,7 @@ index 54eaeb9..3e56fb0 100644
  		return false;
  	}
  
-@@ -737,8 +750,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
+@@ -749,8 +762,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();

@@ -106,12 +106,9 @@ namespace NGit.Api
 		/// </returns>
 		/// <exception cref="NGit.Api.Errors.InvalidRemoteException">when called with an invalid remote uri
 		/// 	</exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">
-		/// a low-level exception of JGit has occurred. The original
-		/// exception can be retrieved by calling
-		/// <see cref="System.Exception.InnerException()">System.Exception.InnerException()</see>
-		/// .
-		/// </exception>
+		/// <exception cref="NGit.Api.Errors.TransportException">when an error occurs during transport
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override FetchResult Call()
 		{
 			CheckCallable();
@@ -142,10 +139,9 @@ namespace NGit.Api
 				throw new InvalidRemoteException(MessageFormat.Format(JGitText.Get().invalidRemote
 					, remote), e);
 			}
-			catch (TransportException e)
+			catch (NGit.Errors.TransportException e)
 			{
-				throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfFetchCommand
-					, e);
+				throw new NGit.Errors.TransportException(e.Message, e);
 			}
 			catch (URISyntaxException)
 			{

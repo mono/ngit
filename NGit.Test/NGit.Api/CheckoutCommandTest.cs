@@ -46,6 +46,7 @@ using System.IO;
 using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
+using NGit.Dircache;
 using NGit.Revwalk;
 using NGit.Transport;
 using NGit.Util;
@@ -112,10 +113,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsNotNull(db.GetRef("test2"));
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.RefAlreadyExistsException"></exception>
-		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
-		/// <exception cref="NGit.Api.Errors.CheckoutConflictException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCheckoutToNonExistingBranch()
 		{
@@ -235,11 +233,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.RefAlreadyExistsException"></exception>
-		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
-		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="NGit.Api.Errors.CheckoutConflictException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestDetachedHeadOnCheckout()
 		{
@@ -251,6 +246,38 @@ namespace NGit.Api
 			Ref head = db.GetRef(Constants.HEAD);
 			NUnit.Framework.Assert.IsFalse(head.IsSymbolic());
 			NUnit.Framework.Assert.AreSame(head, head.GetTarget());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestUpdateSmudgedEntries()
+		{
+			git.BranchCreate().SetName("test2").Call();
+			RefUpdate rup = db.UpdateRef(Constants.HEAD);
+			rup.Link("refs/heads/test2");
+			FilePath file = new FilePath(db.WorkTree, "Test.txt");
+			long size = file.Length();
+			long mTime = file.LastModified() - 5000L;
+			NUnit.Framework.Assert.IsTrue(file.SetLastModified(mTime));
+			DirCache cache = DirCache.Lock(db.GetIndexFile(), db.FileSystem);
+			DirCacheEntry entry = cache.GetEntry("Test.txt");
+			NUnit.Framework.Assert.IsNotNull(entry);
+			entry.SetLength(0);
+			entry.LastModified = 0;
+			cache.Write();
+			NUnit.Framework.Assert.IsTrue(cache.Commit());
+			cache = DirCache.Read(db.GetIndexFile(), db.FileSystem);
+			entry = cache.GetEntry("Test.txt");
+			NUnit.Framework.Assert.IsNotNull(entry);
+			NUnit.Framework.Assert.AreEqual(0, entry.Length);
+			NUnit.Framework.Assert.AreEqual(0, entry.LastModified);
+			db.GetIndexFile().SetLastModified(db.GetIndexFile().LastModified() - 5000);
+			NUnit.Framework.Assert.IsNotNull(git.Checkout().SetName("test").Call());
+			cache = DirCache.Read(db.GetIndexFile(), db.FileSystem);
+			entry = cache.GetEntry("Test.txt");
+			NUnit.Framework.Assert.IsNotNull(entry);
+			NUnit.Framework.Assert.AreEqual(size, entry.Length);
+			NUnit.Framework.Assert.AreEqual(mTime, entry.LastModified);
 		}
 	}
 }

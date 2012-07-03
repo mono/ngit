@@ -174,7 +174,6 @@ namespace NGit.Api
 			return false;
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		private ObjectId GetHeadTree()
 		{
@@ -194,7 +193,6 @@ namespace NGit.Api
 			return headTree;
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		private ObjectId GetStashId()
 		{
@@ -265,7 +263,7 @@ namespace NGit.Api
 					entry.SetObjectId(stashIndexIter.EntryObjectId);
 					DirCacheCheckout.CheckoutEntry(repo, file, entry, treeWalk.ObjectReader);
 					DirCacheEntry updatedEntry = entry;
-					editor.Add(new _PathEdit_271(updatedEntry, path));
+					editor.Add(new _PathEdit_270(updatedEntry, path));
 					// Checkout working directory change
 					if (!stashWorkingIter.IdEqual(stashIndexIter))
 					{
@@ -286,9 +284,9 @@ namespace NGit.Api
 			}
 		}
 
-		private sealed class _PathEdit_271 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_270 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_271(DirCacheEntry updatedEntry, string baseArg1) : base(baseArg1
+			public _PathEdit_270(DirCacheEntry updatedEntry, string baseArg1) : base(baseArg1
 				)
 			{
 				this.updatedEntry = updatedEntry;
@@ -305,8 +303,10 @@ namespace NGit.Api
 		/// <summary>Apply the changes in a stashed commit to the working directory and index
 		/// 	</summary>
 		/// <returns>id of stashed commit that was applied</returns>
-		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException">NGit.Api.Errors.WrongRepositoryStateException
+		/// 	</exception>
 		public override ObjectId Call()
 		{
 			CheckCallable();

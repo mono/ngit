@@ -78,7 +78,7 @@ namespace NGit.Api
 			return this;
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override IDictionary<string, SubmoduleStatus> Call()
 		{
 			CheckCallable();
@@ -130,7 +130,15 @@ namespace NGit.Api
 			{
 				return new SubmoduleStatus(SubmoduleStatusType.UNINITIALIZED, path, id);
 			}
-			ObjectId headId = subRepo.Resolve(Constants.HEAD);
+			ObjectId headId;
+			try
+			{
+				headId = subRepo.Resolve(Constants.HEAD);
+			}
+			finally
+			{
+				subRepo.Close();
+			}
 			// Report uninitialized if no HEAD commit in submodule repository
 			if (headId == null)
 			{

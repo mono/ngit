@@ -210,7 +210,7 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual("refs/remotes/test/a", tru.GetLocalName());
 			NUnit.Framework.Assert.AreEqual("refs/heads/a", tru.GetRemoteName());
 			NUnit.Framework.Assert.AreEqual(db.Resolve("refs/heads/a"), tru.GetNewObjectId());
-			NUnit.Framework.Assert.IsNull(tru.GetOldObjectId());
+			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, tru.GetOldObjectId());
 		}
 
 		[NUnit.Framework.Test]

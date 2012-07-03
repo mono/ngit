@@ -499,9 +499,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.RefAlreadyExistsException"></exception>
-		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
-		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public virtual Ref CreateBranch(Git actGit, string name, bool force, string startPoint
 			, CreateBranchCommand.SetupUpstreamMode? mode)
 		{

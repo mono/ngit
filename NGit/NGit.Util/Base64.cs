@@ -359,7 +359,8 @@ namespace NGit.Util
 					if (sbiDecode != WHITE_SPACE_DEC)
 					{
 						throw new ArgumentException(MessageFormat.Format(JGitText.Get().badBase64InputCharacterAt
-							, i, source[i] & unchecked((int)(0xff))));
+							, Sharpen.Extensions.ValueOf(i), Sharpen.Extensions.ValueOf(source[i] & unchecked(
+							(int)(0xff)))));
 					}
 				}
 			}

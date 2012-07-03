@@ -73,5 +73,14 @@ namespace NGit.Transport
 		protected internal HttpTransport(Repository local, URIish uri) : base(local, uri)
 		{
 		}
+
+		/// <summary>Create a minimal HTTP transport instance not tied to a single repository.
+		/// 	</summary>
+		/// <remarks>Create a minimal HTTP transport instance not tied to a single repository.
+		/// 	</remarks>
+		/// <param name="uri"></param>
+		protected internal HttpTransport(URIish uri) : base(uri)
+		{
+		}
 	}
 }

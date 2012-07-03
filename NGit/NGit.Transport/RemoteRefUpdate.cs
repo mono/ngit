@@ -109,6 +109,8 @@ namespace NGit.Transport
 
 		private readonly Repository localDb;
 
+		private RefUpdate localUpdate;
+
 		/// <summary>Construct remote ref update request by providing an update specification.
 		/// 	</summary>
 		/// <remarks>
@@ -309,8 +311,13 @@ namespace NGit.Transport
 			this.forceUpdate = forceUpdate;
 			if (localName != null && localDb != null)
 			{
-				trackingRefUpdate = new TrackingRefUpdate(localDb, localName, remoteName, true, newObjectId
-					, "push");
+				localUpdate = localDb.UpdateRef(localName);
+				localUpdate.SetForceUpdate(true);
+				localUpdate.SetRefLogMessage("push", true);
+				localUpdate.SetNewObjectId(newObjectId);
+				trackingRefUpdate = new TrackingRefUpdate(true, remoteName, localName, localUpdate
+					.GetOldObjectId() != null ? localUpdate.GetOldObjectId() : ObjectId.ZeroId, newObjectId
+					);
 			}
 			else
 			{
@@ -475,11 +482,11 @@ namespace NGit.Transport
 		{
 			if (IsDelete())
 			{
-				trackingRefUpdate.Delete(walk);
+				trackingRefUpdate.SetResult(localUpdate.Delete(walk));
 			}
 			else
 			{
-				trackingRefUpdate.Update(walk);
+				trackingRefUpdate.SetResult(localUpdate.Update(walk));
 			}
 		}
 

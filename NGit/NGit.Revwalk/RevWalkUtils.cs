@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Collections.Generic;
 using NGit.Revwalk;
 using Sharpen;
 
@@ -88,18 +89,51 @@ namespace NGit.Revwalk
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		public static int Count(RevWalk walk, RevCommit start, RevCommit end)
 		{
+			return Find(walk, start, end).Count;
+		}
+
+		/// <summary>
+		/// Find commits that are reachable from <code>start</code> until a commit
+		/// that is reachable from <code>end</code> is encountered.
+		/// </summary>
+		/// <remarks>
+		/// Find commits that are reachable from <code>start</code> until a commit
+		/// that is reachable from <code>end</code> is encountered. In other words,
+		/// Find of commits that are in <code>start</code>, but not in
+		/// <code>end</code>.
+		/// <p>
+		/// Note that this method calls
+		/// <see cref="RevWalk.Reset()">RevWalk.Reset()</see>
+		/// at the beginning.
+		/// Also note that the existing rev filter on the walk is left as-is, so be
+		/// sure to set the right rev filter before calling this method.
+		/// </remarks>
+		/// <param name="walk">the rev walk to use</param>
+		/// <param name="start">the commit to start counting from</param>
+		/// <param name="end">
+		/// the commit where counting should end, or null if counting
+		/// should be done until there are no more commits
+		/// </param>
+		/// <returns>the commits found</returns>
+		/// <exception cref="NGit.Errors.MissingObjectException">NGit.Errors.MissingObjectException
+		/// 	</exception>
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException">NGit.Errors.IncorrectObjectTypeException
+		/// 	</exception>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public static IList<RevCommit> Find(RevWalk walk, RevCommit start, RevCommit end)
+		{
 			walk.Reset();
 			walk.MarkStart(start);
 			if (end != null)
 			{
 				walk.MarkUninteresting(end);
 			}
-			int count = 0;
-			for (RevCommit c = walk.Next(); c != null; c = walk.Next())
+			IList<RevCommit> commits = new AList<RevCommit>();
+			foreach (RevCommit c in walk)
 			{
-				count++;
+				commits.AddItem(c);
 			}
-			return count;
+			return commits;
 		}
 	}
 }

@@ -51,6 +51,7 @@ namespace NGit.Api
 	/// Encapsulates the result of a
 	/// <see cref="ApplyCommand">ApplyCommand</see>
 	/// </summary>
+	/// <since>2.0</since>
 	public class ApplyResult
 	{
 		private IList<FilePath> updatedFiles = new AList<FilePath>();

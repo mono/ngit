@@ -267,7 +267,7 @@ namespace NGit.Revplot
 				{
 					newPos = positionsAllocated++;
 				}
-				freePositions.AddItem(commit.lane.GetPosition());
+				freePositions.AddItem(Sharpen.Extensions.ValueOf(commit.lane.GetPosition()));
 				activeLanes.Remove(commit.lane);
 				commit.lane.position = newPos;
 				activeLanes.AddItem(commit.lane);

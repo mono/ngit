@@ -236,7 +236,7 @@ namespace NGit.Patch
 			if (charsetGuess != null && charsetGuess.Length != GetParentCount() + 1)
 			{
 				throw new ArgumentException(MessageFormat.Format(JGitText.Get().expectedCharacterEncodingGuesses
-					, (GetParentCount() + 1)));
+					, Sharpen.Extensions.ValueOf(GetParentCount() + 1)));
 			}
 			if (TrySimpleConversion(charsetGuess))
 			{

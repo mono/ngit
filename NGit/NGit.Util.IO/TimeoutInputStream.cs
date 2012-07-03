@@ -81,8 +81,8 @@ namespace NGit.Util.IO
 		{
 			if (millis < 0)
 			{
-				throw new ArgumentException(MessageFormat.Format(JGitText.Get().invalidTimeout, millis
-					));
+				throw new ArgumentException(MessageFormat.Format(JGitText.Get().invalidTimeout, Sharpen.Extensions.ValueOf
+					(millis)));
 			}
 			timeout = millis;
 		}

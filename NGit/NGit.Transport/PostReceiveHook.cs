@@ -57,7 +57,7 @@ namespace NGit.Transport
 	/// <see cref="Result.OK">Result.OK</see>
 	/// are passed into the hook. To get
 	/// all commands within the hook, see
-	/// <see cref="ReceivePack.GetAllCommands()">ReceivePack.GetAllCommands()</see>
+	/// <see cref="BaseReceivePack.GetAllCommands()">BaseReceivePack.GetAllCommands()</see>
 	/// .
 	/// <p>
 	/// Any post-receive hook implementation should not update the status of a

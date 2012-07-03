@@ -54,14 +54,7 @@ namespace NGit.Api
 	[NUnit.Framework.TestFixture]
 	public class TagCommandTest : RepositoryTestCase
 	{
-		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
-		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
-		/// <exception cref="NGit.Api.Errors.InvalidTagNameException"></exception>
-		/// <exception cref="NGit.Errors.MissingObjectException"></exception>
-		/// <exception cref="NGit.Errors.IncorrectObjectTypeException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestTaggingOnHead()
@@ -75,13 +68,8 @@ namespace NGit.Api
 				());
 		}
 
-		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
-		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
-		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
-		/// <exception cref="NGit.Api.Errors.InvalidTagNameException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestTagging()
 		{
@@ -93,12 +81,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(commit.Id, db.Peel(tagRef).GetPeeledObjectId());
 		}
 
-		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
-		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
-		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestEmptyTagName()
 		{
@@ -116,12 +99,7 @@ namespace NGit.Api
 		}
 
 		// should hit here
-		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
-		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
-		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestInvalidTagName()
 		{
@@ -138,13 +116,7 @@ namespace NGit.Api
 		}
 
 		// should hit here
-		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoMessageException"></exception>
-		/// <exception cref="NGit.Errors.UnmergedPathException"></exception>
-		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
-		/// <exception cref="NGit.Api.Errors.InvalidTagNameException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestFailureOnSignedTags()
 		{

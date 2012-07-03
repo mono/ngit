@@ -102,7 +102,7 @@ namespace Sharpen
 		
 		public static void SetProperty (string key, string value)
 		{
-//			throw new NotImplementedException ();
+			GetProperties () [key] = value;
 		}
 
 		public static Runtime GetRuntime ()

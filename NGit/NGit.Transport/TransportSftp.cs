@@ -276,7 +276,7 @@ namespace NGit.Transport
 						{
 							continue;
 						}
-						mtimes.Put(n, ent_1.GetAttrs().GetMTime());
+						mtimes.Put(n, Sharpen.Extensions.ValueOf(ent_1.GetAttrs().GetMTime()));
 						packs.AddItem(n);
 					}
 					packs.Sort(new _IComparer_249(mtimes));

@@ -11,22 +11,22 @@
     <AssemblyName>NGit.Test</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>..\bin</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>False</Optimize>
     <OutputPath>..\bin</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -264,6 +264,20 @@
     <Compile Include="NGit.Transport\SpiTransport.cs" />
     <Compile Include="NGit.Api\HugeFileTest.cs" />
     <Compile Include="NGit.Util\ReadLinesTest.cs" />
+    <Compile Include="NGit\IndexModificationTimesTest.cs" />
+    <Compile Include="NGit\SquashCommitMsgTest.cs" />
+    <Compile Include="NGit.Api\ApplyCommandTest.cs" />
+    <Compile Include="NGit.Api\RenameBranchCommandTest.cs" />
+    <Compile Include="NGit.Api\StashApplyCommandTest.cs" />
+    <Compile Include="NGit.Api\StashCreateCommandTest.cs" />
+    <Compile Include="NGit.Api\StashDropCommandTest.cs" />
+    <Compile Include="NGit.Merge\ResolveMergerTest.cs" />
+    <Compile Include="NGit.Merge\SquashMessageFormatterTest.cs" />
+    <Compile Include="NGit.Revwalk\RevCommitListTest.cs" />
+    <Compile Include="NGit.Transport\OpenSshConfigTest.cs" />
+    <Compile Include="NGit.Transport\PackParserTest.cs" />
+    <Compile Include="NGit.Transport\ReceivePackAdvertiseRefsHookTest.cs" />
+    <Compile Include="NGit.Util\GitDateFormatterTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -428,5 +442,54 @@
     <EmbeddedResource Include="resources\NonTranslatedBundle.properties">
       <LogicalName>NGit.Nls.NonTranslatedBundle.properties</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="NGit.Diff\A1_PostImage" />
+    <EmbeddedResource Include="NGit.Diff\A1.patch" />
+    <EmbeddedResource Include="NGit.Diff\A2_PostImage" />
+    <EmbeddedResource Include="NGit.Diff\A2.patch" />
+    <EmbeddedResource Include="NGit.Diff\D_PreImage" />
+    <EmbeddedResource Include="NGit.Diff\D.patch" />
+    <EmbeddedResource Include="NGit.Diff\E_PostImage" />
+    <EmbeddedResource Include="NGit.Diff\E_PreImage" />
+    <EmbeddedResource Include="NGit.Diff\E.patch" />
+    <EmbeddedResource Include="NGit.Diff\F1_PreImage" />
+    <EmbeddedResource Include="NGit.Diff\F1.patch" />
+    <EmbeddedResource Include="NGit.Diff\F2_PreImage" />
+    <EmbeddedResource Include="NGit.Diff\F2.patch" />
+    <EmbeddedResource Include="NGit.Diff\X_PostImage" />
+    <EmbeddedResource Include="NGit.Diff\X_PreImage" />
+    <EmbeddedResource Include="NGit.Diff\X.patch" />
+    <EmbeddedResource Include="NGit.Diff\Y_PostImage" />
+    <EmbeddedResource Include="NGit.Diff\Y_PreImage" />
+    <EmbeddedResource Include="NGit.Diff\Y.patch" />
+    <EmbeddedResource Include="NGit.Diff\Z_PostImage" />
+    <EmbeddedResource Include="NGit.Diff\Z_PreImage" />
+    <EmbeddedResource Include="NGit.Diff\Z.patch" />
+    <EmbeddedResource Include="NGit.Diff\testContext0.out" />
+    <EmbeddedResource Include="NGit.Diff\testContext1.out" />
+    <EmbeddedResource Include="NGit.Diff\testContext3.out" />
+    <EmbeddedResource Include="NGit.Diff\testContext5.out" />
+    <EmbeddedResource Include="NGit.Diff\testContext10.out" />
+    <EmbeddedResource Include="NGit.Diff\testContext100.out" />
+    <EmbeddedResource Include="NGit.Patch\testEditList_Types.patch" />
+    <EmbeddedResource Include="NGit.Patch\testError_BodyTooLong.patch" />
+    <EmbeddedResource Include="NGit.Patch\testError_CcTruncatedOld.patch" />
+    <EmbeddedResource Include="NGit.Patch\testError_DisconnectedHunk.patch" />
+    <EmbeddedResource Include="NGit.Patch\testError_GarbageBetweenFiles.patch" />
+    <EmbeddedResource Include="NGit.Patch\testError_GitBinaryNoForwardHunk.patch" />
+    <EmbeddedResource Include="NGit.Patch\testError_TruncatedNew.patch" />
+    <EmbeddedResource Include="NGit.Patch\testError_TruncatedOld.patch" />
+    <EmbeddedResource Include="NGit.Patch\testGetText_BothISO88591.patch" />
+    <EmbeddedResource Include="NGit.Patch\testGetText_Convert.patch" />
+    <EmbeddedResource Include="NGit.Patch\testGetText_DiffCc.patch" />
+    <EmbeddedResource Include="NGit.Patch\testGetText_NoBinary.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_AddNoNewline.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_CcDeleteFile.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_CcNewFile.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_ConfigCaseInsensitive.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_FixNoNewline.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_GitBinaryDelta.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_GitBinaryLiteral.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_NoBinary.patch" />
+    <EmbeddedResource Include="NGit.Patch\testParse_OneFileCc.patch" />
   </ItemGroup>
 </Project>

@@ -63,13 +63,12 @@ namespace NGit.Api
 		/// <code>Init</code>
 		/// command.
 		/// </summary>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">if the repository can't be created
-		/// 	</exception>
 		/// <returns>
 		/// the newly created
 		/// <code>Git</code>
 		/// object with associated repository
 		/// </returns>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public virtual Git Call()
 		{
 			try

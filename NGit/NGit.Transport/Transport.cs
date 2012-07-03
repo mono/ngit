@@ -627,6 +627,31 @@ namespace NGit.Transport
 				, uri));
 		}
 
+		/// <summary>Open a new transport with no local repository.</summary>
+		/// <remarks>Open a new transport with no local repository.</remarks>
+		/// <param name="uri"></param>
+		/// <returns>new Transport instance</returns>
+		/// <exception cref="System.NotSupportedException">System.NotSupportedException</exception>
+		/// <exception cref="NGit.Errors.TransportException">NGit.Errors.TransportException</exception>
+		public static NGit.Transport.Transport Open(URIish uri)
+		{
+			foreach (WeakReference<TransportProtocol> @ref in protocols)
+			{
+				TransportProtocol proto = @ref.Get();
+				if (proto == null)
+				{
+					protocols.Remove(@ref);
+					continue;
+				}
+				if (proto.CanHandle(uri, null, null))
+				{
+					return proto.Open(uri);
+				}
+			}
+			throw new NGit.Errors.NotSupportedException(MessageFormat.Format(JGitText.Get().URINotSupported
+				, uri));
+		}
+
 		/// <summary>
 		/// Convert push remote refs update specification from
 		/// <see cref="RefSpec">RefSpec</see>
@@ -865,6 +890,17 @@ namespace NGit.Transport
 			this.local = local;
 			this.uri = uri;
 			this.checkFetchedObjects = tc.IsFsckObjects();
+			this.credentialsProvider = CredentialsProvider.GetDefault();
+		}
+
+		/// <summary>Create a minimal transport instance not tied to a single repository.</summary>
+		/// <remarks>Create a minimal transport instance not tied to a single repository.</remarks>
+		/// <param name="uri"></param>
+		protected internal Transport(URIish uri)
+		{
+			this.uri = uri;
+			this.local = null;
+			this.checkFetchedObjects = true;
 			this.credentialsProvider = CredentialsProvider.GetDefault();
 		}
 

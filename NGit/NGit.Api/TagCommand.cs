@@ -99,14 +99,8 @@ namespace NGit.Api
 		/// </returns>
 		/// <exception cref="NGit.Api.Errors.NoHeadException">when called on a git repo without a HEAD reference
 		/// 	</exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">
-		/// a low-level exception of JGit has occurred. The original
-		/// exception can be retrieved by calling
-		/// <see cref="System.Exception.InnerException()">System.Exception.InnerException()</see>
-		/// . Expect only
-		/// <code>IOException's</code>
-		/// to be wrapped.
-		/// </exception>
+		/// <since>2.0</since>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
 		/// <exception cref="NGit.Api.Errors.InvalidTagNameException"></exception>
 		public override Ref Call()

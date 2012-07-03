@@ -436,8 +436,8 @@ namespace NGit.Revwalk
 						default:
 						{
 							throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().corruptObjectInvalidMode3
-								, string.Format("%o", mode), idBuffer.Name, RawParseUtils.Decode(buf, tv.namePtr
-								, tv.nameEnd), tv.obj));
+								, string.Format("%o", Sharpen.Extensions.ValueOf(mode)), idBuffer.Name, RawParseUtils
+								.Decode(buf, tv.namePtr, tv.nameEnd), tv.obj));
 						}
 					}
 				}
@@ -917,7 +917,8 @@ namespace NGit.Revwalk
 					{
 						idBuffer.FromRaw(raw, ptr);
 						throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().corruptObjectInvalidMode3
-							, string.Format("%o", mode), idBuffer.Name, string.Empty, tree));
+							, string.Format("%o", Sharpen.Extensions.ValueOf(mode)), idBuffer.Name, string.Empty
+							, tree));
 					}
 				}
 				ptr += ID_SZ;

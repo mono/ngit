@@ -70,8 +70,8 @@ namespace NGit.Storage.File
 			WriteTrashFile("file.txt", "content2");
 			git.Add().AddFilepattern("file.txt").Call();
 			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("edit file").Call());
-			NUnit.Framework.Assert.IsTrue(new LockFile(db.GetIndexFile(), db.FileSystem).Lock
-				());
+			LockFile lf = new LockFile(db.GetIndexFile(), db.FileSystem);
+			NUnit.Framework.Assert.IsTrue(lf.Lock());
 			try
 			{
 				git.Checkout().SetName(commit1.Name).Call();
@@ -80,7 +80,7 @@ namespace NGit.Storage.File
 			catch (JGitInternalException e)
 			{
 				NUnit.Framework.Assert.IsTrue(e.InnerException is LockFailedException);
-				LockFile.Unlock(((LockFailedException)e.InnerException).GetFile());
+				lf.Unlock();
 				git.Checkout().SetName(commit1.Name).Call();
 			}
 		}

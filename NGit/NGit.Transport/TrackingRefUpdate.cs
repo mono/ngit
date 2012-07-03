@@ -42,7 +42,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
-using NGit.Revwalk;
 using NGit.Transport;
 using Sharpen;
 
@@ -54,24 +53,24 @@ namespace NGit.Transport
 	{
 		private readonly string remoteName;
 
-		private readonly RefUpdate update;
+		private readonly string localName;
 
-		/// <exception cref="System.IO.IOException"></exception>
-		internal TrackingRefUpdate(Repository db, RefSpec spec, AnyObjectId nv, string msg
-			) : this(db, spec.GetDestination(), spec.GetSource(), spec.IsForceUpdate(), nv, 
-			msg)
-		{
-		}
+		private bool forceUpdate;
 
-		/// <exception cref="System.IO.IOException"></exception>
-		internal TrackingRefUpdate(Repository db, string localName, string remoteName, bool
-			 forceUpdate, AnyObjectId nv, string msg)
+		private ObjectId oldObjectId;
+
+		private ObjectId newObjectId;
+
+		private RefUpdate.Result result;
+
+		internal TrackingRefUpdate(bool canForceUpdate, string remoteName, string localName
+			, AnyObjectId oldValue, AnyObjectId newValue)
 		{
 			this.remoteName = remoteName;
-			update = db.UpdateRef(localName);
-			update.SetForceUpdate(forceUpdate);
-			update.SetNewObjectId(nv);
-			update.SetRefLogMessage(msg, true);
+			this.localName = localName;
+			this.forceUpdate = canForceUpdate;
+			this.oldObjectId = oldValue.Copy();
+			this.newObjectId = newValue.Copy();
 		}
 
 		/// <summary>Get the name of the remote ref.</summary>
@@ -95,7 +94,7 @@ namespace NGit.Transport
 		/// <returns>the name used within this local repository.</returns>
 		public virtual string GetLocalName()
 		{
-			return update.GetName();
+			return localName;
 		}
 
 		/// <summary>Get the new value the ref will be (or was) updated to.</summary>
@@ -103,7 +102,7 @@ namespace NGit.Transport
 		/// <returns>new value. Null if the caller has not configured it.</returns>
 		public virtual ObjectId GetNewObjectId()
 		{
-			return update.GetNewObjectId();
+			return newObjectId;
 		}
 
 		/// <summary>The old value of the ref, prior to the update being attempted.</summary>
@@ -115,13 +114,10 @@ namespace NGit.Transport
 		/// value may change if someone else modified the ref between the time we
 		/// last read it and when the ref was locked for update.
 		/// </remarks>
-		/// <returns>
-		/// the value of the ref prior to the update being attempted; null if
-		/// the updated has not been attempted yet.
-		/// </returns>
+		/// <returns>the value of the ref prior to the update being attempted.</returns>
 		public virtual ObjectId GetOldObjectId()
 		{
-			return update.GetOldObjectId();
+			return oldObjectId;
 		}
 
 		/// <summary>Get the status of this update.</summary>
@@ -129,19 +125,112 @@ namespace NGit.Transport
 		/// <returns>the status of the update.</returns>
 		public virtual RefUpdate.Result GetResult()
 		{
-			return update.GetResult();
+			return result;
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
-		internal virtual void Update(RevWalk walk)
+		internal virtual void SetResult(RefUpdate.Result result)
 		{
-			update.Update(walk);
+			this.result = result;
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
-		internal virtual void Delete(RevWalk walk)
+		internal virtual ReceiveCommand AsReceiveCommand()
 		{
-			update.Delete(walk);
+			return new TrackingRefUpdate.Command(this);
+		}
+
+		internal sealed class Command : ReceiveCommand
+		{
+			public Command(TrackingRefUpdate _enclosing) : base(_enclosing.oldObjectId, 
+				_enclosing.newObjectId, _enclosing.localName)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			internal bool CanForceUpdate()
+			{
+				return this._enclosing.forceUpdate;
+			}
+
+			public override void SetResult(RefUpdate.Result status)
+			{
+				this._enclosing.result = status;
+				base.SetResult(status);
+			}
+
+			public override void SetResult(ReceiveCommand.Result status)
+			{
+				this._enclosing.result = this.Decode(status);
+				base.SetResult(status);
+			}
+
+			public override void SetResult(ReceiveCommand.Result status, string msg)
+			{
+				this._enclosing.result = this.Decode(status);
+				base.SetResult(status, msg);
+			}
+
+			private RefUpdate.Result Decode(ReceiveCommand.Result status)
+			{
+				switch (status)
+				{
+					case ReceiveCommand.Result.OK:
+					{
+						if (AnyObjectId.Equals(this._enclosing.oldObjectId, this._enclosing.newObjectId))
+						{
+							return RefUpdate.Result.NO_CHANGE;
+						}
+						switch (this.GetType())
+						{
+							case ReceiveCommand.Type.CREATE:
+							{
+								return RefUpdate.Result.NEW;
+							}
+
+							case ReceiveCommand.Type.UPDATE:
+							{
+								return RefUpdate.Result.FAST_FORWARD;
+							}
+
+							case ReceiveCommand.Type.DELETE:
+							case ReceiveCommand.Type.UPDATE_NONFASTFORWARD:
+							default:
+							{
+								return RefUpdate.Result.FORCED;
+								break;
+							}
+						}
+						goto case ReceiveCommand.Result.REJECTED_NOCREATE;
+					}
+
+					case ReceiveCommand.Result.REJECTED_NOCREATE:
+					case ReceiveCommand.Result.REJECTED_NODELETE:
+					case ReceiveCommand.Result.REJECTED_NONFASTFORWARD:
+					{
+						return RefUpdate.Result.REJECTED;
+					}
+
+					case ReceiveCommand.Result.REJECTED_CURRENT_BRANCH:
+					{
+						return RefUpdate.Result.REJECTED_CURRENT_BRANCH;
+					}
+
+					case ReceiveCommand.Result.REJECTED_MISSING_OBJECT:
+					{
+						return RefUpdate.Result.IO_FAILURE;
+					}
+
+					case ReceiveCommand.Result.LOCK_FAILURE:
+					case ReceiveCommand.Result.NOT_ATTEMPTED:
+					case ReceiveCommand.Result.REJECTED_OTHER_REASON:
+					default:
+					{
+						return RefUpdate.Result.LOCK_FAILURE;
+						break;
+					}
+				}
+			}
+
+			private readonly TrackingRefUpdate _enclosing;
 		}
 	}
 }

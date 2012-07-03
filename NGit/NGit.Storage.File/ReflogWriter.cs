@@ -52,6 +52,7 @@ using Sharpen;
 namespace NGit.Storage.File
 {
 	/// <summary>Utility for writing reflog entries</summary>
+	/// <since>2.0</since>
 	public class ReflogWriter
 	{
 		/// <summary>Get the ref name to be used for when locking a ref's log for rewriting</summary>

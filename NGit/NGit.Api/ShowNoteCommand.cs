@@ -66,7 +66,7 @@ namespace NGit.Api
 		{
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">upon internal failure</exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override Note Call()
 		{
 			CheckCallable();

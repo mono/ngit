@@ -41,7 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System.IO;
+using System;
 using Sharpen;
 
 namespace NGit.Errors
@@ -55,7 +55,7 @@ namespace NGit.Errors
 	/// properly formatted.
 	/// </remarks>
 	[System.Serializable]
-	public class RevisionSyntaxException : IOException
+	public class RevisionSyntaxException : ArgumentException
 	{
 		private const long serialVersionUID = 1L;
 

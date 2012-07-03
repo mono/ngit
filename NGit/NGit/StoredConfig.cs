@@ -83,5 +83,10 @@ namespace NGit
 		/// <remarks>Save the configuration to the persistent store.</remarks>
 		/// <exception cref="System.IO.IOException">the configuration could not be written.</exception>
 		public abstract void Save();
+
+		protected internal override void Clear()
+		{
+			base.Clear();
+		}
 	}
 }

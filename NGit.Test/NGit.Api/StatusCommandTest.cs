@@ -51,7 +51,8 @@ namespace NGit.Api
 	[NUnit.Framework.TestFixture]
 	public class StatusCommandTest : RepositoryTestCase
 	{
-		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Errors.NoWorkTreeException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestEmptyStatus()
 		{
@@ -120,25 +121,35 @@ namespace NGit.Api
 			git.Commit().SetMessage("t").Call();
 		}
 
-		static StringSet Set(params string[] elements)
+		public static StringSet Set(params string[] elements)
 		{
 			return new StringSet (elements);
 		}
 		
-		static StringSet Set(IEnumerable<string> elements)
+		public static StringSet Set(IEnumerable<string> elements)
 		{
 			return new StringSet (elements);
 		}
 		
-		class StringSet
+		public class StringSet : IEnumerable<string>
 		{
-			HashSet<string> sset = new HashSet<string> ();
-			
+			HashSet<string> sset;
+
 			public StringSet (IEnumerable<string> s)
 			{
-				sset.UnionWith (s);
+				sset = new HashSet<string>(s);
 			}
-			
+
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
+			{
+				return sset.GetEnumerator ();
+			}
+
+			IEnumerator<string> IEnumerable<string>.GetEnumerator ()
+			{
+				return sset.GetEnumerator ();
+			}
+
 			public override bool Equals (object obj)
 			{
 				StringSet s = obj as StringSet;

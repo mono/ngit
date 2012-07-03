@@ -59,6 +59,7 @@ namespace NGit.Api
 	/// <remarks>Apply a patch to files and/or to the index.</remarks>
 	/// <seealso><a href="http://www.kernel.org/pub/software/scm/git/docs/git-apply.html"
 	/// *      >Git documentation about apply</a></seealso>
+	/// <since>2.0</since>
 	public class ApplyCommand : GitCommand<ApplyResult>
 	{
 		private InputStream @in;
@@ -94,7 +95,12 @@ namespace NGit.Api
 		/// <see cref="ApplyResult">ApplyResult</see>
 		/// object representing the command result
 		/// </returns>
-		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.PatchFormatException">NGit.Api.Errors.PatchFormatException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.PatchApplyException">NGit.Api.Errors.PatchApplyException
+		/// 	</exception>
 		public override ApplyResult Call()
 		{
 			CheckCallable();

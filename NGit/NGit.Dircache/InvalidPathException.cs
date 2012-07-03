@@ -48,6 +48,7 @@ using Sharpen;
 namespace NGit.Dircache
 {
 	/// <summary>Thrown when JGit detects and refuses to use an invalid path</summary>
+	/// <since>2.0</since>
 	[System.Serializable]
 	public class InvalidPathException : ArgumentException
 	{

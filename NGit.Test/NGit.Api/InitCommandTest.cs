@@ -58,6 +58,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestInitRepository()
 		{
@@ -70,6 +72,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestInitNonEmptyRepository()
 		{
@@ -86,6 +90,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestInitBareRepository()
 		{

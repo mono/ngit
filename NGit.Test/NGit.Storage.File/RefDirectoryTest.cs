@@ -436,7 +436,7 @@ namespace NGit.Storage.File
 			WriteLooseRef("refs/heads/my/a/b/c", B);
 			int[] count = new int[1];
 			ListenerHandle listener = Repository.GetGlobalListenerList().AddRefsChangedListener
-				(new _RefsChangedListener_481(count));
+				(new _RefsChangedListener_483(count));
 			refs = refdir.GetRefs(RefDatabase.ALL);
 			refs = refdir.GetRefs(RefDatabase.ALL);
 			listener.Remove();
@@ -447,9 +447,9 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(B, refs.Get("refs/heads/my/a/b/c").GetObjectId());
 		}
 
-		private sealed class _RefsChangedListener_481 : RefsChangedListener
+		private sealed class _RefsChangedListener_483 : RefsChangedListener
 		{
-			public _RefsChangedListener_481(int[] count)
+			public _RefsChangedListener_483(int[] count)
 			{
 				this.count = count;
 			}
@@ -1025,6 +1025,64 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsTrue(master_p2.IsPeeled());
 			NUnit.Framework.Assert.IsNull(master_p2.GetPeeledObjectId());
 			NUnit.Framework.Assert.AreSame(master_p2, refdir.Peel(master_p2));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRefsChangedStackOverflow()
+		{
+			FileRepository newRepo = CreateBareRepository();
+			RefDatabase refDb = newRepo.RefDatabase;
+			FilePath packedRefs = new FilePath(newRepo.Directory, "packed-refs");
+			NUnit.Framework.Assert.IsTrue(packedRefs.CreateNewFile());
+			AtomicReference<StackOverflowError> error = new AtomicReference<StackOverflowError
+				>();
+			AtomicReference<IOException> exception = new AtomicReference<IOException>();
+			AtomicInteger changeCount = new AtomicInteger();
+			newRepo.Listeners.AddRefsChangedListener(new _RefsChangedListener_1092(refDb, changeCount
+				, error, exception));
+			refDb.GetRefs("ref");
+			refDb.GetRefs("ref");
+			NUnit.Framework.Assert.IsNull(error.Get());
+			NUnit.Framework.Assert.IsNull(exception.Get());
+			NUnit.Framework.Assert.AreEqual(1, changeCount.Get());
+		}
+
+		private sealed class _RefsChangedListener_1092 : RefsChangedListener
+		{
+			public _RefsChangedListener_1092(RefDatabase refDb, AtomicInteger changeCount, AtomicReference
+				<StackOverflowError> error, AtomicReference<IOException> exception)
+			{
+				this.refDb = refDb;
+				this.changeCount = changeCount;
+				this.error = error;
+				this.exception = exception;
+			}
+
+			public void OnRefsChanged(RefsChangedEvent @event)
+			{
+				try
+				{
+					refDb.GetRefs("ref");
+					changeCount.IncrementAndGet();
+				}
+				catch (StackOverflowError soe)
+				{
+					error.Set(soe);
+				}
+				catch (IOException ioe)
+				{
+					exception.Set(ioe);
+				}
+			}
+
+			private readonly RefDatabase refDb;
+
+			private readonly AtomicInteger changeCount;
+
+			private readonly AtomicReference<StackOverflowError> error;
+
+			private readonly AtomicReference<IOException> exception;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

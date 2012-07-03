@@ -59,6 +59,7 @@ namespace NGit.Submodule
 	[NUnit.Framework.TestFixture]
 	public class SubmoduleUpdateTest : RepositoryTestCase
 	{
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithNoSubmodules()
 		{
@@ -79,7 +80,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_93(commit, path));
+			editor.Add(new _PathEdit_94(commit, path));
 			editor.Commit();
 			StoredConfig config = ((FileBasedConfig)db.GetConfig());
 			config.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants.
@@ -98,13 +99,14 @@ namespace NGit.Submodule
 			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
 			Repository subRepo = generator.GetRepository();
+			AddRepoToClose(subRepo);
 			NUnit.Framework.Assert.IsNotNull(subRepo);
 			NUnit.Framework.Assert.AreEqual(commit, subRepo.Resolve(Constants.HEAD));
 		}
 
-		private sealed class _PathEdit_93 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_94 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_93(RevCommit commit, string baseArg1) : base(baseArg1)
+			public _PathEdit_94(RevCommit commit, string baseArg1) : base(baseArg1)
 			{
 				this.commit = commit;
 			}
@@ -119,6 +121,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithUnconfiguredSubmodule()
 		{
@@ -126,7 +129,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_134(id, path));
+			editor.Add(new _PathEdit_137(id, path));
 			editor.Commit();
 			FileBasedConfig modulesConfig = new FileBasedConfig(new FilePath(db.WorkTree, Constants
 				.DOT_GIT_MODULES), db.FileSystem);
@@ -145,9 +148,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsTrue(updated.IsEmpty());
 		}
 
-		private sealed class _PathEdit_134 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_137 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_134(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_137(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -162,6 +165,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithInitializedSubmodule()
 		{
@@ -169,7 +173,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_168(id, path));
+			editor.Add(new _PathEdit_172(id, path));
 			editor.Commit();
 			Repository subRepo = Git.Init().SetBare(false).SetDirectory(new FilePath(db.WorkTree
 				, path)).Call().GetRepository();
@@ -180,9 +184,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsTrue(updated.IsEmpty());
 		}
 
-		private sealed class _PathEdit_168 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_172 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_168(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_172(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}

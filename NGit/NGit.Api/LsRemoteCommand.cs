@@ -95,23 +95,38 @@ namespace NGit.Api
 
 		/// <summary>Include refs/heads in references results</summary>
 		/// <param name="heads"></param>
-		public virtual void SetHeads(bool heads)
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.LsRemoteCommand SetHeads(bool heads)
 		{
 			this.heads = heads;
+			return this;
 		}
 
 		/// <summary>Include refs/tags in references results</summary>
 		/// <param name="tags"></param>
-		public virtual void SetTags(bool tags)
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.LsRemoteCommand SetTags(bool tags)
 		{
 			this.tags = tags;
+			return this;
 		}
 
 		/// <summary>The full path of git-upload-pack on the remote host</summary>
 		/// <param name="uploadPack"></param>
-		public virtual void SetUploadPack(string uploadPack)
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.LsRemoteCommand SetUploadPack(string uploadPack)
 		{
 			this.uploadPack = uploadPack;
+			return this;
 		}
 
 		/// <summary>
@@ -127,12 +142,8 @@ namespace NGit.Api
 		/// <returns>a collection of references in the remote repository</returns>
 		/// <exception cref="NGit.Api.Errors.InvalidRemoteException">when called with an invalid remote uri
 		/// 	</exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">
-		/// a low-level exception of JGit has occurred. The original
-		/// exception can be retrieved by calling
-		/// <see cref="System.Exception.InnerException()">System.Exception.InnerException()</see>
-		/// .
-		/// </exception>
+		/// <exception cref="NGit.Api.Errors.TransportException">for errors that occurs during transport
+		/// 	</exception>
 		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override ICollection<Ref> Call()
 		{
@@ -190,10 +201,9 @@ namespace NGit.Api
 				throw new JGitInternalException(JGitText.Get().exceptionCaughtDuringExecutionOfLsRemoteCommand
 					, e);
 			}
-			catch (TransportException e)
+			catch (NGit.Errors.TransportException e)
 			{
-				throw new TransportException(JGitText.Get().exceptionCaughtDuringExecutionOfLsRemoteCommand
-					, e);
+				throw new NGit.Errors.TransportException(e.Message, e);
 			}
 			finally
 			{

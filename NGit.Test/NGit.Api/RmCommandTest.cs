@@ -67,9 +67,9 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
 		/// <exception cref="System.InvalidOperationException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestRemove()
 		{

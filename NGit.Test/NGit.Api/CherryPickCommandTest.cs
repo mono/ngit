@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Api;
+using NGit.Dircache;
 using NGit.Merge;
 using NGit.Revwalk;
 using NGit.Storage.File;
@@ -160,6 +161,36 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
 			NUnit.Framework.Assert.IsFalse(new FilePath(db.Directory, Constants.CHERRY_PICK_HEAD
 				).Exists());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCherryPickOverExecutableChangeOnNonExectuableFileSystem()
+		{
+			Git git = new Git(db);
+			FilePath file = WriteTrashFile("test.txt", "a");
+			NUnit.Framework.Assert.IsNotNull(git.Add().AddFilepattern("test.txt").Call());
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("commit1").Call());
+			NUnit.Framework.Assert.IsNotNull(git.Checkout().SetCreateBranch(true).SetName("a"
+				).Call());
+			WriteTrashFile("test.txt", "b");
+			NUnit.Framework.Assert.IsNotNull(git.Add().AddFilepattern("test.txt").Call());
+			RevCommit commit2 = git.Commit().SetMessage("commit2").Call();
+			NUnit.Framework.Assert.IsNotNull(commit2);
+			NUnit.Framework.Assert.IsNotNull(git.Checkout().SetName(Constants.MASTER).Call());
+			DirCache cache = db.LockDirCache();
+			cache.GetEntry("test.txt").FileMode = FileMode.EXECUTABLE_FILE;
+			cache.Write();
+			NUnit.Framework.Assert.IsTrue(cache.Commit());
+			cache.Unlock();
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("commit3").Call());
+			db.FileSystem.SetExecute(file, false);
+			git.GetRepository().GetConfig().SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null
+				, ConfigConstants.CONFIG_KEY_FILEMODE, false);
+			CherryPickResult result = git.CherryPick().Include(commit2).Call();
+			NUnit.Framework.Assert.IsNotNull(result);
+			NUnit.Framework.Assert.AreEqual(CherryPickResult.CherryPickStatus.OK, result.GetStatus
+				());
 		}
 
 		/// <exception cref="System.Exception"></exception>

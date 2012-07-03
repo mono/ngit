@@ -58,6 +58,7 @@ namespace NGit.Submodule
 	[NUnit.Framework.TestFixture]
 	public class SubmoduleSyncTest : RepositoryTestCase
 	{
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithNoSubmodules()
 		{
@@ -79,7 +80,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_95(id, path));
+			editor.Add(new _PathEdit_96(id, path));
 			editor.Commit();
 			FileBasedConfig modulesConfig = new FileBasedConfig(new FilePath(db.WorkTree, Constants
 				.DOT_GIT_MODULES), db.FileSystem);
@@ -91,6 +92,7 @@ namespace NGit.Submodule
 			modulesConfig.Save();
 			Repository subRepo = Git.CloneRepository().SetURI(db.Directory.ToURI().ToString()
 				).SetDirectory(new FilePath(db.WorkTree, path)).Call().GetRepository();
+			AddRepoToClose(subRepo);
 			NUnit.Framework.Assert.IsNotNull(subRepo);
 			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
@@ -106,14 +108,16 @@ namespace NGit.Submodule
 			generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
 			NUnit.Framework.Assert.AreEqual(url, generator.GetConfigUrl());
-			StoredConfig submoduleConfig = generator.GetRepository().GetConfig();
+			Repository subModRepository = generator.GetRepository();
+			AddRepoToClose(subModRepository);
+			StoredConfig submoduleConfig = subModRepository.GetConfig();
 			NUnit.Framework.Assert.AreEqual(url, submoduleConfig.GetString(ConfigConstants.CONFIG_REMOTE_SECTION
 				, Constants.DEFAULT_REMOTE_NAME, ConfigConstants.CONFIG_KEY_URL));
 		}
 
-		private sealed class _PathEdit_95 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_96 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_95(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_96(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -139,7 +143,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_153(id, path));
+			editor.Add(new _PathEdit_157(id, path));
 			editor.Commit();
 			string @base = "git://server/repo.git";
 			FileBasedConfig config = ((FileBasedConfig)db.GetConfig());
@@ -157,6 +161,7 @@ namespace NGit.Submodule
 			Repository subRepo = Git.CloneRepository().SetURI(db.Directory.ToURI().ToString()
 				).SetDirectory(new FilePath(db.WorkTree, path)).Call().GetRepository();
 			NUnit.Framework.Assert.IsNotNull(subRepo);
+			AddRepoToClose(subRepo);
 			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
 			NUnit.Framework.Assert.IsNull(generator.GetConfigUrl());
@@ -174,15 +179,17 @@ namespace NGit.Submodule
 			generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
 			NUnit.Framework.Assert.AreEqual("git://server/sub.git", generator.GetConfigUrl());
-			StoredConfig submoduleConfig = generator.GetRepository().GetConfig();
+			Repository subModRepository1 = generator.GetRepository();
+			AddRepoToClose(subModRepository1);
+			StoredConfig submoduleConfig = subModRepository1.GetConfig();
 			NUnit.Framework.Assert.AreEqual("git://server/sub.git", submoduleConfig.GetString
 				(ConfigConstants.CONFIG_REMOTE_SECTION, Constants.DEFAULT_REMOTE_NAME, ConfigConstants
 				.CONFIG_KEY_URL));
 		}
 
-		private sealed class _PathEdit_153 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_157 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_153(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_157(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}

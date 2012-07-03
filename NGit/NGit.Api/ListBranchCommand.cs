@@ -74,7 +74,7 @@ namespace NGit.Api
 		{
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">upon internal failure</exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override IList<Ref> Call()
 		{
 			CheckCallable();
@@ -105,14 +105,14 @@ namespace NGit.Api
 			}
 			IList<Ref> resultRefs = new AList<Ref>();
 			Sharpen.Collections.AddAll(resultRefs, refList.Values);
-			resultRefs.Sort(new _IComparer_114());
+			resultRefs.Sort(new _IComparer_111());
 			SetCallable(false);
 			return resultRefs;
 		}
 
-		private sealed class _IComparer_114 : IComparer<Ref>
+		private sealed class _IComparer_111 : IComparer<Ref>
 		{
-			public _IComparer_114()
+			public _IComparer_111()
 			{
 			}
 

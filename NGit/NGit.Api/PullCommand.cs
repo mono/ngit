@@ -85,13 +85,24 @@ namespace NGit.Api
 		/// command. Don't call this method twice on an instance.
 		/// </summary>
 		/// <returns>the result of the pull</returns>
-		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException"></exception>
-		/// <exception cref="NGit.Api.Errors.InvalidConfigurationException"></exception>
-		/// <exception cref="NGit.Api.Errors.DetachedHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.InvalidRemoteException"></exception>
-		/// <exception cref="NGit.Api.Errors.CanceledException"></exception>
-		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
+		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException">NGit.Api.Errors.WrongRepositoryStateException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.InvalidConfigurationException">NGit.Api.Errors.InvalidConfigurationException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.DetachedHeadException">NGit.Api.Errors.DetachedHeadException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.InvalidRemoteException">NGit.Api.Errors.InvalidRemoteException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.CanceledException">NGit.Api.Errors.CanceledException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.RefNotFoundException">NGit.Api.Errors.RefNotFoundException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.NoHeadException">NGit.Api.Errors.NoHeadException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.TransportException">NGit.Api.Errors.TransportException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
 		public override PullResult Call()
 		{
 			CheckCallable();
@@ -230,28 +241,9 @@ namespace NGit.Api
 			if (doRebase)
 			{
 				RebaseCommand rebase = new RebaseCommand(repo);
-				try
-				{
-					RebaseResult rebaseRes = rebase.SetUpstream(commitToMerge).SetProgressMonitor(monitor
-						).SetOperation(RebaseCommand.Operation.BEGIN).Call();
-					result = new PullResult(fetchRes, remote, rebaseRes);
-				}
-				catch (NoHeadException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
-				catch (RefNotFoundException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
-				catch (JGitInternalException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
-				catch (GitAPIException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
+				RebaseResult rebaseRes = rebase.SetUpstream(commitToMerge).SetProgressMonitor(monitor
+					).SetOperation(RebaseCommand.Operation.BEGIN).Call();
+				result = new PullResult(fetchRes, remote, rebaseRes);
 			}
 			else
 			{
@@ -259,37 +251,9 @@ namespace NGit.Api
 				string name = "branch \'" + Repository.ShortenRefName(remoteBranchName) + "\' of "
 					 + remoteUri;
 				merge.Include(name, commitToMerge);
-				MergeCommandResult mergeRes;
-				try
-				{
-					mergeRes = merge.Call();
-					monitor.Update(1);
-					result = new PullResult(fetchRes, remote, mergeRes);
-				}
-				catch (NoHeadException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
-				catch (ConcurrentRefUpdateException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
-				catch (NGit.Api.Errors.CheckoutConflictException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
-				catch (InvalidMergeHeadsException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
-				catch (WrongRepositoryStateException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
-				catch (NoMessageException e)
-				{
-					throw new JGitInternalException(e.Message, e);
-				}
+				MergeCommandResult mergeRes = merge.Call();
+				monitor.Update(1);
+				result = new PullResult(fetchRes, remote, mergeRes);
 			}
 			monitor.EndTask();
 			return result;

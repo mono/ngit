@@ -48,6 +48,7 @@ namespace NGit.Transport
 {
 	/// <summary>Indicates that a client request has not yet been read from the wire.</summary>
 	/// <remarks>Indicates that a client request has not yet been read from the wire.</remarks>
+	/// <since>2.0</since>
 	[System.Serializable]
 	public class RequestNotYetReadException : InvalidOperationException
 	{

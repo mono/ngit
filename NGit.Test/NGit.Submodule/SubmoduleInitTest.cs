@@ -60,6 +60,7 @@ namespace NGit.Submodule
 	[NUnit.Framework.TestFixture]
 	public class SubmoduleInitTest : RepositoryTestCase
 	{
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithNoSubmodules()
 		{
@@ -71,6 +72,7 @@ namespace NGit.Submodule
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithUninitializedModule()
 		{
@@ -140,6 +142,7 @@ namespace NGit.Submodule
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void ResolveOneLevelHigherRelativeUrl()
 		{
@@ -177,6 +180,7 @@ namespace NGit.Submodule
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void ResolveTwoLevelHigherRelativeUrl()
 		{
@@ -214,6 +218,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void ResolveWorkingDirectoryRelativeUrl()
@@ -256,6 +261,7 @@ namespace NGit.Submodule
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void ResolveInvalidParentUrl()
 		{
@@ -295,14 +301,14 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_322(id, path));
+			editor.Add(new _PathEdit_323(id, path));
 			editor.Commit();
 			return path;
 		}
 
-		private sealed class _PathEdit_322 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_323 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_322(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_323(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}

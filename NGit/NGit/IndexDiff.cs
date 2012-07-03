@@ -452,7 +452,7 @@ namespace NGit
 		/// <returns>list of folders containing only untracked files/folders</returns>
 		public virtual ICollection<string> GetUntrackedFolders()
 		{
-			return ((indexDiffFilter == null) ? Sharpen.Collections.EmptySet<string>() : new 
+			return ((indexDiffFilter == null || indexDiffFilter.GetUntrackedFolders ().Count == 0) ? Sharpen.Collections.EmptySet<string>() : new 
 				HashSet<string>(indexDiffFilter.GetUntrackedFolders()));
 		}
 

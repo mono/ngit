@@ -194,7 +194,7 @@ namespace NGit.Transport
 					default:
 					{
 						throw new PackProtocolException(MessageFormat.Format(JGitText.Get().invalidChannel
-							, channel));
+							, Sharpen.Extensions.ValueOf(channel)));
 					}
 				}
 			}

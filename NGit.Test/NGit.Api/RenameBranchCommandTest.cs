@@ -127,7 +127,7 @@ namespace NGit.Api
 			config.Save();
 			NUnit.Framework.Assert.IsNotNull(git.BranchRename().SetNewName(branch).Call());
 			config = git.GetRepository().GetConfig();
-			Assert.AssertArrayEquals(new string[] { "b", "a" }, config.GetStringList(ConfigConstants
+			CollectionAssert.AreEquivalent(new string[] { "b", "a" }, config.GetStringList(ConfigConstants
 				.CONFIG_BRANCH_SECTION, branch, "a"));
 		}
 

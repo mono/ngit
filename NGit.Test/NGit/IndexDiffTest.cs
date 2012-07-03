@@ -141,12 +141,12 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetChanged().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetModified().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetAdded().Count);
-			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestModified()
 		{
@@ -175,7 +175,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetAdded().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetMissing().Count);
-			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -292,7 +292,7 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoFilepatternException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestUnchangedSimple()
 		{
@@ -324,7 +324,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetMissing().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetModified().Count);
-			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -337,7 +337,7 @@ namespace NGit
 		/// used by Git.
 		/// </remarks>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
-		/// <exception cref="NGit.Api.Errors.NoFilepatternException">NGit.Api.Errors.NoFilepatternException
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
 		/// 	</exception>
 		[NUnit.Framework.Test]
 		public virtual void TestUnchangedComplex()
@@ -381,7 +381,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(0, diff.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetMissing().Count);
 			NUnit.Framework.Assert.AreEqual(0, diff.GetModified().Count);
-			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -421,7 +421,7 @@ namespace NGit
 			diff.Diff();
 			NUnit.Framework.Assert.IsTrue(diff.GetRemoved().Contains(path));
 			NUnit.Framework.Assert.IsTrue(diff.GetUntracked().Contains(path));
-			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 		}
 
@@ -432,7 +432,7 @@ namespace NGit
 			Git git = new Git(db);
 			IndexDiff diff = new IndexDiff(db, Constants.HEAD, new FileTreeIterator(db));
 			diff.Diff();
-			NUnit.Framework.CollectionAssert.AreEquivalent(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
+			NUnit.Framework.Assert.AreEqual(Collections<string>.EMPTY_SET, diff.GetUntrackedFolders()
 				);
 			WriteTrashFile("readme", string.Empty);
 			WriteTrashFile("src/com/A.java", string.Empty);
@@ -496,7 +496,7 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(1, diff.GetChanged().Count);
 			NUnit.Framework.Assert.IsTrue(diff.GetAssumeUnchanged().Contains("file2"));
 			NUnit.Framework.Assert.IsTrue(diff.GetChanged().Contains("file"));
-			NUnit.Framework.CollectionAssert.AreEquivalent(Sharpen.Collections<string>.EMPTY_SET, diff.GetUntrackedFolders
+			NUnit.Framework.Assert.AreEqual(Sharpen.Collections<string>.EMPTY_SET, diff.GetUntrackedFolders
 				());
 		}
 

@@ -139,7 +139,7 @@ namespace NGit
 				default:
 				{
 					throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().corruptObjectInvalidType2
-						, objType));
+						, Sharpen.Extensions.ValueOf(objType)));
 				}
 			}
 		}

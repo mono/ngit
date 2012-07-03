@@ -166,6 +166,18 @@ namespace NGit
 		/// <exception cref="System.IO.IOException">the reference space cannot be accessed.</exception>
 		public abstract RefRename NewRename(string fromName, string toName);
 
+		/// <summary>Create a new batch update to attempt on this database.</summary>
+		/// <remarks>
+		/// Create a new batch update to attempt on this database.
+		/// <p>
+		/// The default implementation performs a sequential update of each command.
+		/// </remarks>
+		/// <returns>a new batch update object.</returns>
+		public virtual BatchRefUpdate NewBatchUpdate()
+		{
+			return new BatchRefUpdate(this);
+		}
+
 		/// <summary>Read a single reference.</summary>
 		/// <remarks>
 		/// Read a single reference.
@@ -267,5 +279,6 @@ namespace NGit
 		public virtual void Refresh()
 		{
 		}
+		// nothing
 	}
 }

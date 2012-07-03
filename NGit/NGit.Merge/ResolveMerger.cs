@@ -95,13 +95,13 @@ namespace NGit.Merge
 		private IDictionary<string, DirCacheEntry> toBeCheckedOut = new Dictionary<string
 			, DirCacheEntry>();
 
+		private IList<string> toBeDeleted = new AList<string>();
+
 		private IDictionary<string, MergeResult<Sequence>> mergeResults = new Dictionary<
 			string, MergeResult<Sequence>>();
 
 		private IDictionary<string, ResolveMerger.MergeFailureReason> failingPaths = new 
 			Dictionary<string, ResolveMerger.MergeFailureReason>();
-
-		private ObjectInserter oi;
 
 		private bool enterSubtree;
 
@@ -122,7 +122,6 @@ namespace NGit.Merge
 				.HISTOGRAM);
 			mergeAlgorithm = new MergeAlgorithm(DiffAlgorithm.GetAlgorithm(diffAlg));
 			commitNames = new string[] { "BASE", "OURS", "THEIRS" };
-			oi = GetObjectInserter();
 			this.inCore = inCore;
 			if (inCore)
 			{
@@ -194,9 +193,9 @@ namespace NGit.Merge
 					builder.Finish();
 					builder = null;
 				}
-				if (GetUnmergedPaths().IsEmpty())
+				if (GetUnmergedPaths().IsEmpty() && !Failed())
 				{
-					resultTree = dircache.WriteTree(oi);
+					resultTree = dircache.WriteTree(GetObjectInserter());
 					return true;
 				}
 				else
@@ -224,19 +223,22 @@ namespace NGit.Merge
 				foreach (KeyValuePair<string, DirCacheEntry> entry in toBeCheckedOut.EntrySet())
 				{
 					FilePath f = new FilePath(db.WorkTree, entry.Key);
-					if (entry.Value != null)
-					{
-						CreateDir(f.GetParentFile());
-						DirCacheCheckout.CheckoutEntry(db, f, entry.Value, r);
-					}
-					else
-					{
-						if (!f.Delete())
-						{
-							failingPaths.Put(entry.Key, ResolveMerger.MergeFailureReason.COULD_NOT_DELETE);
-						}
-					}
+					CreateDir(f.GetParentFile());
+					DirCacheCheckout.CheckoutEntry(db, f, entry.Value, r);
 					modifiedFiles.AddItem(entry.Key);
+				}
+				// Iterate in reverse so that "folder/file" is deleted before
+				// "folder". Otherwise this could result in a failing path because
+				// of a non-empty directory, for which delete() would fail.
+				for (int i = toBeDeleted.Count - 1; i >= 0; i--)
+				{
+					string fileName = toBeDeleted[i];
+					FilePath f = new FilePath(db.WorkTree, fileName);
+					if (!f.Delete())
+					{
+						failingPaths.Put(fileName, ResolveMerger.MergeFailureReason.COULD_NOT_DELETE);
+					}
+					modifiedFiles.AddItem(fileName);
 				}
 			}
 			finally
@@ -411,7 +413,7 @@ namespace NGit.Merge
 						{
 							// the preferred version THEIRS has a different mode
 							// than ours. Check it out!
-							if (IsWorktreeDirty())
+							if (IsWorktreeDirty(work))
 							{
 								return false;
 							}
@@ -446,7 +448,7 @@ namespace NGit.Merge
 				// OURS was not changed compared to BASE. All changes must be in
 				// THEIRS. THEIRS is chosen.
 				// Check worktree before checking out THEIRS
-				if (IsWorktreeDirty())
+				if (IsWorktreeDirty(work))
 				{
 					return false;
 				}
@@ -465,7 +467,7 @@ namespace NGit.Merge
 					{
 						// we want THEIRS ... but THEIRS contains the deletion of the
 						// file
-						toBeCheckedOut.Put(tw.PathString, null);
+						toBeDeleted.AddItem(tw.PathString);
 						return true;
 					}
 				}
@@ -512,7 +514,7 @@ namespace NGit.Merge
 			if (NonTree(modeO) && NonTree(modeT))
 			{
 				// Check worktree before modifying files
-				if (IsWorktreeDirty())
+				if (IsWorktreeDirty(work))
 				{
 					return false;
 				}
@@ -540,7 +542,7 @@ namespace NGit.Merge
 						if (modeO == 0)
 						{
 							// Check worktree before checking out THEIRS
-							if (IsWorktreeDirty())
+							if (IsWorktreeDirty(work))
 							{
 								return false;
 							}
@@ -592,7 +594,7 @@ namespace NGit.Merge
 			int modeI = tw.GetRawMode(T_INDEX);
 			int modeO = tw.GetRawMode(T_OURS);
 			// Index entry has to match ours to be considered clean
-			bool isDirty = NonTree(modeI) && !(tw.IdEqual(T_INDEX, T_OURS) && modeO == modeI);
+			bool isDirty = NonTree(modeI) && !(modeO == modeI && tw.IdEqual(T_INDEX, T_OURS));
 			if (isDirty)
 			{
 				failingPaths.Put(tw.PathString, ResolveMerger.MergeFailureReason.DIRTY_INDEX);
@@ -600,7 +602,7 @@ namespace NGit.Merge
 			return isDirty;
 		}
 
-		private bool IsWorktreeDirty()
+		private bool IsWorktreeDirty(WorkingTreeIterator work)
 		{
 			if (inCore)
 			{
@@ -609,7 +611,15 @@ namespace NGit.Merge
 			int modeF = tw.GetRawMode(T_FILE);
 			int modeO = tw.GetRawMode(T_OURS);
 			// Worktree entry has to match ours to be considered clean
-			bool isDirty = NonTree(modeF) && !(tw.IdEqual(T_FILE, T_OURS) && modeO == modeF);
+			bool isDirty;
+			if (NonTree(modeF))
+			{
+				isDirty = work.IsModeDifferent(modeO) || !tw.IdEqual(T_FILE, T_OURS);
+			}
+			else
+			{
+				isDirty = false;
+			}
 			if (isDirty)
 			{
 				failingPaths.Put(tw.PathString, ResolveMerger.MergeFailureReason.DIRTY_WORKTREE);
@@ -661,7 +671,7 @@ namespace NGit.Merge
 				InputStream @is = new FileInputStream(of);
 				try
 				{
-					dce.SetObjectId(oi.Insert(Constants.OBJ_BLOB, of.Length(), @is));
+					dce.SetObjectId(GetObjectInserter().Insert(Constants.OBJ_BLOB, of.Length(), @is));
 				}
 				finally
 				{

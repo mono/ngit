@@ -762,7 +762,7 @@ namespace NGit.Storage.File
 				return curList;
 			}
 			RefDirectory.PackedRefList newList = ReadPackedRefs();
-			if (packedRefs.CompareAndSet(curList, newList))
+			if (packedRefs.CompareAndSet(curList, newList) && !curList.id.Equals(newList.id))
 			{
 				modCnt.IncrementAndGet();
 			}
@@ -774,10 +774,11 @@ namespace NGit.Storage.File
 		{
 			FileSnapshot snapshot = FileSnapshot.Save(packedRefsFile);
 			BufferedReader br;
+			MessageDigest digest = Constants.NewMessageDigest();
 			try
 			{
-				br = new BufferedReader(new InputStreamReader(new FileInputStream(packedRefsFile)
-					, Constants.CHARSET));
+				br = new BufferedReader(new InputStreamReader(new DigestInputStream(new FileInputStream
+					(packedRefsFile), digest), Constants.CHARSET));
 			}
 			catch (FileNotFoundException)
 			{
@@ -786,7 +787,8 @@ namespace NGit.Storage.File
 			}
 			try
 			{
-				return new RefDirectory.PackedRefList(ParsePackedRefs(br), snapshot);
+				return new RefDirectory.PackedRefList(ParsePackedRefs(br), snapshot, ObjectId.FromRaw
+					(digest.Digest()));
 			}
 			finally
 			{
@@ -862,12 +864,12 @@ namespace NGit.Storage.File
 		private void CommitPackedRefs(LockFile lck, RefList<Ref> refs, RefDirectory.PackedRefList
 			 oldPackedList)
 		{
-			new _RefWriter_707(this, lck, oldPackedList, refs, refs).WritePackedRefs();
+			new _RefWriter_712(this, lck, oldPackedList, refs, refs).WritePackedRefs();
 		}
 
-		private sealed class _RefWriter_707 : RefWriter
+		private sealed class _RefWriter_712 : RefWriter
 		{
-			public _RefWriter_707(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
+			public _RefWriter_712(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
 				 oldPackedList, RefList<Ref> refs, RefList<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -905,8 +907,9 @@ namespace NGit.Storage.File
 					throw new ObjectWritingException(MessageFormat.Format(JGitText.Get().unableToWrite
 						, name));
 				}
+				byte[] digest = Constants.NewMessageDigest().Digest(content);
 				this._enclosing.packedRefs.CompareAndSet(oldPackedList, new RefDirectory.PackedRefList
-					(refs, lck.GetCommitSnapshot()));
+					(refs, lck.GetCommitSnapshot(), ObjectId.FromRaw(digest)));
 			}
 
 			private readonly RefDirectory _enclosing;
@@ -1142,13 +1145,16 @@ namespace NGit.Storage.File
 		private class PackedRefList : RefList<Ref>
 		{
 			internal static readonly RefDirectory.PackedRefList NO_PACKED_REFS = new RefDirectory.PackedRefList
-				(RefList.EmptyList(), FileSnapshot.MISSING_FILE);
+				(RefList.EmptyList(), FileSnapshot.MISSING_FILE, ObjectId.ZeroId);
 
 			internal readonly FileSnapshot snapshot;
 
-			internal PackedRefList(RefList<Ref> src, FileSnapshot s) : base(src)
+			internal readonly ObjectId id;
+
+			internal PackedRefList(RefList<Ref> src, FileSnapshot s, ObjectId i) : base(src)
 			{
 				snapshot = s;
+				id = i;
 			}
 		}
 

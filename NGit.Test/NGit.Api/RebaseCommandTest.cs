@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using NGit;
 using NGit.Api;
@@ -259,7 +260,7 @@ namespace NGit.Api
 			// change third line in topic branch
 			WriteTrashFile(FILE1, "1\n2\n3\ntopic\n");
 			git.Add().AddFilepattern(FILE1).Call();
-			git.Commit().SetMessage("change file1 in topic").Call();
+			RevCommit origHead = git.Commit().SetMessage("change file1 in topic").Call();
 			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.OK, res.GetStatus());
 			CheckFile(theFile, "1master\n2\n3\ntopic\n");
@@ -267,6 +268,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("refs/heads/topic", db.GetFullBranch());
 			NUnit.Framework.Assert.AreEqual(lastMasterChange, new RevWalk(db).ParseCommit(db.
 				Resolve(Constants.HEAD)).GetParent(0));
+			NUnit.Framework.Assert.AreEqual(origHead, db.ReadOrigHead());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -1260,7 +1262,7 @@ namespace NGit.Api
 		private int CountPicks()
 		{
 			int count = 0;
-			FilePath todoFile = new FilePath(db.Directory, "rebase-merge/git-rebase-todo");
+			FilePath todoFile = GetTodoFile();
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(
 				todoFile), "UTF-8"));
 			try
@@ -1364,6 +1366,27 @@ namespace NGit.Api
 			}
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, git.GetRepository().GetRepositoryState
 				());
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseShouldBeAbleToHandleEmptyLinesInRebaseTodoFile()
+		{
+			string emptyLine = "\n";
+			string todo = "pick 1111111 Commit 1\n" + emptyLine + "pick 2222222 Commit 2\n" +
+				 emptyLine + "# Comment line at end\n";
+			Write(GetTodoFile(), todo);
+			RebaseCommand rebaseCommand = git.Rebase();
+			IList<RebaseCommand.Step> steps = rebaseCommand.LoadSteps();
+			NUnit.Framework.Assert.AreEqual(2, steps.Count);
+			NUnit.Framework.Assert.AreEqual("1111111", steps[0].commit.Name);
+			NUnit.Framework.Assert.AreEqual("2222222", steps[1].commit.Name);
+		}
+
+		private FilePath GetTodoFile()
+		{
+			FilePath todoFile = new FilePath(db.Directory, "rebase-merge/git-rebase-todo");
+			return todoFile;
 		}
 	}
 }

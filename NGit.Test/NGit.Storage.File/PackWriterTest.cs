@@ -476,6 +476,66 @@ namespace NGit.Storage.File
 			}
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestExclude()
+		{
+			FileRepository repo = CreateBareRepository();
+			TestRepository<FileRepository> testRepo = new TestRepository<FileRepository>(repo
+				);
+			BranchBuilder bb = testRepo.Branch("refs/heads/master");
+			RevBlob contentA = testRepo.Blob("A");
+			RevCommit c1 = bb.Commit().Add("f", contentA).Create();
+			testRepo.GetRevWalk().ParseHeaders(c1);
+			PackIndex pf1 = WritePack(repo, Sharpen.Collections.Singleton(c1), Sharpen.Collections
+				.EmptySet<PackIndex>());
+			AssertContent(pf1, Arrays.AsList(c1.Id, c1.Tree.Id, contentA.Id));
+			RevBlob contentB = testRepo.Blob("B");
+			RevCommit c2 = bb.Commit().Add("f", contentB).Create();
+			testRepo.GetRevWalk().ParseHeaders(c2);
+			PackIndex pf2 = WritePack(repo, Sharpen.Collections.Singleton(c2), Sharpen.Collections
+				.Singleton(pf1));
+			AssertContent(pf2, Arrays.AsList(c2.Id, c2.Tree.Id, contentB.Id));
+		}
+
+		private void AssertContent(PackIndex pi, IList<ObjectId> expected)
+		{
+			NUnit.Framework.Assert.AreEqual(expected.Count, pi.GetObjectCount(), "Pack index has wrong size."
+				);
+			for (int i = 0; i < pi.GetObjectCount(); i++)
+			{
+				NUnit.Framework.Assert.IsTrue(expected.Contains(pi.GetObjectId(i)), "Pack index didn't contain the expected id "
+					 + pi.GetObjectId(i));
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private PackIndex WritePack<_T0>(FileRepository repo, ICollection<_T0> want, ICollection
+			<PackIndex> excludeObjects) where _T0:ObjectId
+		{
+			PackWriter pw = new PackWriter(repo);
+			pw.SetDeltaBaseAsOffset(true);
+			pw.SetReuseDeltaCommits(false);
+			foreach (PackIndex idx in excludeObjects)
+			{
+				pw.ExcludeObjects(idx);
+			}
+			pw.PreparePack(NullProgressMonitor.INSTANCE, want, Sharpen.Collections.EmptySet<ObjectId
+				>());
+			string id = pw.ComputeName().GetName();
+			FilePath packdir = new FilePath(repo.ObjectsDirectory, "pack");
+			FilePath packFile = new FilePath(packdir, "pack-" + id + ".pack");
+			FileOutputStream packOS = new FileOutputStream(packFile);
+			pw.WritePack(NullProgressMonitor.INSTANCE, NullProgressMonitor.INSTANCE, packOS);
+			packOS.Close();
+			FilePath idxFile = new FilePath(packdir, "pack-" + id + ".idx");
+			FileOutputStream idxOS = new FileOutputStream(idxFile);
+			pw.WriteIndex(idxOS);
+			idxOS.Close();
+			pw.Release();
+			return PackIndex.Open(idxFile);
+		}
+
 		// TODO: testWritePackDeltasCycle()
 		// TODO: testWritePackDeltasDepth()
 		/// <exception cref="System.IO.IOException"></exception>
@@ -628,7 +688,7 @@ namespace NGit.Storage.File
 			{
 				entries.AddItem(me.CloneEntry());
 			}
-			entries.Sort(new _IComparer_593());
+			entries.Sort(new _IComparer_659());
 			int i = 0;
 			foreach (PackIndex.MutableEntry me_1 in entries)
 			{
@@ -637,9 +697,9 @@ namespace NGit.Storage.File
 			}
 		}
 
-		private sealed class _IComparer_593 : IComparer<PackIndex.MutableEntry>
+		private sealed class _IComparer_659 : IComparer<PackIndex.MutableEntry>
 		{
-			public _IComparer_593()
+			public _IComparer_659()
 			{
 			}
 

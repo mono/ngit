@@ -46,6 +46,7 @@ using System.Diagnostics;
 using NGit;
 using NGit.Api;
 using NGit.Diff;
+using NGit.Dircache;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Submodule;
@@ -59,6 +60,7 @@ namespace NGit.Api
 	/// <summary>
 	/// Unit tests of
 	/// <see cref="CommitCommand">CommitCommand</see>
+	/// .
 	/// </summary>
 	[NUnit.Framework.TestFixture]
 	public class CommitCommandTest : RepositoryTestCase
@@ -71,7 +73,7 @@ namespace NGit.Api
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, true);
 			config.Save();
-			FS executableFs = new _FS_81();
+			FS executableFs = new _FS_83();
 			Git git = Git.Open(db.Directory, executableFs);
 			string path = "a.txt";
 			WriteTrashFile(path, "content");
@@ -80,7 +82,7 @@ namespace NGit.Api
 			TreeWalk walk = TreeWalk.ForPath(db, path, commit1.Tree);
 			NUnit.Framework.Assert.IsNotNull(walk);
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
-			FS nonExecutableFs = new _FS_121();
+			FS nonExecutableFs = new _FS_123();
 			config = ((FileBasedConfig)db.GetConfig());
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, false);
@@ -93,9 +95,9 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
 		}
 
-		private sealed class _FS_81 : FS
+		private sealed class _FS_83 : FS
 		{
-			public _FS_81()
+			public _FS_83()
 			{
 			}
 
@@ -135,9 +137,9 @@ namespace NGit.Api
 			}
 		}
 
-		private sealed class _FS_121 : FS
+		private sealed class _FS_123 : FS
 		{
-			public _FS_121()
+			public _FS_123()
 			{
 			}
 
@@ -192,6 +194,7 @@ namespace NGit.Api
 			command.SetURI(uri);
 			Repository repo = command.Call();
 			NUnit.Framework.Assert.IsNotNull(repo);
+			AddRepoToClose(repo);
 			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
 			NUnit.Framework.Assert.AreEqual(path, generator.GetPath());
@@ -199,7 +202,9 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(uri, generator.GetModulesUrl());
 			NUnit.Framework.Assert.AreEqual(path, generator.GetModulesPath());
 			NUnit.Framework.Assert.AreEqual(uri, generator.GetConfigUrl());
-			NUnit.Framework.Assert.IsNotNull(generator.GetRepository());
+			Repository subModRepo = generator.GetRepository();
+			AddRepoToClose(subModRepo);
+			NUnit.Framework.Assert.IsNotNull(subModRepo);
 			NUnit.Framework.Assert.AreEqual(commit, repo.Resolve(Constants.HEAD));
 			RevCommit submoduleCommit = git.Commit().SetMessage("submodule add").SetOnly(path
 				).Call();
@@ -236,6 +241,7 @@ namespace NGit.Api
 			command.SetURI(uri);
 			Repository repo = command.Call();
 			NUnit.Framework.Assert.IsNotNull(repo);
+			AddRepoToClose(repo);
 			SubmoduleWalk generator = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(generator.Next());
 			NUnit.Framework.Assert.AreEqual(path, generator.GetPath());
@@ -243,7 +249,9 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(uri, generator.GetModulesUrl());
 			NUnit.Framework.Assert.AreEqual(path, generator.GetModulesPath());
 			NUnit.Framework.Assert.AreEqual(uri, generator.GetConfigUrl());
-			NUnit.Framework.Assert.IsNotNull(generator.GetRepository());
+			Repository subModRepo = generator.GetRepository();
+			AddRepoToClose(subModRepo);
+			NUnit.Framework.Assert.IsNotNull(subModRepo);
 			NUnit.Framework.Assert.AreEqual(commit2, repo.Resolve(Constants.HEAD));
 			RevCommit submoduleAddCommit = git.Commit().SetMessage("submodule add").SetOnly(path
 				).Call();
@@ -267,6 +275,132 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(commit, subDiff.GetNewId().ToObjectId());
 			NUnit.Framework.Assert.AreEqual(path, subDiff.GetNewPath());
 			NUnit.Framework.Assert.AreEqual(path, subDiff.GetOldPath());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void CommitUpdatesSmudgedEntries()
+		{
+			Git git = new Git(db);
+			FilePath file1 = WriteTrashFile("file1.txt", "content1");
+			NUnit.Framework.Assert.IsTrue(file1.SetLastModified(file1.LastModified() - 5000));
+			FilePath file2 = WriteTrashFile("file2.txt", "content2");
+			NUnit.Framework.Assert.IsTrue(file2.SetLastModified(file2.LastModified() - 5000));
+			FilePath file3 = WriteTrashFile("file3.txt", "content3");
+			NUnit.Framework.Assert.IsTrue(file3.SetLastModified(file3.LastModified() - 5000));
+			NUnit.Framework.Assert.IsNotNull(git.Add().AddFilepattern("file1.txt").AddFilepattern
+				("file2.txt").AddFilepattern("file3.txt").Call());
+			RevCommit commit = git.Commit().SetMessage("add files").Call();
+			NUnit.Framework.Assert.IsNotNull(commit);
+			DirCache cache = DirCache.Read(db.GetIndexFile(), db.FileSystem);
+			int file1Size = cache.GetEntry("file1.txt").Length;
+			int file2Size = cache.GetEntry("file2.txt").Length;
+			int file3Size = cache.GetEntry("file3.txt").Length;
+			ObjectId file2Id = cache.GetEntry("file2.txt").GetObjectId();
+			ObjectId file3Id = cache.GetEntry("file3.txt").GetObjectId();
+			NUnit.Framework.Assert.IsTrue(file1Size > 0);
+			NUnit.Framework.Assert.IsTrue(file2Size > 0);
+			NUnit.Framework.Assert.IsTrue(file3Size > 0);
+			// Smudge entries
+			cache = DirCache.Lock(db.GetIndexFile(), db.FileSystem);
+			cache.GetEntry("file1.txt").SetLength(0);
+			cache.GetEntry("file2.txt").SetLength(0);
+			cache.GetEntry("file3.txt").SetLength(0);
+			cache.Write();
+			NUnit.Framework.Assert.IsTrue(cache.Commit());
+			// Verify entries smudged
+			cache = DirCache.Read(db.GetIndexFile(), db.FileSystem);
+			NUnit.Framework.Assert.AreEqual(0, cache.GetEntry("file1.txt").Length);
+			NUnit.Framework.Assert.AreEqual(0, cache.GetEntry("file2.txt").Length);
+			NUnit.Framework.Assert.AreEqual(0, cache.GetEntry("file3.txt").Length);
+			long indexTime = db.GetIndexFile().LastModified();
+			db.GetIndexFile().SetLastModified(indexTime - 5000);
+			Write(file1, "content4");
+			NUnit.Framework.Assert.IsTrue(file1.SetLastModified(file1.LastModified() + 1000));
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("edit file").SetOnly("file1.txt"
+				).Call());
+			cache = db.ReadDirCache();
+			NUnit.Framework.Assert.AreEqual(file1Size, cache.GetEntry("file1.txt").Length);
+			NUnit.Framework.Assert.AreEqual(file2Size, cache.GetEntry("file2.txt").Length);
+			NUnit.Framework.Assert.AreEqual(file3Size, cache.GetEntry("file3.txt").Length);
+			NUnit.Framework.Assert.AreEqual(file2Id, cache.GetEntry("file2.txt").GetObjectId(
+				));
+			NUnit.Framework.Assert.AreEqual(file3Id, cache.GetEntry("file3.txt").GetObjectId(
+				));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void CommitIgnoresSmudgedEntryWithDifferentId()
+		{
+			Git git = new Git(db);
+			FilePath file1 = WriteTrashFile("file1.txt", "content1");
+			NUnit.Framework.Assert.IsTrue(file1.SetLastModified(file1.LastModified() - 5000));
+			FilePath file2 = WriteTrashFile("file2.txt", "content2");
+			NUnit.Framework.Assert.IsTrue(file2.SetLastModified(file2.LastModified() - 5000));
+			NUnit.Framework.Assert.IsNotNull(git.Add().AddFilepattern("file1.txt").AddFilepattern
+				("file2.txt").Call());
+			RevCommit commit = git.Commit().SetMessage("add files").Call();
+			NUnit.Framework.Assert.IsNotNull(commit);
+			DirCache cache = DirCache.Read(db.GetIndexFile(), db.FileSystem);
+			int file1Size = cache.GetEntry("file1.txt").Length;
+			int file2Size = cache.GetEntry("file2.txt").Length;
+			NUnit.Framework.Assert.IsTrue(file1Size > 0);
+			NUnit.Framework.Assert.IsTrue(file2Size > 0);
+			WriteTrashFile("file2.txt", "content3");
+			NUnit.Framework.Assert.IsNotNull(git.Add().AddFilepattern("file2.txt").Call());
+			WriteTrashFile("file2.txt", "content4");
+			// Smudge entries
+			cache = DirCache.Lock(db.GetIndexFile(), db.FileSystem);
+			cache.GetEntry("file1.txt").SetLength(0);
+			cache.GetEntry("file2.txt").SetLength(0);
+			cache.Write();
+			NUnit.Framework.Assert.IsTrue(cache.Commit());
+			// Verify entries smudged
+			cache = db.ReadDirCache();
+			NUnit.Framework.Assert.AreEqual(0, cache.GetEntry("file1.txt").Length);
+			NUnit.Framework.Assert.AreEqual(0, cache.GetEntry("file2.txt").Length);
+			long indexTime = db.GetIndexFile().LastModified();
+			db.GetIndexFile().SetLastModified(indexTime - 5000);
+			Write(file1, "content5");
+			NUnit.Framework.Assert.IsTrue(file1.SetLastModified(file1.LastModified() + 1000));
+			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("edit file").SetOnly("file1.txt"
+				).Call());
+			cache = db.ReadDirCache();
+			NUnit.Framework.Assert.AreEqual(file1Size, cache.GetEntry("file1.txt").Length);
+			NUnit.Framework.Assert.AreEqual(0, cache.GetEntry("file2.txt").Length);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void CommitAfterSquashMerge()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file1", "file1");
+			git.Add().AddFilepattern("file1").Call();
+			RevCommit first = git.Commit().SetMessage("initial commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			CreateBranch(first, "refs/heads/branch1");
+			CheckoutBranch("refs/heads/branch1");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			git.Commit().SetMessage("second commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			CheckoutBranch("refs/heads/master");
+			MergeCommandResult result = git.Merge().Include(db.GetRef("branch1")).SetSquash(true
+				).Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			NUnit.Framework.Assert.AreEqual(MergeStatus.FAST_FORWARD_SQUASHED, result.GetMergeStatus
+				());
+			// comment not set, should be inferred from SQUASH_MSG
+			RevCommit squashedCommit = git.Commit().Call();
+			NUnit.Framework.Assert.AreEqual(1, squashedCommit.ParentCount);
+			NUnit.Framework.Assert.IsNull(db.ReadSquashCommitMsg());
+			NUnit.Framework.Assert.AreEqual("commit: Squashed commit of the following:", db.GetReflogReader
+				(Constants.HEAD).GetLastEntry().GetComment());
+			NUnit.Framework.Assert.AreEqual("commit: Squashed commit of the following:", db.GetReflogReader
+				(db.GetBranch()).GetLastEntry().GetComment());
 		}
 	}
 }

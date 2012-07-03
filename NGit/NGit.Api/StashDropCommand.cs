@@ -58,6 +58,7 @@ namespace NGit.Api
 	/// <summary>Command class to delete a stashed commit reference</summary>
 	/// <seealso><a href="http://www.kernel.org/pub/software/scm/git/docs/git-stash.html"
 	/// *      >Git documentation about Stash</a></seealso>
+	/// <since>2.0</since>
 	public class StashDropCommand : GitCommand<ObjectId>
 	{
 		private int stashRefEntry;
@@ -182,8 +183,8 @@ namespace NGit.Api
 		/// stash reference after the drop occurs
 		/// </summary>
 		/// <returns>commit id of stash reference or null if no more stashed changes</returns>
-		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
 		public override ObjectId Call()
 		{
 			CheckCallable();

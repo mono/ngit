@@ -139,7 +139,7 @@ namespace NGit.Dircache
 
 		/// <exception cref="System.IO.IOException"></exception>
 		internal DirCacheEntry(byte[] sharedInfo, MutableInteger infoAt, InputStream @in, 
-			MessageDigest md)
+			MessageDigest md, int smudge_s, int smudge_ns)
 		{
 			// private static final int P_CTIME_NSEC = 4;
 			// private static final int P_MTIME_NSEC = 12;
@@ -213,6 +213,10 @@ namespace NGit.Dircache
 			{
 				IOUtil.SkipFully(@in, padLen);
 				md.Update(nullpad, 0, padLen);
+			}
+			if (MightBeRacilyClean(smudge_s, smudge_ns))
+			{
+				SmudgeRacilyClean();
 			}
 		}
 

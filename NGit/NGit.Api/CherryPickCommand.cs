@@ -90,7 +90,18 @@ namespace NGit.Api
 		/// invocation of the command. Don't call this method twice on an instance.
 		/// </summary>
 		/// <returns>the result of the cherry-pick</returns>
-		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException">NGit.Api.Errors.WrongRepositoryStateException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException">NGit.Api.Errors.ConcurrentRefUpdateException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.UnmergedPathsException">NGit.Api.Errors.UnmergedPathsException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.NoMessageException">NGit.Api.Errors.NoMessageException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.NoHeadException">NGit.Api.Errors.NoHeadException
+		/// 	</exception>
 		public override CherryPickResult Call()
 		{
 			RevCommit newHead = null;

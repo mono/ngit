@@ -394,6 +394,91 @@ namespace NGit.Revwalk
 			}
 		}
 
+		/// <summary>Ensures all commits until the given commit are loaded.</summary>
+		/// <remarks>
+		/// Ensures all commits until the given commit are loaded. The revision
+		/// walker specified by
+		/// <see cref="RevCommitList{E}.Source(RevWalk)">RevCommitList&lt;E&gt;.Source(RevWalk)
+		/// 	</see>
+		/// is pumped until the
+		/// specified commit is loaded. Callers can test the final size of the list
+		/// by
+		/// <see cref="RevObjectList{E}.Count()">RevObjectList&lt;E&gt;.Count()</see>
+		/// to determine if the high water mark specified was met.
+		/// <p/>
+		/// </remarks>
+		/// <param name="commitToLoad">
+		/// commit the caller wants this list to contain when the fill
+		/// operation is complete.
+		/// </param>
+		/// <param name="highMark">
+		/// maximum number of commits the caller wants this list to
+		/// contain when the fill operation is complete. If highMark is 0
+		/// the walk is pumped until the specified commit or the end of
+		/// the walk is reached.
+		/// </param>
+		/// <exception cref="System.IO.IOException">
+		/// see
+		/// <see cref="RevWalk.Next()">RevWalk.Next()</see>
+		/// </exception>
+		/// <exception cref="NGit.Errors.IncorrectObjectTypeException">
+		/// see
+		/// <see cref="RevWalk.Next()">RevWalk.Next()</see>
+		/// </exception>
+		/// <exception cref="NGit.Errors.MissingObjectException">
+		/// see
+		/// <see cref="RevWalk.Next()">RevWalk.Next()</see>
+		/// </exception>
+		public virtual void FillTo(RevCommit commitToLoad, int highMark)
+		{
+			if (walker == null || commitToLoad == null || (highMark > 0 && size > highMark))
+			{
+				return;
+			}
+			RevCommit c = walker.Next();
+			if (c == null)
+			{
+				walker = null;
+				return;
+			}
+			Enter(size, (E)c);
+			AddItem((E)c);
+			while ((highMark == 0 || size <= highMark) && !c.Equals(commitToLoad))
+			{
+				int index = size;
+				RevObjectListBlock s = contents;
+				while (index >> s.shift >= BLOCK_SIZE)
+				{
+					s = new RevObjectListBlock(s.shift + BLOCK_SHIFT);
+					s.contents[0] = contents;
+					contents = s;
+				}
+				while (s.shift > 0)
+				{
+					int i = index >> s.shift;
+					index -= i << s.shift;
+					if (s.contents[i] == null)
+					{
+						s.contents[i] = new RevObjectListBlock(s.shift - BLOCK_SHIFT);
+					}
+					s = (RevObjectListBlock)s.contents[i];
+				}
+				object[] dst = s.contents;
+				while ((highMark == 0 || size <= highMark) && index < BLOCK_SIZE && !c.Equals(commitToLoad
+					))
+				{
+					c = walker.Next();
+					if (c == null)
+					{
+						walker = null;
+						return;
+					}
+					Enter(size++, (E)c);
+					dst[index++] = c;
+				}
+			}
+		}
+
 		/// <summary>Optional callback invoked when commits enter the list by fillTo.</summary>
 		/// <remarks>
 		/// Optional callback invoked when commits enter the list by fillTo.

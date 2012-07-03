@@ -83,19 +83,20 @@ namespace NGit.Api
 		/// </param>
 		/// <param name="mergedCommits">all the commits which have been merged together</param>
 		/// <param name="mergeStatus">the status the merge resulted in</param>
+		/// <param name="mergeStrategy">
+		/// the used
+		/// <see cref="NGit.Merge.MergeStrategy">NGit.Merge.MergeStrategy</see>
+		/// </param>
 		/// <param name="lowLevelResults">
 		/// merge results as returned by
 		/// <see cref="NGit.Merge.ResolveMerger.GetMergeResults()">NGit.Merge.ResolveMerger.GetMergeResults()
 		/// 	</see>
 		/// </param>
-		/// <param name="mergeStrategy">
-		/// the used
-		/// <see cref="NGit.Merge.MergeStrategy">NGit.Merge.MergeStrategy</see>
-		/// </param>
+		/// <since>2.0</since>
 		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
-			, MergeStatus mergeStatus, IDictionary<string, MergeResult<Sequence>> lowLevelResults
-			, MergeStrategy mergeStrategy) : this(newHead, @base, mergedCommits, mergeStatus
-			, mergeStrategy, lowLevelResults, null)
+			, MergeStatus mergeStatus, MergeStrategy mergeStrategy, IDictionary<string, MergeResult
+			<Sequence>> lowLevelResults) : this(newHead, @base, mergedCommits, mergeStatus, mergeStrategy
+			, lowLevelResults, null)
 		{
 		}
 
@@ -120,7 +121,7 @@ namespace NGit.Api
 		public MergeCommandResult(ObjectId newHead, ObjectId @base, ObjectId[] mergedCommits
 			, MergeStatus mergeStatus, MergeStrategy mergeStrategy, IDictionary<string, MergeResult
 			<Sequence>> lowLevelResults, string description) : this(newHead, @base, mergedCommits
-			, mergeStatus, mergeStrategy, lowLevelResults, null, null)
+			, mergeStatus, mergeStrategy, lowLevelResults, null, description)
 		{
 		}
 
@@ -352,23 +353,46 @@ namespace NGit.Api
 
 	public abstract class MergeStatus
 	{
-		public static MergeStatus FAST_FORWARD = new FAST_FORWARD_Class();
+		public static MergeStatus FAST_FORWARD = new FAST_FORWARD_Class
+			();
 
-		public static MergeStatus ALREADY_UP_TO_DATE = new ALREADY_UP_TO_DATE_Class();
+		public static MergeStatus FAST_FORWARD_SQUASHED = new FAST_FORWARD_SQUASHED_Class
+			();
+
+		public static MergeStatus ALREADY_UP_TO_DATE = new ALREADY_UP_TO_DATE_Class
+			();
 
 		public static MergeStatus FAILED = new FAILED_Class();
 
 		public static MergeStatus MERGED = new MERGED_Class();
 
-		public static MergeStatus CONFLICTING = new CONFLICTING_Class();
+		public static MergeStatus MERGED_SQUASHED = new MERGED_SQUASHED_Class
+			();
 
-		public static MergeStatus NOT_SUPPORTED = new NOT_SUPPORTED_Class();
+		public static MergeStatus CONFLICTING = new CONFLICTING_Class
+			();
+
+		public static MergeStatus NOT_SUPPORTED = new NOT_SUPPORTED_Class
+			();
 
 		internal class FAST_FORWARD_Class : MergeStatus
 		{
 			public override string ToString()
 			{
 				return "Fast-forward";
+			}
+
+			public override bool IsSuccessful()
+			{
+				return true;
+			}
+		}
+
+		internal class FAST_FORWARD_SQUASHED_Class : MergeStatus
+		{
+			public override string ToString()
+			{
+				return "Fast-forward-squashed";
 			}
 
 			public override bool IsSuccessful()
@@ -408,6 +432,19 @@ namespace NGit.Api
 			public override string ToString()
 			{
 				return "Merged";
+			}
+
+			public override bool IsSuccessful()
+			{
+				return true;
+			}
+		}
+
+		internal class MERGED_SQUASHED_Class : MergeStatus
+		{
+			public override string ToString()
+			{
+				return "Merged-squashed";
 			}
 
 			public override bool IsSuccessful()

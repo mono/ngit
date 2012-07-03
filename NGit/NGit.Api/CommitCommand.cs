@@ -119,24 +119,15 @@ namespace NGit.Api
 		/// 	</exception>
 		/// <exception cref="NGit.Api.Errors.NoMessageException">when called without specifying a commit message
 		/// 	</exception>
-		/// <exception cref="NGit.Errors.UnmergedPathException">when the current index contained unmerged paths (conflicts)
+		/// <exception cref="NGit.Api.Errors.UnmergedPathsException">when the current index contained unmerged paths (conflicts)
 		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException">
+		/// when HEAD or branch ref is updated concurrently by someone
+		/// else
+		/// </exception>
 		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException">when repository is not in the right state for committing
 		/// 	</exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">
-		/// a low-level exception of JGit has occurred. The original
-		/// exception can be retrieved by calling
-		/// <see cref="System.Exception.InnerException()">System.Exception.InnerException()</see>
-		/// . Expect only
-		/// <code>IOException's</code>
-		/// to be wrapped. Subclasses of
-		/// <see cref="System.IO.IOException">System.IO.IOException</see>
-		/// (e.g.
-		/// <see cref="NGit.Errors.UnmergedPathException">NGit.Errors.UnmergedPathException</see>
-		/// ) are
-		/// typically not wrapped here but thrown as original exception
-		/// </exception>
-		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override RevCommit Call()
 		{
 			CheckCallable();
@@ -294,10 +285,7 @@ namespace NGit.Api
 			}
 			catch (UnmergedPathException e)
 			{
-				// since UnmergedPathException is a subclass of IOException
-				// which should not be wrapped by a JGitInternalException we
-				// have to catch and re-throw it here
-				throw;
+				throw new UnmergedPathsException(e);
 			}
 			catch (IOException e)
 			{
@@ -407,7 +395,7 @@ namespace NGit.Api
 							}
 						}
 						// update index
-						dcEditor.Add(new _PathEdit_373(dcEntry, path));
+						dcEditor.Add(new _PathEdit_369(dcEntry, path));
 						// add to temporary in-core index
 						dcBuilder.Add(dcEntry);
 						if (emptyCommit && (hTree == null || !hTree.IdEqual(fTree) || hTree.EntryRawMode 
@@ -467,9 +455,9 @@ namespace NGit.Api
 			return inCoreIndex;
 		}
 
-		private sealed class _PathEdit_373 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_369 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_373(DirCacheEntry dcEntry, string baseArg1) : base(baseArg1)
+			public _PathEdit_369(DirCacheEntry dcEntry, string baseArg1) : base(baseArg1)
 			{
 				this.dcEntry = dcEntry;
 			}
@@ -563,9 +551,28 @@ namespace NGit.Api
 					}
 				}
 			}
+			else
+			{
+				if (state == RepositoryState.SAFE && message == null)
+				{
+					try
+					{
+						message = repo.ReadSquashCommitMsg();
+						if (message != null)
+						{
+							repo.WriteSquashCommitMsg(null);
+						}
+					}
+					catch (IOException e)
+					{
+						throw new JGitInternalException(MessageFormat.Format(JGitText.Get().exceptionOccurredDuringReadingOfGIT_DIR
+							, Constants.MERGE_MSG, e), e);
+					}
+				}
+			}
 			if (message == null)
 			{
-				// as long as we don't suppport -C option we have to have
+				// as long as we don't support -C option we have to have
 				// an explicit message
 				throw new NoMessageException(JGitText.Get().commitMessageNotSpecified);
 			}

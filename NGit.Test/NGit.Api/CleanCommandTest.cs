@@ -70,7 +70,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="NGit.Errors.NoWorkTreeException"></exception>
-		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestClean()
 		{
@@ -89,7 +89,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="NGit.Errors.NoWorkTreeException"></exception>
-		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCleanWithPaths()
 		{
@@ -110,7 +110,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="NGit.Errors.NoWorkTreeException"></exception>
-		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCleanWithDryRun()
 		{

@@ -107,7 +107,7 @@ namespace NGit.Util
 		private static bool IsMacOS()
 		{
 			string osDotName = AccessController.DoPrivileged(new _PrivilegedAction_103());
-			return "Mac OS X".Equals(osDotName);
+			return "Mac OS X".Equals(osDotName) || "Darwin".Equals(osDotName);
 		}
 
 		private sealed class _PrivilegedAction_103 : PrivilegedAction<string>

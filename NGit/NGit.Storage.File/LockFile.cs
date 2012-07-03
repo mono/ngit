@@ -630,6 +630,19 @@ namespace NGit.Storage.File
 			return commitSnapshot;
 		}
 
+		/// <summary>
+		/// Update the commit snapshot
+		/// <see cref="GetCommitSnapshot()">GetCommitSnapshot()</see>
+		/// before commit.
+		/// <p>
+		/// This may be necessary if you need time stamp before commit occurs, e.g
+		/// while writing the index.
+		/// </summary>
+		public virtual void CreateCommitSnapshot()
+		{
+			SaveStatInformation();
+		}
+
 		/// <summary>Unlock this file and abort this change.</summary>
 		/// <remarks>
 		/// Unlock this file and abort this change.

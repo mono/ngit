@@ -72,6 +72,7 @@ namespace NGit.Util
 
 		/// <summary>Option not to throw exceptions when a deletion finally doesn't succeed.</summary>
 		/// <remarks>Option not to throw exceptions when a deletion finally doesn't succeed.</remarks>
+		/// <since>2.0</since>
 		public const int IGNORE_ERRORS = 8;
 
 		/// <summary>Delete file or empty folder</summary>

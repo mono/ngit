@@ -57,6 +57,16 @@ namespace NGit.Api
 	{
 		public static MergeStrategy[] mergeStrategies = MergeStrategy.Get();
 
+		private GitDateFormatter dateFormatter;
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
+		{
+			base.SetUp();
+			dateFormatter = new GitDateFormatter(GitDateFormatter.Format.DEFAULT);
+		}
+
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestMergeInItself()
@@ -908,6 +918,42 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestMergeRemovingFoldersWithoutFastForward()
+		{
+			FilePath folder1 = new FilePath(db.WorkTree, "folder1");
+			FilePath folder2 = new FilePath(db.WorkTree, "folder2");
+			FileUtils.Mkdir(folder1);
+			FileUtils.Mkdir(folder2);
+			FilePath file = new FilePath(folder1, "file1.txt");
+			Write(file, "folder1--file1.txt");
+			file = new FilePath(folder1, "file2.txt");
+			Write(file, "folder1--file2.txt");
+			file = new FilePath(folder2, "file1.txt");
+			Write(file, "folder--file1.txt");
+			file = new FilePath(folder2, "file2.txt");
+			Write(file, "folder2--file2.txt");
+			Git git = new Git(db);
+			git.Add().AddFilepattern(folder1.GetName()).AddFilepattern(folder2.GetName()).Call
+				();
+			RevCommit @base = git.Commit().SetMessage("adding folders").Call();
+			RecursiveDelete(folder1);
+			RecursiveDelete(folder2);
+			git.Rm().AddFilepattern("folder1/file1.txt").AddFilepattern("folder1/file2.txt").
+				AddFilepattern("folder2/file1.txt").AddFilepattern("folder2/file2.txt").Call();
+			RevCommit other = git.Commit().SetMessage("removing folders on 'branch'").Call();
+			git.Checkout().SetName(@base.Name).Call();
+			file = new FilePath(folder2, "file3.txt");
+			Write(file, "folder2--file3.txt");
+			git.Add().AddFilepattern(folder2.GetName()).Call();
+			git.Commit().SetMessage("adding another file").Call();
+			MergeCommandResult result = git.Merge().Include(other.Id).SetStrategy(MergeStrategy
+				.RESOLVE).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, result.GetMergeStatus());
+			NUnit.Framework.Assert.IsFalse(folder1.Exists());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestFileModeMerge()
 		{
 			if (!FS.DETECTED.SupportsExecute())
@@ -974,6 +1020,134 @@ namespace NGit.Api
 				.RESOLVE).Call();
 			NUnit.Framework.Assert.AreEqual(MergeStatus.FAILED, result.GetMergeStatus());
 			NUnit.Framework.Assert.IsFalse(CanExecute(git, "mergeableButDirty"));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSquashFastForward()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file1", "file1");
+			git.Add().AddFilepattern("file1").Call();
+			RevCommit first = git.Commit().SetMessage("initial commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			CreateBranch(first, "refs/heads/branch1");
+			CheckoutBranch("refs/heads/branch1");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			RevCommit second = git.Commit().SetMessage("second commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			WriteTrashFile("file3", "file3");
+			git.Add().AddFilepattern("file3").Call();
+			RevCommit third = git.Commit().SetMessage("third commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file3").Exists());
+			CheckoutBranch("refs/heads/master");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "file2").Exists());
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "file3").Exists());
+			MergeCommandResult result = git.Merge().Include(db.GetRef("branch1")).SetSquash(true
+				).Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file3").Exists());
+			NUnit.Framework.Assert.AreEqual(MergeStatus.FAST_FORWARD_SQUASHED, result.GetMergeStatus
+				());
+			NUnit.Framework.Assert.AreEqual(first, result.GetNewHead());
+			// HEAD didn't move
+			NUnit.Framework.Assert.AreEqual(first, db.Resolve(Constants.HEAD + "^{commit}"));
+			NUnit.Framework.Assert.AreEqual("Squashed commit of the following:\n\ncommit " + 
+				third.GetName() + "\nAuthor: " + third.GetAuthorIdent().GetName() + " <" + third
+				.GetAuthorIdent().GetEmailAddress() + ">\nDate:   " + dateFormatter.FormatDate(third
+				.GetAuthorIdent()) + "\n\n\tthird commit\n\ncommit " + second.GetName() + "\nAuthor: "
+				 + second.GetAuthorIdent().GetName() + " <" + second.GetAuthorIdent().GetEmailAddress
+				() + ">\nDate:   " + dateFormatter.FormatDate(second.GetAuthorIdent()) + "\n\n\tsecond commit\n"
+				, db.ReadSquashCommitMsg());
+			NUnit.Framework.Assert.IsNull(db.ReadMergeCommitMsg());
+			Status stat = git.Status().Call();
+			NUnit.Framework.CollectionAssert.AreEquivalent(StatusCommandTest.Set(new [] { "file2", "file3" }), stat.GetAdded
+				());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSquashMerge()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file1", "file1");
+			git.Add().AddFilepattern("file1").Call();
+			RevCommit first = git.Commit().SetMessage("initial commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			CreateBranch(first, "refs/heads/branch1");
+			WriteTrashFile("file2", "file2");
+			git.Add().AddFilepattern("file2").Call();
+			RevCommit second = git.Commit().SetMessage("second commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			CheckoutBranch("refs/heads/branch1");
+			WriteTrashFile("file3", "file3");
+			git.Add().AddFilepattern("file3").Call();
+			RevCommit third = git.Commit().SetMessage("third commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file3").Exists());
+			CheckoutBranch("refs/heads/master");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			NUnit.Framework.Assert.IsFalse(new FilePath(db.WorkTree, "file3").Exists());
+			MergeCommandResult result = git.Merge().Include(db.GetRef("branch1")).SetSquash(true
+				).Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file3").Exists());
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED_SQUASHED, result.GetMergeStatus
+				());
+			NUnit.Framework.Assert.AreEqual(second, result.GetNewHead());
+			// HEAD didn't move
+			NUnit.Framework.Assert.AreEqual(second, db.Resolve(Constants.HEAD + "^{commit}"));
+			NUnit.Framework.Assert.AreEqual("Squashed commit of the following:\n\ncommit " + 
+				third.GetName() + "\nAuthor: " + third.GetAuthorIdent().GetName() + " <" + third
+				.GetAuthorIdent().GetEmailAddress() + ">\nDate:   " + dateFormatter.FormatDate(third
+				.GetAuthorIdent()) + "\n\n\tthird commit\n", db.ReadSquashCommitMsg());
+			NUnit.Framework.Assert.IsNull(db.ReadMergeCommitMsg());
+			Status stat = git.Status().Call();
+			NUnit.Framework.CollectionAssert.AreEquivalent(StatusCommandTest.Set("file3"), stat.GetAdded());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestSquashMergeConflict()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file1", "file1");
+			git.Add().AddFilepattern("file1").Call();
+			RevCommit first = git.Commit().SetMessage("initial commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			CreateBranch(first, "refs/heads/branch1");
+			WriteTrashFile("file2", "master");
+			git.Add().AddFilepattern("file2").Call();
+			RevCommit second = git.Commit().SetMessage("second commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			CheckoutBranch("refs/heads/branch1");
+			WriteTrashFile("file2", "branch");
+			git.Add().AddFilepattern("file2").Call();
+			RevCommit third = git.Commit().SetMessage("third commit").Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			CheckoutBranch("refs/heads/master");
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			MergeCommandResult result = git.Merge().Include(db.GetRef("branch1")).SetSquash(true
+				).Call();
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file1").Exists());
+			NUnit.Framework.Assert.IsTrue(new FilePath(db.WorkTree, "file2").Exists());
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, result.GetMergeStatus());
+			NUnit.Framework.Assert.IsNull(result.GetNewHead());
+			NUnit.Framework.Assert.AreEqual(second, db.Resolve(Constants.HEAD + "^{commit}"));
+			NUnit.Framework.Assert.AreEqual("Squashed commit of the following:\n\ncommit " + 
+				third.GetName() + "\nAuthor: " + third.GetAuthorIdent().GetName() + " <" + third
+				.GetAuthorIdent().GetEmailAddress() + ">\nDate:   " + dateFormatter.FormatDate(third
+				.GetAuthorIdent()) + "\n\n\tthird commit\n", db.ReadSquashCommitMsg());
+			NUnit.Framework.Assert.AreEqual("\nConflicts:\n\tfile2\n", db.ReadMergeCommitMsg(
+				));
+			Status stat = git.Status().Call();
+			NUnit.Framework.CollectionAssert.AreEquivalent(StatusCommandTest.Set("file2"), stat.GetConflicting
+				());
 		}
 
 		private void SetExecutable(Git git, string path, bool executable)

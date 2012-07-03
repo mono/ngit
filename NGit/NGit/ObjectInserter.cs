@@ -95,6 +95,75 @@ namespace NGit
 			// Do nothing.
 		}
 
+		/// <summary>Wraps a delegate ObjectInserter.</summary>
+		/// <remarks>Wraps a delegate ObjectInserter.</remarks>
+		public abstract class Filter : ObjectInserter
+		{
+			/// <returns>delegate ObjectInserter to handle all processing.</returns>
+			protected internal abstract ObjectInserter Delegate();
+
+			protected internal override byte[] Buffer()
+			{
+				return Delegate().Buffer();
+			}
+
+			public override ObjectId IdFor(int type, byte[] data)
+			{
+				return Delegate().IdFor(type, data);
+			}
+
+			public override ObjectId IdFor(int type, byte[] data, int off, int len)
+			{
+				return Delegate().IdFor(type, data, off, len);
+			}
+
+			/// <exception cref="System.IO.IOException"></exception>
+			public override ObjectId IdFor(int objectType, long length, InputStream @in)
+			{
+				return Delegate().IdFor(objectType, length, @in);
+			}
+
+			public override ObjectId IdFor(TreeFormatter formatter)
+			{
+				return Delegate().IdFor(formatter);
+			}
+
+			/// <exception cref="System.IO.IOException"></exception>
+			public override ObjectId Insert(int type, byte[] data)
+			{
+				return Delegate().Insert(type, data);
+			}
+
+			/// <exception cref="System.IO.IOException"></exception>
+			public override ObjectId Insert(int type, byte[] data, int off, int len)
+			{
+				return Delegate().Insert(type, data, off, len);
+			}
+
+			/// <exception cref="System.IO.IOException"></exception>
+			public override ObjectId Insert(int objectType, long length, InputStream @in)
+			{
+				return Delegate().Insert(objectType, length, @in);
+			}
+
+			/// <exception cref="System.IO.IOException"></exception>
+			public override PackParser NewPackParser(InputStream @in)
+			{
+				return Delegate().NewPackParser(@in);
+			}
+
+			/// <exception cref="System.IO.IOException"></exception>
+			public override void Flush()
+			{
+				Delegate().Flush();
+			}
+
+			public override void Release()
+			{
+				Delegate().Release();
+			}
+		}
+
 		/// <summary>Digest to compute the name of an object.</summary>
 		/// <remarks>Digest to compute the name of an object.</remarks>
 		private readonly MessageDigest digest;

@@ -130,14 +130,20 @@ namespace NGit.Transport
 			{
 				return new NGit.Transport.TransportHttp(local, uri);
 			}
+
+			/// <exception cref="System.NotSupportedException"></exception>
+			public override NGit.Transport.Transport Open(URIish uri)
+			{
+				return new NGit.Transport.TransportHttp(uri);
+		}
 		}
 
 		internal static readonly TransportProtocol PROTO_HTTP = new _TransportProtocol_137
 			();
 
-		private sealed class _TransportProtocol_172 : TransportProtocol
+		private sealed class _TransportProtocol_176 : TransportProtocol
 		{
-			public _TransportProtocol_172()
+			public _TransportProtocol_176()
 			{
 			}
 
@@ -177,7 +183,7 @@ namespace NGit.Transport
 			}
 		}
 
-		internal static readonly TransportProtocol PROTO_FTP = new _TransportProtocol_172
+		internal static readonly TransportProtocol PROTO_FTP = new _TransportProtocol_176
 			();
 
 		private static string ComputeUserAgent()
@@ -196,10 +202,10 @@ namespace NGit.Transport
 			return "JGit/" + version;
 		}
 
-		private sealed class _SectionParser_212 : Config.SectionParser<TransportHttp.HttpConfig
+		private sealed class _SectionParser_216 : Config.SectionParser<TransportHttp.HttpConfig
 			>
 		{
-			public _SectionParser_212()
+			public _SectionParser_216()
 			{
 			}
 
@@ -211,7 +217,7 @@ namespace NGit.Transport
 		}
 
 		private static readonly Config.SectionParser<TransportHttp.HttpConfig> HTTP_KEY = 
-			new _SectionParser_212();
+			new _SectionParser_216();
 
 		private class HttpConfig
 		{
@@ -225,6 +231,10 @@ namespace NGit.Transport
 				//$NON-NLS-1$  //$NON-NLS-2$
 				sslVerify = rc.GetBoolean("http", "sslVerify", true);
 			}
+
+			public HttpConfig() : this(new Config())
+			{
+		}
 		}
 
 		private readonly Uri baseUrl;
@@ -261,6 +271,34 @@ namespace NGit.Transport
 					), e);
 			}
 			http = local.GetConfig().Get(HTTP_KEY);
+			proxySelector = ProxySelector.GetDefault();
+		}
+
+		/// <summary>Create a minimal HTTP transport with default configuration values.</summary>
+		/// <remarks>Create a minimal HTTP transport with default configuration values.</remarks>
+		/// <param name="uri"></param>
+		/// <exception cref="System.NotSupportedException">System.NotSupportedException</exception>
+		protected internal TransportHttp(URIish uri) : base(uri)
+		{
+			try
+			{
+				string uriString = uri.ToString();
+				if (!uriString.EndsWith("/"))
+				{
+					//$NON-NLS-1$
+					uriString += "/";
+				}
+				//$NON-NLS-1$
+				baseUrl = new Uri(uriString);
+				objectsUrl = new Uri(baseUrl, "objects/");
+			}
+			catch (UriFormatException e)
+			{
+				//$NON-NLS-1$
+				throw new NGit.Errors.NotSupportedException(MessageFormat.Format(JGitText.Get().invalidURL, uri
+					), e);
+			}
+			http = new TransportHttp.HttpConfig();
 			proxySelector = ProxySelector.GetDefault();
 		}
 
@@ -392,7 +430,7 @@ namespace NGit.Transport
 					default:
 					{
 						throw new TransportException(uri, MessageFormat.Format(JGitText.Get().cannotReadHEAD
-							, status, conn.GetResponseMessage()));
+							, Sharpen.Extensions.ValueOf(status), conn.GetResponseMessage()));
 					}
 				}
 			}
@@ -864,7 +902,7 @@ namespace NGit.Transport
 
 		internal class SmartHttpFetchConnection : BasePackFetchConnection
 		{
-			private TransportHttp.Service svc;
+			private TransportHttp.MultiRequestService svc;
 
 			/// <exception cref="NGit.Errors.TransportException"></exception>
 			internal SmartHttpFetchConnection(TransportHttp _enclosing, InputStream advertisement
@@ -883,8 +921,9 @@ namespace NGit.Transport
 			{
 				try
 				{
-					this.svc = new TransportHttp.Service(_enclosing, TransportHttp.SVC_UPLOAD_PACK);
-					this.Init(this.svc.@in, this.svc.@out);
+					this.svc = new TransportHttp.MultiRequestService(_enclosing, TransportHttp.SVC_UPLOAD_PACK
+						);
+					this.Init(this.svc.GetInputStream(), this.svc.GetOutputStream());
 				base.DoFetch(monitor, want, have);
 			}
 				finally
@@ -918,53 +957,32 @@ namespace NGit.Transport
 			protected internal override void DoPush(ProgressMonitor monitor, IDictionary<string
 				, RemoteRefUpdate> refUpdates)
 			{
-				TransportHttp.Service svc = new TransportHttp.Service(_enclosing, TransportHttp.SVC_RECEIVE_PACK
-					);
-				this.Init(svc.@in, svc.@out);
+				TransportHttp.Service svc = new TransportHttp.MultiRequestService(_enclosing, TransportHttp
+					.SVC_RECEIVE_PACK);
+				this.Init(svc.GetInputStream(), svc.GetOutputStream());
 				base.DoPush(monitor, refUpdates);
 			}
 
 			private readonly TransportHttp _enclosing;
 		}
 
-		/// <summary>State required to speak multiple HTTP requests with the remote.</summary>
-		/// <remarks>
-		/// State required to speak multiple HTTP requests with the remote.
-		/// <p>
-		/// A service wrapper provides a normal looking InputStream and OutputStream
-		/// pair which are connected via HTTP to the named remote service. Writing to
-		/// the OutputStream is buffered until either the buffer overflows, or
-		/// reading from the InputStream occurs. If overflow occurs HTTP/1.1 and its
-		/// chunked transfer encoding is used to stream the request data to the
-		/// remote service. If the entire request fits in the memory buffer, the
-		/// older HTTP/1.0 standard and a fixed content length is used instead.
-		/// <p>
-		/// It is an error to attempt to read without there being outstanding data
-		/// ready for transmission on the OutputStream.
-		/// <p>
-		/// No state is preserved between write-read request pairs. The caller is
-		/// responsible for replaying state vector information as part of the request
-		/// data written to the OutputStream. Any session HTTP cookies may or may not
-		/// be preserved between requests, it is left up to the JVM's implementation
-		/// of the HTTP client.
-		/// </remarks>
-		internal class Service
+		/// <summary>Basic service for sending and receiving HTTP requests.</summary>
+		/// <remarks>Basic service for sending and receiving HTTP requests.</remarks>
+		internal abstract class Service
 		{
-			private readonly string serviceName;
+			protected internal readonly string serviceName;
 
-			private readonly string requestType;
+			protected internal readonly string requestType;
 
-			private readonly string responseType;
+			protected internal readonly string responseType;
 
-			private readonly TransportHttp.Service.HttpExecuteStream execute;
+			protected internal HttpURLConnection conn;
 
-			internal bool finalRequest;
+			protected internal TransportHttp.Service.HttpOutputStream @out;
+
+			protected internal readonly TransportHttp.Service.HttpExecuteStream execute;
 
 			internal readonly UnionInputStream @in;
-
-			internal readonly TransportHttp.Service.HttpOutputStream @out;
-
-			internal HttpURLConnection conn;
 
 			internal Service(TransportHttp _enclosing, string serviceName)
 			{
@@ -974,9 +992,9 @@ namespace NGit.Transport
 				//$NON-NLS-1$ //$NON-NLS-2$
 				this.responseType = "application/x-" + serviceName + "-result";
 				//$NON-NLS-1$ //$NON-NLS-2$
+				this.@out = new TransportHttp.Service.HttpOutputStream(this);
 				this.execute = new TransportHttp.Service.HttpExecuteStream(this);
 				this.@in = new UnionInputStream(this.execute);
-				this.@out = new TransportHttp.Service.HttpOutputStream(this);
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
@@ -991,25 +1009,8 @@ namespace NGit.Transport
 			}
 
 			/// <exception cref="System.IO.IOException"></exception>
-			internal virtual void Execute()
+			internal virtual void SendRequest()
 			{
-				this.@out.Close();
-				if (this.conn == null)
-				{
-					if (this.@out.Length() == 0)
-					{
-						// Request output hasn't started yet, but more data is being
-						// requested. If there is no request data buffered and the
-						// final request was already sent, do nothing to ensure the
-						// caller is shown EOF on the InputStream; otherwise an
-						// programming error has occurred within this module.
-						if (this.finalRequest)
-						{
-							return;
-						}
-						throw new TransportException(this._enclosing.uri, JGitText.Get().startingReadStageWithoutWrittenRequestDataPendingIsNotSupported
-							);
-					}
 					// Try to compress the content, but only if that is smaller.
 					TemporaryBuffer buf = new TemporaryBuffer.Heap(this._enclosing.http.postBuffer);
 					try
@@ -1045,7 +1046,10 @@ namespace NGit.Transport
 						httpOut.Close();
 					}
 				}
-				this.@out.Reset();
+
+			/// <exception cref="System.IO.IOException"></exception>
+			internal virtual void OpenResponse()
+			{
 				int status = HttpSupport.Response(this.conn);
 				if (status != HttpURLConnection.HTTP_OK)
 				{
@@ -1059,32 +1063,20 @@ namespace NGit.Transport
 					this.conn.GetInputStream().Close();
 					throw this._enclosing.WrongContentType(this.responseType, contentType);
 				}
-				this.@in.Add(this._enclosing.OpenInputStream(this.conn));
-				if (!this.finalRequest)
-				{
-				this.@in.Add(this.execute);
 				}
-				this.conn = null;
-			}
 
-			internal class HttpOutputStream : TemporaryBuffer
+			internal virtual TransportHttp.Service.HttpOutputStream GetOutputStream()
 			{
-				public HttpOutputStream(Service _enclosing) : base(_enclosing._enclosing.http
-					.postBuffer)
-				{
-					this._enclosing = _enclosing;
+				return this.@out;
 				}
 
-				/// <exception cref="System.IO.IOException"></exception>
-				protected internal override OutputStream Overflow()
+			internal virtual InputStream GetInputStream()
 				{
-					this._enclosing.OpenStream();
-					this._enclosing.conn.SetChunkedStreamingMode(0);
-					return this._enclosing.conn.GetOutputStream();
+				return this.@in;
 				}
 
-				private readonly Service _enclosing;
-			}
+			/// <exception cref="System.IO.IOException"></exception>
+			internal abstract void Execute();
 
 			internal class HttpExecuteStream : InputStream
 			{
@@ -1115,6 +1107,121 @@ namespace NGit.Transport
 				}
 
 				private readonly Service _enclosing;
+			}
+
+			internal class HttpOutputStream : TemporaryBuffer
+			{
+				public HttpOutputStream(Service _enclosing) : base(_enclosing._enclosing.http
+					.postBuffer)
+				{
+					this._enclosing = _enclosing;
+				}
+
+				/// <exception cref="System.IO.IOException"></exception>
+				protected internal override OutputStream Overflow()
+				{
+					this._enclosing.OpenStream();
+					this._enclosing.conn.SetChunkedStreamingMode(0);
+					return this._enclosing.conn.GetOutputStream();
+				}
+
+				private readonly Service _enclosing;
+			}
+
+			private readonly TransportHttp _enclosing;
+		}
+
+		/// <summary>State required to speak multiple HTTP requests with the remote.</summary>
+		/// <remarks>
+		/// State required to speak multiple HTTP requests with the remote.
+		/// <p>
+		/// A service wrapper provides a normal looking InputStream and OutputStream
+		/// pair which are connected via HTTP to the named remote service. Writing to
+		/// the OutputStream is buffered until either the buffer overflows, or
+		/// reading from the InputStream occurs. If overflow occurs HTTP/1.1 and its
+		/// chunked transfer encoding is used to stream the request data to the
+		/// remote service. If the entire request fits in the memory buffer, the
+		/// older HTTP/1.0 standard and a fixed content length is used instead.
+		/// <p>
+		/// It is an error to attempt to read without there being outstanding data
+		/// ready for transmission on the OutputStream.
+		/// <p>
+		/// No state is preserved between write-read request pairs. The caller is
+		/// responsible for replaying state vector information as part of the request
+		/// data written to the OutputStream. Any session HTTP cookies may or may not
+		/// be preserved between requests, it is left up to the JVM's implementation
+		/// of the HTTP client.
+		/// </remarks>
+		internal class MultiRequestService : TransportHttp.Service
+		{
+			internal bool finalRequest;
+
+			internal MultiRequestService(TransportHttp _enclosing, string serviceName) : base
+				(_enclosing, serviceName)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			/// <summary>Keep opening send-receive pairs to the given URI.</summary>
+			/// <remarks>Keep opening send-receive pairs to the given URI.</remarks>
+			/// <exception cref="System.IO.IOException"></exception>
+			internal override void Execute()
+			{
+				this.@out.Close();
+				if (this.conn == null)
+				{
+					if (this.@out.Length() == 0)
+					{
+						// Request output hasn't started yet, but more data is being
+						// requested. If there is no request data buffered and the
+						// final request was already sent, do nothing to ensure the
+						// caller is shown EOF on the InputStream; otherwise an
+						// programming error has occurred within this module.
+						if (this.finalRequest)
+						{
+							return;
+						}
+						throw new TransportException(this._enclosing.uri, JGitText.Get().startingReadStageWithoutWrittenRequestDataPendingIsNotSupported
+							);
+					}
+					this.SendRequest();
+				}
+				this.@out.Reset();
+				this.OpenResponse();
+				this.@in.Add(this._enclosing.OpenInputStream(this.conn));
+				if (!this.finalRequest)
+				{
+					this.@in.Add(this.execute);
+				}
+				this.conn = null;
+			}
+
+			private readonly TransportHttp _enclosing;
+		}
+
+		/// <summary>Service for maintaining a single long-poll connection.</summary>
+		/// <remarks>Service for maintaining a single long-poll connection.</remarks>
+		internal class LongPollService : TransportHttp.Service
+		{
+			/// <param name="serviceName"></param>
+			internal LongPollService(TransportHttp _enclosing, string serviceName) : base(_enclosing, serviceName
+				)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			/// <summary>Only open one send-receive request.</summary>
+			/// <remarks>Only open one send-receive request.</remarks>
+			/// <exception cref="System.IO.IOException"></exception>
+			internal override void Execute()
+			{
+				this.@out.Close();
+				if (this.conn == null)
+				{
+					this.SendRequest();
+				}
+				this.OpenResponse();
+				this.@in.Add(this._enclosing.OpenInputStream(this.conn));
 			}
 
 			private readonly TransportHttp _enclosing;

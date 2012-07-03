@@ -818,6 +818,7 @@ namespace NGit.Api
 		/// a
 		/// <see cref="StashCreateCommand">StashCreateCommand</see>
 		/// </returns>
+		/// <since>2.0</since>
 		public virtual StashCreateCommand StashCreate()
 		{
 			return new StashCreateCommand(repo);
@@ -828,6 +829,7 @@ namespace NGit.Api
 		/// a
 		/// <see cref="StashApplyCommand">StashApplyCommand</see>
 		/// </returns>
+		/// <since>2.0</since>
 		public virtual StashApplyCommand StashApply()
 		{
 			return new StashApplyCommand(repo);
@@ -838,6 +840,7 @@ namespace NGit.Api
 		/// a
 		/// <see cref="StashDropCommand">StashDropCommand</see>
 		/// </returns>
+		/// <since>2.0</since>
 		public virtual StashDropCommand StashDrop()
 		{
 			return new StashDropCommand(repo);
@@ -859,6 +862,7 @@ namespace NGit.Api
 		/// <code>apply</code>
 		/// command
 		/// </returns>
+		/// <since>2.0</since>
 		public virtual ApplyCommand Apply()
 		{
 			return new ApplyCommand(repo);

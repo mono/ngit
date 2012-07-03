@@ -151,6 +151,7 @@ namespace NGit.Util
 		/// negative, zero or positive if a sorts before, is equal to, or
 		/// sorts after b.
 		/// </returns>
+		/// <since>2.0</since>
 		public static int CompareIgnoreCase(string a, string b)
 		{
 			for (int i = 0; i < a.Length && i < b.Length; i++)
@@ -177,6 +178,7 @@ namespace NGit.Util
 		/// negative, zero or positive if a sorts before, is equal to, or
 		/// sorts after b.
 		/// </returns>
+		/// <since>2.0</since>
 		public static int CompareWithCase(string a, string b)
 		{
 			for (int i = 0; i < a.Length && i < b.Length; i++)

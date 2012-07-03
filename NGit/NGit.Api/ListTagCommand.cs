@@ -62,8 +62,8 @@ namespace NGit.Api
 		{
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">upon internal failure</exception>
 		/// <returns>the tags available</returns>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override IList<Ref> Call()
 		{
 			CheckCallable();
@@ -86,14 +86,14 @@ namespace NGit.Api
 			{
 				revWalk.Release();
 			}
-			tags.Sort(new _IComparer_93());
+			tags.Sort(new _IComparer_92());
 			SetCallable(false);
 			return tags;
 		}
 
-		private sealed class _IComparer_93 : IComparer<Ref>
+		private sealed class _IComparer_92 : IComparer<Ref>
 		{
-			public _IComparer_93()
+			public _IComparer_92()
 			{
 			}
 

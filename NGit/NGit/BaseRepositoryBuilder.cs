@@ -77,6 +77,45 @@ namespace NGit
 				[4] == 'i' && @ref[5] == 'r' && @ref[6] == ':' && @ref[7] == ' ';
 		}
 
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		/// <exception cref="System.IO.IOException"></exception>
+		private static FilePath GetSymRef(FilePath workTree, FilePath dotGit)
+		{
+			byte[] content = IOUtil.ReadFully(dotGit);
+			if (!IsSymRef(content))
+			{
+				throw new IOException(MessageFormat.Format(JGitText.Get().invalidGitdirRef, dotGit
+					.GetAbsolutePath()));
+			}
+			int pathStart = 8;
+			int lineEnd = RawParseUtils.NextLF(content, pathStart);
+			if (content[lineEnd - 1] == '\n')
+			{
+				lineEnd--;
+			}
+			if (lineEnd == pathStart)
+			{
+				throw new IOException(MessageFormat.Format(JGitText.Get().invalidGitdirRef, dotGit
+					.GetAbsolutePath()));
+			}
+			string gitdirPath = RawParseUtils.Decode(content, pathStart, lineEnd);
+			FilePath gitdirFile = new FilePath(gitdirPath);
+			if (gitdirFile.IsAbsolute())
+			{
+				return gitdirFile;
+			}
+			else
+			{
+				return new FilePath(workTree, gitdirPath).GetCanonicalFile();
+			}
+		}
+
 		private FS fs;
 
 		private FilePath gitDir;
@@ -105,13 +144,6 @@ namespace NGit
 		/// <remarks>Configuration file of target repository, lazily loaded if required.</remarks>
 		private Config config;
 
-		//
-		//
-		//
-		//
-		//
-		//
-		//
 		/// <summary>Set the file system abstraction needed by this repository.</summary>
 		/// <remarks>Set the file system abstraction needed by this repository.</remarks>
 		/// <param name="fs">the abstraction.</param>
@@ -660,6 +692,21 @@ namespace NGit
 						SetGitDir(dir);
 						break;
 					}
+					else
+					{
+						if (dir.IsFile())
+						{
+							try
+							{
+								SetGitDir(GetSymRef(current, dir));
+								break;
+							}
+							catch (IOException)
+							{
+							}
+						}
+					}
+					// Continue searching if gitdir ref isn't found
 					current = current.GetParentFile();
 					if (current != null && ceilingDirectories != null && ceilingDirectories.Contains(
 						current))
@@ -755,33 +802,7 @@ namespace NGit
 				}
 				else
 				{
-					byte[] content = IOUtil.ReadFully(dotGit);
-					if (!IsSymRef(content))
-					{
-						throw new IOException(MessageFormat.Format(JGitText.Get().invalidGitdirRef, dotGit
-							.GetAbsolutePath()));
-					}
-					int pathStart = 8;
-					int lineEnd = RawParseUtils.NextLF(content, pathStart);
-					if (content[lineEnd - 1] == '\n')
-					{
-						lineEnd--;
-					}
-					if (lineEnd == pathStart)
-					{
-						throw new IOException(MessageFormat.Format(JGitText.Get().invalidGitdirRef, dotGit
-							.GetAbsolutePath()));
-					}
-					string gitdirPath = RawParseUtils.Decode(content, pathStart, lineEnd);
-					FilePath gitdirFile = new FilePath(gitdirPath);
-					if (gitdirFile.IsAbsolute())
-					{
-						SetGitDir(gitdirFile);
-					}
-					else
-					{
-						SetGitDir(new FilePath(GetWorkTree(), gitdirPath).GetCanonicalFile());
-					}
+					SetGitDir(GetSymRef(GetWorkTree(), dotGit));
 				}
 			}
 		}

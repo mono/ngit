@@ -77,6 +77,10 @@ namespace NGit.Api
 		/// )
 		/// </summary>
 		/// <returns>a set of strings representing each file cleaned.</returns>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
+		/// <exception cref="NGit.Errors.NoWorkTreeException">NGit.Errors.NoWorkTreeException
+		/// 	</exception>
 		public override ICollection<string> Call()
 		{
 			ICollection<string> files = new TreeSet<string>();

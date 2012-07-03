@@ -97,7 +97,7 @@ namespace NGit.Api
 		/// invalid
 		/// </exception>
 		/// <returns>the newly created branch</returns>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override Ref Call()
 		{
 			CheckCallable();

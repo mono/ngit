@@ -174,34 +174,30 @@ namespace NGit.Util.IO
 		/// <exception cref="System.IO.IOException"></exception>
 		public override int Read(byte[] b, int off, int len)
 		{
-			int cnt = 0;
-			while (0 < len)
+			if (len == 0)
+			{
+				return 0;
+			}
+			for (; ; )
 			{
 				InputStream @in = Head();
 				int n = @in.Read(b, off, len);
 				if (0 < n)
 				{
-					cnt += n;
-					off += n;
-					len -= n;
+					return n;
 				}
 				else
 				{
 					if (@in == EOF)
 					{
-						return 0 < cnt ? cnt : -1;
+						return -1;
 					}
 					else
 					{
 						Pop();
-						if (0 < cnt)
-						{
-							break;
-						}
 					}
 				}
 			}
-			return cnt;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

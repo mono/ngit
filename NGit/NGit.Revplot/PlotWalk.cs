@@ -177,6 +177,14 @@ namespace NGit.Revplot
 				if (o is RevTag)
 				{
 					RevTag tag = (RevTag)o;
+					try
+					{
+						this._enclosing.ParseBody(tag);
+					}
+					catch (IOException)
+					{
+						return 0;
+					}
 					PersonIdent who = tag.GetTaggerIdent();
 					return who != null ? who.GetWhen().GetTime() : 0;
 				}

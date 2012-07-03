@@ -205,6 +205,32 @@ namespace NGit.Treewalk
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestIsModifiedFileSmudged()
+		{
+			FilePath f = WriteTrashFile("file", "content");
+			Git git = new Git(db);
+			// The idea of this test is to check the smudged handling
+			// Hopefully fsTick will make sure our entry gets smudged
+			FsTick(f);
+			WriteTrashFile("file", "content");
+			git.Add().AddFilepattern("file").Call();
+			WriteTrashFile("file", "conten2");
+			DirCacheEntry dce = db.ReadDirCache().GetEntry("file");
+			FileTreeIterator fti = new FileTreeIterator(trash, db.FileSystem, ((FileBasedConfig
+				)db.GetConfig()).Get(WorkingTreeOptions.KEY));
+			while (!fti.EntryPathString.Equals("file"))
+			{
+				fti.Next(1);
+			}
+			// If the fsTick trick does not work we could skip the compareMetaData
+			// test and hope that we are usually testing the intended code path.
+			NUnit.Framework.Assert.AreEqual(WorkingTreeIterator.MetadataDiff.SMUDGED, fti.CompareMetadata
+				(dce));
+			NUnit.Framework.Assert.IsTrue(fti.IsModified(dce, false));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void SubmoduleHeadMatchesIndex()
 		{
 			Git git = new Git(db);
@@ -214,10 +240,10 @@ namespace NGit.Treewalk
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_227(id, path));
+			editor.Add(new _PathEdit_249(id, path));
 			editor.Commit();
 			Git.CloneRepository().SetURI(db.Directory.ToURI().ToString()).SetDirectory(new FilePath
-				(db.WorkTree, path)).Call();
+				(db.WorkTree, path)).Call().GetRepository().Close();
 			TreeWalk walk = new TreeWalk(db);
 			DirCacheIterator indexIter = new DirCacheIterator(db.ReadDirCache());
 			FileTreeIterator workTreeIter = new FileTreeIterator(db);
@@ -228,9 +254,9 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.IsTrue(indexIter.IdEqual(workTreeIter));
 		}
 
-		private sealed class _PathEdit_227 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_249 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_227(RevCommit id, string baseArg1) : base(baseArg1)
+			public _PathEdit_249(RevCommit id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -255,7 +281,7 @@ namespace NGit.Treewalk
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_259(id, path));
+			editor.Add(new _PathEdit_282(id, path));
 			editor.Commit();
 			FilePath submoduleRoot = new FilePath(db.WorkTree, path);
 			NUnit.Framework.Assert.IsTrue(submoduleRoot.Mkdir());
@@ -272,9 +298,9 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, workTreeIter.EntryObjectId);
 		}
 
-		private sealed class _PathEdit_259 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_282 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_259(RevCommit id, string baseArg1) : base(baseArg1)
+			public _PathEdit_282(RevCommit id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -299,7 +325,7 @@ namespace NGit.Treewalk
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_293(id, path));
+			editor.Add(new _PathEdit_316(id, path));
 			editor.Commit();
 			NUnit.Framework.Assert.IsNotNull(Git.Init().SetDirectory(new FilePath(db.WorkTree
 				, path)).Call().GetRepository());
@@ -314,9 +340,9 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, workTreeIter.EntryObjectId);
 		}
 
-		private sealed class _PathEdit_293 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_316 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_293(RevCommit id, string baseArg1) : base(baseArg1)
+			public _PathEdit_316(RevCommit id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -341,10 +367,10 @@ namespace NGit.Treewalk
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_326(id, path));
+			editor.Add(new _PathEdit_349(id, path));
 			editor.Commit();
 			Git.CloneRepository().SetURI(db.Directory.ToURI().ToString()).SetDirectory(new FilePath
-				(db.WorkTree, path)).Call();
+				(db.WorkTree, path)).Call().GetRepository().Close();
 			TreeWalk walk = new TreeWalk(db);
 			DirCacheIterator indexIter = new DirCacheIterator(db.ReadDirCache());
 			FileTreeIterator workTreeIter = new FileTreeIterator(db.WorkTree, db.FileSystem, 
@@ -356,9 +382,9 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.IsTrue(indexIter.IdEqual(workTreeIter));
 		}
 
-		private sealed class _PathEdit_326 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_349 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_326(RevCommit id, string baseArg1) : base(baseArg1)
+			public _PathEdit_349(RevCommit id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -383,10 +409,10 @@ namespace NGit.Treewalk
 			string path = "sub/dir1/dir2";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_359(id, path));
+			editor.Add(new _PathEdit_383(id, path));
 			editor.Commit();
 			Git.CloneRepository().SetURI(db.Directory.ToURI().ToString()).SetDirectory(new FilePath
-				(db.WorkTree, path)).Call();
+				(db.WorkTree, path)).Call().GetRepository().Close();
 			TreeWalk walk = new TreeWalk(db);
 			DirCacheIterator indexIter = new DirCacheIterator(db.ReadDirCache());
 			FileTreeIterator workTreeIter = new FileTreeIterator(db);
@@ -397,9 +423,9 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.IsTrue(indexIter.IdEqual(workTreeIter));
 		}
 
-		private sealed class _PathEdit_359 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_383 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_359(RevCommit id, string baseArg1) : base(baseArg1)
+			public _PathEdit_383(RevCommit id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}

@@ -62,7 +62,7 @@ namespace NGit.Transport
 	/// This means the hook will not receive a non-fast-forward update command if
 	/// denyNonFastForwards is set to true in the configuration file. To get all
 	/// commands within the hook, see
-	/// <see cref="ReceivePack.GetAllCommands()">ReceivePack.GetAllCommands()</see>
+	/// <see cref="BaseReceivePack.GetAllCommands()">BaseReceivePack.GetAllCommands()</see>
 	/// .
 	/// <p>
 	/// As the hook is invoked prior to the commands being executed, the hook may

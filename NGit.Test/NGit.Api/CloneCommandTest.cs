@@ -85,6 +85,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCloneRepository()
 		{
@@ -110,6 +112,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCloneRepositoryWithBranch()
 		{
@@ -158,6 +162,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCloneRepositoryOnlyOneBranch()
 		{
@@ -206,6 +212,8 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestCloneRepositoryWhenDestinationDirectoryExistsAndIsNotEmpty
 			()
@@ -270,6 +278,7 @@ namespace NGit.Api
 			command.SetURI(uri);
 			Repository repo = command.Call();
 			NUnit.Framework.Assert.IsNotNull(repo);
+			AddRepoToClose(repo);
 			git.Add().AddFilepattern(path).AddFilepattern(Constants.DOT_GIT_MODULES).Call();
 			git.Commit().SetMessage("adding submodule").Call();
 			FilePath directory = CreateTempDirectory("testCloneRepositoryWithSubmodules");
@@ -326,14 +335,18 @@ namespace NGit.Api
 			RevCommit sub2Head = sub2Git.Commit().SetMessage("create file").Call();
 			NUnit.Framework.Assert.IsNotNull(sub2Head);
 			// Add submodule 2 to submodule 1
-			NUnit.Framework.Assert.IsNotNull(sub1Git.SubmoduleAdd().SetPath(path).SetURI(sub2
-				.Directory.ToURI().ToString()).Call());
+			Repository r = sub1Git.SubmoduleAdd().SetPath(path).SetURI(sub2.Directory.ToURI()
+				.ToString()).Call();
+			NUnit.Framework.Assert.IsNotNull(r);
+			AddRepoToClose(r);
 			RevCommit sub1Head = sub1Git.Commit().SetAll(true).SetMessage("Adding submodule")
 				.Call();
 			NUnit.Framework.Assert.IsNotNull(sub1Head);
 			// Add submodule 1 to default repository
-			NUnit.Framework.Assert.IsNotNull(git.SubmoduleAdd().SetPath(path).SetURI(sub1.Directory
-				.ToURI().ToString()).Call());
+			r = git.SubmoduleAdd().SetPath(path).SetURI(sub1.Directory.ToURI().ToString()).Call
+				();
+			NUnit.Framework.Assert.IsNotNull(r);
+			AddRepoToClose(r);
 			NUnit.Framework.Assert.IsNotNull(git.Commit().SetAll(true).SetMessage("Adding submodule"
 				).Call());
 			// Clone default repository and include submodules
@@ -363,6 +376,7 @@ namespace NGit.Api
 			SubmoduleWalk walk = SubmoduleWalk.ForIndex(git2.GetRepository());
 			NUnit.Framework.Assert.IsTrue(walk.Next());
 			Repository clonedSub1 = walk.GetRepository();
+			AddRepoToClose(clonedSub1);
 			NUnit.Framework.Assert.IsNotNull(clonedSub1);
 			status = new SubmoduleStatusCommand(clonedSub1);
 			statuses = status.Call();

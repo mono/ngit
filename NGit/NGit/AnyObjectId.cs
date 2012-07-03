@@ -41,7 +41,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-using System;
 using System.IO;
 using System.Text;
 using NGit;
@@ -60,7 +59,7 @@ namespace NGit
 	/// with this instance can alter at any time, if this instance is modified to
 	/// represent a different object name.
 	/// </remarks>
-	public abstract class AnyObjectId : IComparable
+	public abstract class AnyObjectId : System.IComparable<object>
 	{
 		/// <summary>Compare to object identifier byte sequences for equality.</summary>
 		/// <remarks>Compare to object identifier byte sequences for equality.</remarks>

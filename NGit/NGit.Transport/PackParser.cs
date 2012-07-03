@@ -128,6 +128,8 @@ namespace NGit.Transport
 
 		private bool checkEofAfterPackFooter;
 
+		private bool expectDataAfterPackFooter;
+
 		private long objectCount;
 
 		private PackedObjectInfo[] entries;
@@ -316,6 +318,22 @@ namespace NGit.Transport
 		public virtual void SetCheckEofAfterPackFooter(bool b)
 		{
 			checkEofAfterPackFooter = b;
+		}
+
+		/// <returns>true if there is data expected after the pack footer.</returns>
+		public virtual bool IsExpectDataAfterPackFooter()
+		{
+			return expectDataAfterPackFooter;
+		}
+
+		/// <param name="e">
+		/// true if there is additional data in InputStream after pack.
+		/// This requires the InputStream to support the mark and reset
+		/// functions.
+		/// </param>
+		public virtual void SetExpectDataAfterPackFooter(bool e)
+		{
+			expectDataAfterPackFooter = e;
 		}
 
 		/// <returns>the new objects that were sent by the user</returns>
@@ -558,13 +576,13 @@ namespace NGit.Transport
 						if (!IsAllowThin())
 						{
 							throw new IOException(MessageFormat.Format(JGitText.Get().packHasUnresolvedDeltas
-								, (objectCount - entryCount)));
+								, Sharpen.Extensions.ValueOf(objectCount - entryCount)));
 						}
 						ResolveDeltasWithExternalBases(resolving);
 						if (entryCount < objectCount)
 						{
 							throw new IOException(MessageFormat.Format(JGitText.Get().packHasUnresolvedDeltas
-								, (objectCount - entryCount)));
+								, Sharpen.Extensions.ValueOf(objectCount - entryCount)));
 						}
 					}
 					resolving.EndTask();
@@ -639,14 +657,14 @@ namespace NGit.Transport
 
 				default:
 				{
-					throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, info
-						.type));
+					throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, Sharpen.Extensions.ValueOf
+						(info.type)));
 				}
 			}
 			if (!CheckCRC(oe.GetCRC()))
 			{
 				throw new IOException(MessageFormat.Format(JGitText.Get().corruptionDetectedReReadingAt
-					, oe.GetOffset()));
+					, Sharpen.Extensions.ValueOf(oe.GetOffset())));
 			}
 			ResolveDeltas(visit.Next(), info.type, info, progress);
 		}
@@ -669,8 +687,8 @@ namespace NGit.Transport
 
 					default:
 					{
-						throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, info
-							.type));
+						throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, Sharpen.Extensions.ValueOf
+							(info.type)));
 					}
 				}
 				byte[] delta = InflateAndReturn(PackParser.Source.DATABASE, info.size);
@@ -680,7 +698,7 @@ namespace NGit.Transport
 				if (!CheckCRC(visit.delta.crc))
 				{
 					throw new IOException(MessageFormat.Format(JGitText.Get().corruptionDetectedReReadingAt
-						, visit.delta.position));
+						, Sharpen.Extensions.ValueOf(visit.delta.position)));
 				}
 				objectDigest.Update(Constants.EncodedTypeString(type));
 				objectDigest.Update(unchecked((byte)' '));
@@ -724,8 +742,8 @@ namespace NGit.Transport
 
 					default:
 					{
-						throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, typeCode
-							));
+						throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, Sharpen.Extensions.ValueOf
+							(typeCode)));
 					}
 				}
 			}
@@ -803,8 +821,8 @@ namespace NGit.Transport
 
 				default:
 				{
-					throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, info
-						.type));
+					throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, Sharpen.Extensions.ValueOf
+						(info.type)));
 				}
 			}
 			return info;
@@ -937,6 +955,14 @@ namespace NGit.Transport
 		/// <exception cref="System.IO.IOException"></exception>
 		private void ReadPackHeader()
 		{
+			if (expectDataAfterPackFooter)
+			{
+				if (!@in.MarkSupported())
+				{
+					throw new IOException(JGitText.Get().inputStreamMustSupportMark);
+				}
+				@in.Mark(buf.Length);
+			}
 			int hdrln = Constants.PACK_SIGNATURE.Length + 4 + 4;
 			int p = Fill(PackParser.Source.INPUT, hdrln);
 			for (int k = 0; k < Constants.PACK_SIGNATURE.Length; k++)
@@ -950,7 +976,7 @@ namespace NGit.Transport
 			if (vers != 2 && vers != 3)
 			{
 				throw new IOException(MessageFormat.Format(JGitText.Get().unsupportedPackVersion, 
-					vers));
+					Sharpen.Extensions.ValueOf(vers)));
 			}
 			objectCount = NB.DecodeUInt32(buf, p + 8);
 			Use(hdrln);
@@ -966,12 +992,7 @@ namespace NGit.Transport
 			byte[] srcHash = new byte[20];
 			System.Array.Copy(buf, c, srcHash, 0, 20);
 			Use(20);
-			// The input stream should be at EOF at this point. We do not support
-			// yielding back any remaining buffered data after the pack footer, so
-			// protocols that embed a pack stream are required to either end their
-			// stream with the pack, or embed the pack with a framing system like
-			// the SideBandInputStream does.
-			if (bAvail != 0)
+			if (bAvail != 0 && !expectDataAfterPackFooter)
 			{
 				throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().expectedEOFReceived
 					, "\\x" + Sharpen.Extensions.ToHexString(buf[bOffset] & unchecked((int)(0xff))))
@@ -984,6 +1005,14 @@ namespace NGit.Transport
 				{
 					throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().expectedEOFReceived
 						, "\\x" + Sharpen.Extensions.ToHexString(eof)));
+				}
+			}
+			else
+			{
+				if (bAvail > 0 && expectDataAfterPackFooter)
+				{
+					@in.Reset();
+					IOUtil.SkipFully(@in, bOffset);
 				}
 			}
 			if (!Arrays.Equals(actHash, srcHash))
@@ -1081,8 +1110,8 @@ namespace NGit.Transport
 
 				default:
 				{
-					throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, typeCode
-						));
+					throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, Sharpen.Extensions.ValueOf
+						(typeCode)));
 				}
 			}
 		}
@@ -1183,8 +1212,8 @@ namespace NGit.Transport
 				info = OpenDatabase(obj, info);
 				if (info.type != Constants.OBJ_BLOB)
 				{
-					throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, info
-						.type));
+					throw new IOException(MessageFormat.Format(JGitText.Get().unknownObjectType, Sharpen.Extensions.ValueOf
+						(info.type)));
 				}
 				ObjectStream cur = readCurs.Open(obj, info.type).OpenStream();
 				try
@@ -1321,9 +1350,22 @@ namespace NGit.Transport
 		{
 			packDigest.Update(buf, 0, bOffset);
 			OnStoreStream(buf, 0, bOffset);
-			if (bAvail > 0)
+			if (expectDataAfterPackFooter)
 			{
-				System.Array.Copy(buf, bOffset, buf, 0, bAvail);
+				if (bAvail > 0)
+				{
+					@in.Reset();
+					IOUtil.SkipFully(@in, bOffset);
+					bAvail = 0;
+				}
+				@in.Mark(buf.Length);
+			}
+			else
+			{
+				if (bAvail > 0)
+				{
+					System.Array.Copy(buf, bOffset, buf, 0, bAvail);
+				}
 			}
 			bBase += bOffset;
 			bOffset = 0;

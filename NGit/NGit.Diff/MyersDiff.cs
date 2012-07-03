@@ -287,7 +287,8 @@ namespace NGit.Diff
 					if (((d + k - this.middleK) % 2) != 0)
 					{
 						throw new RuntimeException(MessageFormat.Format(JGitText.Get().unexpectedOddResult
-							, d, k, this.middleK));
+							, Sharpen.Extensions.ValueOf(d), Sharpen.Extensions.ValueOf(k), Sharpen.Extensions.ValueOf
+							(this.middleK)));
 					}
 					return (d + k - this.middleK) / 2;
 				}
@@ -297,8 +298,9 @@ namespace NGit.Diff
 					// TODO: remove
 					if (k < this.beginK || k > this.endK)
 					{
-						throw new RuntimeException(MessageFormat.Format(JGitText.Get().kNotInRange, k, this
-							.beginK, this.endK));
+						throw new RuntimeException(MessageFormat.Format(JGitText.Get().kNotInRange, Sharpen.Extensions.ValueOf
+							(k), Sharpen.Extensions.ValueOf(this.beginK), Sharpen.Extensions.ValueOf(this.endK
+							)));
 					}
 					return this.x.Get(this.GetIndex(d, k));
 				}
@@ -308,8 +310,9 @@ namespace NGit.Diff
 					// TODO: remove
 					if (k < this.beginK || k > this.endK)
 					{
-						throw new RuntimeException(MessageFormat.Format(JGitText.Get().kNotInRange, k, this
-							.beginK, this.endK));
+						throw new RuntimeException(MessageFormat.Format(JGitText.Get().kNotInRange, Sharpen.Extensions.ValueOf
+							(k), Sharpen.Extensions.ValueOf(this.beginK), Sharpen.Extensions.ValueOf(this.endK
+							)));
 					}
 					return this.snake.Get(this.GetIndex(d, k));
 				}

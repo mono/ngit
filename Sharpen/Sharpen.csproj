@@ -152,6 +152,8 @@
     <Compile Include="Sharpen\WeakReference.cs" />
     <Compile Include="Sharpen\Process.cs" />
     <Compile Include="Sharpen\DateFormat.cs" />
+    <Compile Include="Sharpen\DigestInputStream.cs" />
+    <Compile Include="Sharpen\StackOverflowError.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

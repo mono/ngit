@@ -116,5 +116,58 @@ namespace NGit.Storage.File
 				NUnit.Framework.Assert.IsNotNull(e.Message);
 			}
 		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void AbsoluteGitDirRef()
+		{
+			FileRepository repo1 = CreateWorkRepository();
+			FilePath dir = CreateTempDirectory("dir");
+			FilePath dotGit = new FilePath(dir, Constants.DOT_GIT);
+			new FileWriter(dotGit).Append("gitdir: " + repo1.Directory.GetAbsolutePath()).Close
+				();
+			FileRepositoryBuilder builder = new FileRepositoryBuilder();
+			builder.SetWorkTree(dir);
+			builder.SetMustExist(true);
+			FileRepository repo2 = builder.Build();
+			NUnit.Framework.Assert.AreEqual(repo1.Directory, repo2.Directory);
+			NUnit.Framework.Assert.AreEqual(dir, repo2.WorkTree);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void RelativeGitDirRef()
+		{
+			FileRepository repo1 = CreateWorkRepository();
+			FilePath dir = new FilePath(repo1.WorkTree, "dir");
+			NUnit.Framework.Assert.IsTrue(dir.Mkdir());
+			FilePath dotGit = new FilePath(dir, Constants.DOT_GIT);
+			new FileWriter(dotGit).Append("gitdir: ../" + Constants.DOT_GIT).Close();
+			FileRepositoryBuilder builder = new FileRepositoryBuilder();
+			builder.SetWorkTree(dir);
+			builder.SetMustExist(true);
+			FileRepository repo2 = builder.Build();
+			NUnit.Framework.Assert.AreEqual(repo1.Directory, repo2.Directory);
+			NUnit.Framework.Assert.AreEqual(dir, repo2.WorkTree);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void ScanWithGitDirRef()
+		{
+			FileRepository repo1 = CreateWorkRepository();
+			FilePath dir = CreateTempDirectory("dir");
+			FilePath dotGit = new FilePath(dir, Constants.DOT_GIT);
+			new FileWriter(dotGit).Append("gitdir: " + repo1.Directory.GetAbsolutePath()).Close
+				();
+			FileRepositoryBuilder builder = new FileRepositoryBuilder();
+			builder.SetWorkTree(dir);
+			builder.FindGitDir(dir);
+			NUnit.Framework.Assert.AreEqual(repo1.Directory, builder.GetGitDir());
+			builder.SetMustExist(true);
+			FileRepository repo2 = builder.Build();
+			NUnit.Framework.Assert.AreEqual(repo1.Directory, repo2.Directory);
+			NUnit.Framework.Assert.AreEqual(dir, repo2.WorkTree);
+		}
 	}
 }

@@ -97,6 +97,8 @@ namespace Sharpen
 
 		public override void Update (byte[] input, int index, int count)
 		{
+			if (count < 0)
+				Console.WriteLine ("Argh!");
 			this._stream.Write (input, index, count);
 		}
 	}

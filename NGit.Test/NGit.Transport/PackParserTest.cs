@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System.IO;
+using System.Text;
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using NGit;
 using NGit.Errors;
@@ -157,7 +158,7 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestTinyThinPack()
 		{
-			TestRepository d = new TestRepository(db);
+			TestRepository d = new TestRepository<FileRepository>(db);
 			RevBlob a = d.Blob("a");
 			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
 			PackHeader(pack, 1);
@@ -193,7 +194,7 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestPackWithTrailingGarbage()
 		{
-			TestRepository d = new TestRepository(db);
+			TestRepository d = new TestRepository<FileRepository>(db);
 			RevBlob a = d.Blob("a");
 			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
 			PackHeader(pack, 1);
@@ -222,7 +223,7 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestMaxObjectSizeFullBlob()
 		{
-			TestRepository d = new TestRepository(db);
+			TestRepository d = new TestRepository<FileRepository>(db);
 			byte[] data = Constants.Encode("0123456789");
 			d.Blob(data);
 			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
@@ -256,7 +257,7 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestMaxObjectSizeDeltaBlock()
 		{
-			TestRepository d = new TestRepository(db);
+			TestRepository d = new TestRepository<FileRepository>(db);
 			RevBlob a = d.Blob("a");
 			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
 			PackHeader(pack, 1);
@@ -291,7 +292,7 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestMaxObjectSizeDeltaResultSize()
 		{
-			TestRepository d = new TestRepository(db);
+			TestRepository d = new TestRepository<FileRepository>(db);
 			RevBlob a = d.Blob("0123456789");
 			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
 			PackHeader(pack, 1);
@@ -320,6 +321,165 @@ namespace NGit.Transport
 		}
 
 		// max obj size
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestNonMarkingInputStream()
+		{
+			TestRepository d = new TestRepository<FileRepository>(db);
+			RevBlob a = d.Blob("a");
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(1024);
+			PackHeader(pack, 1);
+			pack.Write((Constants.OBJ_REF_DELTA) << 4 | 4);
+			a.CopyRawTo(pack);
+			Deflate(pack, new byte[] { unchecked((int)(0x1)), unchecked((int)(0x1)), unchecked(
+				(int)(0x1)), (byte)('b') });
+			Digest(pack);
+			InputStream @in = new _ByteArrayInputStream_319(pack.ToByteArray());
+			PackParser p = Index(@in);
+			p.SetAllowThin(true);
+			p.SetCheckEofAfterPackFooter(false);
+			p.SetExpectDataAfterPackFooter(true);
+			try
+			{
+				p.Parse(NullProgressMonitor.INSTANCE);
+				NUnit.Framework.Assert.Fail("PackParser should have failed");
+			}
+			catch (IOException e)
+			{
+				NUnit.Framework.Assert.AreEqual(e.Message, JGitText.Get().inputStreamMustSupportMark
+					);
+			}
+		}
+
+		private sealed class _ByteArrayInputStream_319 : ByteArrayInputStream
+		{
+			public _ByteArrayInputStream_319(byte[] baseArg1) : base(baseArg1)
+			{
+			}
+
+			public override bool MarkSupported()
+			{
+				return false;
+			}
+
+			public override void Mark(int maxlength)
+			{
+				NUnit.Framework.Assert.Fail("Mark should not be called");
+			}
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDataAfterPackFooterSingleRead()
+		{
+			TestRepository d = new TestRepository<FileRepository>(db);
+			RevBlob a = d.Blob("a");
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(32 * 1024);
+			PackHeader(pack, 1);
+			pack.Write((Constants.OBJ_REF_DELTA) << 4 | 4);
+			a.CopyRawTo(pack);
+			Deflate(pack, new byte[] { unchecked((int)(0x1)), unchecked((int)(0x1)), unchecked(
+				(int)(0x1)), (byte)('b') });
+			Digest(pack);
+			byte[] packData = pack.ToByteArray();
+			byte[] streamData = new byte[packData.Length + 1];
+			System.Array.Copy(packData, 0, streamData, 0, packData.Length);
+			streamData[packData.Length] = unchecked((int)(0x7e));
+			InputStream @in = new ByteArrayInputStream(streamData);
+			PackParser p = Index(@in);
+			p.SetAllowThin(true);
+			p.SetCheckEofAfterPackFooter(false);
+			p.SetExpectDataAfterPackFooter(true);
+			p.Parse(NullProgressMonitor.INSTANCE);
+			NUnit.Framework.Assert.AreEqual(unchecked((int)(0x7e)), @in.Read());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDataAfterPackFooterSplitObjectRead()
+		{
+			byte[] data = Constants.Encode("0123456789");
+			// Build a pack ~17k
+			int objects = 900;
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(32 * 1024);
+			PackHeader(pack, objects);
+			for (int i = 0; i < objects; i++)
+			{
+				pack.Write((Constants.OBJ_BLOB) << 4 | 10);
+				Deflate(pack, data);
+			}
+			Digest(pack);
+			byte[] packData = pack.ToByteArray();
+			byte[] streamData = new byte[packData.Length + 1];
+			System.Array.Copy(packData, 0, streamData, 0, packData.Length);
+			streamData[packData.Length] = unchecked((int)(0x7e));
+			InputStream @in = new ByteArrayInputStream(streamData);
+			PackParser p = Index(@in);
+			p.SetAllowThin(true);
+			p.SetCheckEofAfterPackFooter(false);
+			p.SetExpectDataAfterPackFooter(true);
+			p.Parse(NullProgressMonitor.INSTANCE);
+			NUnit.Framework.Assert.AreEqual(unchecked((int)(0x7e)), @in.Read());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDataAfterPackFooterSplitHeaderRead()
+		{
+			TestRepository d = new TestRepository<FileRepository>(db);
+			byte[] data = Constants.Encode("a");
+			RevBlob b = d.Blob(data);
+			int objects = 248;
+			TemporaryBuffer.Heap pack = new TemporaryBuffer.Heap(32 * 1024);
+			PackHeader(pack, objects + 1);
+			int offset = 13;
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < offset; i++)
+			{
+				sb.Append(i);
+			}
+			offset = sb.ToString().Length;
+			int lenByte = (Constants.OBJ_BLOB) << 4 | (offset & unchecked((int)(0x0F)));
+			offset >>= 4;
+			if (offset > 0)
+			{
+				lenByte |= 1 << 7;
+			}
+			pack.Write(lenByte);
+			while (offset > 0)
+			{
+				lenByte = offset & unchecked((int)(0x7F));
+				offset >>= 6;
+				if (offset > 0)
+				{
+					lenByte |= 1 << 7;
+				}
+				pack.Write(lenByte);
+			}
+			Deflate(pack, Constants.Encode(sb.ToString()));
+			for (int i_1 = 0; i_1 < objects; i_1++)
+			{
+				// The last pack header written falls across the 8192 byte boundary
+				// between [8189:8210]
+				pack.Write((Constants.OBJ_REF_DELTA) << 4 | 4);
+				b.CopyRawTo(pack);
+				Deflate(pack, new byte[] { unchecked((int)(0x1)), unchecked((int)(0x1)), unchecked(
+					(int)(0x1)), (byte)('b') });
+			}
+			Digest(pack);
+			byte[] packData = pack.ToByteArray();
+			byte[] streamData = new byte[packData.Length + 1];
+			System.Array.Copy(packData, 0, streamData, 0, packData.Length);
+			streamData[packData.Length] = unchecked((int)(0x7e));
+			InputStream @in = new ByteArrayInputStream(streamData);
+			PackParser p = Index(@in);
+			p.SetAllowThin(true);
+			p.SetCheckEofAfterPackFooter(false);
+			p.SetExpectDataAfterPackFooter(true);
+			p.Parse(NullProgressMonitor.INSTANCE);
+			NUnit.Framework.Assert.AreEqual(unchecked((int)(0x7e)), @in.Read());
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private void PackHeader(TemporaryBuffer.Heap tinyPack, int cnt)
 		{
@@ -364,6 +524,7 @@ namespace NGit.Transport
 			if (inserter != null)
 			{
 				inserter.Release();
+				inserter = null;
 			}
 		}
 

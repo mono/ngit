@@ -78,6 +78,8 @@ namespace NGit.Api
 			base.TearDown();
 		}
 
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestWrap()
 		{
@@ -98,6 +100,8 @@ namespace NGit.Api
 
 		// should not get here
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestOpen()
 		{

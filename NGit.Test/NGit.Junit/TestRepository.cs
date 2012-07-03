@@ -81,6 +81,7 @@ namespace NGit.Junit
 		T Update<T>(string @ref, T obj) where T:AnyObjectId;
 		void WriteFile(FilePath p, byte[] bin);
 		RevBlob Blob(string content);
+		RevBlob Blob(byte[] content);
 	}
 	
 	public class TestRepository<R> : TestRepository where R : Repository
@@ -108,7 +109,7 @@ namespace NGit.Junit
 			set { storage = value; }
 		}
 		
-		private R db {
+		private Repository db {
 			get { return (R) (object) storage; }
 			set { storage = (Repository)(object) value; }
 		}
@@ -141,7 +142,7 @@ namespace NGit.Junit
 		}
 
 		/// <returns>the repository this helper class operates against.</returns>
-		public virtual R GetRepository()
+		public virtual Repository GetRepository()
 		{
 			return db;
 		}
@@ -490,21 +491,25 @@ namespace NGit.Junit
 			}
 			else
 			{
+				// nothing
 				if ("FETCH_HEAD".Equals(@ref))
 				{
 				}
 				else
 				{
+					// nothing
 					if ("MERGE_HEAD".Equals(@ref))
 					{
 					}
 					else
 					{
+						// nothing
 						if (@ref.StartsWith(Constants.R_REFS))
 						{
 						}
 						else
 						{
+							// nothing
 							@ref = Constants.R_HEADS + @ref;
 						}
 					}
@@ -537,8 +542,8 @@ namespace NGit.Junit
 		{
 			if (db is FileRepository)
 			{
-				FileRepository fr = (FileRepository)(object)db;
-				RefWriter rw = new _RefWriter_491(this, fr, fr.GetAllRefs().Values);
+				FileRepository fr = (FileRepository)db;
+				RefWriter rw = new _RefWriter_495(this, fr, fr.GetAllRefs().Values);
 				rw.WritePackedRefs();
 				rw.WriteInfoRefs();
 				StringBuilder w = new StringBuilder();
@@ -553,9 +558,9 @@ namespace NGit.Junit
 			}
 		}
 
-		private sealed class _RefWriter_491 : RefWriter
+		private sealed class _RefWriter_495 : RefWriter
 		{
-			public _RefWriter_491(TestRepository<R> _enclosing, FileRepository fr, ICollection
+			public _RefWriter_495(TestRepository<R> _enclosing, FileRepository fr, ICollection
 				<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -613,11 +618,13 @@ namespace NGit.Junit
 			}
 			else
 			{
+				// nothing
 				if (@ref.StartsWith(Constants.R_REFS))
 				{
 				}
 				else
 				{
+					// nothing
 					@ref = Constants.R_HEADS + @ref;
 				}
 			}
@@ -935,15 +942,12 @@ namespace NGit.Junit
 			/// <exception cref="System.Exception"></exception>
 			public virtual CommitBuilder Add(string path, RevBlob id)
 			{
-				DirCacheEditor e = this.tree.Editor();
-				e.Add(new _PathEdit_791(id, path));
-				e.Finish();
-				return this;
+				return this.Edit(new _PathEdit_796(id, path));
 			}
 
-			private sealed class _PathEdit_791 : DirCacheEditor.PathEdit
+			private sealed class _PathEdit_796 : DirCacheEditor.PathEdit
 			{
-				public _PathEdit_791(RevBlob id, string baseArg1) : base(baseArg1)
+				public _PathEdit_796(RevBlob id, string baseArg1) : base(baseArg1)
 				{
 					this.id = id;
 				}
@@ -955,6 +959,14 @@ namespace NGit.Junit
 				}
 
 				private readonly RevBlob id;
+			}
+
+		public virtual CommitBuilder Edit(NGit.Dircache.DirCacheEditor.PathEdit edit)
+			{
+				DirCacheEditor e = this.tree.Editor();
+				e.Add(edit);
+				e.Finish();
+				return this;
 			}
 
 			public virtual CommitBuilder Rm(string path)

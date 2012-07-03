@@ -123,7 +123,7 @@ namespace NGit.Transport
 							// if authentication failed maybe credentials changed at the
 							// remote end therefore reset credentials and retry
 							if (credentialsProvider != null && e.InnerException == null && e.Message.Equals("Auth fail"
-								))
+								) && retries < 3)
 							{
 								credentialsProvider.Reset(uri);
 								session = CreateSession(credentialsProvider, fs, user, pass, host, port, hc);

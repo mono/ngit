@@ -106,7 +106,16 @@ namespace NGit.Api
 		/// be obtained by calling
 		/// <see cref="GetRevertedRefs()">GetRevertedRefs()</see>
 		/// </returns>
-		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException">NGit.Api.Errors.WrongRepositoryStateException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.ConcurrentRefUpdateException">NGit.Api.Errors.ConcurrentRefUpdateException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.UnmergedPathsException">NGit.Api.Errors.UnmergedPathsException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.NoMessageException">NGit.Api.Errors.NoMessageException
+		/// 	</exception>
 		public override RevCommit Call()
 		{
 			RevCommit newHead = null;

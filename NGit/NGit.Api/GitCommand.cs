@@ -66,25 +66,25 @@ namespace NGit.Api
 	/// this command should work with.
 	/// <p>
 	/// Finally this class stores a state telling whether it is allowed to call
-	/// <see cref="Sharpen.Callable{V}.Call()">Sharpen.Callable&lt;V&gt;.Call()</see>
+	/// <see cref="GitCommand{T}.Call()">GitCommand&lt;T&gt;.Call()</see>
 	/// on this instance. Instances of
 	/// <see cref="GitCommand{T}">GitCommand&lt;T&gt;</see>
 	/// can only be
 	/// used for one single successful call to
-	/// <see cref="Sharpen.Callable{V}.Call()">Sharpen.Callable&lt;V&gt;.Call()</see>
+	/// <see cref="GitCommand{T}.Call()">GitCommand&lt;T&gt;.Call()</see>
 	/// . Afterwards this
 	/// instance may not be used anymore to set/modify any properties or to call
-	/// <see cref="Sharpen.Callable{V}.Call()">Sharpen.Callable&lt;V&gt;.Call()</see>
+	/// <see cref="GitCommand{T}.Call()">GitCommand&lt;T&gt;.Call()</see>
 	/// again. This is achieved by setting the
 	/// <see cref="GitCommand{T}.callable">GitCommand&lt;T&gt;.callable</see>
 	/// property to false after the successful execution of
-	/// <see cref="Sharpen.Callable{V}.Call()">Sharpen.Callable&lt;V&gt;.Call()</see>
+	/// <see cref="GitCommand{T}.Call()">GitCommand&lt;T&gt;.Call()</see>
 	/// and to
 	/// check the state (by calling
 	/// <see cref="GitCommand{T}.CheckCallable()">GitCommand&lt;T&gt;.CheckCallable()</see>
 	/// ) before setting of
 	/// properties and inside
-	/// <see cref="Sharpen.Callable{V}.Call()">Sharpen.Callable&lt;V&gt;.Call()</see>
+	/// <see cref="GitCommand{T}.Call()">GitCommand&lt;T&gt;.Call()</see>
 	/// .
 	/// </summary>
 	/// <?></?>
@@ -95,7 +95,7 @@ namespace NGit.Api
 
 		/// <summary>
 		/// a state which tells whether it is allowed to call
-		/// <see cref="Sharpen.Callable{V}.Call()">Sharpen.Callable&lt;V&gt;.Call()</see>
+		/// <see cref="GitCommand{T}.Call()">GitCommand&lt;T&gt;.Call()</see>
 		/// on this
 		/// instance.
 		/// </summary>
@@ -124,7 +124,7 @@ namespace NGit.Api
 
 		/// <summary>
 		/// Set's the state which tells whether it is allowed to call
-		/// <see cref="Sharpen.Callable{V}.Call()">Sharpen.Callable&lt;V&gt;.Call()</see>
+		/// <see cref="GitCommand{T}.Call()">GitCommand&lt;T&gt;.Call()</see>
 		/// on this instance.
 		/// <see cref="GitCommand{T}.CheckCallable()">GitCommand&lt;T&gt;.CheckCallable()</see>
 		/// will throw an exception when
@@ -133,7 +133,7 @@ namespace NGit.Api
 		/// </summary>
 		/// <param name="callable">
 		/// if <code>true</code> it is allowed to call
-		/// <see cref="Sharpen.Callable{V}.Call()">Sharpen.Callable&lt;V&gt;.Call()</see>
+		/// <see cref="GitCommand{T}.Call()">GitCommand&lt;T&gt;.Call()</see>
 		/// on
 		/// this instance.
 		/// </param>
@@ -167,6 +167,10 @@ namespace NGit.Api
 			}
 		}
 
+		/// <summary>Executes the command</summary>
+		/// <returns>T a result. Each command has its own return type</returns>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">or subclass thereof when an error occurs
+		/// 	</exception>
 		public abstract T Call();
 	}
 }

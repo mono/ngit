@@ -55,6 +55,7 @@ namespace NGit.Transport
 	/// This stream is buffered at packet sizes, so the caller doesn't need to wrap
 	/// it in yet another buffered stream.
 	/// </remarks>
+	/// <since>2.0</since>
 	public class SideBandOutputStream : OutputStream
 	{
 		/// <summary>Channel used for pack data.</summary>
@@ -116,19 +117,19 @@ namespace NGit.Transport
 			if (chan <= 0 || chan > 255)
 			{
 				throw new ArgumentException(MessageFormat.Format(JGitText.Get().channelMustBeInRange0_255
-					, chan));
+					, Sharpen.Extensions.ValueOf(chan)));
 			}
 			if (sz <= HDR_SIZE)
 			{
 				throw new ArgumentException(MessageFormat.Format(JGitText.Get().packetSizeMustBeAtLeast
-					, sz, HDR_SIZE));
+					, Sharpen.Extensions.ValueOf(sz), Sharpen.Extensions.ValueOf(HDR_SIZE)));
 			}
 			else
 			{
 				if (MAX_BUF < sz)
 				{
 					throw new ArgumentException(MessageFormat.Format(JGitText.Get().packetSizeMustBeAtMost
-						, sz, MAX_BUF));
+						, Sharpen.Extensions.ValueOf(sz), Sharpen.Extensions.ValueOf(MAX_BUF)));
 				}
 			}
 			@out = os;

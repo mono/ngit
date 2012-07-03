@@ -65,7 +65,8 @@ namespace NGit.Api
 		{
 		}
 
-		/// <exception cref="System.Exception"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
+		/// <exception cref="NGit.Api.Errors.InvalidRefNameException"></exception>
 		public override ICollection<RevCommit> Call()
 		{
 			CheckCallable();

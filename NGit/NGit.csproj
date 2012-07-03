@@ -576,6 +576,10 @@
     <Compile Include="NGit.Api\StashDropCommand.cs" />
     <Compile Include="NGit.Storage.File\ReflogWriter.cs" />
     <Compile Include="NGit.Dircache\InvalidPathException.cs" />
+    <Compile Include="NGit\BatchRefUpdate.cs" />
+    <Compile Include="NGit.Api.Errors\TransportException.cs" />
+    <Compile Include="NGit.Merge\SquashMessageFormatter.cs" />
+    <Compile Include="NGit.Transport\BaseReceivePack.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -602,4 +606,7 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <ItemGroup>
+    <None Include="NGit.Storage.File\ChangeLog" />
+  </ItemGroup>
 </Project>

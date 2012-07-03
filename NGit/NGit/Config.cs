@@ -1402,8 +1402,7 @@ namespace NGit
 
 						default:
 						{
-							throw new ConfigInvalidException(MessageFormat.Format(JGitText.Get().badEscape, (
-								(char)c)));
+							throw new ConfigInvalidException(MessageFormat.Format(JGitText.Get().badEscape, c));
 						}
 					}
 				}

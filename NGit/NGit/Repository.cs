@@ -1114,7 +1114,7 @@ namespace NGit
 		/// </exception>
 		public virtual DirCache ReadDirCache()
 		{
-			return DirCache.Read(GetIndexFile(), FileSystem);
+			return DirCache.Read(this);
 		}
 
 		/// <summary>Create a new in-core index representation, lock it, and read from disk.</summary>
@@ -1148,7 +1148,7 @@ namespace NGit
 			// we want DirCache to inform us so that we can inform registered
 			// listeners about index changes
 			IndexChangedListener l = new _IndexChangedListener_900(this);
-			return DirCache.Lock(GetIndexFile(), FileSystem, l);
+			return DirCache.Lock(this, l);
 		}
 
 		private sealed class _IndexChangedListener_900 : IndexChangedListener
@@ -1465,21 +1465,7 @@ namespace NGit
 		/// </exception>
 		public virtual string ReadMergeCommitMsg()
 		{
-			if (IsBare || Directory == null)
-			{
-				throw new NoWorkTreeException();
-			}
-			FilePath mergeMsgFile = new FilePath(Directory, Constants.MERGE_MSG);
-			try
-			{
-				return RawParseUtils.Decode(IOUtil.ReadFully(mergeMsgFile));
-			}
-			catch (FileNotFoundException)
-			{
-				// MERGE_MSG file has disappeared in the meantime
-				// ignore it
-				return null;
-			}
+			return ReadCommitMsgFile(Constants.MERGE_MSG);
 		}
 
 		/// <summary>Write new content to the file $GIT_DIR/MERGE_MSG.</summary>
@@ -1487,7 +1473,7 @@ namespace NGit
 		/// Write new content to the file $GIT_DIR/MERGE_MSG. In this file operations
 		/// triggering a merge will store a template for the commit message of the
 		/// merge commit. If <code>null</code> is specified as message the file will
-		/// be deleted
+		/// be deleted.
 		/// </remarks>
 		/// <param name="msg">
 		/// the message which should be written or <code>null</code> to
@@ -1497,22 +1483,7 @@ namespace NGit
 		public virtual void WriteMergeCommitMsg(string msg)
 		{
 			FilePath mergeMsgFile = new FilePath(gitDir, Constants.MERGE_MSG);
-			if (msg != null)
-			{
-				FileOutputStream fos = new FileOutputStream(mergeMsgFile);
-				try
-				{
-					fos.Write(Sharpen.Runtime.GetBytesForString(msg, Constants.CHARACTER_ENCODING));
-				}
-				finally
-				{
-					fos.Close();
-				}
-			}
-			else
-			{
-				FileUtils.Delete(mergeMsgFile, FileUtils.SKIP_MISSING);
-			}
+			WriteCommitMsg(mergeMsgFile, msg);
 		}
 
 		/// <summary>Return the information stored in the file $GIT_DIR/MERGE_HEAD.</summary>
@@ -1522,11 +1493,10 @@ namespace NGit
 		/// should be merged together with HEAD.
 		/// </remarks>
 		/// <returns>
-		/// a list of commits which IDs are listed in the MERGE_HEAD
-		/// file or
+		/// a list of commits which IDs are listed in the MERGE_HEAD file or
 		/// <code>null</code>
-		/// if this file doesn't exist. Also if the file
-		/// exists but is empty
+		/// if this file doesn't exist. Also if the file exists
+		/// but is empty
 		/// <code>null</code>
 		/// will be returned
 		/// </returns>
@@ -1620,6 +1590,128 @@ namespace NGit
 			IList<ObjectId> heads = (head != null) ? Sharpen.Collections.SingletonList(head) : 
 				null;
 			WriteHeadsFile(heads, Constants.CHERRY_PICK_HEAD);
+		}
+
+		/// <summary>Write original HEAD commit into $GIT_DIR/ORIG_HEAD.</summary>
+		/// <remarks>Write original HEAD commit into $GIT_DIR/ORIG_HEAD.</remarks>
+		/// <param name="head">
+		/// an object id of the original HEAD commit or <code>null</code>
+		/// to delete the file
+		/// </param>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void WriteOrigHead(ObjectId head)
+		{
+			IList<ObjectId> heads = head != null ? Sharpen.Collections.SingletonList(head) : 
+				null;
+			WriteHeadsFile(heads, Constants.ORIG_HEAD);
+		}
+
+		/// <summary>Return the information stored in the file $GIT_DIR/ORIG_HEAD.</summary>
+		/// <remarks>Return the information stored in the file $GIT_DIR/ORIG_HEAD.</remarks>
+		/// <returns>
+		/// object id from ORIG_HEAD file or
+		/// <code>null</code>
+		/// if this file
+		/// doesn't exist. Also if the file exists but is empty
+		/// <code>null</code>
+		/// will be returned
+		/// </returns>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		/// <exception cref="NGit.Errors.NoWorkTreeException">
+		/// if this is bare, which implies it has no working directory.
+		/// See
+		/// <see cref="IsBare()">IsBare()</see>
+		/// .
+		/// </exception>
+		public virtual ObjectId ReadOrigHead()
+		{
+			if (IsBare || Directory == null)
+			{
+				throw new NoWorkTreeException();
+			}
+			byte[] raw = ReadGitDirectoryFile(Constants.ORIG_HEAD);
+			return raw != null ? ObjectId.FromString(raw, 0) : null;
+		}
+
+		/// <summary>Return the information stored in the file $GIT_DIR/SQUASH_MSG.</summary>
+		/// <remarks>
+		/// Return the information stored in the file $GIT_DIR/SQUASH_MSG. In this
+		/// file operations triggering a squashed merge will store a template for the
+		/// commit message of the squash commit.
+		/// </remarks>
+		/// <returns>
+		/// a String containing the content of the SQUASH_MSG file or
+		/// <code>null</code>
+		/// if this file doesn't exist
+		/// </returns>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		/// <exception cref="NGit.Errors.NoWorkTreeException">
+		/// if this is bare, which implies it has no working directory.
+		/// See
+		/// <see cref="IsBare()">IsBare()</see>
+		/// .
+		/// </exception>
+		public virtual string ReadSquashCommitMsg()
+		{
+			return ReadCommitMsgFile(Constants.SQUASH_MSG);
+		}
+
+		/// <summary>Write new content to the file $GIT_DIR/SQUASH_MSG.</summary>
+		/// <remarks>
+		/// Write new content to the file $GIT_DIR/SQUASH_MSG. In this file
+		/// operations triggering a squashed merge will store a template for the
+		/// commit message of the squash commit. If <code>null</code> is specified as
+		/// message the file will be deleted.
+		/// </remarks>
+		/// <param name="msg">
+		/// the message which should be written or <code>null</code> to
+		/// delete the file
+		/// </param>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void WriteSquashCommitMsg(string msg)
+		{
+			FilePath squashMsgFile = new FilePath(gitDir, Constants.SQUASH_MSG);
+			WriteCommitMsg(squashMsgFile, msg);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private string ReadCommitMsgFile(string msgFilename)
+		{
+			if (IsBare || Directory == null)
+			{
+				throw new NoWorkTreeException();
+			}
+			FilePath mergeMsgFile = new FilePath(Directory, msgFilename);
+			try
+			{
+				return RawParseUtils.Decode(IOUtil.ReadFully(mergeMsgFile));
+			}
+			catch (FileNotFoundException)
+			{
+				// the file has disappeared in the meantime ignore it
+				return null;
+			}
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		private void WriteCommitMsg(FilePath msgFile, string msg)
+		{
+			if (msg != null)
+			{
+				FileOutputStream fos = new FileOutputStream(msgFile);
+				try
+				{
+					fos.Write(Sharpen.Runtime.GetBytesForString(msg, Constants.CHARACTER_ENCODING));
+				}
+				finally
+				{
+					fos.Close();
+				}
+			}
+			else
+			{
+				FileUtils.Delete(msgFile, FileUtils.SKIP_MISSING);
+			}
 		}
 
 		/// <summary>Read a file from the git directory.</summary>

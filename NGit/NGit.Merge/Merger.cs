@@ -116,6 +116,8 @@ namespace NGit.Merge
 		/// an object writer to create objects in
 		/// <see cref="GetRepository()">GetRepository()</see>
 		/// .
+		/// If no inserter has been set on this instance, one will be created
+		/// and returned by all future calls.
 		/// </returns>
 		public virtual ObjectInserter GetObjectInserter()
 		{
@@ -124,6 +126,31 @@ namespace NGit.Merge
 				inserter = GetRepository().NewObjectInserter();
 			}
 			return inserter;
+		}
+
+		/// <summary>Set the inserter this merger will use to create objects.</summary>
+		/// <remarks>
+		/// Set the inserter this merger will use to create objects.
+		/// <p>
+		/// If an inserter was already set on this instance (such as by a prior set,
+		/// or a prior call to
+		/// <see cref="GetObjectInserter()">GetObjectInserter()</see>
+		/// ), the prior inserter will
+		/// be released first.
+		/// </remarks>
+		/// <param name="oi">
+		/// the inserter instance to use. Must be associated with the
+		/// repository instance returned by
+		/// <see cref="GetRepository()">GetRepository()</see>
+		/// .
+		/// </param>
+		public virtual void SetObjectInserter(ObjectInserter oi)
+		{
+			if (inserter != null)
+			{
+				inserter.Release();
+			}
+			inserter = oi;
 		}
 
 		/// <summary>Merge together two or more tree-ish objects.</summary>

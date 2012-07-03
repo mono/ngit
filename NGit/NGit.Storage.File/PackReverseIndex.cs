@@ -212,7 +212,7 @@ namespace NGit.Storage.File
 				if (i32 < 0)
 				{
 					throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().cantFindObjectInReversePackIndexForTheSpecifiedOffset
-						, offset));
+						, Sharpen.Extensions.ValueOf(offset)));
 				}
 				if (i32 + 1 == offsets32.Length)
 				{
@@ -230,7 +230,7 @@ namespace NGit.Storage.File
 				if (i64 < 0)
 				{
 					throw new CorruptObjectException(MessageFormat.Format(JGitText.Get().cantFindObjectInReversePackIndexForTheSpecifiedOffset
-						, offset));
+						, Sharpen.Extensions.ValueOf(offset)));
 				}
 				if (i64 + 1 == offsets64.Length)
 				{

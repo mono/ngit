@@ -795,8 +795,8 @@ namespace NGit.Revwalk
 
 					default:
 					{
-						throw new ArgumentException(MessageFormat.Format(JGitText.Get().invalidGitType, type
-							));
+						throw new ArgumentException(MessageFormat.Format(JGitText.Get().invalidGitType, Sharpen.Extensions.ValueOf
+							(type)));
 					}
 				}
 				objects.Add(r);
@@ -985,8 +985,8 @@ namespace NGit.Revwalk
 
 				default:
 				{
-					throw new ArgumentException(MessageFormat.Format(JGitText.Get().badObjectType, type
-						));
+					throw new ArgumentException(MessageFormat.Format(JGitText.Get().badObjectType, Sharpen.Extensions.ValueOf
+						(type)));
 				}
 			}
 			objects.Add(r);
@@ -1243,7 +1243,7 @@ namespace NGit.Revwalk
 			if (freeFlags == 0)
 			{
 				throw new ArgumentException(MessageFormat.Format(JGitText.Get().flagsAlreadyCreated
-					, 32 - RESERVED_FLAGS));
+					, Sharpen.Extensions.ValueOf(32 - RESERVED_FLAGS)));
 			}
 			int m = Sharpen.Extensions.LowestOneBit(freeFlags);
 			freeFlags &= ~m;
@@ -1508,12 +1508,12 @@ namespace NGit.Revwalk
 			{
 				throw new RevWalkException(e);
 			}
-			return new _Iterator_1236(this, first);
+			return new _Iterator_1238(this, first);
 		}
 
-		private sealed class _Iterator_1236 : Sharpen.Iterator<RevCommit>
+		private sealed class _Iterator_1238 : Sharpen.Iterator<RevCommit>
 		{
-			public _Iterator_1236(RevWalk _enclosing, RevCommit first)
+			public _Iterator_1238(RevWalk _enclosing, RevCommit first)
 			{
 				this._enclosing = _enclosing;
 				this.first = first;

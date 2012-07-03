@@ -45,6 +45,7 @@ using System.Collections.Generic;
 using System.IO;
 using NGit;
 using NGit.Internal;
+using NGit.Revwalk;
 using NGit.Transport;
 using Sharpen;
 
@@ -52,7 +53,7 @@ namespace NGit.Transport
 {
 	/// <summary>
 	/// A command being processed by
-	/// <see cref="ReceivePack">ReceivePack</see>
+	/// <see cref="BaseReceivePack">BaseReceivePack</see>
 	/// .
 	/// <p>
 	/// This command instance roughly translates to the server side representation of
@@ -92,9 +93,10 @@ namespace NGit.Transport
 		/// <param name="commands">commands to filter.</param>
 		/// <param name="want">desired status to filter by.</param>
 		/// <returns>
-		/// a copy of the command list containing only those commands with the
-		/// desired status.
+		/// a copy of the command list containing only those commands with
+		/// the desired status.
 		/// </returns>
+		/// <since>2.0</since>
 		public static IList<NGit.Transport.ReceiveCommand> Filter(IList<NGit.Transport.ReceiveCommand
 			> commands, ReceiveCommand.Result want)
 		{
@@ -124,9 +126,11 @@ namespace NGit.Transport
 
 		private string message;
 
+		private bool typeIsCorrect;
+
 		/// <summary>
 		/// Create a new command for
-		/// <see cref="ReceivePack">ReceivePack</see>
+		/// <see cref="BaseReceivePack">BaseReceivePack</see>
 		/// .
 		/// </summary>
 		/// <param name="oldId">
@@ -159,7 +163,7 @@ namespace NGit.Transport
 
 		/// <summary>
 		/// Create a new command for
-		/// <see cref="ReceivePack">ReceivePack</see>
+		/// <see cref="BaseReceivePack">BaseReceivePack</see>
 		/// .
 		/// </summary>
 		/// <param name="oldId">
@@ -174,6 +178,7 @@ namespace NGit.Transport
 		/// </param>
 		/// <param name="name">name of the ref being affected.</param>
 		/// <param name="type">type of the command.</param>
+		/// <since>2.0</since>
 		public ReceiveCommand(ObjectId oldId, ObjectId newId, string name, ReceiveCommand.Type
 			 type)
 		{
@@ -247,6 +252,49 @@ namespace NGit.Transport
 			message = m;
 		}
 
+		/// <summary>Update the type of this command by checking for fast-forward.</summary>
+		/// <remarks>
+		/// Update the type of this command by checking for fast-forward.
+		/// <p>
+		/// If the command's current type is UPDATE, a merge test will be performed
+		/// using the supplied RevWalk to determine if
+		/// <see cref="GetOldId()">GetOldId()</see>
+		/// is fully
+		/// merged into
+		/// <see cref="GetNewId()">GetNewId()</see>
+		/// . If some commits are not merged the
+		/// update type is changed to
+		/// <see cref="Type.UPDATE_NONFASTFORWARD">Type.UPDATE_NONFASTFORWARD</see>
+		/// .
+		/// </remarks>
+		/// <param name="walk">
+		/// an instance to perform the merge test with. The caller must
+		/// allocate and release this object.
+		/// </param>
+		/// <exception cref="System.IO.IOException">
+		/// either oldId or newId is not accessible in the repository
+		/// used by the RevWalk. This usually indicates data corruption,
+		/// and the command cannot be processed.
+		/// </exception>
+		public virtual void UpdateType(RevWalk walk)
+		{
+			if (typeIsCorrect)
+			{
+				return;
+			}
+			if (type == ReceiveCommand.Type.UPDATE && !AnyObjectId.Equals(oldId, newId))
+			{
+				RevObject o = walk.ParseAny(oldId);
+				RevObject n = walk.ParseAny(newId);
+				if (!(o is RevCommit) || !(n is RevCommit) || !walk.IsMergedInto((RevCommit)o, (RevCommit
+					)n))
+				{
+					SetType(ReceiveCommand.Type.UPDATE_NONFASTFORWARD);
+				}
+			}
+			typeIsCorrect = true;
+		}
+
 		/// <summary>Execute this command during a receive-pack session.</summary>
 		/// <remarks>
 		/// Execute this command during a receive-pack session.
@@ -254,7 +302,8 @@ namespace NGit.Transport
 		/// Sets the status of the command as a side effect.
 		/// </remarks>
 		/// <param name="rp">receive-pack session.</param>
-		public virtual void Execute(ReceivePack rp)
+		/// <since>2.0</since>
+		public virtual void Execute(BaseReceivePack rp)
 		{
 			try
 			{
@@ -292,8 +341,7 @@ namespace NGit.Transport
 			}
 			catch (IOException err)
 			{
-				SetResult(ReceiveCommand.Result.REJECTED_OTHER_REASON, MessageFormat.Format(JGitText
-					.Get().lockError, err.Message));
+				Reject(err);
 			}
 		}
 
@@ -307,7 +355,16 @@ namespace NGit.Transport
 			type = t;
 		}
 
-		private void SetResult(RefUpdate.Result r)
+		internal virtual void SetTypeFastForwardUpdate()
+		{
+			type = ReceiveCommand.Type.UPDATE;
+			typeIsCorrect = true;
+		}
+
+		/// <summary>Set the result of this command.</summary>
+		/// <remarks>Set the result of this command.</remarks>
+		/// <param name="r">the new result code for this command.</param>
+		public virtual void SetResult(RefUpdate.Result r)
 		{
 			switch (r)
 			{
@@ -352,6 +409,12 @@ namespace NGit.Transport
 					break;
 				}
 			}
+		}
+
+		internal virtual void Reject(IOException err)
+		{
+			SetResult(ReceiveCommand.Result.REJECTED_OTHER_REASON, MessageFormat.Format(JGitText
+				.Get().lockError, err.Message));
 		}
 
 		public override string ToString()

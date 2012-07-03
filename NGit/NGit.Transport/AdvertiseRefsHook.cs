@@ -48,11 +48,12 @@ namespace NGit.Transport
 {
 	/// <summary>Hook to allow callers to take over advertising refs to the client.</summary>
 	/// <remarks>Hook to allow callers to take over advertising refs to the client.</remarks>
+	/// <since>2.0</since>
 	public abstract class AdvertiseRefsHook
 	{
-		private sealed class _AdvertiseRefsHook_54 : AdvertiseRefsHook
+		private sealed class _AdvertiseRefsHook_58 : AdvertiseRefsHook
 		{
-			public _AdvertiseRefsHook_54()
+			public _AdvertiseRefsHook_58()
 			{
 			}
 
@@ -61,7 +62,7 @@ namespace NGit.Transport
 			}
 
 			// Do nothing.
-			public override void AdvertiseRefs(ReceivePack receivePack)
+			public override void AdvertiseRefs(BaseReceivePack receivePack)
 			{
 			}
 		}
@@ -75,12 +76,12 @@ namespace NGit.Transport
 		/// 	">UploadPack.SetAdvertisedRefs(System.Collections.Generic.IDictionary&lt;K, V&gt;)
 		/// 	</see>
 		/// and
-		/// <see cref="ReceivePack.SetAdvertisedRefs(System.Collections.Generic.IDictionary{K, V}, System.Collections.Generic.ICollection{E})
-		/// 	">ReceivePack.SetAdvertisedRefs(System.Collections.Generic.IDictionary&lt;K, V&gt;, System.Collections.Generic.ICollection&lt;E&gt;)
+		/// <see cref="BaseReceivePack.SetAdvertisedRefs(System.Collections.Generic.IDictionary{K, V}, System.Collections.Generic.ICollection{E})
+		/// 	">BaseReceivePack.SetAdvertisedRefs(System.Collections.Generic.IDictionary&lt;K, V&gt;, System.Collections.Generic.ICollection&lt;E&gt;)
 		/// 	</see>
 		/// .
 		/// </remarks>
-		public static AdvertiseRefsHook DEFAULT = new _AdvertiseRefsHook_54();
+		public static readonly AdvertiseRefsHook DEFAULT = new _AdvertiseRefsHook_58();
 
 		// Do nothing.
 		/// <summary>Advertise refs for upload-pack.</summary>
@@ -101,14 +102,14 @@ namespace NGit.Transport
 		/// <remarks>Advertise refs for receive-pack.</remarks>
 		/// <param name="receivePack">
 		/// instance on which to call
-		/// <see cref="ReceivePack.SetAdvertisedRefs(System.Collections.Generic.IDictionary{K, V}, System.Collections.Generic.ICollection{E})
-		/// 	">ReceivePack.SetAdvertisedRefs(System.Collections.Generic.IDictionary&lt;K, V&gt;, System.Collections.Generic.ICollection&lt;E&gt;)
+		/// <see cref="BaseReceivePack.SetAdvertisedRefs(System.Collections.Generic.IDictionary{K, V}, System.Collections.Generic.ICollection{E})
+		/// 	">BaseReceivePack.SetAdvertisedRefs(System.Collections.Generic.IDictionary&lt;K, V&gt;, System.Collections.Generic.ICollection&lt;E&gt;)
 		/// 	</see>
 		/// if necessary.
 		/// </param>
 		/// <exception cref="ServiceMayNotContinueException">abort; the message will be sent to the user.
 		/// 	</exception>
 		/// <exception cref="NGit.Transport.ServiceMayNotContinueException"></exception>
-		public abstract void AdvertiseRefs(ReceivePack receivePack);
+		public abstract void AdvertiseRefs(BaseReceivePack receivePack);
 	}
 }

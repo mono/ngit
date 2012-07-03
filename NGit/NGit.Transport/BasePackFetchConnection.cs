@@ -117,42 +117,52 @@ namespace NGit.Transport
 
 		/// <summary>Include tags if we are also including the referenced objects.</summary>
 		/// <remarks>Include tags if we are also including the referenced objects.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_INCLUDE_TAG = "include-tag";
 
 		/// <summary>Mutli-ACK support for improved negotiation.</summary>
 		/// <remarks>Mutli-ACK support for improved negotiation.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_MULTI_ACK = "multi_ack";
 
 		/// <summary>Mutli-ACK detailed support for improved negotiation.</summary>
 		/// <remarks>Mutli-ACK detailed support for improved negotiation.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_MULTI_ACK_DETAILED = "multi_ack_detailed";
 
 		/// <summary>The client supports packs with deltas but not their bases.</summary>
 		/// <remarks>The client supports packs with deltas but not their bases.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_THIN_PACK = "thin-pack";
 
 		/// <summary>The client supports using the side-band for progress messages.</summary>
 		/// <remarks>The client supports using the side-band for progress messages.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_SIDE_BAND = "side-band";
 
 		/// <summary>The client supports using the 64K side-band for progress messages.</summary>
 		/// <remarks>The client supports using the 64K side-band for progress messages.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_SIDE_BAND_64K = "side-band-64k";
 
 		/// <summary>The client supports packs with OFS deltas.</summary>
 		/// <remarks>The client supports packs with OFS deltas.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_OFS_DELTA = "ofs-delta";
 
 		/// <summary>The client supports shallow fetches.</summary>
 		/// <remarks>The client supports shallow fetches.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_SHALLOW = "shallow";
 
 		/// <summary>The client does not want progress messages and will ignore them.</summary>
 		/// <remarks>The client does not want progress messages and will ignore them.</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_NO_PROGRESS = "no-progress";
 
 		/// <summary>The client supports receiving a pack before it has sent "done".</summary>
 		/// <remarks>The client supports receiving a pack before it has sent "done".</remarks>
+		/// <since>2.0</since>
 		public static readonly string OPTION_NO_DONE = "no-done";
 
 		internal class MultiAck
@@ -240,10 +250,10 @@ namespace NGit.Transport
 
 		private class FetchConfig
 		{
-			private sealed class _SectionParser_226 : Config.SectionParser<BasePackFetchConnection.FetchConfig
+			private sealed class _SectionParser_256 : Config.SectionParser<BasePackFetchConnection.FetchConfig
 				>
 			{
-				public _SectionParser_226()
+				public _SectionParser_256()
 				{
 				}
 
@@ -254,7 +264,7 @@ namespace NGit.Transport
 			}
 
 			internal static readonly Config.SectionParser<BasePackFetchConnection.FetchConfig
-				> KEY = new _SectionParser_226();
+				> KEY = new _SectionParser_256();
 
 			internal readonly bool allowOfsDelta;
 
@@ -746,12 +756,12 @@ READ_RESULT_break2: ;
 			walk.ResetRetain(REACHABLE, ADVERTISED);
 			walk.MarkStart(reachableCommits);
 			walk.Sort(RevSort.COMMIT_TIME_DESC);
-			walk.SetRevFilter(new _RevFilter_619(this));
+			walk.SetRevFilter(new _RevFilter_649(this));
 		}
 
-		private sealed class _RevFilter_619 : RevFilter
+		private sealed class _RevFilter_649 : RevFilter
 		{
-			public _RevFilter_619(BasePackFetchConnection _enclosing)
+			public _RevFilter_649(BasePackFetchConnection _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -866,6 +876,7 @@ READ_RESULT_break2: ;
 		/// to
 		/// disable its request magic and ensure the pack stream is read correctly.
 		/// </remarks>
+		/// <since>2.0</since>
 		protected internal virtual void OnReceivePack()
 		{
 		}

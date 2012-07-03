@@ -58,6 +58,7 @@ namespace NGit.Submodule
 	[NUnit.Framework.TestFixture]
 	public class SubmoduleStatusTest : RepositoryTestCase
 	{
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithNoSubmodules()
 		{
@@ -68,6 +69,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithMissingSubmodule()
 		{
@@ -75,7 +77,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_91(id, path));
+			editor.Add(new _PathEdit_93(id, path));
 			editor.Commit();
 			SubmoduleStatusCommand command = new SubmoduleStatusCommand(db);
 			IDictionary<string, SubmoduleStatus> statuses = command.Call();
@@ -92,9 +94,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.AreEqual(SubmoduleStatusType.MISSING, status.GetType());
 		}
 
-		private sealed class _PathEdit_91 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_93 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_91(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_93(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -109,6 +111,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithUninitializedSubmodule()
 		{
@@ -116,7 +119,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_122(id, path));
+			editor.Add(new _PathEdit_125(id, path));
 			editor.Commit();
 			FileBasedConfig modulesConfig = new FileBasedConfig(new FilePath(db.WorkTree, Constants
 				.DOT_GIT_MODULES), db.FileSystem);
@@ -141,9 +144,9 @@ namespace NGit.Submodule
 				());
 		}
 
-		private sealed class _PathEdit_122 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_125 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_122(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_125(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -158,6 +161,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithNoHeadInSubmodule()
 		{
@@ -165,7 +169,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_161(id, path));
+			editor.Add(new _PathEdit_165(id, path));
 			editor.Commit();
 			string url = "git://server/repo.git";
 			StoredConfig config = ((FileBasedConfig)db.GetConfig());
@@ -198,9 +202,9 @@ namespace NGit.Submodule
 				());
 		}
 
-		private sealed class _PathEdit_161 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_165 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_161(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_165(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -215,6 +219,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithNoSubmoduleRepository()
 		{
@@ -222,7 +227,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_211(id, path));
+			editor.Add(new _PathEdit_216(id, path));
 			editor.Commit();
 			string url = "git://server/repo.git";
 			StoredConfig config = ((FileBasedConfig)db.GetConfig());
@@ -252,9 +257,9 @@ namespace NGit.Submodule
 				());
 		}
 
-		private sealed class _PathEdit_211 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_216 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_211(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_216(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -269,6 +274,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithInitializedSubmodule()
 		{
@@ -276,7 +282,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_256(id, path));
+			editor.Add(new _PathEdit_262(id, path));
 			editor.Commit();
 			string url = "git://server/repo.git";
 			StoredConfig config = ((FileBasedConfig)db.GetConfig());
@@ -312,9 +318,9 @@ namespace NGit.Submodule
 				);
 		}
 
-		private sealed class _PathEdit_256 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_262 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_256(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_262(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -329,6 +335,7 @@ namespace NGit.Submodule
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithDifferentRevCheckedOutSubmodule()
 		{
@@ -336,7 +343,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_311(id, path));
+			editor.Add(new _PathEdit_317(id, path));
 			editor.Commit();
 			string url = "git://server/repo.git";
 			StoredConfig config = ((FileBasedConfig)db.GetConfig());
@@ -374,9 +381,9 @@ namespace NGit.Submodule
 				());
 		}
 
-		private sealed class _PathEdit_311 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_317 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_311(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_317(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}

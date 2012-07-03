@@ -48,6 +48,7 @@ namespace NGit.Transport
 {
 	/// <summary>Indicates a transport service may not continue execution.</summary>
 	/// <remarks>Indicates a transport service may not continue execution.</remarks>
+	/// <since>2.0</since>
 	[System.Serializable]
 	public class ServiceMayNotContinueException : IOException
 	{

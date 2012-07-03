@@ -243,6 +243,7 @@ namespace NGit.Diff
 		/// <summary>Get the prefix applied in front of old file paths.</summary>
 		/// <remarks>Get the prefix applied in front of old file paths.</remarks>
 		/// <returns>the prefix</returns>
+		/// <since>2.0</since>
 		public virtual string GetOldPrefix()
 		{
 			return this.oldPrefix;
@@ -266,6 +267,7 @@ namespace NGit.Diff
 		/// <summary>Get the prefix applied in front of new file paths.</summary>
 		/// <remarks>Get the prefix applied in front of new file paths.</remarks>
 		/// <returns>the prefix</returns>
+		/// <since>2.0</since>
 		public virtual string GetNewPrefix()
 		{
 			return this.newPrefix;
@@ -1017,7 +1019,7 @@ namespace NGit.Diff
 			{
 				return EMPTY;
 			}
-			if (IsBinary(entry.GetPath(side)))
+			if (IsBinary())
 			{
 				return BINARY;
 			}
@@ -1079,7 +1081,7 @@ namespace NGit.Diff
 			}
 		}
 
-		private bool IsBinary(string path)
+		private bool IsBinary()
 		{
 			return false;
 		}

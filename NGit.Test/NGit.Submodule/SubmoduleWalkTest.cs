@@ -43,8 +43,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit;
 using NGit.Dircache;
+using NGit.Junit;
+using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Submodule;
+using NGit.Treewalk;
 using NGit.Treewalk.Filter;
 using Sharpen;
 
@@ -57,6 +60,16 @@ namespace NGit.Submodule
 	[NUnit.Framework.TestFixture]
 	public class SubmoduleWalkTest : RepositoryTestCase
 	{
+		private TestRepository<FileRepository> testDb;
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.SetUp]
+		public override void SetUp()
+		{
+			base.SetUp();
+			testDb = new TestRepository<FileRepository>(db);
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
 		public virtual void RepositoryWithNoSubmodules()
@@ -76,7 +89,7 @@ namespace NGit.Submodule
 			string path = "sub";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_90(id, path));
+			editor.Add(new _PathEdit_108(id, path));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(gen.Next());
@@ -93,9 +106,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_90 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_108 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_90(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_108(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -131,7 +144,7 @@ namespace NGit.Submodule
 			builder.Build().Create();
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_134(id, path));
+			editor.Add(new _PathEdit_152(id, path));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(gen.Next());
@@ -145,6 +158,7 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsNull(gen.GetModulesUpdate());
 			NUnit.Framework.Assert.IsNull(gen.GetModulesUrl());
 			Repository subRepo = gen.GetRepository();
+			AddRepoToClose(subRepo);
 			NUnit.Framework.Assert.IsNotNull(subRepo);
 			NUnit.Framework.Assert.AreEqual(modulesGitDir, subRepo.Directory);
 			NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, path), subRepo.WorkTree
@@ -152,9 +166,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_134 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_152 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_134(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_152(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -190,7 +204,7 @@ namespace NGit.Submodule
 			builder.Build().Create();
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_182(id, path));
+			editor.Add(new _PathEdit_201(id, path));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(gen.Next());
@@ -204,6 +218,7 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsNull(gen.GetModulesUpdate());
 			NUnit.Framework.Assert.IsNull(gen.GetModulesUrl());
 			Repository subRepo = gen.GetRepository();
+			AddRepoToClose(subRepo);
 			NUnit.Framework.Assert.IsNotNull(subRepo);
 			NUnit.Framework.Assert.AreEqual(modulesGitDir, subRepo.Directory);
 			NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, path), subRepo.WorkTree
@@ -211,9 +226,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_182 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_201 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_182(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_201(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -236,7 +251,7 @@ namespace NGit.Submodule
 			string path = "sub/dir/final";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_216(id, path));
+			editor.Add(new _PathEdit_236(id, path));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(gen.Next());
@@ -253,9 +268,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_216 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_236 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_216(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_236(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -279,8 +294,8 @@ namespace NGit.Submodule
 			string path2 = "sub2";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_249(id1, path1));
-			editor.Add(new _PathEdit_256(id2, path2));
+			editor.Add(new _PathEdit_269(id1, path1));
+			editor.Add(new _PathEdit_276(id2, path2));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			gen.SetFilter(PathFilter.Create(path1));
@@ -290,9 +305,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_249 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_269 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_249(ObjectId id1, string baseArg1) : base(baseArg1)
+			public _PathEdit_269(ObjectId id1, string baseArg1) : base(baseArg1)
 			{
 				this.id1 = id1;
 			}
@@ -306,9 +321,9 @@ namespace NGit.Submodule
 			private readonly ObjectId id1;
 		}
 
-		private sealed class _PathEdit_256 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_276 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_256(ObjectId id2, string baseArg1) : base(baseArg1)
+			public _PathEdit_276(ObjectId id2, string baseArg1) : base(baseArg1)
 			{
 				this.id2 = id2;
 			}
@@ -320,6 +335,164 @@ namespace NGit.Submodule
 			}
 
 			private readonly ObjectId id2;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void IndexWithGitmodules()
+		{
+			ObjectId subId = ObjectId.FromString("abcd1234abcd1234abcd1234abcd1234abcd1234");
+			string path = "sub";
+			Config gitmodules = new Config();
+			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
+				.CONFIG_KEY_PATH, "sub");
+			// Different config in the index should be overridden by the working tree.
+			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
+				.CONFIG_KEY_URL, "git://example.com/bad");
+			RevBlob gitmodulesBlob = testDb.Blob(gitmodules.ToText());
+			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
+				.CONFIG_KEY_URL, "git://example.com/sub");
+			WriteTrashFile(Constants.DOT_GIT_MODULES, gitmodules.ToText());
+			DirCache cache = db.LockDirCache();
+			DirCacheEditor editor = cache.Editor();
+			editor.Add(new _PathEdit_313(subId, path));
+			editor.Add(new _PathEdit_320(gitmodulesBlob, Constants.DOT_GIT_MODULES));
+			editor.Commit();
+			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
+			NUnit.Framework.Assert.IsTrue(gen.Next());
+			NUnit.Framework.Assert.AreEqual(path, gen.GetPath());
+			NUnit.Framework.Assert.AreEqual(subId, gen.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, path), gen.GetDirectory
+				());
+			NUnit.Framework.Assert.IsNull(gen.GetConfigUpdate());
+			NUnit.Framework.Assert.IsNull(gen.GetConfigUrl());
+			NUnit.Framework.Assert.AreEqual("sub", gen.GetModulesPath());
+			NUnit.Framework.Assert.IsNull(gen.GetModulesUpdate());
+			NUnit.Framework.Assert.AreEqual("git://example.com/sub", gen.GetModulesUrl());
+			NUnit.Framework.Assert.IsNull(gen.GetRepository());
+			NUnit.Framework.Assert.IsFalse(gen.Next());
+		}
+
+		private sealed class _PathEdit_313 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_313(ObjectId subId, string baseArg1) : base(baseArg1)
+			{
+				this.subId = subId;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.GITLINK;
+				ent.SetObjectId(subId);
+			}
+
+			private readonly ObjectId subId;
+		}
+
+		private sealed class _PathEdit_320 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_320(RevBlob gitmodulesBlob, string baseArg1) : base(baseArg1)
+			{
+				this.gitmodulesBlob = gitmodulesBlob;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.REGULAR_FILE;
+				ent.SetObjectId(gitmodulesBlob);
+			}
+
+			private readonly RevBlob gitmodulesBlob;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TreeIdWithGitmodules()
+		{
+			ObjectId subId = ObjectId.FromString("abcd1234abcd1234abcd1234abcd1234abcd1234");
+			string path = "sub";
+			Config gitmodules = new Config();
+			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
+				.CONFIG_KEY_PATH, "sub");
+			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
+				.CONFIG_KEY_URL, "git://example.com/sub");
+			RevCommit commit = testDb.GetRevWalk().ParseCommit(testDb.Commit().NoParents().Add
+				(Constants.DOT_GIT_MODULES, gitmodules.ToText()).Edit(new _PathEdit_358(subId, path
+				)).Create());
+			SubmoduleWalk gen = SubmoduleWalk.ForPath(db, commit.Tree, "sub");
+			NUnit.Framework.Assert.AreEqual(path, gen.GetPath());
+			NUnit.Framework.Assert.AreEqual(subId, gen.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, path), gen.GetDirectory
+				());
+			NUnit.Framework.Assert.IsNull(gen.GetConfigUpdate());
+			NUnit.Framework.Assert.IsNull(gen.GetConfigUrl());
+			NUnit.Framework.Assert.AreEqual("sub", gen.GetModulesPath());
+			NUnit.Framework.Assert.IsNull(gen.GetModulesUpdate());
+			NUnit.Framework.Assert.AreEqual("git://example.com/sub", gen.GetModulesUrl());
+			NUnit.Framework.Assert.IsNull(gen.GetRepository());
+			NUnit.Framework.Assert.IsFalse(gen.Next());
+		}
+
+		private sealed class _PathEdit_358 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_358(ObjectId subId, string baseArg1) : base(baseArg1)
+			{
+				this.subId = subId;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.GITLINK;
+				ent.SetObjectId(subId);
+			}
+
+			private readonly ObjectId subId;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestTreeIteratorWithGitmodules()
+		{
+			ObjectId subId = ObjectId.FromString("abcd1234abcd1234abcd1234abcd1234abcd1234");
+			string path = "sub";
+			Config gitmodules = new Config();
+			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
+				.CONFIG_KEY_PATH, "sub");
+			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
+				.CONFIG_KEY_URL, "git://example.com/sub");
+			RevCommit commit = testDb.GetRevWalk().ParseCommit(testDb.Commit().NoParents().Add
+				(Constants.DOT_GIT_MODULES, gitmodules.ToText()).Edit(new _PathEdit_395(subId, path
+				)).Create());
+			CanonicalTreeParser p = new CanonicalTreeParser();
+			p.Reset(testDb.GetRevWalk().GetObjectReader(), commit.Tree);
+			SubmoduleWalk gen = SubmoduleWalk.ForPath(db, p, "sub");
+			NUnit.Framework.Assert.AreEqual(path, gen.GetPath());
+			NUnit.Framework.Assert.AreEqual(subId, gen.GetObjectId());
+			NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, path), gen.GetDirectory
+				());
+			NUnit.Framework.Assert.IsNull(gen.GetConfigUpdate());
+			NUnit.Framework.Assert.IsNull(gen.GetConfigUrl());
+			NUnit.Framework.Assert.AreEqual("sub", gen.GetModulesPath());
+			NUnit.Framework.Assert.IsNull(gen.GetModulesUpdate());
+			NUnit.Framework.Assert.AreEqual("git://example.com/sub", gen.GetModulesUrl());
+			NUnit.Framework.Assert.IsNull(gen.GetRepository());
+			NUnit.Framework.Assert.IsFalse(gen.Next());
+		}
+
+		private sealed class _PathEdit_395 : DirCacheEditor.PathEdit
+		{
+			public _PathEdit_395(ObjectId subId, string baseArg1) : base(baseArg1)
+			{
+				this.subId = subId;
+			}
+
+			public override void Apply(DirCacheEntry ent)
+			{
+				ent.FileMode = FileMode.GITLINK;
+				ent.SetObjectId(subId);
+			}
+
+			private readonly ObjectId subId;
 		}
 	}
 }

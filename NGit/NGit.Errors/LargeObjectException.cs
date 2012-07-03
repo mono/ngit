@@ -179,7 +179,7 @@ namespace NGit.Errors
 				get
 				{
 					return MessageFormat.Format(JGitText.Get().largeObjectExceedsLimit, GetObjectName
-						(), limit, size);
+						(), Sharpen.Extensions.ValueOf(limit), Sharpen.Extensions.ValueOf(size));
 				}
 			}
 		}

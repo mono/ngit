@@ -470,6 +470,8 @@ namespace NGit.Internal
 
 		public string funnyRefname;
 
+		public string gitmodulesNotFound;
+
 		public string headRequiredToStash;
 
 		public string hoursAgo;
@@ -505,6 +507,8 @@ namespace NGit.Internal
 		public string indexWriteException;
 
 		public string inMemoryBufferLimitExceeded;
+
+		public string inputStreamMustSupportMark;
 
 		public string integerValueOutOfRange;
 
@@ -908,6 +912,8 @@ namespace NGit.Internal
 
 		public string sourceRefNotSpecifiedForRefspec;
 
+		public string squashCommitNotUpdatingHEAD;
+
 		public string staleRevFlagsOn;
 
 		public string startingReadStageWithoutWrittenRequestDataPendingIsNotSupported;
@@ -959,6 +965,8 @@ namespace NGit.Internal
 		public string transportExceptionMissingAssumed;
 
 		public string transportExceptionReadRef;
+
+		public string transportNeedsRepository;
 
 		public string transportProtoAmazonS3;
 

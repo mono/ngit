@@ -70,9 +70,8 @@ namespace NGit.Api
 		{
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException">when trying to delete a tag that doesn't exist
-		/// 	</exception>
 		/// <returns>the list with the full names of the deleted tags</returns>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override IList<string> Call()
 		{
 			CheckCallable();

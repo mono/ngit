@@ -60,6 +60,9 @@ namespace NGit.Submodule
 		/// <summary>
 		/// Create a generator to walk over the submodule entries currently in the
 		/// index
+		/// The
+		/// <code>.gitmodules</code>
+		/// file is read from the index.
 		/// </summary>
 		/// <param name="repository"></param>
 		/// <returns>generator over submodule index entries</returns>
@@ -68,7 +71,16 @@ namespace NGit.Submodule
 		{
 			NGit.Submodule.SubmoduleWalk generator = new NGit.Submodule.SubmoduleWalk(repository
 				);
-			generator.SetTree(new DirCacheIterator(repository.ReadDirCache()));
+			try
+			{
+				DirCache index = repository.ReadDirCache();
+				generator.SetTree(new DirCacheIterator(index));
+			}
+			catch (IOException e)
+			{
+				generator.Release();
+				throw;
+			}
 			return generator;
 		}
 
@@ -77,7 +89,10 @@ namespace NGit.Submodule
 		/// path
 		/// </summary>
 		/// <param name="repository"></param>
-		/// <param name="treeId"></param>
+		/// <param name="treeId">
+		/// the root of a tree containing both a submodule at the given path
+		/// and .gitmodules at the root.
+		/// </param>
 		/// <param name="path"></param>
 		/// <returns>generator at given path, null if no submodule at given path</returns>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
@@ -86,16 +101,26 @@ namespace NGit.Submodule
 		{
 			NGit.Submodule.SubmoduleWalk generator = new NGit.Submodule.SubmoduleWalk(repository
 				);
-			generator.SetTree(treeId);
-			PathFilter filter = PathFilter.Create(path);
-			generator.SetFilter(filter);
-			while (generator.Next())
+			try
 			{
-				if (filter.IsDone(generator.walk))
+				generator.SetTree(treeId);
+				PathFilter filter = PathFilter.Create(path);
+				generator.SetFilter(filter);
+				generator.SetRootTree(treeId);
+				while (generator.Next())
 				{
-					return generator;
+					if (filter.IsDone(generator.walk))
+					{
+						return generator;
+					}
 				}
 			}
+			catch (IOException e)
+			{
+				generator.Release();
+				throw;
+			}
+			generator.Release();
 			return null;
 		}
 
@@ -104,7 +129,10 @@ namespace NGit.Submodule
 		/// path
 		/// </summary>
 		/// <param name="repository"></param>
-		/// <param name="iterator"></param>
+		/// <param name="iterator">
+		/// the root of a tree containing both a submodule at the given path
+		/// and .gitmodules at the root.
+		/// </param>
 		/// <param name="path"></param>
 		/// <returns>generator at given path, null if no submodule at given path</returns>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
@@ -113,16 +141,26 @@ namespace NGit.Submodule
 		{
 			NGit.Submodule.SubmoduleWalk generator = new NGit.Submodule.SubmoduleWalk(repository
 				);
-			generator.SetTree(iterator);
-			PathFilter filter = PathFilter.Create(path);
-			generator.SetFilter(filter);
-			while (generator.Next())
+			try
 			{
-				if (filter.IsDone(generator.walk))
+				generator.SetTree(iterator);
+				PathFilter filter = PathFilter.Create(path);
+				generator.SetFilter(filter);
+				generator.SetRootTree(iterator);
+				while (generator.Next())
 				{
-					return generator;
+					if (filter.IsDone(generator.walk))
+					{
+						return generator;
+					}
 				}
 			}
+			catch (IOException e)
+			{
+				generator.Release();
+				throw;
+			}
+			generator.Release();
 			return null;
 		}
 
@@ -269,7 +307,9 @@ namespace NGit.Submodule
 
 		private StoredConfig repoConfig;
 
-		private FileBasedConfig modulesConfig;
+		private AbstractTreeIterator rootTree;
+
+		private Config modulesConfig;
 
 		private string path;
 
@@ -284,17 +324,143 @@ namespace NGit.Submodule
 			walk.Recursive = true;
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
-		private void LoadModulesConfig()
+		/// <summary>Set the config used by this walk.</summary>
+		/// <remarks>
+		/// Set the config used by this walk.
+		/// This method need only be called if constructing a walk manually instead of
+		/// with one of the static factory methods above.
+		/// </remarks>
+		/// <param name="config">.gitmodules config object</param>
+		/// <returns>this generator</returns>
+		public virtual NGit.Submodule.SubmoduleWalk SetModulesConfig(Config config)
 		{
-			if (modulesConfig == null)
+			modulesConfig = config;
+			return this;
+		}
+
+		/// <summary>
+		/// Set the tree used by this walk for finding
+		/// <code>.gitmodules</code>
+		/// .
+		/// <p>
+		/// The root tree is not read until the first submodule is encountered by the
+		/// walk.
+		/// <p>
+		/// This method need only be called if constructing a walk manually instead of
+		/// with one of the static factory methods above.
+		/// </summary>
+		/// <param name="tree">tree containing .gitmodules</param>
+		/// <returns>this generator</returns>
+		public virtual NGit.Submodule.SubmoduleWalk SetRootTree(AbstractTreeIterator tree
+			)
+		{
+			rootTree = tree;
+			modulesConfig = null;
+			return this;
+		}
+
+		/// <summary>
+		/// Set the tree used by this walk for finding
+		/// <code>.gitmodules</code>
+		/// .
+		/// <p>
+		/// The root tree is not read until the first submodule is encountered by the
+		/// walk.
+		/// <p>
+		/// This method need only be called if constructing a walk manually instead of
+		/// with one of the static factory methods above.
+		/// </summary>
+		/// <param name="id">ID of a tree containing .gitmodules</param>
+		/// <returns>this generator</returns>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual NGit.Submodule.SubmoduleWalk SetRootTree(AnyObjectId id)
+		{
+			CanonicalTreeParser p = new CanonicalTreeParser();
+			p.Reset(walk.ObjectReader, id);
+			rootTree = p;
+			modulesConfig = null;
+			return this;
+		}
+
+		/// <summary>
+		/// Load the config for this walk from
+		/// <code>.gitmodules</code>
+		/// .
+		/// <p>
+		/// Uses the root tree if
+		/// <see cref="SetRootTree(NGit.Treewalk.AbstractTreeIterator)">SetRootTree(NGit.Treewalk.AbstractTreeIterator)
+		/// 	</see>
+		/// was
+		/// previously called, otherwise uses the working tree.
+		/// <p>
+		/// If no submodule config is found, loads an empty config.
+		/// </summary>
+		/// <returns>this generator</returns>
+		/// <exception cref="System.IO.IOException">if an error occurred, or if the repository is bare
+		/// 	</exception>
+		/// <exception cref="NGit.Errors.ConfigInvalidException">NGit.Errors.ConfigInvalidException
+		/// 	</exception>
+		public virtual NGit.Submodule.SubmoduleWalk LoadModulesConfig()
+		{
+			if (rootTree == null)
 			{
 				FilePath modulesFile = new FilePath(repository.WorkTree, Constants.DOT_GIT_MODULES
 					);
 				FileBasedConfig config = new FileBasedConfig(modulesFile, repository.FileSystem);
 				config.Load();
 				modulesConfig = config;
+			}
+			else
+			{
+				TreeWalk configWalk = new TreeWalk(repository);
+				try
+				{
+					configWalk.AddTree(rootTree);
+					// The root tree may be part of the submodule walk, so we need to revert
+					// it after this walk.
+					int idx;
+					for (idx = 0; !rootTree.First; idx++)
+					{
+						rootTree.Back(1);
+					}
+					try
+					{
+						configWalk.Recursive = false;
+						PathFilter filter = PathFilter.Create(Constants.DOT_GIT_MODULES);
+						configWalk.Filter = filter;
+						while (configWalk.Next())
+						{
+							if (filter.IsDone(configWalk))
+							{
+								modulesConfig = new BlobBasedConfig(null, repository, configWalk.GetObjectId(0));
+								return this;
+							}
+						}
+						modulesConfig = new Config();
+					}
+					finally
+					{
+						if (idx > 0)
+						{
+							rootTree.Next(idx);
+						}
+					}
+				}
+				finally
+				{
+					configWalk.Release();
+				}
+			}
+			return this;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		/// <exception cref="NGit.Errors.ConfigInvalidException"></exception>
+		private void LazyLoadModulesConfig()
+		{
+			if (modulesConfig == null)
+			{
+				LoadModulesConfig();
 			}
 		}
 
@@ -401,7 +567,7 @@ namespace NGit.Submodule
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		public virtual string GetModulesPath()
 		{
-			LoadModulesConfig();
+			LazyLoadModulesConfig();
 			return modulesConfig.GetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
 				.CONFIG_KEY_PATH);
 		}
@@ -432,7 +598,7 @@ namespace NGit.Submodule
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		public virtual string GetModulesUrl()
 		{
-			LoadModulesConfig();
+			LazyLoadModulesConfig();
 			return modulesConfig.GetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
 				.CONFIG_KEY_URL);
 		}
@@ -463,7 +629,7 @@ namespace NGit.Submodule
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
 		public virtual string GetModulesUpdate()
 		{
-			LoadModulesConfig();
+			LazyLoadModulesConfig();
 			return modulesConfig.GetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
 				.CONFIG_KEY_UPDATE);
 		}
@@ -482,7 +648,18 @@ namespace NGit.Submodule
 		public virtual ObjectId GetHead()
 		{
 			Repository subRepo = GetRepository();
-			return subRepo != null ? subRepo.Resolve(Constants.HEAD) : null;
+			if (subRepo == null)
+			{
+				return null;
+			}
+			try
+			{
+				return subRepo.Resolve(Constants.HEAD);
+			}
+			finally
+			{
+				subRepo.Close();
+			}
 		}
 
 		/// <summary>Get ref that HEAD points to in the current submodule's repository</summary>
@@ -495,8 +672,15 @@ namespace NGit.Submodule
 			{
 				return null;
 			}
-			Ref head = subRepo.GetRef(Constants.HEAD);
-			return head != null ? head.GetLeaf().GetName() : null;
+			try
+			{
+				Ref head = subRepo.GetRef(Constants.HEAD);
+				return head != null ? head.GetLeaf().GetName() : null;
+			}
+			finally
+			{
+				subRepo.Close();
+			}
 		}
 
 		/// <summary>Get the resolved remote URL for the current submodule.</summary>
@@ -516,6 +700,13 @@ namespace NGit.Submodule
 		{
 			string url = GetModulesUrl();
 			return url != null ? GetSubmoduleRemoteUrl(repository, url) : null;
+		}
+
+		/// <summary>Release any resources used by this walker's reader.</summary>
+		/// <remarks>Release any resources used by this walker's reader.</remarks>
+		public virtual void Release()
+		{
+			walk.Release();
 		}
 	}
 }

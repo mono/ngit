@@ -28,6 +28,17 @@ using System;
 
 namespace Sharpen
 {
+	public class VirtualMachineError : Error
+	{
+	}
+
+	public class StackOverflowError : VirtualMachineError
+	{
+		public StackOverflowError ()
+		{
+		}
+	}
+
 	public class BrokenBarrierException : Exception
 	{
 	}

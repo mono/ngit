@@ -395,7 +395,7 @@ SCAN_break: ;
 			{
 				int missingCount = old.lineCount - (nContext + old.nDeleted);
 				script.Error(buf, startOffset, MessageFormat.Format(JGitText.Get().truncatedHunkOldLinesMissing
-					, missingCount));
+					, Sharpen.Extensions.ValueOf(missingCount)));
 			}
 			else
 			{
@@ -403,7 +403,7 @@ SCAN_break: ;
 				{
 					int missingCount = newLineCount - (nContext + old.nAdded);
 					script.Error(buf, startOffset, MessageFormat.Format(JGitText.Get().truncatedHunkNewLinesMissing
-						, missingCount));
+						, Sharpen.Extensions.ValueOf(missingCount)));
 				}
 				else
 				{

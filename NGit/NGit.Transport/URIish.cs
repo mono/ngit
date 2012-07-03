@@ -659,15 +659,15 @@ namespace NGit.Transport
 		/// <returns>the URI, including its password field, if any.</returns>
 		public virtual string ToPrivateString()
 		{
-			return Format(true, false, false);
+			return Format(true, false);
 		}
 
 		public override string ToString()
 		{
-			return Format(false, false, false);
+			return Format(false, false);
 		}
 
-		private string Format(bool includePassword, bool escape, bool escapeNonAscii)
+		private string Format(bool includePassword, bool escapeNonAscii)
 		{
 			StringBuilder r = new StringBuilder();
 			if (GetScheme() != null)
@@ -735,7 +735,7 @@ namespace NGit.Transport
 		/// <returns>the URI as an ASCII string. Password is not included.</returns>
 		public virtual string ToASCIIString()
 		{
-			return Format(false, true, true);
+			return Format(false, true);
 		}
 
 		/// <returns>
@@ -744,7 +744,7 @@ namespace NGit.Transport
 		/// </returns>
 		public virtual string ToPrivateASCIIString()
 		{
-			return Format(true, true, true);
+			return Format(true, true);
 		}
 
 		/// <summary>Get the "humanish" part of the path.</summary>

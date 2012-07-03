@@ -431,8 +431,8 @@ namespace NGit
 
 				default:
 				{
-					throw new ArgumentException(MessageFormat.Format(JGitText.Get().badObjectType, typeCode
-						));
+					throw new ArgumentException(MessageFormat.Format(JGitText.Get().badObjectType, Sharpen.Extensions.ValueOf
+						(typeCode)));
 				}
 			}
 		}
@@ -472,8 +472,8 @@ namespace NGit
 
 				default:
 				{
-					throw new ArgumentException(MessageFormat.Format(JGitText.Get().badObjectType, typeCode
-						));
+					throw new ArgumentException(MessageFormat.Format(JGitText.Get().badObjectType, Sharpen.Extensions.ValueOf
+						(typeCode)));
 				}
 			}
 		}
@@ -668,6 +668,9 @@ namespace NGit
 		/// <summary>name of the file containing the ID of a cherry pick commit in case of conflicts
 		/// 	</summary>
 		public static readonly string CHERRY_PICK_HEAD = "CHERRY_PICK_HEAD";
+
+		/// <summary>name of the file containing the commit msg for a squash commit</summary>
+		public static readonly string SQUASH_MSG = "SQUASH_MSG";
 
 		/// <summary>
 		/// name of the ref ORIG_HEAD used by certain commands to store the original

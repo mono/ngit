@@ -82,7 +82,7 @@ namespace NGit.Api
 			return this;
 		}
 
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		public override ICollection<string> Call()
 		{
 			CheckCallable();

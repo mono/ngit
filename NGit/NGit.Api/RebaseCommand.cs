@@ -141,10 +141,14 @@ namespace NGit.Api
 		/// this method twice on an instance.
 		/// </summary>
 		/// <returns>an object describing the result of this command</returns>
-		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
-		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.WrongRepositoryStateException">NGit.Api.Errors.WrongRepositoryStateException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.NoHeadException">NGit.Api.Errors.NoHeadException
+		/// 	</exception>
+		/// <exception cref="NGit.Api.Errors.RefNotFoundException">NGit.Api.Errors.RefNotFoundException
+		/// 	</exception>
 		public override RebaseResult Call()
 		{
 			RevCommit newHead = null;
@@ -336,7 +340,6 @@ namespace NGit.Api
 
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		private RevCommit CheckoutCurrentHead()
 		{
 			ObjectId headTree = repo.Resolve(Constants.HEAD + "^{tree}");
@@ -563,10 +566,8 @@ namespace NGit.Api
 			}
 		}
 
-		/// <exception cref="NGit.Api.Errors.RefNotFoundException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="NGit.Api.Errors.NoHeadException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		private RebaseResult InitFilesAndRewind()
 		{
 			// we need to store everything into files so that we can implement
@@ -629,7 +630,7 @@ namespace NGit.Api
 			Sharpen.Collections.Reverse(cherryPickList);
 			// create the folder for the meta information
 			FileUtils.Mkdir(rebaseDir);
-			CreateFile(repo.Directory, Constants.ORIG_HEAD, headId.Name);
+			repo.WriteOrigHead(headId);
 			CreateFile(rebaseDir, REBASE_HEAD, headId.Name);
 			CreateFile(rebaseDir, HEAD_NAME, headName);
 			CreateFile(rebaseDir, ONTO, upstreamCommit.Name);
@@ -683,9 +684,9 @@ namespace NGit.Api
 		/// 	</summary>
 		/// <param name="newCommit"></param>
 		/// <returns>the new head, or null</returns>
-		/// <exception cref="NGit.Api.Errors.RefNotFoundException">NGit.Api.Errors.RefNotFoundException
-		/// 	</exception>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException">NGit.Api.Errors.GitAPIException
+		/// 	</exception>
 		public virtual RevCommit TryFastForward(RevCommit newCommit)
 		{
 			Ref head = repo.GetRef(Constants.HEAD);
@@ -718,7 +719,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
+		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>
 		private RevCommit TryFastForward(string headName, RevCommit oldCommit, RevCommit 
 			newCommit)
 		{
@@ -835,7 +836,8 @@ namespace NGit.Api
 		{
 			try
 			{
-				string commitId = ReadFile(repo.Directory, Constants.ORIG_HEAD);
+				ObjectId origHead = repo.ReadOrigHead();
+				string commitId = origHead != null ? origHead.Name : null;
 				monitor.BeginTask(MessageFormat.Format(JGitText.Get().abortingRebase, commitId), 
 					ProgressMonitor.UNKNOWN);
 				DirCacheCheckout dco;
@@ -945,7 +947,7 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		private IList<RebaseCommand.Step> LoadSteps()
+		internal virtual IList<RebaseCommand.Step> LoadSteps()
 		{
 			byte[] buf = IOUtil.ReadFully(new FilePath(rebaseDir, GIT_REBASE_TODO));
 			int ptr = 0;
@@ -955,7 +957,7 @@ namespace NGit.Api
 			{
 				tokenBegin = ptr;
 				ptr = RawParseUtils.NextLF(buf, ptr);
-				int nextSpace = 0;
+				int nextSpace = RawParseUtils.Next(buf, tokenBegin, ' ');
 				int tokenCount = 0;
 				RebaseCommand.Step current = null;
 				while (tokenCount < 3 && nextSpace < ptr)
@@ -964,7 +966,6 @@ namespace NGit.Api
 					{
 						case 0:
 						{
-							nextSpace = RawParseUtils.Next(buf, tokenBegin, ' ');
 							string actionToken = Sharpen.Runtime.GetStringForBytes(buf, tokenBegin, nextSpace
 								 - tokenBegin - 1);
 							tokenBegin = nextSpace;
@@ -1108,6 +1109,11 @@ namespace NGit.Api
 				return this.token;
 			}
 
+			public override string ToString()
+			{
+				return "Action[" + token + "]";
+			}
+
 			internal static RebaseCommand.Action Parse(string token)
 			{
 				if (token.Equals("pick") || token.Equals("p"))
@@ -1130,6 +1136,13 @@ namespace NGit.Api
 			internal Step(RebaseCommand.Action action)
 			{
 				this.action = action;
+			}
+
+			public override string ToString()
+			{
+				return "Step[" + action + ", " + ((commit == null) ? "null" : commit.ToString ()) + ", " + ((
+					shortMessage == null) ? "null" : Sharpen.Runtime.GetStringForBytes(shortMessage)
+					) + "]";
 			}
 		}
 

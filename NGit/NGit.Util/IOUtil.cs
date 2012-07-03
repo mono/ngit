@@ -315,6 +315,7 @@ namespace NGit.Util
 		/// <remarks>Divides the given string into lines.</remarks>
 		/// <param name="s">the string to read</param>
 		/// <returns>the string divided into lines</returns>
+		/// <since>2.0</since>
 		public static IList<string> ReadLines(string s)
 		{
 			IList<string> l = new AList<string>();
