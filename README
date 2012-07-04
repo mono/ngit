@@ -20,6 +20,18 @@ you just have to open the ngit.sln solution and build it.
 Instructions and tools for updating and regenerating the NGit code from JGit
 are available in the 'gen' subdirectory.
 
+COMPILING
+---------
+The port depends on two external libraries:
+  - ICSharpCode.SharpZipLib
+  - Mono.Security.
+
+If you are compiling with Mono then these libraries will be available in
+Mono's GAC. If you are compiling on Windows using the Microsoft .NET
+framework you can obtain these libraries by installing the Mono Libraries
+package:
+  http://monodevelop.com/files/Windows/MonoLibraries.msi
+
 CREDITS
 -------
 
