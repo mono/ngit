@@ -174,7 +174,7 @@ import: validate-convert
 	cp -r $(NGIT_DIR)/* ..
 	cp $(JGIT_DIR)/org.eclipse.jgit/resources/org/eclipse/jgit/internal/JGitText.properties ../NGit/resources
 	cp $(JGIT_DIR)/org.eclipse.jgit.test/tst-rsrc/org/eclipse/jgit/diff/*.patch ../NGit.Test/NGit.Diff
-	cp $(JGIT_DIR)/org.eclipse.jgit.test/tst-rsrc/org/eclipse/jgit/diff/*.Image ../NGit.Test/NGit.Diff
+	cp $(JGIT_DIR)/org.eclipse.jgit.test/tst-rsrc/org/eclipse/jgit/diff/*Image ../NGit.Test/NGit.Diff
 	cp $(JGIT_DIR)/org.eclipse.jgit.test/tst-rsrc/org/eclipse/jgit/diff/testContext* ../NGit.Test/NGit.Diff
 	cp $(JGIT_DIR)/org.eclipse.jgit.test/tst-rsrc/org/eclipse/jgit/patch/*.patch ../NGit.Test/NGit.Patch
 	rm -rf ../NGit/.git

@@ -6567,7 +6567,7 @@ index a4d2573..44b29f1 100644
  				this._enclosing = _enclosing;
  				try
 diff --git a/NGit/NGit.Transport/TransportHttp.cs b/NGit/NGit.Transport/TransportHttp.cs
-index e854069..dd19dc2 100644
+index e854069..0142b73 100644
 --- a/NGit/NGit.Transport/TransportHttp.cs
 +++ b/NGit/NGit.Transport/TransportHttp.cs
 @@ -48,8 +48,8 @@ using System.Reflection;
@@ -6667,6 +6667,15 @@ index e854069..dd19dc2 100644
  			{
  				throw;
  			}
+@@ -680,7 +680,7 @@ namespace NGit.Transport
+ 			string expType = "application/x-" + service + "-advertisement";
+ 			//$NON-NLS-1$ //$NON-NLS-2$
+ 			string actType = c.GetContentType();
+-			return expType.Equals(actType);
++			return expType.Contains(actType);
+ 		}
+ 
+ 		/// <exception cref="System.IO.IOException"></exception>
 @@ -754,7 +754,7 @@ namespace NGit.Transport
  			/// <exception cref="System.IO.IOException"></exception>
  			internal override WalkRemoteObjectDatabase OpenAlternate(string location)
