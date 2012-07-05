@@ -72,6 +72,11 @@ namespace Sharpen
 					catch (WebException ex)
 					{
 						reqResponse = (HttpWebResponse) ex.Response;
+						if (reqResponse == null) {
+							if (this is HttpsURLConnection)
+								throw new WebException ("A secure connection could not be established", ex);
+							throw;
+						}
 					}
 				}
 				return reqResponse;
