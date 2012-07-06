@@ -8,7 +8,7 @@ namespace Sharpen.Test
 	[TestFixture()]
 	public class ScheduledThreadPoolExecutorTests
 	{
-		const int delayDif = 7;
+		const int delayDif = 50;
 
 		[Test]
 		public void ExecuteTest ()
