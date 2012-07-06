@@ -18,18 +18,26 @@ namespace Sharpen
 		}
 
 		public FilePath (string path)
+			: this ((string) null, path)
 		{
-			this.path = path;
+
 		}
 
 		public FilePath (FilePath other, string child)
+			: this ((string) other, child)
 		{
-			this.path = Path.Combine (other.path, child);
+
 		}
 
 		public FilePath (string other, string child)
 		{
-			this.path = Path.Combine (other, child);
+			if (other == null) {
+				this.path = child;
+			} else {
+				while (child != null && child.Length > 0 && (child[0] == Path.DirectorySeparatorChar || child[0] == Path.AltDirectorySeparatorChar))
+					child = child.Substring (1);
+				this.path = Path.Combine (other, child);
+			}
 		}
 		
 		public static implicit operator FilePath (string name)
@@ -39,7 +47,7 @@ namespace Sharpen
 
 		public static implicit operator string (FilePath filePath)
 		{
-			return filePath.path;
+			return filePath == null ? null : filePath.path;
 		}
 		
 		public override bool Equals (object obj)
@@ -123,13 +131,13 @@ namespace Sharpen
 						return false;
 					MakeDirWritable (path);
 					Directory.Delete (path, true);
-                    return true;
-                }
-                else if (File.Exists(path)) {
+					return true;
+				}
+				else if (File.Exists(path)) {
 					MakeFileWritable (path);
 					File.Delete (path);
-                    return true;
-                }
+					return true;
+				}
 				return false;
 			} catch (Exception exception) {
 				Console.WriteLine (exception);
@@ -221,12 +229,12 @@ namespace Sharpen
 
 		public long LastModified ()
 		{
-            if (RunningOnLinux) {
+			if (RunningOnLinux) {
 				var info = GetUnixFileInfo (path);
 				return info != null && info.Exists ? info.LastWriteTimeUtc.ToMillisecondsSinceEpoch() : 0;
-            }
+			}
 
-            var info2 = new FileInfo(path);
+			var info2 = new FileInfo(path);
 			return info2.Exists ? info2.LastWriteTimeUtc.ToMillisecondsSinceEpoch() : 0;
 		}
 
