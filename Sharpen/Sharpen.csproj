@@ -154,6 +154,7 @@
     <Compile Include="Sharpen\DateFormat.cs" />
     <Compile Include="Sharpen\DigestInputStream.cs" />
     <Compile Include="Sharpen\StackOverflowError.cs" />
+    <Compile Include="Sharpen\FileHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
