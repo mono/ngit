@@ -266,14 +266,7 @@ namespace Sharpen
 
 		public bool SetLastModified (long milis)
 		{
-			// FIXME: I don't know how to change the modified time on a symlink
-			try {
-				DateTime utcDateTime = Extensions.MillisToDateTimeOffset (milis, 0L).UtcDateTime;
-				File.SetLastWriteTimeUtc (path, utcDateTime);
-				return true;
-			} catch {
-				return false;
-			}
+			return FileHelper.Instance.SetLastModified(this, milis);
 		}
 
 		public void SetReadOnly ()

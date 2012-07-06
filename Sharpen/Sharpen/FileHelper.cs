@@ -62,8 +62,14 @@ namespace Sharpen
 
 		public virtual long LastModified (FilePath path)
 		{
-			var info2 = new FileInfo(path);
-			return info2.Exists ? info2.LastWriteTimeUtc.ToMillisecondsSinceEpoch() : 0;
+			if (IsFile(path)) {
+				var info2 = new FileInfo(path);
+				return info2.Exists ? info2.LastWriteTimeUtc.ToMillisecondsSinceEpoch() : 0;
+			} else if (IsDirectory (path)) {
+				var info = new DirectoryInfo(path);
+				return info.Exists ? info.LastWriteTimeUtc.ToMillisecondsSinceEpoch() : 0;
+			}
+			return 0;
 		}
 
 		public virtual long Length (FilePath path)
@@ -111,6 +117,25 @@ namespace Sharpen
 		{
 			var fileAttributes = File.GetAttributes (path) | FileAttributes.ReadOnly;
 			File.SetAttributes (path, fileAttributes);
+		}
+
+		public virtual bool SetLastModified(FilePath path, long milis)
+		{
+			try {
+				DateTime utcDateTime = Extensions.MillisToDateTimeOffset(milis, 0L).UtcDateTime;
+				if (IsFile(path)) {
+					var info2 = new FileInfo(path);
+					info2.LastWriteTimeUtc = utcDateTime;
+					return true;
+				} else if (IsDirectory(path)) {
+					var info = new DirectoryInfo(path);
+					info.LastWriteTimeUtc = utcDateTime;
+					return true;
+				}
+			} catch  {
+
+			}
+			return false;
 		}
 	}
 	
@@ -236,6 +261,12 @@ namespace Sharpen
 			}
 			fi.FileAccessPermissions = perms;
 			return true;
+		}
+
+		public override bool SetLastModified(FilePath path, long milis)
+		{
+			// How can the last write time be set on a symlink?
+			return base.SetLastModified(path, milis);
 		}
 
 		public override void SetReadOnly (FilePath path)
