@@ -262,6 +262,24 @@ namespace Sharpen
 			} catch {
 				// Not found
 			}
+
+            // Mono and Java allow you to specify timezones by short id (i.e. EST instead of Eastern Standard Time).
+            // Mono on Windows and the microsoft framewokr on windows do not allow this. This hack is to compensate
+            // for that and allow you to match 'EST' to 'Eastern Standard Time' by matching the first letter of each
+            // word to the corresponding character in the short string. Bleh.
+			if (tzone.Length <= 4) {
+				foreach (var timezone in TimeZoneInfo.GetSystemTimeZones ()) {
+					var parts = timezone.Id.Split (new [] {' '}, StringSplitOptions.RemoveEmptyEntries);
+					if (parts.Length == tzone.Length) {
+						bool found = true;
+						for (int i = 0; i <parts.Length; i++)
+							found &= parts[i][0] == tzone[i];
+
+						if (found)
+							return timezone;
+					}
+				}
+			}
 			char[] separator = new char[] { ':' };
 			string[] strArray = tzone.Substring (4).Split (separator);
 			int hours, minutes;
