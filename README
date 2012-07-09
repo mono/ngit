@@ -24,13 +24,24 @@ COMPILING
 ---------
 The port depends on two external libraries:
   - ICSharpCode.SharpZipLib
-  - Mono.Security.
+  - Mono.Security
+  - Mono.Posix (optional)
 
 If you are compiling with Mono then these libraries will be available in
 Mono's GAC. If you are compiling on Windows using the Microsoft .NET
 framework you can obtain these libraries by installing the Mono Libraries
 package:
   http://monodevelop.com/files/Windows/MonoLibraries.msi
+
+The optional Mono.Posix assembly can be gotten by installing Gtk# for windows.
+The latest installer can usually be found on the monodevelop site:
+  http://monodevelop.com/Download
+
+Mono.Posix is only required when building the Sharpen.Unix assembly, and this
+assembly is only required when running NGit on MacOS or Linux operating system.
+If you are only running on Windows, then you do not need to compile this assembly.
+Sharpen.Unix only contains support code to correctly handle symlinks on Unix
+based systems.
 
 CREDITS
 -------
