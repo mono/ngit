@@ -260,6 +260,9 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestModeChange()
 		{
+			if (!FS.DETECTED.SupportsExecute())
+				return;
+
 			Git git = new Git(db);
 			// create file
 			FilePath file = new FilePath(db.WorkTree, "a.txt");

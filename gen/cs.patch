@@ -40,6 +40,20 @@ index 216aaa9..aca421b 100644
  			return cmd.Call();
  		}
  	}
+diff --git a/NGit.Test/NGit.Api/CommitAndLogCommandTests.cs b/NGit.Test/NGit.Api/CommitAndLogCommandTests.cs
+index 608ee7f..f5e7ef6 100644
+--- a/NGit.Test/NGit.Api/CommitAndLogCommandTests.cs
++++ b/NGit.Test/NGit.Api/CommitAndLogCommandTests.cs
+@@ -260,6 +260,9 @@ namespace NGit.Api
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestModeChange()
+ 		{
++			if (!FS.DETECTED.SupportsExecute())
++				return;
++
+ 			Git git = new Git(db);
+ 			// create file
+ 			FilePath file = new FilePath(db.WorkTree, "a.txt");
 diff --git a/NGit.Test/NGit.Api/CommitCommandTest.cs b/NGit.Test/NGit.Api/CommitCommandTest.cs
 index 641ee5d..bf3b707 100644
 --- a/NGit.Test/NGit.Api/CommitCommandTest.cs
