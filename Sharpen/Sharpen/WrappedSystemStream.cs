@@ -64,9 +64,12 @@ namespace Sharpen
 		public override long Seek (long offset, SeekOrigin origin)
 		{
 			if (origin == SeekOrigin.Begin)
-				return Position = offset;
-			else
-				throw new NotSupportedException ();
+				Position = offset;
+			else if (origin == SeekOrigin.Current)
+				Position = Position + offset;
+			else if (origin == SeekOrigin.End)
+				Position = Length + offset;
+			return Position;
 		}
 
 		public override void SetLength (long value)
