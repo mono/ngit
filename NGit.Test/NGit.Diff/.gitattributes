@@ -1,0 +1,3 @@
+*.patch -crlf
+*PostImage -crlf
+*PreImage -crlf
