@@ -1,6 +1,7 @@
 *.pidb
 *.suo
 *.user
+*~
 NSch/obj
 NGit.Test/obj
 NGit.Test/test-results
@@ -16,3 +17,4 @@ gen/resp
 gen/sharpen-options
 gen/source
 ngit.userprefs
+_ReSharper*/
