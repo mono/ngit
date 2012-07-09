@@ -1,6 +1,8 @@
 *.pidb
 *.suo
 *.user
+_ReSharper*/
+*~
 NSch/obj
 NGit.Test/obj
 NGit.Test/test-results
