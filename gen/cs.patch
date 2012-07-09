@@ -179,7 +179,7 @@ index 2c0a8ef..0ef72c5 100644
  		}
  
 diff --git a/NGit.Test/NGit.Api/StatusCommandTest.cs b/NGit.Test/NGit.Api/StatusCommandTest.cs
-index 3f8612b..f9c85ac 100644
+index 3f8612b..357ab82 100644
 --- a/NGit.Test/NGit.Api/StatusCommandTest.cs
 +++ b/NGit.Test/NGit.Api/StatusCommandTest.cs
 @@ -78,12 +78,12 @@ namespace NGit.Api
@@ -207,7 +207,7 @@ index 3f8612b..f9c85ac 100644
 +			NUnit.Framework.Assert.AreEqual(Set("a"), Set (stat.GetChanged()));
  			NUnit.Framework.Assert.AreEqual(0, stat.GetMissing().Count);
 -			NUnit.Framework.Assert.AreEqual(Set("b", "a"), stat.GetModified());
-+			NUnit.Framework.Assert.AreEqual(Set("b", "a"), Set (stat.GetModified()));
++			NUnit.Framework.CollectionAssert.AreEquivalent(Set("b", "a"), Set (stat.GetModified()));
  			NUnit.Framework.Assert.AreEqual(0, stat.GetRemoved().Count);
 -			NUnit.Framework.Assert.AreEqual(Set("c"), stat.GetUntracked());
 +			NUnit.Framework.Assert.AreEqual(Set("c"), Set (stat.GetUntracked()));

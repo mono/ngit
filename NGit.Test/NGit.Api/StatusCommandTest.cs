@@ -94,7 +94,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(Set("d"), Set (stat.GetAdded()));
 			NUnit.Framework.Assert.AreEqual(Set("a"), Set (stat.GetChanged()));
 			NUnit.Framework.Assert.AreEqual(0, stat.GetMissing().Count);
-			NUnit.Framework.Assert.AreEqual(Set("b", "a"), Set (stat.GetModified()));
+			NUnit.Framework.CollectionAssert.AreEquivalent(Set("b", "a"), Set (stat.GetModified()));
 			NUnit.Framework.Assert.AreEqual(0, stat.GetRemoved().Count);
 			NUnit.Framework.Assert.AreEqual(Set("c"), Set (stat.GetUntracked()));
 			git.Add().AddFilepattern(".").Call();
