@@ -105,6 +105,16 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestAddA1Sub()
+		{
+			ApplyResult result = Init("A1_sub", false, false);
+			NUnit.Framework.Assert.AreEqual(1, result.GetUpdatedFiles().Count);
+			NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, "sub/A1"), result.GetUpdatedFiles
+				()[0]);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestDeleteD()
 		{
 			ApplyResult result = Init("D", true, false);

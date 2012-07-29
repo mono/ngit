@@ -52,6 +52,7 @@ using NGit.Internal;
 using NGit.Revwalk;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
+using NGit.Util;
 using Sharpen;
 
 namespace NGit.Api
@@ -308,7 +309,7 @@ namespace NGit.Api
 					{
 						ObjectId blobId = startWalk.GetObjectId(0);
 						FileMode mode = startWalk.GetFileMode(0);
-						editor.Add(new _PathEdit_296(this, blobId, mode, workTree, r, startWalk.PathString
+						editor.Add(new _PathEdit_297(this, blobId, mode, workTree, r, startWalk.PathString
 							));
 					}
 					editor.Commit();
@@ -327,9 +328,9 @@ namespace NGit.Api
 			return this;
 		}
 
-		private sealed class _PathEdit_296 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_297 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_296(CheckoutCommand _enclosing, ObjectId blobId, FileMode mode, 
+			public _PathEdit_297(CheckoutCommand _enclosing, ObjectId blobId, FileMode mode, 
 				FilePath workTree, ObjectReader r, string baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -343,10 +344,12 @@ namespace NGit.Api
 			{
 				ent.SetObjectId(blobId);
 				ent.FileMode = mode;
+				FilePath file = new FilePath(workTree, ent.PathString);
+				FilePath parentDir = file.GetParentFile();
 				try
 				{
-					DirCacheCheckout.CheckoutEntry(this._enclosing.repo, new FilePath(workTree, ent.PathString
-						), ent, r);
+					FileUtils.Mkdirs(parentDir, true);
+					DirCacheCheckout.CheckoutEntry(this._enclosing.repo, file, ent, r);
 				}
 				catch (IOException e)
 				{

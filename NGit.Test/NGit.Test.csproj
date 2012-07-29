@@ -449,5 +449,6 @@
     <EmbeddedResource Include="resources\NGit.Diff\F1.patch" />
     <EmbeddedResource Include="resources\NGit.Diff\F2_PreImage" />
     <EmbeddedResource Include="resources\NGit.Diff\F2.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\A1_sub.patch" />
   </ItemGroup>
 </Project>

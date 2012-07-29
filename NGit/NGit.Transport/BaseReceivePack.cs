@@ -1125,7 +1125,7 @@ namespace NGit.Transport
 			parser = null;
 			ObjectWalk ow = new ObjectWalk(db);
 			ow.SetRetainBody(false);
-			if (checkReferencedIsReachable)
+			if (baseObjects != null)
 			{
 				ow.Sort(RevSort.TOPO);
 				if (!baseObjects.IsEmpty())
@@ -1149,7 +1149,7 @@ namespace NGit.Transport
 			{
 				RevObject o = ow.ParseAny(have);
 				ow.MarkUninteresting(o);
-				if (checkReferencedIsReachable && !baseObjects.IsEmpty())
+				if (baseObjects != null && !baseObjects.IsEmpty())
 				{
 					o = ow.Peel(o);
 					if (o is RevCommit)
@@ -1165,8 +1165,8 @@ namespace NGit.Transport
 			RevCommit c;
 			while ((c = ow.Next()) != null)
 			{
-				if (checkReferencedIsReachable && !c.Has(RevFlag.UNINTERESTING) && !providedObjects
-					.Contains(c))
+				if (providedObjects != null && !c.Has(RevFlag.UNINTERESTING) && !providedObjects.
+					Contains(c))
 				{
 					//
 					//
@@ -1180,7 +1180,7 @@ namespace NGit.Transport
 				{
 					continue;
 				}
-				if (checkReferencedIsReachable)
+				if (providedObjects != null)
 				{
 					if (providedObjects.Contains(o_1))
 					{
@@ -1196,7 +1196,7 @@ namespace NGit.Transport
 					throw new MissingObjectException(o_1, Constants.TYPE_BLOB);
 				}
 			}
-			if (checkReferencedIsReachable)
+			if (baseObjects != null)
 			{
 				foreach (ObjectId id in baseObjects)
 				{
@@ -1440,9 +1440,14 @@ namespace NGit.Transport
 					continue;
 				}
 				StringBuilder r = new StringBuilder();
-				r.Append("ng ");
-				r.Append(cmd_1.GetRefName());
-				r.Append(" ");
+				if (forClient)
+				{
+					r.Append("ng ").Append(cmd_1.GetRefName()).Append(" ");
+				}
+				else
+				{
+					r.Append(" ! [rejected] ").Append(cmd_1.GetRefName()).Append(" (");
+				}
 				switch (cmd_1.GetResult())
 				{
 					case ReceiveCommand.Result.NOT_ATTEMPTED:
@@ -1519,6 +1524,10 @@ namespace NGit.Transport
 						// We shouldn't have reached this case (see 'ok' case above).
 						continue;
 					}
+				}
+				if (!forClient)
+				{
+					r.Append(")");
 				}
 				@out.SendString(r.ToString());
 			}

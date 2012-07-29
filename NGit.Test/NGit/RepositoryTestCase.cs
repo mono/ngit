@@ -453,5 +453,39 @@ namespace NGit
 			RefUpdate refUpdate = db.UpdateRef(Constants.HEAD);
 			refUpdate.Link(branchName);
 		}
+
+		/// <summary>Writes a number of files in the working tree.</summary>
+		/// <remarks>
+		/// Writes a number of files in the working tree. The first content specified
+		/// will be written into a file named '0', the second into a file named "1"
+		/// and so on. If <code>null</code> is specified as content then this file is
+		/// skipped.
+		/// </remarks>
+		/// <param name="ensureDistinctTimestamps">
+		/// if set to <code>true</code> then between two write operations
+		/// this method will wait to ensure that the second file will get
+		/// a different lastmodification timestamp than the first file.
+		/// </param>
+		/// <param name="contents">the contents which should be written into the files</param>
+		/// <returns>the File object associated to the last written file.</returns>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		protected internal virtual FilePath WriteTrashFiles(bool ensureDistinctTimestamps
+			, params string[] contents)
+		{
+			FilePath f = null;
+			for (int i = 0; i < contents.Length; i++)
+			{
+				if (contents[i] != null)
+				{
+					if (ensureDistinctTimestamps && (f != null))
+					{
+						FsTick(f);
+					}
+					f = WriteTrashFile(Sharpen.Extensions.ToString(i), contents[i]);
+				}
+			}
+			return f;
+		}
 	}
 }

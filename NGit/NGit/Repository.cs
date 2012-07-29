@@ -410,25 +410,25 @@ namespace NGit
 		/// <exception cref="System.IO.IOException"></exception>
 		private ObjectId Resolve(RevWalk rw, string revstr)
 		{
-			char[] rev = revstr.ToCharArray();
-			RevObject @ref = null;
-			for (int i = 0; i < rev.Length; ++i)
+			char[] revChars = revstr.ToCharArray();
+			RevObject rev = null;
+			for (int i = 0; i < revChars.Length; ++i)
 			{
-				switch (rev[i])
+				switch (revChars[i])
 				{
 					case '^':
 					{
-						if (@ref == null)
+						if (rev == null)
 						{
-							@ref = ParseSimple(rw, new string(rev, 0, i));
-							if (@ref == null)
+							rev = ParseSimple(rw, new string(revChars, 0, i));
+							if (rev == null)
 							{
 								return null;
 							}
 						}
-						if (i + 1 < rev.Length)
+						if (i + 1 < revChars.Length)
 						{
-							switch (rev[i + 1])
+							switch (revChars[i + 1])
 							{
 								case '0':
 								case '1':
@@ -442,15 +442,15 @@ namespace NGit
 								case '9':
 								{
 									int j;
-									@ref = rw.ParseCommit(@ref);
-									for (j = i + 1; j < rev.Length; ++j)
+									rev = rw.ParseCommit(rev);
+									for (j = i + 1; j < revChars.Length; ++j)
 									{
-										if (!char.IsDigit(rev[j]))
+										if (!char.IsDigit(revChars[j]))
 										{
 											break;
 										}
 									}
-									string parentnum = new string(rev, i + 1, j - i - 1);
+									string parentnum = new string(revChars, i + 1, j - i - 1);
 									int pnum;
 									try
 									{
@@ -463,14 +463,14 @@ namespace NGit
 									}
 									if (pnum != 0)
 									{
-										RevCommit commit = (RevCommit)@ref;
+										RevCommit commit = (RevCommit)rev;
 										if (pnum > commit.ParentCount)
 										{
-											@ref = null;
+											rev = null;
 										}
 										else
 										{
-											@ref = commit.GetParent(pnum - 1);
+											rev = commit.GetParent(pnum - 1);
 										}
 									}
 									i = j - 1;
@@ -481,11 +481,11 @@ namespace NGit
 								{
 									int k;
 									string item = null;
-									for (k = i + 2; k < rev.Length; ++k)
+									for (k = i + 2; k < revChars.Length; ++k)
 									{
-										if (rev[k] == '}')
+										if (revChars[k] == '}')
 										{
-											item = new string(rev, i + 2, k - i - 2);
+											item = new string(revChars, i + 2, k - i - 2);
 											break;
 										}
 									}
@@ -494,29 +494,29 @@ namespace NGit
 									{
 										if (item.Equals("tree"))
 										{
-											@ref = rw.ParseTree(@ref);
+											rev = rw.ParseTree(rev);
 										}
 										else
 										{
 											if (item.Equals("commit"))
 											{
-												@ref = rw.ParseCommit(@ref);
+												rev = rw.ParseCommit(rev);
 											}
 											else
 											{
 												if (item.Equals("blob"))
 												{
-													@ref = rw.Peel(@ref);
-													if (!(@ref is RevBlob))
+													rev = rw.Peel(rev);
+													if (!(rev is RevBlob))
 													{
-														throw new IncorrectObjectTypeException(@ref, Constants.TYPE_BLOB);
+														throw new IncorrectObjectTypeException(rev, Constants.TYPE_BLOB);
 													}
 												}
 												else
 												{
 													if (item.Equals(string.Empty))
 													{
-														@ref = rw.Peel(@ref);
+														rev = rw.Peel(rev);
 													}
 													else
 													{
@@ -535,22 +535,22 @@ namespace NGit
 
 								default:
 								{
-									@ref = rw.ParseAny(@ref);
-									if (@ref is RevCommit)
+									rev = rw.ParseAny(rev);
+									if (rev is RevCommit)
 									{
-										RevCommit commit = ((RevCommit)@ref);
+										RevCommit commit = ((RevCommit)rev);
 										if (commit.ParentCount == 0)
 										{
-											@ref = null;
+											rev = null;
 										}
 										else
 										{
-											@ref = commit.GetParent(0);
+											rev = commit.GetParent(0);
 										}
 									}
 									else
 									{
-										throw new IncorrectObjectTypeException(@ref, Constants.TYPE_COMMIT);
+										throw new IncorrectObjectTypeException(rev, Constants.TYPE_COMMIT);
 									}
 									break;
 								}
@@ -558,22 +558,22 @@ namespace NGit
 						}
 						else
 						{
-							@ref = rw.Peel(@ref);
-							if (@ref is RevCommit)
+							rev = rw.Peel(rev);
+							if (rev is RevCommit)
 							{
-								RevCommit commit = ((RevCommit)@ref);
+								RevCommit commit = ((RevCommit)rev);
 								if (commit.ParentCount == 0)
 								{
-									@ref = null;
+									rev = null;
 								}
 								else
 								{
-									@ref = commit.GetParent(0);
+									rev = commit.GetParent(0);
 								}
 							}
 							else
 							{
-								throw new IncorrectObjectTypeException(@ref, Constants.TYPE_COMMIT);
+								throw new IncorrectObjectTypeException(rev, Constants.TYPE_COMMIT);
 							}
 						}
 						break;
@@ -581,23 +581,23 @@ namespace NGit
 
 					case '~':
 					{
-						if (@ref == null)
+						if (rev == null)
 						{
-							@ref = ParseSimple(rw, new string(rev, 0, i));
-							if (@ref == null)
+							rev = ParseSimple(rw, new string(revChars, 0, i));
+							if (rev == null)
 							{
 								return null;
 							}
 						}
-						@ref = rw.Peel(@ref);
-						if (!(@ref is RevCommit))
+						rev = rw.Peel(rev);
+						if (!(rev is RevCommit))
 						{
-							throw new IncorrectObjectTypeException(@ref, Constants.TYPE_COMMIT);
+							throw new IncorrectObjectTypeException(rev, Constants.TYPE_COMMIT);
 						}
 						int l;
-						for (l = i + 1; l < rev.Length; ++l)
+						for (l = i + 1; l < revChars.Length; ++l)
 						{
-							if (!char.IsDigit(rev[l]))
+							if (!char.IsDigit(revChars[l]))
 							{
 								break;
 							}
@@ -605,7 +605,7 @@ namespace NGit
 						int dist;
 						if (l - i > 1)
 						{
-							string distnum = new string(rev, i + 1, l - i - 1);
+							string distnum = new string(revChars, i + 1, l - i - 1);
 							try
 							{
 								dist = System.Convert.ToInt32(distnum);
@@ -621,15 +621,15 @@ namespace NGit
 						}
 						while (dist > 0)
 						{
-							RevCommit commit = (RevCommit)@ref;
+							RevCommit commit = (RevCommit)rev;
 							if (commit.ParentCount == 0)
 							{
-								@ref = null;
+								rev = null;
 								break;
 							}
 							commit = commit.GetParent(0);
 							rw.ParseHeaders(commit);
-							@ref = commit;
+							rev = commit;
 							--dist;
 						}
 						i = l - 1;
@@ -640,23 +640,23 @@ namespace NGit
 					{
 						int m;
 						string time = null;
-						for (m = i + 2; m < rev.Length; ++m)
+						for (m = i + 2; m < revChars.Length; ++m)
 						{
-							if (rev[m] == '}')
+							if (revChars[m] == '}')
 							{
-								time = new string(rev, i + 2, m - i - 2);
+								time = new string(revChars, i + 2, m - i - 2);
 								break;
 							}
 						}
 						if (time != null)
 						{
-							string refName = new string(rev, 0, i);
+							string refName = new string(revChars, 0, i);
 							Ref resolved = RefDatabase.GetRef(refName);
 							if (resolved == null)
 							{
 								return null;
 							}
-							@ref = ResolveReflog(rw, resolved, time);
+							rev = ResolveReflog(rw, resolved, time);
 							i = m;
 						}
 						else
@@ -669,7 +669,7 @@ namespace NGit
 					case ':':
 					{
 						RevTree tree;
-						if (@ref == null)
+						if (rev == null)
 						{
 							// We might not yet have parsed the left hand side.
 							ObjectId id;
@@ -681,7 +681,7 @@ namespace NGit
 								}
 								else
 								{
-									id = Resolve(rw, new string(rev, 0, i));
+									id = Resolve(rw, new string(revChars, 0, i));
 								}
 							}
 							catch (RevisionSyntaxException)
@@ -696,20 +696,20 @@ namespace NGit
 						}
 						else
 						{
-							tree = rw.ParseTree(@ref);
+							tree = rw.ParseTree(rev);
 						}
-						if (i == rev.Length - 1)
+						if (i == revChars.Length - 1)
 						{
 							return tree.Copy();
 						}
-						TreeWalk tw = TreeWalk.ForPath(rw.GetObjectReader(), new string(rev, i + 1, rev.Length
-							 - i - 1), tree);
+						TreeWalk tw = TreeWalk.ForPath(rw.GetObjectReader(), new string(revChars, i + 1, 
+							revChars.Length - i - 1), tree);
 						return tw != null ? tw.GetObjectId(0) : null;
 					}
 
 					default:
 					{
-						if (@ref != null)
+						if (rev != null)
 						{
 							throw new RevisionSyntaxException(revstr);
 						}
@@ -717,7 +717,7 @@ namespace NGit
 					}
 				}
 			}
-			return @ref != null ? @ref.Copy() : ResolveSimple(revstr);
+			return rev != null ? rev.Copy() : ResolveSimple(revstr);
 		}
 
 		private static bool IsHex(char c)
@@ -1147,13 +1147,13 @@ namespace NGit
 		{
 			// we want DirCache to inform us so that we can inform registered
 			// listeners about index changes
-			IndexChangedListener l = new _IndexChangedListener_900(this);
+			IndexChangedListener l = new _IndexChangedListener_902(this);
 			return DirCache.Lock(this, l);
 		}
 
-		private sealed class _IndexChangedListener_900 : IndexChangedListener
+		private sealed class _IndexChangedListener_902 : IndexChangedListener
 		{
-			public _IndexChangedListener_900(Repository _enclosing)
+			public _IndexChangedListener_902(Repository _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}

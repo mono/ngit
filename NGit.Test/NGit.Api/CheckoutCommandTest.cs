@@ -232,6 +232,20 @@ namespace NGit.Api
 				(db2, CONTENT));
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutOfFileWithInexistentParentDir()
+		{
+			FilePath a = WriteTrashFile("dir/a.txt", "A");
+			WriteTrashFile("dir/b.txt", "A");
+			git.Add().AddFilepattern("dir/a.txt").AddFilepattern("dir/b.txt").Call();
+			git.Commit().SetMessage("Added dir").Call();
+			FilePath dir = new FilePath(db.WorkTree, "dir");
+			FileUtils.Delete(dir, FileUtils.RECURSIVE);
+			git.Checkout().AddPath("dir/a.txt").Call();
+			NUnit.Framework.Assert.IsTrue(a.Exists());
+		}
+
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>
 		/// <exception cref="System.IO.IOException"></exception>
 		/// <exception cref="NGit.Api.Errors.GitAPIException"></exception>

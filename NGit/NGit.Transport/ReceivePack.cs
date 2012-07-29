@@ -62,6 +62,8 @@ namespace NGit.Transport
 		/// <remarks>Hook to report on the commands after execution.</remarks>
 		private PostReceiveHook postReceive;
 
+		private bool echoCommandFailures;
+
 		/// <summary>Create a new pack receive for an open repository.</summary>
 		/// <remarks>Create a new pack receive for an open repository.</remarks>
 		/// <param name="into">the destination repository.</param>
@@ -116,6 +118,17 @@ namespace NGit.Transport
 		public virtual void SetPostReceiveHook(PostReceiveHook h)
 		{
 			postReceive = h != null ? h : PostReceiveHook.NULL;
+		}
+
+		/// <param name="echo">
+		/// if true this class will report command failures as warning
+		/// messages before sending the command results. This is usually
+		/// not necessary, but may help buggy Git clients that discard the
+		/// errors when all branches fail.
+		/// </param>
+		public virtual void SetEchoCommandFailures(bool echo)
+		{
+			echoCommandFailures = echo;
 		}
 
 		/// <summary>Execute the receive task on the socket.</summary>
@@ -208,14 +221,27 @@ namespace NGit.Transport
 				UnlockPack();
 				if (reportStatus)
 				{
-					SendStatusReport(true, unpackError, new _Reporter_185(this));
+					if (echoCommandFailures && msgOut != null)
+					{
+						SendStatusReport(false, unpackError, new _Reporter_199(this));
+						msgOut.Flush();
+						try
+						{
+							Sharpen.Thread.Sleep(500);
+						}
+						catch (Exception)
+						{
+						}
+					}
+					// Ignore an early wake up.
+					SendStatusReport(true, unpackError, new _Reporter_211(this));
 					pckOut.End();
 				}
 				else
 				{
 					if (msgOut != null)
 					{
-						SendStatusReport(false, unpackError, new _Reporter_192(this));
+						SendStatusReport(false, unpackError, new _Reporter_218(this));
 					}
 				}
 				postReceive.OnPostReceive(this, FilterCommands(ReceiveCommand.Result.OK));
@@ -226,9 +252,25 @@ namespace NGit.Transport
 			}
 		}
 
-		private sealed class _Reporter_185 : BaseReceivePack.Reporter
+		private sealed class _Reporter_199 : BaseReceivePack.Reporter
 		{
-			public _Reporter_185(ReceivePack _enclosing)
+			public _Reporter_199(ReceivePack _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			/// <exception cref="System.IO.IOException"></exception>
+			internal override void SendString(string s)
+			{
+				this._enclosing.msgOut.Write(Constants.Encode(s + "\n"));
+			}
+
+			private readonly ReceivePack _enclosing;
+		}
+
+		private sealed class _Reporter_211 : BaseReceivePack.Reporter
+		{
+			public _Reporter_211(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -242,9 +284,9 @@ namespace NGit.Transport
 			private readonly ReceivePack _enclosing;
 		}
 
-		private sealed class _Reporter_192 : BaseReceivePack.Reporter
+		private sealed class _Reporter_218 : BaseReceivePack.Reporter
 		{
-			public _Reporter_192(ReceivePack _enclosing)
+			public _Reporter_218(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}

@@ -193,6 +193,8 @@ namespace NGit.Api
 			{
 				try
 				{
+					FilePath parent = f.GetParentFile();
+					FileUtils.Mkdirs(parent, true);
 					FileUtils.CreateNewFile(f);
 				}
 				catch (IOException e)

@@ -2517,7 +2517,7 @@ index 4fc1d3e..022e2b7 100644
  			}
  		}
 diff --git a/NGit.Test/NGit/RepositoryTestCase.cs b/NGit.Test/NGit/RepositoryTestCase.cs
-index 6ebb820..6c2dcfd 100644
+index f00a64a..c73e4a6 100644
 --- a/NGit.Test/NGit/RepositoryTestCase.cs
 +++ b/NGit.Test/NGit/RepositoryTestCase.cs
 @@ -248,7 +248,7 @@ namespace NGit
@@ -2530,7 +2530,7 @@ index 6ebb820..6c2dcfd 100644
  				sb.Append("]");
  			}
 diff --git a/NGit/NGit.Api/ApplyCommand.cs b/NGit/NGit.Api/ApplyCommand.cs
-index 402dea9..1cc7211 100644
+index fa1a824..259b310 100644
 --- a/NGit/NGit.Api/ApplyCommand.cs
 +++ b/NGit/NGit.Api/ApplyCommand.cs
 @@ -170,6 +170,7 @@ namespace NGit.Api
@@ -3357,11 +3357,11 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index b2b33f6..d70079d 100644
+index 6075eac..4ece67d 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
-@@ -430,7 +430,7 @@ namespace NGit.Merge
- 						Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);
+@@ -472,7 +472,7 @@ namespace NGit.Merge
+ 						Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3, 0, 0);
  						unmergedPaths.AddItem(tw.PathString);
  						mergeResults.Put(tw.PathString, new MergeResult<RawText>(Sharpen.Collections.EmptyList
 -							<RawText>()));
@@ -3369,7 +3369,7 @@ index b2b33f6..d70079d 100644
  					}
  					return true;
  				}
-@@ -556,7 +556,7 @@ namespace NGit.Merge
+@@ -601,7 +601,7 @@ namespace NGit.Merge
  						}
  						unmergedPaths.AddItem(tw.PathString);
  						// generate a MergeResult for the deleted file
@@ -3378,16 +3378,7 @@ index b2b33f6..d70079d 100644
  					}
  				}
  			}
-@@ -653,7 +653,7 @@ namespace NGit.Merge
- 				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1);
- 				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2);
- 				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3);
--				mergeResults.Put(tw.PathString, result);
-+				mergeResults.Put(tw.PathString, result.Upcast ());
- 			}
- 			else
- 			{
-@@ -709,7 +709,7 @@ namespace NGit.Merge
+@@ -750,7 +750,7 @@ namespace NGit.Merge
  				{
  					// TODO: This should be handled by WorkingTreeIterators which
  					// support write operations
@@ -3395,7 +3386,7 @@ index b2b33f6..d70079d 100644
 +					throw new NGit.Errors.NotSupportedException();
  				}
  				of = new FilePath(workTree, tw.PathString);
- 				fos = new FileOutputStream(of);
+ 				FilePath parentFolder = of.GetParentFile();
 diff --git a/NGit/NGit.Nls/GlobalBundleCache.cs b/NGit/NGit.Nls/GlobalBundleCache.cs
 index f995104..9a728cb 100644
 --- a/NGit/NGit.Nls/GlobalBundleCache.cs
@@ -5554,7 +5545,7 @@ index 235a18c..c53c1b1 100644
  					}
  				}
 diff --git a/NGit/NGit.Transport/BaseReceivePack.cs b/NGit/NGit.Transport/BaseReceivePack.cs
-index 8ba2500..4d05f42 100644
+index 3404a0a..b58b5e6 100644
 --- a/NGit/NGit.Transport/BaseReceivePack.cs
 +++ b/NGit/NGit.Transport/BaseReceivePack.cs
 @@ -1410,7 +1410,7 @@ namespace NGit.Transport
@@ -8410,7 +8401,7 @@ index 8913cf3..3099dbf 100644
  			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
-index 93d11e3..5291c0a 100644
+index 3c9443a..d3963b5 100644
 --- a/NGit/NGit/Repository.cs
 +++ b/NGit/NGit/Repository.cs
 @@ -962,7 +962,7 @@ namespace NGit
