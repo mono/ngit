@@ -84,6 +84,13 @@ namespace NGit.Revplot
 				return this;
 			}
 
+			public virtual PlotCommitListTest.CommitListAssert NrOfPassingLanes(int lanes)
+			{
+				NUnit.Framework.Assert.AreEqual(lanes, this.current.passingLanes.Length, "Number of passing lanes of commit #"
+					 + (this.nextIndex - 1) + " not as expected.");
+				return this;
+			}
+
 			public virtual PlotCommitListTest.CommitListAssert Parents(params RevCommit[] parents
 				)
 			{
@@ -308,6 +315,32 @@ namespace NGit.Revplot
 			test.Commit(remove_unused).Parents(merge_fix).LanePos(0);
 			test.Commit(add_simple).Parents(merge_fix).LanePos(1);
 			test.Commit(merge_fix).Parents().LanePos(3);
+			test.NoMoreCommits();
+		}
+
+		// test a history where a merge commit has two time the same parent
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDuplicateParents()
+		{
+			RevCommit m1 = Commit();
+			RevCommit m2 = Commit(m1);
+			RevCommit m3 = Commit(m2, m2);
+			RevCommit s1 = Commit(m2);
+			RevCommit s2 = Commit(s1);
+			PlotWalk pw = new PlotWalk(db);
+			pw.MarkStart(pw.LookupCommit(m3));
+			pw.MarkStart(pw.LookupCommit(s2));
+			PlotCommitList<PlotLane> pcl = new PlotCommitList<PlotLane>();
+			pcl.Source(pw);
+			pcl.FillTo(int.MaxValue);
+			PlotCommitListTest.CommitListAssert test = new PlotCommitListTest.CommitListAssert
+				(this, pcl);
+			test.Commit(s2).NrOfPassingLanes(0);
+			test.Commit(s1).NrOfPassingLanes(0);
+			test.Commit(m3).NrOfPassingLanes(1);
+			test.Commit(m2).NrOfPassingLanes(0);
+			test.Commit(m1).NrOfPassingLanes(0);
 			test.NoMoreCommits();
 		}
 	}

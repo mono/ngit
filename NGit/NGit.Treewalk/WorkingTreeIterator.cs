@@ -148,6 +148,13 @@ namespace NGit.Treewalk
 		/// </summary>
 		private long canonLen = -1;
 
+		/// <summary>
+		/// The offset of the content id in
+		/// <see cref="IdBuffer()">IdBuffer()</see>
+		/// 
+		/// </summary>
+		private int contentIdOffset;
+
 		/// <summary>Cached value of isEntryIgnored().</summary>
 		/// <remarks>
 		/// Cached value of isEntryIgnored(). 0 if not ignored, 1 if ignored, -1 if
@@ -275,8 +282,11 @@ namespace NGit.Treewalk
 						DirCacheEntry ent = i.GetDirCacheEntry();
 						if (ent != null && CompareMetadata(ent) == WorkingTreeIterator.MetadataDiff.EQUAL)
 						{
-							return i.IdBuffer;
+							contentIdOffset = i.IdOffset;
+							contentIdFromPtr = ptr;
+							return contentId = i.IdBuffer;
 						}
+						contentIdOffset = 0;
 					}
 				}
 				switch (mode & FileMode.TYPE_MASK)
@@ -534,7 +544,7 @@ namespace NGit.Treewalk
 		{
 			get
 			{
-				return 0;
+				return contentIdOffset;
 			}
 		}
 
@@ -745,9 +755,9 @@ namespace NGit.Treewalk
 			return ignoreNode;
 		}
 
-		private sealed class _IComparer_607 : IComparer<WorkingTreeIterator.Entry>
+		private sealed class _IComparer_613 : IComparer<WorkingTreeIterator.Entry>
 		{
-			public _IComparer_607()
+			public _IComparer_613()
 			{
 			}
 
@@ -781,7 +791,7 @@ namespace NGit.Treewalk
 			}
 		}
 
-		private static readonly IComparer<WorkingTreeIterator.Entry> ENTRY_CMP = new _IComparer_607
+		private static readonly IComparer<WorkingTreeIterator.Entry> ENTRY_CMP = new _IComparer_613
 			();
 
 		internal static int LastPathChar(WorkingTreeIterator.Entry e)

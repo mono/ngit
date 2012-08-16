@@ -138,6 +138,8 @@ namespace NGit.Internal
 
 		public string cannotCreateHEAD;
 
+		public string cannotCreateIndexfile;
+
 		public string cannotDeleteCheckedOutBranch;
 
 		public string cannotDeleteFile;
@@ -754,9 +756,13 @@ namespace NGit.Internal
 
 		public string packObjectCountMismatch;
 
+		public string packRefs;
+
 		public string packTooLargeForIndexVersion1;
 
 		public string packWriterStatistics;
+
+		public string panicCantRenameIndexFile;
 
 		public string patchApplyException;
 
@@ -777,6 +783,10 @@ namespace NGit.Internal
 		public string progressMonUploading;
 
 		public string propertyIsAlreadyNonNull;
+
+		public string pruneLoosePackedObjects;
+
+		public string pruneLooseUnreferencedObjects;
 
 		public string pullOnRepoWithoutHEADCurrentlyNotSupported;
 

@@ -499,7 +499,7 @@ namespace NGit.Merge
 				bool strong = p.StartsWith("<");
 				bool @fixed = p[strong ? 1 : 0] == '*';
 				p = Sharpen.Runtime.Substring(p, (strong ? 1 : 0) + (@fixed ? 1 : 0));
-				long curMod = @fixed ? long.Parse (p) : new FilePath(db.WorkTree, p
+				long curMod = @fixed ? long.Parse(p) : new FilePath(db.WorkTree, p
 					).LastModified();
 				if (strong)
 				{

@@ -662,7 +662,7 @@ index 484039e..fb36482 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 6f0c3eb..71089ab 100644
+index 9f8aa7b..a597141 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -85,6 +85,7 @@
@@ -673,7 +673,7 @@ index 6f0c3eb..71089ab 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
-@@ -696,30 +697,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
+@@ -697,30 +698,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -710,7 +710,7 @@ index 6f0c3eb..71089ab 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -942,10 +940,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -943,10 +941,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -1445,7 +1445,7 @@ index 990106b..20aafab 100644
  	/**
  	 * Create reverse index from straight/forward pack index, by indexing all
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
-index d93e2d6..989e8ba 100644
+index 99ec75c..1ff8bca 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/storage/pack/PackWriter.java
 @@ -189,7 +189,7 @@ public void remove() {
@@ -1680,11 +1680,11 @@ index 315d909..98cedfa 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index ebe9f73..b19689f 100644
+index 8d0555b..db1c4af 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-@@ -132,6 +132,12 @@
- 	private long canonLen = -1;
+@@ -135,6 +135,12 @@
+ 	private int contentIdOffset;
  
  	/**
 +	 * Cached value of isEntryIgnored(). 0 if not ignored, 1 if ignored, -1 if
@@ -1696,7 +1696,7 @@ index ebe9f73..b19689f 100644
  	 * Create a new iterator with no parent.
  	 *
  	 * @param options
-@@ -561,6 +567,8 @@ public boolean isEntryIgnored() throws IOException {
+@@ -567,6 +573,8 @@ public boolean isEntryIgnored() throws IOException {
  	 *             a relevant ignore rule file exists but cannot be read.
  	 */
  	protected boolean isEntryIgnored(final int pLen) throws IOException {
@@ -1705,7 +1705,7 @@ index ebe9f73..b19689f 100644
  		IgnoreNode rules = getIgnoreNode();
  		if (rules != null) {
  			// The ignore code wants path to start with a '/' if possible.
-@@ -573,15 +581,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
+@@ -579,15 +587,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
  			String p = TreeWalk.pathOf(path, pOff, pLen);
  			switch (rules.isIgnored(p, FileMode.TREE.equals(mode))) {
  			case IGNORED:
@@ -1728,7 +1728,7 @@ index ebe9f73..b19689f 100644
  		return false;
  	}
  
-@@ -749,8 +762,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
+@@ -755,8 +768,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();

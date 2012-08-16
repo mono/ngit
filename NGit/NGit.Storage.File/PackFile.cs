@@ -85,6 +85,8 @@ namespace NGit.Storage.File
 
 		private readonly FilePath packFile;
 
+		private FilePath keepFile;
+
 		private volatile string packName;
 
 		internal readonly int hash;
@@ -183,6 +185,13 @@ namespace NGit.Storage.File
 			return packFile;
 		}
 
+		/// <returns>the index for this pack file.</returns>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual PackIndex GetIndex()
+		{
+			return Idx();
+		}
+
 		/// <returns>
 		/// name extracted from
 		/// <code>pack-*.pack</code>
@@ -223,6 +232,18 @@ namespace NGit.Storage.File
 		{
 			long offset = Idx().FindOffset(id);
 			return 0 < offset && !IsCorrupt(offset);
+		}
+
+		/// <summary>Determines whether a .keep file exists for this pack file.</summary>
+		/// <remarks>Determines whether a .keep file exists for this pack file.</remarks>
+		/// <returns>true if a .keep file exist.</returns>
+		public virtual bool ShouldBeKept()
+		{
+			if (keepFile == null)
+			{
+				keepFile = new FilePath(packFile.GetPath() + ".keep");
+			}
+			return keepFile.Exists();
 		}
 
 		/// <summary>Get an object from this pack.</summary>

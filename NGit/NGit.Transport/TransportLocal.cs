@@ -119,10 +119,10 @@ namespace NGit.Transport
 			public override NGit.Transport.Transport Open(URIish uri, Repository local, string
 				 remoteName)
 			{
+				FilePath localPath = local.IsBare ? local.Directory : local.WorkTree;
+				FilePath path = local.FileSystem.Resolve(localPath, uri.GetPath());
 				// If the reference is to a local file, C Git behavior says
 				// assume this is a bundle, since repositories are directories.
-				//
-				FilePath path = local.FileSystem.Resolve(new FilePath("."), uri.GetPath());
 				if (path.IsFile())
 				{
 					return new TransportBundleFile(local, uri, path);

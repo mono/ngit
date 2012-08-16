@@ -55,14 +55,6 @@ namespace NGit.Api
 	{
 		/// <summary>
 		/// The
-		/// <see cref="Status.OK">Status.OK</see>
-		/// result;
-		/// </summary>
-		public static readonly NGit.Api.CheckoutResult OK_RESULT = new NGit.Api.CheckoutResult
-			(CheckoutResult.Status.OK, null);
-
-		/// <summary>
-		/// The
 		/// <see cref="Status.ERROR">Status.ERROR</see>
 		/// result;
 		/// </summary>
@@ -93,6 +85,35 @@ namespace NGit.Api
 
 		private readonly IList<string> undeletedList;
 
+		private readonly IList<string> modifiedList;
+
+		private readonly IList<string> removedList;
+
+		/// <summary>Create a new fail result.</summary>
+		/// <remarks>
+		/// Create a new fail result. If status is
+		/// <see cref="Status.CONFLICTS">Status.CONFLICTS</see>
+		/// ,
+		/// <code>fileList</code> is a list of conflicting files, if status is
+		/// <see cref="Status.NONDELETED">Status.NONDELETED</see>
+		/// , <code>fileList</code> is a list of not deleted
+		/// files. All other values ignore <code>fileList</code>. To create a result
+		/// for
+		/// <see cref="Status.OK">Status.OK</see>
+		/// , see
+		/// <see cref="CheckoutResult(System.Collections.Generic.IList{E}, System.Collections.Generic.IList{E})
+		/// 	">CheckoutResult(System.Collections.Generic.IList&lt;E&gt;, System.Collections.Generic.IList&lt;E&gt;)
+		/// 	</see>
+		/// .
+		/// </remarks>
+		/// <param name="status">the failure status</param>
+		/// <param name="fileList">
+		/// the list of files to store, status has to be either
+		/// <see cref="Status.CONFLICTS">Status.CONFLICTS</see>
+		/// or
+		/// <see cref="Status.NONDELETED">Status.NONDELETED</see>
+		/// .
+		/// </param>
 		internal CheckoutResult(CheckoutResult.Status status, IList<string> fileList)
 		{
 			myStatus = status;
@@ -112,6 +133,21 @@ namespace NGit.Api
 			{
 				this.undeletedList = new AList<string>(0);
 			}
+			this.modifiedList = new AList<string>(0);
+			this.removedList = new AList<string>(0);
+		}
+
+		/// <summary>Create a new OK result with modified and removed files.</summary>
+		/// <remarks>Create a new OK result with modified and removed files.</remarks>
+		/// <param name="modified">the modified files</param>
+		/// <param name="removed">the removed files.</param>
+		internal CheckoutResult(IList<string> modified, IList<string> removed)
+		{
+			myStatus = CheckoutResult.Status.OK;
+			this.conflictList = new AList<string>(0);
+			this.undeletedList = new AList<string>(0);
+			this.modifiedList = modified;
+			this.removedList = removed;
 		}
 
 		/// <returns>the status</returns>
@@ -144,6 +180,30 @@ namespace NGit.Api
 		public virtual IList<string> GetUndeletedList()
 		{
 			return undeletedList;
+		}
+
+		/// <returns>
+		/// the list of files that where modified during checkout, or an
+		/// empty list if
+		/// <see cref="GetStatus()">GetStatus()</see>
+		/// is not
+		/// <see cref="Status.OK">Status.OK</see>
+		/// </returns>
+		public virtual IList<string> GetModifiedList()
+		{
+			return modifiedList;
+		}
+
+		/// <returns>
+		/// the list of files that where removed during checkout, or an empty
+		/// list if
+		/// <see cref="GetStatus()">GetStatus()</see>
+		/// is not
+		/// <see cref="Status.OK">Status.OK</see>
+		/// </returns>
+		public virtual IList<string> GetRemovedList()
+		{
+			return removedList;
 		}
 	}
 }

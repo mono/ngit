@@ -114,10 +114,20 @@ namespace NGit.Revplot
 			{
 				if (cnt == 1)
 				{
-					children = new NGit.Revplot.PlotCommit[] { children[0], c };
+					if (!c.Id.Equals(children[0].Id))
+					{
+						children = new NGit.Revplot.PlotCommit[] { children[0], c };
+					}
 				}
 				else
 				{
+					foreach (NGit.Revplot.PlotCommit pc in children)
+					{
+						if (c.Id.Equals(pc.Id))
+						{
+							return;
+						}
+					}
 					NGit.Revplot.PlotCommit[] n = new NGit.Revplot.PlotCommit[cnt + 1];
 					System.Array.Copy(children, 0, n, 0, cnt);
 					n[cnt] = c;
@@ -257,7 +267,8 @@ namespace NGit.Revplot
 		void AddPassingLane(PlotLane c);
 		int ParentCount { get; }
 		PlotLane GetLane();
-		
+		ObjectId Id { get; }
+
 		// Properties
 		PlotLane lane { get; set; }
 		Ref[] refs { get; set; }

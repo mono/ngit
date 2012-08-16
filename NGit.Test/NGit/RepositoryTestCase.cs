@@ -97,6 +97,13 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		protected internal virtual FilePath WriteTrashFile(string subdir, string name, string
+			 data)
+		{
+			return JGitTestUtil.WriteTrashFile(db, subdir, name, data);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
 		protected internal virtual void DeleteTrashFile(string name)
 		{
 			JGitTestUtil.DeleteTrashFile(db, name);

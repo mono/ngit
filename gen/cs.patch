@@ -1,5 +1,5 @@
 diff --git a/NGit.Test/NGit.Api/AddCommandTest.cs b/NGit.Test/NGit.Api/AddCommandTest.cs
-index 77e11b7..f14769e 100644
+index cddf21b..a5d21b5 100644
 --- a/NGit.Test/NGit.Api/AddCommandTest.cs
 +++ b/NGit.Test/NGit.Api/AddCommandTest.cs
 @@ -584,7 +584,7 @@ namespace NGit.Api
@@ -11,7 +11,7 @@ index 77e11b7..f14769e 100644
  			{
  				return null;
  			}
-@@ -626,7 +626,7 @@ namespace NGit.Api
+@@ -631,7 +631,7 @@ namespace NGit.Api
  				return this;
  			}
  
@@ -55,7 +55,7 @@ index 608ee7f..f5e7ef6 100644
  			// create file
  			FilePath file = new FilePath(db.WorkTree, "a.txt");
 diff --git a/NGit.Test/NGit.Api/CommitCommandTest.cs b/NGit.Test/NGit.Api/CommitCommandTest.cs
-index 641ee5d..bf3b707 100644
+index c0f3e93..2bffb14 100644
 --- a/NGit.Test/NGit.Api/CommitCommandTest.cs
 +++ b/NGit.Test/NGit.Api/CommitCommandTest.cs
 @@ -126,7 +126,7 @@ namespace NGit.Api
@@ -67,7 +67,7 @@ index 641ee5d..bf3b707 100644
  			{
  				return null;
  			}
-@@ -168,7 +168,7 @@ namespace NGit.Api
+@@ -173,7 +173,7 @@ namespace NGit.Api
  				return this;
  			}
  
@@ -146,7 +146,7 @@ index f434cee..7a397a7 100644
  		}
  
 diff --git a/NGit.Test/NGit.Api/RebaseCommandTest.cs b/NGit.Test/NGit.Api/RebaseCommandTest.cs
-index cd17ed0..96de9e1 100644
+index eebfcbe..55c5c07 100644
 --- a/NGit.Test/NGit.Api/RebaseCommandTest.cs
 +++ b/NGit.Test/NGit.Api/RebaseCommandTest.cs
 @@ -778,9 +778,14 @@ namespace NGit.Api
@@ -588,7 +588,7 @@ index 0be32d3..c2a6001 100644
  
  		/// <exception cref="System.Exception"></exception>
 diff --git a/NGit.Test/NGit.Junit/JGitTestUtil.cs b/NGit.Test/NGit.Junit/JGitTestUtil.cs
-index 6f5cdeb..8ca1edb 100644
+index 5adb135..acf4246 100644
 --- a/NGit.Test/NGit.Junit/JGitTestUtil.cs
 +++ b/NGit.Test/NGit.Junit/JGitTestUtil.cs
 @@ -49,6 +49,7 @@ using NGit.Storage.File;
@@ -1030,6 +1030,28 @@ index 34da486..ea369ef 100644
  				), RT(ours), RT(theirs));
  			ByteArrayOutputStream bo = new ByteArrayOutputStream(50);
  			fmt.FormatMerge(bo, r, "B", "O", "T", Constants.CHARACTER_ENCODING);
+diff --git a/NGit.Test/NGit.Merge/ResolveMergerTest.cs b/NGit.Test/NGit.Merge/ResolveMergerTest.cs
+index 3e417ac..07c2100 100644
+--- a/NGit.Test/NGit.Merge/ResolveMergerTest.cs
++++ b/NGit.Test/NGit.Merge/ResolveMergerTest.cs
+@@ -493,12 +493,13 @@ namespace NGit.Merge
+ 		private void CheckModificationTimeStampOrder(params string[] pathes)
+ 		{
+ 			long lastMod = long.MinValue;
+-			foreach (string p in pathes)
++			foreach (string pp in pathes)
+ 			{
++				var p = pp;
+ 				bool strong = p.StartsWith("<");
+-				bool fixed = p[strong ? 1 : 0] == '*';
+-				p = Sharpen.Runtime.Substring(p, (strong ? 1 : 0) + (fixed ? 1 : 0));
+-				long curMod = fixed ? Sharpen.Extensions.ValueOf(p) : new FilePath(db.WorkTree, p
++				bool @fixed = p[strong ? 1 : 0] == '*';
++				p = Sharpen.Runtime.Substring(p, (strong ? 1 : 0) + (@fixed ? 1 : 0));
++				long curMod = @fixed ? long.Parse(p) : new FilePath(db.WorkTree, p
+ 					).LastModified();
+ 				if (strong)
+ 				{
 diff --git a/NGit.Test/NGit.Nls/NLSTest.cs b/NGit.Test/NGit.Nls/NLSTest.cs
 index b7e4df5..7dff5a2 100644
 --- a/NGit.Test/NGit.Nls/NLSTest.cs
@@ -1287,6 +1309,100 @@ index 3843c0e..9de90e3 100644
  		{
  			return util.Commit();
  		}
+diff --git a/NGit.Test/NGit.Storage.File/GCTest.cs b/NGit.Test/NGit.Storage.File/GCTest.cs
+index c23eeee..0f48e9a 100644
+--- a/NGit.Test/NGit.Storage.File/GCTest.cs
++++ b/NGit.Test/NGit.Storage.File/GCTest.cs
+@@ -98,7 +98,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestKeepFiles()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			stats = gc.GetStatistics();
+ 			NUnit.Framework.Assert.AreEqual(4, stats.numberOfLooseObjects);
+@@ -162,7 +162,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestPack2Commits()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			bb.Commit().Add("A", "A2").Add("B", "B2").Create();
+ 			stats = gc.GetStatistics();
+@@ -179,7 +179,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestPackCommitsAndLooseOne()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			RevCommit first = bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			bb.Commit().Add("A", "A2").Add("B", "B2").Create();
+ 			tr.Update("refs/heads/master", first);
+@@ -197,7 +197,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestNotPackTwice()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			RevCommit first = bb.Commit().Message("M").Add("M", "M").Create();
+ 			bb.Commit().Message("B").Add("B", "Q").Create();
+ 			bb.Commit().Message("A").Add("A", "A").Create();
+@@ -231,7 +231,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestPackCommitsAndLooseOneNoReflog()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			RevCommit first = bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			bb.Commit().Add("A", "A2").Add("B", "B2").Create();
+ 			tr.Update("refs/heads/master", first);
+@@ -253,7 +253,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestPackCommitsAndLooseOneWithPruneNow()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			RevCommit first = bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			bb.Commit().Add("A", "A2").Add("B", "B2").Create();
+ 			tr.Update("refs/heads/master", first);
+@@ -272,7 +272,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestPackCommitsAndLooseOneWithPruneNowNoReflog()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			RevCommit first = bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			bb.Commit().Add("A", "A2").Add("B", "B2").Create();
+ 			tr.Update("refs/heads/master", first);
+@@ -295,7 +295,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestIndexSavesObjects()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			bb.Commit().Add("A", "A2").Add("B", "B2").Create();
+ 			bb.Commit().Add("A", "A3");
+@@ -314,7 +314,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestIndexSavesObjectsWithPruneNow()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			bb.Commit().Add("A", "A2").Add("B", "B2").Create();
+ 			bb.Commit().Add("A", "A3");
+@@ -334,7 +334,7 @@ namespace NGit.Storage.File
+ 		[NUnit.Framework.Test]
+ 		public virtual void TestPruneNone()
+ 		{
+-			TestRepository.BranchBuilder bb = tr.Branch("refs/heads/master");
++			BranchBuilder bb = tr.Branch("refs/heads/master");
+ 			bb.Commit().Add("A", "A").Add("B", "B").Create();
+ 			bb.Commit().Add("A", "A2").Add("B", "B2").Create();
+ 			new FilePath(repo.Directory, Constants.LOGS + "/refs/heads/master").Delete();
 diff --git a/NGit.Test/NGit.Storage.File/PackFileTest.cs b/NGit.Test/NGit.Storage.File/PackFileTest.cs
 index 0a39b1a..301e078 100644
 --- a/NGit.Test/NGit.Storage.File/PackFileTest.cs
@@ -1326,19 +1442,6 @@ index af1d429..f7a954a 100644
  			RevBlob contentA = testRepo.Blob("A");
  			RevCommit c1 = bb.Commit().Add("f", contentA).Create();
  			testRepo.GetRevWalk().ParseHeaders(c1);
-diff --git a/NGit.Test/NGit.Storage.File/RefDirectoryTest.cs b/NGit.Test/NGit.Storage.File/RefDirectoryTest.cs
-index 351efd6..6bcae9a 100644
---- a/NGit.Test/NGit.Storage.File/RefDirectoryTest.cs
-+++ b/NGit.Test/NGit.Storage.File/RefDirectoryTest.cs
-@@ -74,7 +74,7 @@ namespace NGit.Storage.File
- 			base.SetUp();
- 			diskRepo = CreateBareRepository();
- 			refdir = (RefDirectory)diskRepo.RefDatabase;
--			repo = new TestRepository(diskRepo);
-+			repo = new TestRepository<Repository>(diskRepo);
- 			A = repo.Commit().Create();
- 			B = repo.Commit(repo.GetRevWalk().ParseCommit(A));
- 			v1_0 = repo.Tag("v1_0", B);
 diff --git a/NGit.Test/NGit.Storage.File/RefUpdateTest.cs b/NGit.Test/NGit.Storage.File/RefUpdateTest.cs
 index 1a268d6..8de18fb 100644
 --- a/NGit.Test/NGit.Storage.File/RefUpdateTest.cs
@@ -1738,10 +1841,10 @@ index 98c9974..1f30e08 100644
  				NUnit.Framework.Assert.AreEqual(buf[i_1], act[j]);
  			}
 diff --git a/NGit.Test/NGit.Transport/TransportTest.cs b/NGit.Test/NGit.Transport/TransportTest.cs
-index a239f23..06d7d41 100644
+index a9537c1..b05573d 100644
 --- a/NGit.Test/NGit.Transport/TransportTest.cs
 +++ b/NGit.Test/NGit.Transport/TransportTest.cs
-@@ -214,6 +214,7 @@ namespace NGit.Transport
+@@ -227,6 +227,7 @@ namespace NGit.Transport
  		}
  
  		[NUnit.Framework.Test]
@@ -2517,10 +2620,10 @@ index 4fc1d3e..022e2b7 100644
  			}
  		}
 diff --git a/NGit.Test/NGit/RepositoryTestCase.cs b/NGit.Test/NGit/RepositoryTestCase.cs
-index f00a64a..c73e4a6 100644
+index 8831aad..42c32db 100644
 --- a/NGit.Test/NGit/RepositoryTestCase.cs
 +++ b/NGit.Test/NGit/RepositoryTestCase.cs
-@@ -248,7 +248,7 @@ namespace NGit
+@@ -255,7 +255,7 @@ namespace NGit
  				}
  				if (0 != (includedOptions & ASSUME_UNCHANGED))
  				{
@@ -2783,7 +2886,7 @@ index 0dd7c01..f433494 100644
  
  		/// <summary>The remote (uri or name) used for the push operation.</summary>
 diff --git a/NGit/NGit.Api/RebaseCommand.cs b/NGit/NGit.Api/RebaseCommand.cs
-index c3616d1..a3dcd69 100644
+index c53bb62..2c4434e 100644
 --- a/NGit/NGit.Api/RebaseCommand.cs
 +++ b/NGit/NGit.Api/RebaseCommand.cs
 @@ -188,6 +188,7 @@ namespace NGit.Api
@@ -2802,7 +2905,7 @@ index c3616d1..a3dcd69 100644
  								}
  							}
  						}
-@@ -1118,7 +1120,7 @@ namespace NGit.Api
+@@ -1120,7 +1122,7 @@ namespace NGit.Api
  				{
  					return PICK;
  				}
@@ -2811,7 +2914,7 @@ index c3616d1..a3dcd69 100644
  					, token, PICK.ToToken()));
  			}
  		}
-@@ -1138,7 +1140,7 @@ namespace NGit.Api
+@@ -1140,7 +1142,7 @@ namespace NGit.Api
  
  			public override string ToString()
  			{
@@ -3357,7 +3460,7 @@ index c92343b..481f590 100644
  				int srcIdx = this._enclosing.chunks.Get(this.idx++);
  				int begin = this._enclosing.chunks.Get(this.idx++);
 diff --git a/NGit/NGit.Merge/ResolveMerger.cs b/NGit/NGit.Merge/ResolveMerger.cs
-index 6075eac..4ece67d 100644
+index 6075eac..6dd4e07 100644
 --- a/NGit/NGit.Merge/ResolveMerger.cs
 +++ b/NGit/NGit.Merge/ResolveMerger.cs
 @@ -472,7 +472,7 @@ namespace NGit.Merge
@@ -3378,6 +3481,15 @@ index 6075eac..4ece67d 100644
  					}
  				}
  			}
+@@ -694,7 +694,7 @@ namespace NGit.Merge
+ 				Add(tw.RawPath, @base, DirCacheEntry.STAGE_1, 0, 0);
+ 				Add(tw.RawPath, ours, DirCacheEntry.STAGE_2, 0, 0);
+ 				Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3, 0, 0);
+-				mergeResults.Put(tw.PathString, result);
++				mergeResults.Put(tw.PathString, result.Upcast ());
+ 			}
+ 			else
+ 			{
 @@ -750,7 +750,7 @@ namespace NGit.Merge
  				{
  					// TODO: This should be handled by WorkingTreeIterators which
@@ -3494,7 +3606,7 @@ index d7a8525..d159a38 100644
  			return hunks;
  		}
 diff --git a/NGit/NGit.Revplot/PlotCommit.cs b/NGit/NGit.Revplot/PlotCommit.cs
-index 6c8c3be..f3dcefc 100644
+index c683a6e..15e0ce6 100644
 --- a/NGit/NGit.Revplot/PlotCommit.cs
 +++ b/NGit/NGit.Revplot/PlotCommit.cs
 @@ -53,7 +53,7 @@ namespace NGit.Revplot
@@ -3506,7 +3618,7 @@ index 6c8c3be..f3dcefc 100644
  	{
  		internal static readonly NGit.Revplot.PlotCommit[] NO_CHILDREN = new NGit.Revplot.PlotCommit
  			[] {  };
-@@ -203,5 +203,63 @@ namespace NGit.Revplot
+@@ -213,5 +213,64 @@ namespace NGit.Revplot
  			lane = null;
  			base.Reset();
  		}
@@ -3564,7 +3676,8 @@ index 6c8c3be..f3dcefc 100644
 +		void AddPassingLane(PlotLane c);
 +		int ParentCount { get; }
 +		PlotLane GetLane();
-+		
++		ObjectId Id { get; }
++
 +		// Properties
 +		PlotLane lane { get; set; }
 +		Ref[] refs { get; set; }
@@ -3910,6 +4023,55 @@ index 86bb157..23ddbb0 100644
  
  		/// <summary>
  		/// True once
+diff --git a/NGit/NGit.Storage.File/GC.cs b/NGit/NGit.Storage.File/GC.cs
+index cc63ebf..bbfe10f 100644
+--- a/NGit/NGit.Storage.File/GC.cs
++++ b/NGit/NGit.Storage.File/GC.cs
+@@ -165,6 +165,7 @@ namespace NGit.Storage.File
+ 			}
+ 			foreach (PackFile oldPack in oldPacks)
+ 			{
++				bool retainPack = false;
+ 				string oldName = oldPack.GetPackName();
+ 				// check whether an old pack file is also among the list of new
+ 				// pack files. Then we must not delete it.
+@@ -172,17 +173,18 @@ namespace NGit.Storage.File
+ 				{
+ 					if (oldName.Equals(newPack.GetPackName()))
+ 					{
+-						goto oldPackLoop_continue;
++						retainPack = true;
++						break;
+ 					}
+ 				}
+-				if (!oldPack.ShouldBeKept())
++				if (!retainPack && !oldPack.ShouldBeKept())
+ 				{
+ 					oldPack.Close();
+ 					FileUtils.Delete(NameFor(oldName, ".pack"), deleteOptions);
+ 					FileUtils.Delete(NameFor(oldName, ".idx"), deleteOptions);
+ 				}
+ 			}
+-oldPackLoop_break: ;
++
+ 			// close the complete object database. Thats my only chance to force
+ 			// rescanning and to detect that certain pack files are now deleted.
+ 			((ObjectDirectory)repo.ObjectDatabase).Close();
+@@ -680,12 +682,12 @@ oldPackLoop_break: ;
+ 			{
+ 				if (repo.GetIndexFile() == null)
+ 				{
+-					return Sharpen.Collections.EmptySet();
++					return Sharpen.Collections.EmptySet<ObjectId>();
+ 				}
+ 			}
+ 			catch (NoWorkTreeException)
+ 			{
+-				return Sharpen.Collections.EmptySet();
++				return Sharpen.Collections.EmptySet<ObjectId>();
+ 			}
+ 			TreeWalk treeWalk = new TreeWalk(repo);
+ 			try
 diff --git a/NGit/NGit.Storage.File/ObjectDirectory.cs b/NGit/NGit.Storage.File/ObjectDirectory.cs
 index 94139a3..0cc1ee4 100644
 --- a/NGit/NGit.Storage.File/ObjectDirectory.cs
@@ -3985,7 +4147,7 @@ index ccb58de..f69df3c 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index e53aca1..2039d16 100644
+index ede1185..0e3140b 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
 @@ -334,7 +334,7 @@ namespace NGit.Storage.File
@@ -3997,7 +4159,7 @@ index e53aca1..2039d16 100644
  		}
  
  		private class LooseScanner
-@@ -1009,7 +1009,7 @@ namespace NGit.Storage.File
+@@ -1149,7 +1149,7 @@ namespace NGit.Storage.File
  				}
  				// possibly truncated ref
  				// trim trailing whitespace
@@ -4006,7 +4168,7 @@ index e53aca1..2039d16 100644
  				{
  					n--;
  				}
-@@ -1046,7 +1046,7 @@ namespace NGit.Storage.File
+@@ -1186,7 +1186,7 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException)
  			{
@@ -4015,7 +4177,7 @@ index e53aca1..2039d16 100644
  				{
  					n--;
  				}
-@@ -1261,7 +1261,7 @@ namespace NGit.Storage.File
+@@ -1401,7 +1401,7 @@ namespace NGit.Storage.File
  			public RefDirectory.LooseRef Peel(ObjectIdRef newLeaf)
  			{
  				// We should never try to peel the symbolic references.
@@ -4162,7 +4324,7 @@ index 14b5812..63dfac5 100644
  				{
  					curcmd = Next();
 diff --git a/NGit/NGit.Storage.Pack/DeltaWindow.cs b/NGit/NGit.Storage.Pack/DeltaWindow.cs
-index b36e358..2b04f8d 100644
+index 9577942..7cdfd6f 100644
 --- a/NGit/NGit.Storage.Pack/DeltaWindow.cs
 +++ b/NGit/NGit.Storage.Pack/DeltaWindow.cs
 @@ -624,7 +624,7 @@ namespace NGit.Storage.Pack
@@ -4175,7 +4337,7 @@ index b36e358..2b04f8d 100644
  		}
  	}
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index d9ff47c..aad6f7c 100644
+index 5218a97..e1ad62e 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
 @@ -166,7 +166,7 @@ namespace NGit.Storage.Pack
@@ -4458,7 +4620,7 @@ index d9ff47c..aad6f7c 100644
  							if (obj_1 is RevCommit && obj_1.Has(include) && !obj_1.Has(RevFlag.UNINTERESTING)
  								 && !obj_1.Has(added))
  							{
-@@ -2643,7 +2637,7 @@ namespace NGit.Storage.Pack
+@@ -2644,7 +2638,7 @@ namespace NGit.Storage.Pack
  
  			private readonly long totalDeltaSearchBytes;
  
@@ -4467,7 +4629,7 @@ index d9ff47c..aad6f7c 100644
  
  			public MutableState(PackWriter _enclosing)
  			{
-@@ -2686,7 +2680,7 @@ namespace NGit.Storage.Pack
+@@ -2687,7 +2681,7 @@ namespace NGit.Storage.Pack
  				{
  					bytesUsed += this.totalDeltaSearchBytes;
  				}
@@ -6855,7 +7017,7 @@ index e854069..0142b73 100644
  			{
  				this._enclosing = _enclosing;
 diff --git a/NGit/NGit.Transport/TransportLocal.cs b/NGit/NGit.Transport/TransportLocal.cs
-index d076db7..3a99af0 100644
+index a34b819..b441e92 100644
 --- a/NGit/NGit.Transport/TransportLocal.cs
 +++ b/NGit/NGit.Transport/TransportLocal.cs
 @@ -194,15 +194,15 @@ namespace NGit.Transport
@@ -7351,10 +7513,10 @@ index 97a21dd..edea11b 100644
  				paths = p;
  				Arrays.Sort(paths, PATH_SORT);
 diff --git a/NGit/NGit.Treewalk/WorkingTreeIterator.cs b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-index e72fb79..8d7e512 100644
+index cf2705e..7307ad1 100644
 --- a/NGit/NGit.Treewalk/WorkingTreeIterator.cs
 +++ b/NGit/NGit.Treewalk/WorkingTreeIterator.cs
-@@ -586,6 +586,7 @@ namespace NGit.Treewalk
+@@ -596,6 +596,7 @@ namespace NGit.Treewalk
  
  		private void ParseEntry()
  		{
@@ -7362,7 +7524,7 @@ index e72fb79..8d7e512 100644
  			WorkingTreeIterator.Entry e = entries[ptr];
  			mode = e.GetMode().GetBits();
  			int nameLen = e.encodedNameLen;
-@@ -686,10 +687,16 @@ namespace NGit.Treewalk
+@@ -696,10 +697,16 @@ namespace NGit.Treewalk
  		/// 	</exception>
  		protected internal virtual bool IsEntryIgnored(int pLen)
  		{
@@ -7381,7 +7543,7 @@ index e72fb79..8d7e512 100644
  			IgnoreNode rules = GetIgnoreNode();
  			if (rules != null)
  			{
-@@ -707,13 +714,11 @@ namespace NGit.Treewalk
+@@ -717,13 +724,11 @@ namespace NGit.Treewalk
  				{
  					case IgnoreNode.MatchResult.IGNORED:
  					{
@@ -7395,7 +7557,7 @@ index e72fb79..8d7e512 100644
  						return false;
  					}
  
-@@ -725,14 +730,11 @@ namespace NGit.Treewalk
+@@ -735,14 +740,11 @@ namespace NGit.Treewalk
  			}
  			if (parent is NGit.Treewalk.WorkingTreeIterator)
  			{
@@ -7412,7 +7574,7 @@ index e72fb79..8d7e512 100644
  		/// <exception cref="System.IO.IOException"></exception>
  		private IgnoreNode GetIgnoreNode()
  		{
-@@ -1149,7 +1151,7 @@ namespace NGit.Treewalk
+@@ -1159,7 +1161,7 @@ namespace NGit.Treewalk
  
  		/// <summary>A single entry within a working directory tree.</summary>
  		/// <remarks>A single entry within a working directory tree.</remarks>
@@ -7709,7 +7871,7 @@ index 672fa1b..c32292d 100644
  
  			private readonly BlockList<T> _enclosing;
 diff --git a/NGit/NGit.Util/FS.cs b/NGit/NGit.Util/FS.cs
-index 3177f8a..56397f5 100644
+index 6df6757..6008bbe 100644
 --- a/NGit/NGit.Util/FS.cs
 +++ b/NGit/NGit.Util/FS.cs
 @@ -90,7 +90,7 @@ namespace NGit.Util
@@ -7730,7 +7892,7 @@ index 3177f8a..56397f5 100644
  				{
  					return new FS_Win32_Cygwin();
  				}
-@@ -288,10 +288,14 @@ namespace NGit.Util
+@@ -292,10 +292,14 @@ namespace NGit.Util
  			{
  				foreach (string command in lookFor)
  				{

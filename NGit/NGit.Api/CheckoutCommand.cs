@@ -110,7 +110,7 @@ namespace NGit.Api
 				if (checkoutAllPaths || !paths.IsEmpty())
 				{
 					CheckoutPaths();
-					status = CheckoutResult.OK_RESULT;
+					status = new CheckoutResult(CheckoutResult.Status.OK, paths);
 					SetCallable(false);
 					return null;
 				}
@@ -215,7 +215,8 @@ namespace NGit.Api
 				}
 				else
 				{
-					status = CheckoutResult.OK_RESULT;
+					status = new CheckoutResult(new AList<string>(dco.GetUpdated().Keys), dco.GetRemoved
+						());
 				}
 				return @ref;
 			}
@@ -309,7 +310,7 @@ namespace NGit.Api
 					{
 						ObjectId blobId = startWalk.GetObjectId(0);
 						FileMode mode = startWalk.GetFileMode(0);
-						editor.Add(new _PathEdit_297(this, blobId, mode, workTree, r, startWalk.PathString
+						editor.Add(new _PathEdit_300(this, blobId, mode, workTree, r, startWalk.PathString
 							));
 					}
 					editor.Commit();
@@ -328,9 +329,9 @@ namespace NGit.Api
 			return this;
 		}
 
-		private sealed class _PathEdit_297 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_300 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_297(CheckoutCommand _enclosing, ObjectId blobId, FileMode mode, 
+			public _PathEdit_300(CheckoutCommand _enclosing, ObjectId blobId, FileMode mode, 
 				FilePath workTree, ObjectReader r, string baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;

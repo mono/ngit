@@ -465,6 +465,8 @@ namespace NGit.Api
 			// representation for date and timezone
 			sb.Append(GIT_AUTHOR_DATE);
 			sb.Append("='");
+			sb.Append("@");
+			// @ for time in seconds since 1970
 			string externalString = author.ToExternalString();
 			sb.Append(Sharpen.Runtime.Substring(externalString, externalString.LastIndexOf('>'
 				) + 2));
@@ -1174,7 +1176,17 @@ namespace NGit.Api
 			string email = keyValueMap.Get(GIT_AUTHOR_EMAIL);
 			string time = keyValueMap.Get(GIT_AUTHOR_DATE);
 			// the time is saved as <seconds since 1970> <timezone offset>
-			long when = long.Parse(Sharpen.Runtime.Substring(time, 0, time.IndexOf(' '))) * 1000;
+			int timeStart = 0;
+			if (time.StartsWith("@"))
+			{
+				timeStart = 1;
+			}
+			else
+			{
+				timeStart = 0;
+			}
+			long when = long.Parse(Sharpen.Runtime.Substring(time, timeStart, time.IndexOf(' '
+				))) * 1000;
 			string tzOffsetString = Sharpen.Runtime.Substring(time, time.IndexOf(' ') + 1);
 			int multiplier = -1;
 			if (tzOffsetString[0] == '+')

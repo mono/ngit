@@ -2246,6 +2246,7 @@ namespace NGit.Storage.Pack
 					otp.ClearReuseAsIs();
 				}
 			}
+			otp.SetDeltaAttempted(next.WasDeltaAttempted());
 			otp.Select(next);
 		}
 

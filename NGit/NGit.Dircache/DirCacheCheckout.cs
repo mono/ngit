@@ -1122,6 +1122,7 @@ namespace NGit.Dircache
 		{
 			ObjectLoader ol = or.Open(entry.GetObjectId());
 			FilePath parentDir = f.GetParentFile();
+			parentDir.Mkdirs();
 			FilePath tmpFile = FilePath.CreateTempFile("._" + f.GetName(), null, parentDir);
 			WorkingTreeOptions opt = repo.GetConfig().Get(WorkingTreeOptions.KEY);
 			FileOutputStream rawChannel = new FileOutputStream(tmpFile);

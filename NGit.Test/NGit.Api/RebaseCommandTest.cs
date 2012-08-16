@@ -874,7 +874,7 @@ namespace NGit.Api
 			string[] lines = convertedAuthor.Split("\n");
 			NUnit.Framework.Assert.AreEqual("GIT_AUTHOR_NAME='Author name'", lines[0]);
 			NUnit.Framework.Assert.AreEqual("GIT_AUTHOR_EMAIL='a.mail@some.com'", lines[1]);
-			NUnit.Framework.Assert.AreEqual("GIT_AUTHOR_DATE='123456789 -0100'", lines[2]);
+			NUnit.Framework.Assert.AreEqual("GIT_AUTHOR_DATE='@123456789 -0100'", lines[2]);
 			PersonIdent parsedIdent = git.Rebase().ParseAuthor(Sharpen.Runtime.GetBytesForString
 				(convertedAuthor, "UTF-8"));
 			NUnit.Framework.Assert.AreEqual(ident.GetName(), parsedIdent.GetName());
@@ -890,7 +890,7 @@ namespace NGit.Api
 			lines = convertedAuthor.Split("\n");
 			NUnit.Framework.Assert.AreEqual("GIT_AUTHOR_NAME='Author name'", lines[0]);
 			NUnit.Framework.Assert.AreEqual("GIT_AUTHOR_EMAIL='a.mail@some.com'", lines[1]);
-			NUnit.Framework.Assert.AreEqual("GIT_AUTHOR_DATE='123456789 +0930'", lines[2]);
+			NUnit.Framework.Assert.AreEqual("GIT_AUTHOR_DATE='@123456789 +0930'", lines[2]);
 			parsedIdent = git.Rebase().ParseAuthor(Sharpen.Runtime.GetBytesForString(convertedAuthor
 				, "UTF-8"));
 			NUnit.Framework.Assert.AreEqual(ident.GetName(), parsedIdent.GetName());

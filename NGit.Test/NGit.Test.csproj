@@ -33,7 +33,6 @@
     <Reference Include="ICSharpCode.SharpZipLib" />
     <Reference Include="System.Core" />
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <Private>True</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
@@ -277,6 +276,7 @@
     <Compile Include="NGit.Transport\PackParserTest.cs" />
     <Compile Include="NGit.Transport\ReceivePackAdvertiseRefsHookTest.cs" />
     <Compile Include="NGit.Util\GitDateFormatterTest.cs" />
+    <Compile Include="NGit.Storage.File\GCTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

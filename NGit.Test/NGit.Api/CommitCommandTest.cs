@@ -82,7 +82,7 @@ namespace NGit.Api
 			TreeWalk walk = TreeWalk.ForPath(db, path, commit1.Tree);
 			NUnit.Framework.Assert.IsNotNull(walk);
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
-			FS nonExecutableFs = new _FS_123();
+			FS nonExecutableFs = new _FS_128();
 			config = ((FileBasedConfig)db.GetConfig());
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, false);
@@ -135,11 +135,16 @@ namespace NGit.Api
 			{
 				return true;
 			}
+
+			public override bool IsCaseSensitive()
+			{
+				return true;
+			}
 		}
 
-		private sealed class _FS_123 : FS
+		private sealed class _FS_128 : FS
 		{
-			public _FS_123()
+			public _FS_128()
 			{
 			}
 
@@ -176,6 +181,11 @@ namespace NGit.Api
 			public override bool CanExecute(FilePath f)
 			{
 				return false;
+			}
+
+			public override bool IsCaseSensitive()
+			{
+				return true;
 			}
 		}
 

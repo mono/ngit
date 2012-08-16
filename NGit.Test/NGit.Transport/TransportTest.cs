@@ -213,6 +213,19 @@ namespace NGit.Transport
 			NUnit.Framework.Assert.AreEqual(ObjectId.ZeroId, tru.GetOldObjectId());
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestLocalTransportWithRelativePath()
+		{
+			FileRepository other = CreateWorkRepository();
+			string otherDir = other.WorkTree.GetName();
+			RemoteConfig config = new RemoteConfig(((FileBasedConfig)db.GetConfig()), "other"
+				);
+			config.AddURI(new URIish("../" + otherDir));
+			// Should not throw NoRemoteRepositoryException
+			transport = NGit.Transport.Transport.Open(db, config);
+		}
+
 		[NUnit.Framework.Test]
 		[NUnit.Framework.Ignore ("I've no idea how the transport is being registered anyway...")]
 		public virtual void TestSpi()

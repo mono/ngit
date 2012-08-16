@@ -696,6 +696,146 @@ namespace NGit.Storage.File
 			FireRefsChanged();
 		}
 
+		/// <summary>Adds a set of refs to the set of packed-refs.</summary>
+		/// <remarks>
+		/// Adds a set of refs to the set of packed-refs. Only non-symbolic refs are
+		/// added. If a ref with the given name already existed in packed-refs it is
+		/// updated with the new value. Each loose ref which was added to the
+		/// packed-ref file is deleted. If a given ref can't be locked it will not be
+		/// added to the pack file.
+		/// </remarks>
+		/// <param name="refs">the refs to be added. Must be fully qualified.</param>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual void Pack(IList<string> refs)
+		{
+			if (refs.Count == 0)
+			{
+				return;
+			}
+			FS fs = parent.FileSystem;
+			// Lock the packed refs file and read the content
+			LockFile lck = new LockFile(packedRefsFile, fs);
+			if (!lck.Lock())
+			{
+				throw new IOException(MessageFormat.Format(JGitText.Get().cannotLock, packedRefsFile
+					));
+			}
+			try
+			{
+				RefDirectory.PackedRefList packed = GetPackedRefs();
+				RefList<Ref> cur = ReadPackedRefs();
+				// Iterate over all refs to be packed
+				foreach (string refName in refs)
+				{
+					Ref @ref = ReadRef(refName, cur);
+					if (@ref.IsSymbolic())
+					{
+						continue;
+					}
+					// can't pack symbolic refs
+					// Add/Update it to packed-refs
+					int idx = cur.Find(refName);
+					if (idx >= 0)
+					{
+						cur = cur.Set(idx, PeeledPackedRef(@ref));
+					}
+					else
+					{
+						cur = cur.Add(idx, PeeledPackedRef(@ref));
+					}
+				}
+				// The new content for packed-refs is collected. Persist it.
+				CommitPackedRefs(lck, cur, packed);
+				// Now delete the loose refs which are now packed
+				foreach (string refName_1 in refs)
+				{
+					// Lock the loose ref
+					FilePath refFile = FileFor(refName_1);
+					if (!refFile.Exists())
+					{
+						continue;
+					}
+					LockFile rLck = new LockFile(refFile, parent.FileSystem);
+					if (!rLck.Lock())
+					{
+						continue;
+					}
+					try
+					{
+						RefDirectory.LooseRef currentLooseRef = ScanRef(null, refName_1);
+						if (currentLooseRef == null || currentLooseRef.IsSymbolic())
+						{
+							continue;
+						}
+						Ref packedRef = cur.Get(refName_1);
+						ObjectId clr_oid = currentLooseRef.GetObjectId();
+						if (clr_oid != null && clr_oid.Equals(packedRef.GetObjectId()))
+						{
+							RefList<RefDirectory.LooseRef> curLoose;
+							RefList<RefDirectory.LooseRef> newLoose;
+							do
+							{
+								curLoose = looseRefs.Get();
+								int idx = curLoose.Find(refName_1);
+								if (idx < 0)
+								{
+									break;
+								}
+								newLoose = curLoose.Remove(idx);
+							}
+							while (!looseRefs.CompareAndSet(curLoose, newLoose));
+							int levels = LevelsIn(refName_1) - 2;
+							Delete(FileFor(refName_1), levels);
+						}
+					}
+					finally
+					{
+						rLck.Unlock();
+					}
+				}
+			}
+			finally
+			{
+				// Don't fire refsChanged. The refs have not change, only their
+				// storage.
+				lck.Unlock();
+			}
+		}
+
+		/// <summary>Make sure a ref is peeled and has the Storage PACKED.</summary>
+		/// <remarks>
+		/// Make sure a ref is peeled and has the Storage PACKED. If the given ref
+		/// has this attributes simply return it. Otherwise create a new peeled
+		/// <see cref="NGit.ObjectIdRef">NGit.ObjectIdRef</see>
+		/// where Storage is set to PACKED.
+		/// </remarks>
+		/// <param name="f"></param>
+		/// <returns>a ref for Storage PACKED having the same name, id, peeledId as f</returns>
+		/// <exception cref="NGit.Errors.MissingObjectException">NGit.Errors.MissingObjectException
+		/// 	</exception>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		private Ref PeeledPackedRef(Ref f)
+		{
+			if (f.GetStorage().IsPacked() && f.IsPeeled())
+			{
+				return f;
+			}
+			if (!f.IsPeeled())
+			{
+				f = Peel(f);
+			}
+			if (f.GetPeeledObjectId() != null)
+			{
+				return new ObjectIdRef.PeeledTag(RefStorage.PACKED, f.GetName(), f.GetObjectId(), 
+					f.GetPeeledObjectId());
+			}
+			else
+			{
+				return new ObjectIdRef.PeeledNonTag(RefStorage.PACKED, f.GetName(), f.GetObjectId
+					());
+			}
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		internal virtual void Log(RefUpdate update, string msg, bool deref)
 		{
@@ -864,12 +1004,12 @@ namespace NGit.Storage.File
 		private void CommitPackedRefs(LockFile lck, RefList<Ref> refs, RefDirectory.PackedRefList
 			 oldPackedList)
 		{
-			new _RefWriter_712(this, lck, oldPackedList, refs, refs).WritePackedRefs();
+			new _RefWriter_818(this, lck, oldPackedList, refs, refs).WritePackedRefs();
 		}
 
-		private sealed class _RefWriter_712 : RefWriter
+		private sealed class _RefWriter_818 : RefWriter
 		{
-			public _RefWriter_712(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
+			public _RefWriter_818(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
 				 oldPackedList, RefList<Ref> refs, RefList<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;

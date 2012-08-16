@@ -71,6 +71,10 @@ namespace NGit.Storage.Pack
 
 		private const int EDGE = 1 << 3;
 
+		private const int DELTA_ATTEMPTED = 1 << 4;
+
+		private const int ATTEMPT_DELTA_MASK = REUSE_AS_IS | DELTA_ATTEMPTED;
+
 		private const int TYPE_SHIFT = 5;
 
 		private const int EXT_SHIFT = 8;
@@ -94,7 +98,7 @@ namespace NGit.Storage.Pack
 		/// <li>1 bit: canReuseAsIs</li>
 		/// <li>1 bit: doNotDelta</li>
 		/// <li>1 bit: edgeObject</li>
-		/// <li>1 bit: unused</li>
+		/// <li>1 bit: deltaAttempted</li>
 		/// <li>3 bits: type</li>
 		/// <li>4 bits: subclass flags (if any)</li>
 		/// <li>--</li>
@@ -299,6 +303,29 @@ namespace NGit.Storage.Pack
 		internal virtual void SetEdge()
 		{
 			flags |= EDGE;
+		}
+
+		internal virtual bool DoNotAttemptDelta()
+		{
+			// Do not attempt if delta attempted and object reuse.
+			return (flags & ATTEMPT_DELTA_MASK) == ATTEMPT_DELTA_MASK;
+		}
+
+		internal virtual bool IsDeltaAttempted()
+		{
+			return (flags & DELTA_ATTEMPTED) != 0;
+		}
+
+		internal virtual void SetDeltaAttempted(bool deltaAttempted)
+		{
+			if (deltaAttempted)
+			{
+				flags |= DELTA_ATTEMPTED;
+			}
+			else
+			{
+				flags &= ~DELTA_ATTEMPTED;
+			}
 		}
 
 		/// <returns>the extended flags on this object, in the range [0x0, 0xf].</returns>

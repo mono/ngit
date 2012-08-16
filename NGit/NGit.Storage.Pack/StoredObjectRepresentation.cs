@@ -86,8 +86,13 @@ namespace NGit.Storage.Pack
 		}
 
 		/// <returns>
-		/// true if this is a delta against another object and this is stored
-		/// in pack delta format.
+		/// the storage format type, which must be one of
+		/// <see cref="PACK_DELTA">PACK_DELTA</see>
+		/// ,
+		/// <see cref="PACK_WHOLE">PACK_WHOLE</see>
+		/// , or
+		/// <see cref="FORMAT_OTHER">FORMAT_OTHER</see>
+		/// .
 		/// </returns>
 		public virtual int GetFormat()
 		{
@@ -105,6 +110,16 @@ namespace NGit.Storage.Pack
 		public virtual ObjectId GetDeltaBase()
 		{
 			return null;
+		}
+
+		/// <returns>
+		/// whether the current representation of the object has had delta
+		/// compression attempted on it.
+		/// </returns>
+		public virtual bool WasDeltaAttempted()
+		{
+			int fmt = GetFormat();
+			return fmt == PACK_DELTA || fmt == PACK_WHOLE;
 		}
 	}
 }

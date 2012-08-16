@@ -144,6 +144,15 @@ namespace NGit.Junit
 			return path;
 		}
 
+		/// <exception cref="System.IO.IOException"></exception>
+		public static FilePath WriteTrashFile(FileRepository db, string subdir, string name
+			, string data)
+		{
+			FilePath path = new FilePath(db.WorkTree + "/" + subdir, name);
+			Write(path, data);
+			return path;
+		}
+
 		/// <summary>Write a string as a UTF-8 file.</summary>
 		/// <remarks>Write a string as a UTF-8 file.</remarks>
 		/// <param name="f">

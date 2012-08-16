@@ -397,6 +397,34 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void StashChangeInANewSubdirectory()
+		{
+			string subdir = "subdir";
+			string fname = "file2.txt";
+			string path = subdir + Runtime.GetProperty("file.separator") + fname;
+			string otherBranch = "otherbranch";
+			WriteTrashFile(subdir, fname, "content2");
+			git.Add().AddFilepattern(path).Call();
+			RevCommit stashed = git.StashCreate().Call();
+			NUnit.Framework.Assert.IsNotNull(stashed);
+			NUnit.Framework.Assert.IsTrue(git.Status().Call().IsClean());
+			git.BranchCreate().SetName(otherBranch).Call();
+			git.Checkout().SetName(otherBranch).Call();
+			ObjectId unstashed = git.StashApply().Call();
+			NUnit.Framework.Assert.AreEqual(stashed, unstashed);
+			Status status = git.Status().Call();
+			NUnit.Framework.Assert.IsTrue(status.GetChanged().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetConflicting().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetMissing().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetRemoved().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetModified().IsEmpty());
+			NUnit.Framework.Assert.IsTrue(status.GetUntracked().IsEmpty());
+			NUnit.Framework.Assert.AreEqual(1, status.GetAdded().Count);
+			NUnit.Framework.Assert.IsTrue(status.GetAdded().Contains(path));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void UnstashNonStashCommit()
 		{
 			try
