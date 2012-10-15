@@ -15,11 +15,15 @@ namespace Sharpen
 			if (Environment.OSVersion.Platform.ToString ().StartsWith ("Win"))
 				Instance = new FileHelper ();
 			else {
-				var path = ((FilePath) typeof (FileHelper).Assembly.Location).GetParent ();
-				var assembly = Assembly.LoadFile (Path.Combine (path, "Sharpen.Unix.dll"));
-				if (assembly == null)
-					throw new Exception ("Sharpen.Unix.dll is required when running on a Unix based system");
-				Instance = (FileHelper) Activator.CreateInstance (assembly.GetType ("Sharpen.Unix.UnixFileHelper"));
+				var ufh = Type.GetType("Sharpen.Unix.UnixFileHelper");
+				if (ufh == null) {
+					var path = ((FilePath) typeof (FileHelper).Assembly.Location).GetParent();
+					var assembly = Assembly.LoadFile(Path.Combine(path, "Sharpen.Unix.dll"));
+					if (assembly == null)
+						throw new Exception("Sharpen.Unix.dll is required when running on a Unix based system");
+					ufh = assembly.GetType("Sharpen.Unix.UnixFileHelper");
+				}
+				Instance = (FileHelper)Activator.CreateInstance (ufh);
 			}
 		}
 
