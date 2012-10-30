@@ -43,7 +43,9 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit.Errors;
 using NGit.Fnmatch;
+using NGit.Junit;
 using Sharpen;
+using NUnit.Framework;
 
 namespace NGit.Fnmatch
 {
@@ -56,8 +58,8 @@ namespace NGit.Fnmatch
 		{
 			FileNameMatcher matcher = new FileNameMatcher(pattern, null);
 			matcher.Append(input);
-			NUnit.Framework.Assert.AreEqual(matchExpected, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(appendCanMatchExpected, matcher.CanAppendMatch());
+			Assert.AreEqual(matchExpected, matcher.IsMatch());
+			Assert.AreEqual(appendCanMatchExpected, matcher.CanAppendMatch());
 		}
 
 		/// <exception cref="NGit.Errors.InvalidPatternException"></exception>
@@ -66,8 +68,8 @@ namespace NGit.Fnmatch
 		{
 			FileNameMatcher matcher = new FileNameMatcher(pattern, excludedCharacter);
 			matcher.Append(input);
-			NUnit.Framework.Assert.AreEqual(matchExpected, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(appendCanMatchExpected, matcher.CanAppendMatch());
+			Assert.AreEqual(matchExpected, matcher.IsMatch());
+			Assert.AreEqual(appendCanMatchExpected, matcher.CanAppendMatch());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -1123,22 +1125,22 @@ namespace NGit.Fnmatch
 			string pattern = "helloworld";
 			FileNameMatcher matcher = new FileNameMatcher(pattern, null);
 			matcher.Append("helloworld");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
 			matcher.Reset();
 			matcher.Append("hello");
-			NUnit.Framework.Assert.AreEqual(false, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.IsMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.CanAppendMatch());
 			matcher.Append("world");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
 			matcher.Append("to much");
-			NUnit.Framework.Assert.AreEqual(false, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
 			matcher.Reset();
 			matcher.Append("helloworld");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -1149,30 +1151,30 @@ namespace NGit.Fnmatch
 			FileNameMatcher matcher = new FileNameMatcher(pattern, null);
 			matcher.Append("hello");
 			FileNameMatcher childMatcher = matcher.CreateMatcherForSuffix();
-			NUnit.Framework.Assert.AreEqual(false, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(false, childMatcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, childMatcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.IsMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(childMatcher.IsMatch());
+			NUnit.Framework.Assert.IsTrue(childMatcher.CanAppendMatch());
 			matcher.Append("world");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(false, childMatcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, childMatcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(childMatcher.IsMatch());
+			NUnit.Framework.Assert.IsTrue(childMatcher.CanAppendMatch());
 			childMatcher.Append("world");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(true, childMatcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, childMatcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(childMatcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(childMatcher.CanAppendMatch());
 			childMatcher.Reset();
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(false, childMatcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, childMatcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(childMatcher.IsMatch());
+			NUnit.Framework.Assert.IsTrue(childMatcher.CanAppendMatch());
 			childMatcher.Append("world");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(true, childMatcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, childMatcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(childMatcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(childMatcher.CanAppendMatch());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -1183,30 +1185,30 @@ namespace NGit.Fnmatch
 			FileNameMatcher matcher = new FileNameMatcher(pattern, null);
 			matcher.Append("hello");
 			FileNameMatcher copy = new FileNameMatcher(matcher);
-			NUnit.Framework.Assert.AreEqual(false, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(false, copy.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, copy.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.IsMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(copy.IsMatch());
+			NUnit.Framework.Assert.IsTrue(copy.CanAppendMatch());
 			matcher.Append("world");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(false, copy.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, copy.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(copy.IsMatch());
+			NUnit.Framework.Assert.IsTrue(copy.CanAppendMatch());
 			copy.Append("world");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(true, copy.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, copy.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(copy.IsMatch());
+			NUnit.Framework.Assert.IsFalse(copy.CanAppendMatch());
 			copy.Reset();
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(false, copy.IsMatch());
-			NUnit.Framework.Assert.AreEqual(true, copy.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsFalse(copy.IsMatch());
+			NUnit.Framework.Assert.IsTrue(copy.CanAppendMatch());
 			copy.Append("helloworld");
-			NUnit.Framework.Assert.AreEqual(true, matcher.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, matcher.CanAppendMatch());
-			NUnit.Framework.Assert.AreEqual(true, copy.IsMatch());
-			NUnit.Framework.Assert.AreEqual(false, copy.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(matcher.IsMatch());
+			NUnit.Framework.Assert.IsFalse(matcher.CanAppendMatch());
+			NUnit.Framework.Assert.IsTrue(copy.IsMatch());
+			NUnit.Framework.Assert.IsFalse(copy.CanAppendMatch());
 		}
 	}
 }

@@ -653,10 +653,7 @@ namespace NGit.Dircache
 					case unchecked((int)(0xDFD)):
 					{
 						// 3 4
-						// CAUTION: I put it into removed instead of updated, because
-						// that's what our tests expect
-						// updated.put(name, mId);
-						Remove(name);
+						Keep(dce);
 						break;
 					}
 
@@ -822,13 +819,20 @@ namespace NGit.Dircache
 					else
 					{
 						// 2
-						Update(name, mId, mMode);
+						// 3
+						if (EqualIdAndMode(hId, hMode, mId, mMode))
+						{
+							Keep(dce);
+						}
+						else
+						{
+							Conflict(name, dce, h, m);
+						}
 					}
 				}
 			}
 			else
 			{
-				// 3
 				if (h == null)
 				{
 					if (m == null || EqualIdAndMode(mId, mMode, iId, iMode))
@@ -1212,9 +1216,8 @@ namespace NGit.Dircache
 
 		private static bool IsValidPathSegment(CanonicalTreeParser t)
 		{
-			string osName = SystemReader.GetInstance().GetProperty("os.name");
-			bool isWindows = "Windows".Equals(osName);
-			bool isOSX = "Darwin".Equals(osName) || "Mac OS X".Equals(osName);
+			bool isWindows = SystemReader.GetInstance().IsWindows();
+			bool isOSX = SystemReader.GetInstance().IsMacOS();
 			bool ignCase = isOSX || isWindows;
 			int ptr = t.GetNameOffset();
 			byte[] raw = t.GetEntryPathBuffer();

@@ -37,6 +37,11 @@ namespace Sharpen
 			return WaitHandle.WaitAll (handles, (int) unit.Convert (n, TimeUnit.MILLISECONDS));
 		}
 	
+		public void ShutdownNow ()
+		{
+			Shutdown ();
+		}
+
 		public void Shutdown ()
 		{
 			lock (tasks) {

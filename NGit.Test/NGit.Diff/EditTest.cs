@@ -135,9 +135,9 @@ namespace NGit.Diff
 		{
 			Edit e1 = new Edit(1, 2, 3, 4);
 			Edit e2 = new Edit(1, 2, 3, 4);
-			NUnit.Framework.Assert.IsTrue(e1.Equals(e1));
-			NUnit.Framework.Assert.IsTrue(e1.Equals(e2));
-			NUnit.Framework.Assert.IsTrue(e2.Equals(e1));
+			NUnit.Framework.Assert.AreEqual(e1, e1);
+			NUnit.Framework.Assert.AreEqual(e2, e1);
+			NUnit.Framework.Assert.AreEqual(e1, e2);
 			NUnit.Framework.Assert.AreEqual(e1.GetHashCode(), e2.GetHashCode());
 			NUnit.Framework.Assert.IsFalse(e1.Equals(string.Empty));
 		}

@@ -229,8 +229,8 @@ namespace NGit
 			AbbreviatedObjectId b = AbbreviatedObjectId.FromString(s);
 			NUnit.Framework.Assert.AreNotSame(a, b);
 			NUnit.Framework.Assert.IsTrue(a.GetHashCode() == b.GetHashCode());
-			NUnit.Framework.Assert.IsTrue(a.Equals(b));
-			NUnit.Framework.Assert.IsTrue(b.Equals(a));
+			NUnit.Framework.Assert.AreEqual(b, a);
+			NUnit.Framework.Assert.AreEqual(a, b);
 		}
 
 		[NUnit.Framework.Test]
@@ -241,8 +241,8 @@ namespace NGit
 			AbbreviatedObjectId b = AbbreviatedObjectId.FromString(s);
 			NUnit.Framework.Assert.AreNotSame(a, b);
 			NUnit.Framework.Assert.IsTrue(a.GetHashCode() == b.GetHashCode());
-			NUnit.Framework.Assert.IsTrue(a.Equals(b));
-			NUnit.Framework.Assert.IsTrue(b.Equals(a));
+			NUnit.Framework.Assert.AreEqual(b, a);
+			NUnit.Framework.Assert.AreEqual(a, b);
 		}
 
 		[NUnit.Framework.Test]

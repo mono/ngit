@@ -288,6 +288,10 @@ namespace NGit.Treewalk
 						}
 						contentIdOffset = 0;
 					}
+					else
+					{
+						contentIdOffset = 0;
+					}
 				}
 				switch (mode & FileMode.TYPE_MASK)
 				{
@@ -755,9 +759,9 @@ namespace NGit.Treewalk
 			return ignoreNode;
 		}
 
-		private sealed class _IComparer_613 : IComparer<WorkingTreeIterator.Entry>
+		private sealed class _IComparer_615 : IComparer<WorkingTreeIterator.Entry>
 		{
-			public _IComparer_613()
+			public _IComparer_615()
 			{
 			}
 
@@ -791,7 +795,7 @@ namespace NGit.Treewalk
 			}
 		}
 
-		private static readonly IComparer<WorkingTreeIterator.Entry> ENTRY_CMP = new _IComparer_613
+		private static readonly IComparer<WorkingTreeIterator.Entry> ENTRY_CMP = new _IComparer_615
 			();
 
 		internal static int LastPathChar(WorkingTreeIterator.Entry e)

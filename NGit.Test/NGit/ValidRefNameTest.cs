@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
+using NGit.Junit;
 using Sharpen;
 
 namespace NGit
@@ -51,8 +52,7 @@ namespace NGit
 	{
 		private static void AssertValid(bool exp, string name)
 		{
-			NUnit.Framework.Assert.AreEqual(exp, Repository.IsValidRefName(name), "\"" + name
-				 + "\"");
+			NUnit.Framework.Assert.AreEqual(exp, Repository.IsValidRefName(name), "\"" + name + "\"");
 		}
 
 		[NUnit.Framework.Test]

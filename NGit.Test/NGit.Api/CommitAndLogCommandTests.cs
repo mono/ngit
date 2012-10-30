@@ -205,6 +205,9 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestMergeEmptyBranches()
 		{
+			if (!FS.DETECTED.SupportsExecute())
+				return;
+
 			Git git = new Git(db);
 			git.Commit().SetMessage("initial commit").Call();
 			RefUpdate r = db.UpdateRef("refs/heads/side");
@@ -222,7 +225,7 @@ namespace NGit.Api
 			RevCommit[] parents = commit.Parents;
 			NUnit.Framework.Assert.AreEqual(parents[0], firstSide);
 			NUnit.Framework.Assert.AreEqual(parents[1], second);
-			NUnit.Framework.Assert.IsTrue(parents.Length == 2);
+			NUnit.Framework.Assert.AreEqual(2, parents.Length);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -260,9 +263,11 @@ namespace NGit.Api
 		[NUnit.Framework.Test]
 		public virtual void TestModeChange()
 		{
-			if (!FS.DETECTED.SupportsExecute())
+			if (Runtime.GetProperty("os.name").StartsWith("Windows"))
+			{
 				return;
-
+			}
+			// SKIP
 			Git git = new Git(db);
 			// create file
 			FilePath file = new FilePath(db.WorkTree, "a.txt");

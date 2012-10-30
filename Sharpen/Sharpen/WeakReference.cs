@@ -2,9 +2,9 @@ using System;
 
 namespace Sharpen
 {
-	public class WeakReference<T>: WeakReference
+	public class JavaWeakReference<T>: WeakReference
 	{
-		public WeakReference (T t): base (t)
+		public JavaWeakReference (T t): base (t)
 		{
 		}
 		

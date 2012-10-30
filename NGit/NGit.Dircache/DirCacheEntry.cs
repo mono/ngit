@@ -510,6 +510,14 @@ namespace NGit.Dircache
 			}
 		}
 
+		/// <summary>Returns whether this entry is in the fully-merged stage (0).</summary>
+		/// <remarks>Returns whether this entry is in the fully-merged stage (0).</remarks>
+		/// <returns>true if this entry is merged</returns>
+		public virtual bool IsMerged()
+		{
+			return Stage == STAGE_0;
+		}
+
 		/// <summary>
 		/// Obtain the raw
 		/// <see cref="NGit.FileMode">NGit.FileMode</see>
@@ -844,7 +852,7 @@ namespace NGit.Dircache
 					{
 						// Tree's never have a backslash in them, not even on Windows
 						// but even there we regard it as an invalid path
-						if ("Windows".Equals(SystemReader.GetInstance().GetProperty("os.name")))
+						if (SystemReader.GetInstance().IsWindows())
 						{
 							return false;
 						}

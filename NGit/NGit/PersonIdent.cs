@@ -77,13 +77,8 @@ namespace NGit
 		/// from the configuration.
 		/// </remarks>
 		/// <param name="repo"></param>
-		public PersonIdent(Repository repo)
+		public PersonIdent(Repository repo) : this(repo.GetConfig().Get(UserConfig.KEY))
 		{
-			UserConfig config = repo.GetConfig().Get(UserConfig.KEY);
-			name = config.GetCommitterName();
-			emailAddress = config.GetCommitterEmail();
-			when = SystemReader.GetInstance().GetCurrentTime();
-			tzOffset = SystemReader.GetInstance().GetTimezone(when);
 		}
 
 		/// <summary>
@@ -107,12 +102,9 @@ namespace NGit
 		/// </summary>
 		/// <param name="aName"></param>
 		/// <param name="aEmailAddress"></param>
-		public PersonIdent(string aName, string aEmailAddress)
+		public PersonIdent(string aName, string aEmailAddress) : this(aName, aEmailAddress
+			, SystemReader.GetInstance().GetCurrentTime())
 		{
-			name = aName;
-			emailAddress = aEmailAddress;
-			when = SystemReader.GetInstance().GetCurrentTime();
-			tzOffset = SystemReader.GetInstance().GetTimezone(when);
 		}
 
 		/// <summary>Copy a PersonIdent, but alter the clone's time stamp</summary>
@@ -137,12 +129,9 @@ namespace NGit
 		/// <see cref="PersonIdent">PersonIdent</see>
 		/// </param>
 		/// <param name="aWhen">local time</param>
-		public PersonIdent(NGit.PersonIdent pi, DateTime aWhen)
+		public PersonIdent(NGit.PersonIdent pi, DateTime aWhen) : this(pi.GetName(), pi.GetEmailAddress
+			(), aWhen.GetTime(), pi.tzOffset)
 		{
-			name = pi.GetName();
-			emailAddress = pi.GetEmailAddress();
-			when = aWhen.GetTime();
-			tzOffset = pi.tzOffset;
 		}
 
 		/// <summary>Construct a PersonIdent from simple data</summary>
@@ -151,12 +140,31 @@ namespace NGit
 		/// <param name="aWhen">local time stamp</param>
 		/// <param name="aTZ">time zone</param>
 		public PersonIdent(string aName, string aEmailAddress, DateTime aWhen, TimeZoneInfo
-			 aTZ)
+			 aTZ) : this(aName, aEmailAddress, aWhen.GetTime(), aTZ.GetOffset(aWhen.GetTime(
+			)) / (60 * 1000))
 		{
-			name = aName;
-			emailAddress = aEmailAddress;
-			when = aWhen.GetTime();
-			tzOffset = aTZ.GetOffset(when) / (60 * 1000);
+		}
+
+		/// <summary>Copy a PersonIdent, but alter the clone's time stamp</summary>
+		/// <param name="pi">
+		/// original
+		/// <see cref="PersonIdent">PersonIdent</see>
+		/// </param>
+		/// <param name="aWhen">local time stamp</param>
+		/// <param name="aTZ">time zone</param>
+		public PersonIdent(NGit.PersonIdent pi, long aWhen, int aTZ) : this(pi.GetName(), 
+			pi.GetEmailAddress(), aWhen, aTZ)
+		{
+		}
+
+		private PersonIdent(string aName, string aEmailAddress, long when) : this(aName, 
+			aEmailAddress, when, SystemReader.GetInstance().GetTimezone(when))
+		{
+		}
+
+		private PersonIdent(UserConfig config) : this(config.GetCommitterName(), config.GetCommitterEmail
+			())
+		{
 		}
 
 		/// <summary>
@@ -169,23 +177,16 @@ namespace NGit
 		/// <param name="aTZ">time zone</param>
 		public PersonIdent(string aName, string aEmailAddress, long aWhen, int aTZ)
 		{
+			if (aName == null)
+			{
+				throw new ArgumentException("Name of PersonIdent must not be null.");
+			}
+			if (aEmailAddress == null)
+			{
+				throw new ArgumentException("E-mail address of PersonIdent must not be null.");
+			}
 			name = aName;
 			emailAddress = aEmailAddress;
-			when = aWhen;
-			tzOffset = aTZ;
-		}
-
-		/// <summary>Copy a PersonIdent, but alter the clone's time stamp</summary>
-		/// <param name="pi">
-		/// original
-		/// <see cref="PersonIdent">PersonIdent</see>
-		/// </param>
-		/// <param name="aWhen">local time stamp</param>
-		/// <param name="aTZ">time zone</param>
-		public PersonIdent(NGit.PersonIdent pi, long aWhen, int aTZ)
-		{
-			name = pi.GetName();
-			emailAddress = pi.GetEmailAddress();
 			when = aWhen;
 			tzOffset = aTZ;
 		}

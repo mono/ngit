@@ -45,6 +45,7 @@ using System;
 using System.IO;
 using NGit.Junit;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util
@@ -123,7 +124,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					CollectionAssert.AreEquivalent(test, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -131,7 +132,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 			}
 			finally
@@ -159,7 +160,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -167,7 +168,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 			}
 			finally
@@ -195,7 +196,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -203,7 +204,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 			}
 			finally
@@ -230,7 +231,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -238,7 +239,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 			}
 			finally
@@ -263,7 +264,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -271,7 +272,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 			}
 			finally
@@ -292,7 +293,7 @@ namespace NGit.Util
 			InputStream @in = b.OpenInputStream();
 			byte[] act = new byte[cnt];
 			IOUtil.ReadFully(@in, act, 0, cnt);
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, act));
+			 CollectionAssert.AreEquivalent(test, act);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -312,7 +313,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -320,7 +321,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 			}
 			finally
@@ -346,7 +347,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -354,7 +355,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 			}
 			finally
@@ -382,7 +383,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -390,7 +391,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(test, r));
+					 CollectionAssert.AreEquivalent(test, r);
 				}
 			}
 			finally
@@ -452,7 +453,7 @@ namespace NGit.Util
 					byte[] r = b.ToByteArray();
 					NUnit.Framework.Assert.IsNotNull(r);
 					NUnit.Framework.Assert.AreEqual(expect.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(expect, r));
+					 CollectionAssert.AreEquivalent(expect, r);
 				}
 				{
 					ByteArrayOutputStream o = new ByteArrayOutputStream();
@@ -460,7 +461,7 @@ namespace NGit.Util
 					o.Close();
 					byte[] r = o.ToByteArray();
 					NUnit.Framework.Assert.AreEqual(expect.Length, r.Length);
-					NUnit.Framework.Assert.IsTrue(Arrays.Equals(expect, r));
+					 CollectionAssert.AreEquivalent(expect, r);
 				}
 			}
 			finally

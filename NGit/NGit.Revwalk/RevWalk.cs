@@ -718,6 +718,12 @@ namespace NGit.Revwalk
 		/// <p>
 		/// The commit may or may not exist in the repository. It is impossible to
 		/// tell from this method's return value.
+		/// <p>
+		/// See
+		/// <see cref="ParseHeaders(RevObject)">ParseHeaders(RevObject)</see>
+		/// and
+		/// <see cref="ParseBody(RevObject)">ParseBody(RevObject)</see>
+		/// for loading contents.
 		/// </remarks>
 		/// <param name="id">name of the commit object.</param>
 		/// <returns>reference to the commit object. Never null.</returns>
@@ -1036,7 +1042,7 @@ namespace NGit.Revwalk
 		public virtual AsyncRevObjectQueue ParseAny<T>(Iterable<T> objectIds, bool reportMissing
 			) where T:ObjectId
 		{
-			IList<T> need = new AList<T>();
+			IList<ObjectId> need = new AList<ObjectId>();
 			IList<RevObject> have = new AList<RevObject>();
 			foreach (T id in objectIds)
 			{
@@ -1053,16 +1059,16 @@ namespace NGit.Revwalk
 			Sharpen.Iterator<RevObject> objItr = have.Iterator();
 			if (need.IsEmpty())
 			{
-				return new _AsyncRevObjectQueue_898<T>(objItr);
+				return new _AsyncRevObjectQueue_902(objItr);
 			}
 			// In-memory only, no action required.
-			AsyncObjectLoaderQueue<T> lItr = reader.Open(need.AsIterable(), reportMissing);
-			return new _AsyncRevObjectQueue_914<T>(this, objItr, lItr);
+			AsyncObjectLoaderQueue<ObjectId> lItr = reader.Open(need.AsIterable(), reportMissing);
+			return new _AsyncRevObjectQueue_918(this, objItr, lItr);
 		}
 
-		private sealed class _AsyncRevObjectQueue_898<T> : AsyncRevObjectQueue where T:ObjectId
+		private sealed class _AsyncRevObjectQueue_902 : AsyncRevObjectQueue
 		{
-			public _AsyncRevObjectQueue_898(Sharpen.Iterator<RevObject> objItr)
+			public _AsyncRevObjectQueue_902(Sharpen.Iterator<RevObject> objItr)
 			{
 				this.objItr = objItr;
 			}
@@ -1084,10 +1090,10 @@ namespace NGit.Revwalk
 			private readonly Sharpen.Iterator<RevObject> objItr;
 		}
 
-		private sealed class _AsyncRevObjectQueue_914<T> : AsyncRevObjectQueue where T:ObjectId
+		private sealed class _AsyncRevObjectQueue_918 : AsyncRevObjectQueue
 		{
-			public _AsyncRevObjectQueue_914(RevWalk _enclosing, Sharpen.Iterator<RevObject> objItr
-				, AsyncObjectLoaderQueue<T> lItr)
+			public _AsyncRevObjectQueue_918(RevWalk _enclosing, Sharpen.Iterator<RevObject> objItr
+			       , AsyncObjectLoaderQueue<ObjectId> lItr)
 			{
 				this._enclosing = _enclosing;
 				this.objItr = objItr;
@@ -1151,7 +1157,7 @@ namespace NGit.Revwalk
 
 			private readonly Sharpen.Iterator<RevObject> objItr;
 
-			private readonly AsyncObjectLoaderQueue<T> lItr;
+			private readonly AsyncObjectLoaderQueue<ObjectId> lItr;
 		}
 
 		/// <summary>Ensure the object's critical headers have been parsed.</summary>
@@ -1508,12 +1514,12 @@ namespace NGit.Revwalk
 			{
 				throw new RevWalkException(e);
 			}
-			return new _Iterator_1238(this, first);
+			return new _Iterator_1241(this, first);
 		}
 
-		private sealed class _Iterator_1238 : Sharpen.Iterator<RevCommit>
+		private sealed class _Iterator_1241 : Sharpen.Iterator<RevCommit>
 		{
-			public _Iterator_1238(RevWalk _enclosing, RevCommit first)
+			public _Iterator_1241(RevWalk _enclosing, RevCommit first)
 			{
 				this._enclosing = _enclosing;
 				this.first = first;

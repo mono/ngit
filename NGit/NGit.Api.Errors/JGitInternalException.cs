@@ -76,6 +76,7 @@ namespace NGit.Api.Errors
 	{
 		private const long serialVersionUID = 1L;
 
+		/// <summary>Construct an exception for low-level internal exceptions</summary>
 		/// <param name="message"></param>
 		/// <param name="cause"></param>
 		public JGitInternalException(string message, Exception cause) : base(message, cause
@@ -83,6 +84,7 @@ namespace NGit.Api.Errors
 		{
 		}
 
+		/// <summary>Construct an exception for low-level internal exceptions</summary>
 		/// <param name="message"></param>
 		public JGitInternalException(string message) : base(message)
 		{

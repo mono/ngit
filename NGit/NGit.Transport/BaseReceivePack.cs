@@ -112,14 +112,14 @@ namespace NGit.Transport
 
 		/// <summary>Database we write the stored objects into.</summary>
 		/// <remarks>Database we write the stored objects into.</remarks>
-		protected internal readonly Repository db;
+		private readonly Repository db;
 
 		/// <summary>
 		/// Revision traversal support over
 		/// <see cref="db">db</see>
 		/// .
 		/// </summary>
-		protected internal readonly RevWalk walk;
+		private readonly RevWalk walk;
 
 		/// <summary>
 		/// Is the client connection a bi-directional socket or pipe?
@@ -138,22 +138,22 @@ namespace NGit.Transport
 		/// If false, this class runs in a read everything then output results mode,
 		/// making it suitable for single round-trip systems RPCs such as HTTP.
 		/// </remarks>
-		protected internal bool biDirectionalPipe = true;
+		private bool biDirectionalPipe = true;
 
 		/// <summary>Expecting data after the pack footer</summary>
-		protected internal bool expectDataAfterPackFooter;
+		private bool expectDataAfterPackFooter;
 
 		/// <summary>Should an incoming transfer validate objects?</summary>
-		protected internal bool checkReceivedObjects;
+		private bool checkReceivedObjects;
 
 		/// <summary>Should an incoming transfer permit create requests?</summary>
-		protected internal bool allowCreates;
+		private bool allowCreates;
 
 		/// <summary>Should an incoming transfer permit delete requests?</summary>
-		protected internal bool allowDeletes;
+		private bool allowDeletes;
 
 		/// <summary>Should an incoming transfer permit non-fast-forward requests?</summary>
-		protected internal bool allowNonFastForwards;
+		private bool allowNonFastForwards;
 
 		private bool allowOfsDelta;
 
@@ -216,15 +216,15 @@ namespace NGit.Transport
 
 		/// <summary>The refs we advertised as existing at the start of the connection.</summary>
 		/// <remarks>The refs we advertised as existing at the start of the connection.</remarks>
-		protected internal IDictionary<string, Ref> refs;
+		private IDictionary<string, Ref> refs;
 
 		/// <summary>All SHA-1s shown to the client, which can be possible edges.</summary>
 		/// <remarks>All SHA-1s shown to the client, which can be possible edges.</remarks>
-		protected internal ICollection<ObjectId> advertisedHaves;
+		private ICollection<ObjectId> advertisedHaves;
 
 		/// <summary>Capabilities requested by the client.</summary>
 		/// <remarks>Capabilities requested by the client.</remarks>
-		protected internal ICollection<string> enabledCapabilities;
+		private ICollection<string> enabledCapabilities;
 
 		private IList<ReceiveCommand> commands;
 
@@ -232,19 +232,11 @@ namespace NGit.Transport
 
 		/// <summary>
 		/// If
-		/// <see cref="BasePackPushConnection.CAPABILITY_REPORT_STATUS">BasePackPushConnection.CAPABILITY_REPORT_STATUS
-		/// 	</see>
-		/// is enabled.
-		/// </summary>
-		protected internal bool reportStatus;
-
-		/// <summary>
-		/// If
 		/// <see cref="BasePackPushConnection.CAPABILITY_SIDE_BAND_64K">BasePackPushConnection.CAPABILITY_SIDE_BAND_64K
 		/// 	</see>
 		/// is enabled.
 		/// </summary>
-		protected internal bool sideBand;
+		private bool sideBand;
 
 		/// <summary>Lock around the received pack file, while updating refs.</summary>
 		/// <remarks>Lock around the received pack file, while updating refs.</remarks>
@@ -281,10 +273,10 @@ namespace NGit.Transport
 		/// <remarks>Configuration for receive operations.</remarks>
 		protected internal class ReceiveConfig
 		{
-			private sealed class _SectionParser_264 : Config.SectionParser<BaseReceivePack.ReceiveConfig
+			private sealed class _SectionParser_260 : Config.SectionParser<BaseReceivePack.ReceiveConfig
 				>
 			{
-				public _SectionParser_264()
+				public _SectionParser_260()
 				{
 				}
 
@@ -295,7 +287,7 @@ namespace NGit.Transport
 			}
 
 			internal static readonly Config.SectionParser<BaseReceivePack.ReceiveConfig> KEY = 
-				new _SectionParser_264();
+				new _SectionParser_260();
 
 			internal readonly bool checkReceivedObjects;
 
@@ -1027,10 +1019,7 @@ namespace NGit.Transport
 		/// <remarks>Enable capabilities based on a previously read capabilities line.</remarks>
 		protected internal virtual void EnableCapabilities()
 		{
-			reportStatus = enabledCapabilities.Contains(BasePackPushConnection.CAPABILITY_REPORT_STATUS
-				);
-			sideBand = enabledCapabilities.Contains(BasePackPushConnection.CAPABILITY_SIDE_BAND_64K
-				);
+			sideBand = IsCapabilityEnabled(BasePackPushConnection.CAPABILITY_SIDE_BAND_64K);
 			if (sideBand)
 			{
 				OutputStream @out = rawOut;
@@ -1041,6 +1030,15 @@ namespace NGit.Transport
 				pckOut = new PacketLineOut(rawOut);
 				pckOut.SetFlushOnEnd(false);
 			}
+		}
+
+		/// <summary>Check if the peer requested a capability.</summary>
+		/// <remarks>Check if the peer requested a capability.</remarks>
+		/// <param name="name">protocol name identifying the capability.</param>
+		/// <returns>true if the peer requested the capability to be enabled.</returns>
+		protected internal virtual bool IsCapabilityEnabled(string name)
+		{
+			return enabledCapabilities.Contains(name);
 		}
 
 		/// <returns>true if a pack is expected based on the list of commands.</returns>
@@ -1247,8 +1245,8 @@ namespace NGit.Transport
 						// A well behaved client shouldn't have sent us a
 						// create command for a ref we advertised to it.
 						//
-						cmd.SetResult(ReceiveCommand.Result.REJECTED_OTHER_REASON, MessageFormat.Format(JGitText
-							.Get().refAlreadyExists, @ref));
+						cmd.SetResult(ReceiveCommand.Result.REJECTED_OTHER_REASON, JGitText.Get().refAlreadyExists
+							);
 						continue;
 					}
 				}

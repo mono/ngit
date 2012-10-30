@@ -69,9 +69,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestWrite_CH_DATA()
 		{
-			SideBandOutputStream @out;
-			@out = new SideBandOutputStream(SideBandOutputStream.CH_DATA, SideBandOutputStream
-				.SMALL_BUF, rawOut);
+			SideBandOutputStream @out = new SideBandOutputStream(SideBandOutputStream.CH_DATA
+				, SideBandOutputStream.SMALL_BUF, rawOut);
 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
 			@out.Flush();
 			AssertBuffer("0008\x0001abc");
@@ -81,9 +80,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestWrite_CH_PROGRESS()
 		{
-			SideBandOutputStream @out;
-			@out = new SideBandOutputStream(SideBandOutputStream.CH_PROGRESS, SideBandOutputStream
-				.SMALL_BUF, rawOut);
+			SideBandOutputStream @out = new SideBandOutputStream(SideBandOutputStream.CH_PROGRESS
+				, SideBandOutputStream.SMALL_BUF, rawOut);
 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
 			@out.Flush();
 			AssertBuffer("0008\x0002abc");
@@ -93,9 +91,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestWrite_CH_ERROR()
 		{
-			SideBandOutputStream @out;
-			@out = new SideBandOutputStream(SideBandOutputStream.CH_ERROR, SideBandOutputStream
-				.SMALL_BUF, rawOut);
+			SideBandOutputStream @out = new SideBandOutputStream(SideBandOutputStream.CH_ERROR
+				, SideBandOutputStream.SMALL_BUF, rawOut);
 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
 			@out.Flush();
 			AssertBuffer("0008\x0003abc");
@@ -105,9 +102,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestWrite_Small()
 		{
-			SideBandOutputStream @out;
-			@out = new SideBandOutputStream(SideBandOutputStream.CH_DATA, SideBandOutputStream
-				.SMALL_BUF, rawOut);
+			SideBandOutputStream @out = new SideBandOutputStream(SideBandOutputStream.CH_DATA
+				, SideBandOutputStream.SMALL_BUF, rawOut);
 			@out.Write('a');
 			@out.Write('b');
 			@out.Write('c');
@@ -119,8 +115,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestWrite_SmallBlocks1()
 		{
-			SideBandOutputStream @out;
-			@out = new SideBandOutputStream(SideBandOutputStream.CH_DATA, 6, rawOut);
+			SideBandOutputStream @out = new SideBandOutputStream(SideBandOutputStream.CH_DATA
+				, 6, rawOut);
 			@out.Write('a');
 			@out.Write('b');
 			@out.Write('c');
@@ -132,8 +128,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestWrite_SmallBlocks2()
 		{
-			SideBandOutputStream @out;
-			@out = new SideBandOutputStream(SideBandOutputStream.CH_DATA, 6, rawOut);
+			SideBandOutputStream @out = new SideBandOutputStream(SideBandOutputStream.CH_DATA
+				, 6, rawOut);
 			@out.Write(new byte[] { (byte)('a'), (byte)('b'), (byte)('c') });
 			@out.Flush();
 			AssertBuffer("0006\x0001a0006\x0001b0006\x0001c");
@@ -143,8 +139,8 @@ namespace NGit.Transport
 		[NUnit.Framework.Test]
 		public virtual void TestWrite_SmallBlocks3()
 		{
-			SideBandOutputStream @out;
-			@out = new SideBandOutputStream(SideBandOutputStream.CH_DATA, 7, rawOut);
+			SideBandOutputStream @out = new SideBandOutputStream(SideBandOutputStream.CH_DATA
+				, 7, rawOut);
 			@out.Write('a');
 			@out.Write(new byte[] { (byte)('b'), (byte)('c') });
 			@out.Flush();
@@ -161,9 +157,8 @@ namespace NGit.Transport
 			{
 				buf[i] = unchecked((byte)i);
 			}
-			SideBandOutputStream @out;
-			@out = new SideBandOutputStream(SideBandOutputStream.CH_DATA, SideBandOutputStream
-				.MAX_BUF, rawOut);
+			SideBandOutputStream @out = new SideBandOutputStream(SideBandOutputStream.CH_DATA
+				, SideBandOutputStream.MAX_BUF, rawOut);
 			@out.Write(buf);
 			@out.Flush();
 			byte[] act = rawOut.ToByteArray();
@@ -185,15 +180,15 @@ namespace NGit.Transport
 		public virtual void TestFlush()
 		{
 			int[] flushCnt = new int[1];
-			OutputStream mockout = new _OutputStream_171(flushCnt);
+			OutputStream mockout = new _OutputStream_182(flushCnt);
 			new SideBandOutputStream(SideBandOutputStream.CH_DATA, SideBandOutputStream.SMALL_BUF
 				, mockout).Flush();
 			NUnit.Framework.Assert.AreEqual(1, flushCnt[0]);
 		}
 
-		private sealed class _OutputStream_171 : OutputStream
+		private sealed class _OutputStream_182 : OutputStream
 		{
-			public _OutputStream_171(int[] flushCnt)
+			public _OutputStream_182(int[] flushCnt)
 			{
 				this.flushCnt = flushCnt;
 			}
@@ -285,7 +280,8 @@ namespace NGit.Transport
 			catch (ArgumentException e)
 			{
 				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().packetSizeMustBeAtMost
-					, int.MaxValue, 65520), e.Message);
+					, Sharpen.Extensions.ValueOf(int.MaxValue), Sharpen.Extensions.ValueOf(65520)), 
+					e.Message);
 			}
 		}
 

@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System.Collections.Generic;
 using NGit;
+using NGit.Junit;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using Sharpen;
@@ -91,11 +92,9 @@ namespace NGit.Storage.File
 		private void Delete(RefUpdate @ref, RefUpdate.Result expected, bool exists, bool 
 			removed)
 		{
-			NUnit.Framework.Assert.AreEqual(exists, db.GetAllRefs().ContainsKey(@ref.GetName(
-				)));
+			NUnit.Framework.Assert.AreEqual(exists, db.GetAllRefs().ContainsKey(@ref.GetName()));
 			NUnit.Framework.Assert.AreEqual(expected, @ref.Delete());
-			NUnit.Framework.Assert.AreEqual(!removed, db.GetAllRefs().ContainsKey(@ref.GetName
-				()));
+			NUnit.Framework.Assert.AreEqual(!removed, db.GetAllRefs().ContainsKey(@ref.GetName()));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -666,7 +665,7 @@ namespace NGit.Storage.File
 			ObjectId rb = db.Resolve("refs/heads/b");
 			WriteSymref(Constants.HEAD, "refs/heads/b");
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead), "internal test condition, b == HEAD"
+			NUnit.Framework.Assert.AreEqual(oldHead, rb, "internal test condition, b == HEAD"
 				);
 			WriteReflog(db, rb, "Just a message", "refs/heads/b");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/b").Exists
@@ -786,8 +785,8 @@ namespace NGit.Storage.File
 
 		private void AssertExists(bool positive, string toName)
 		{
-			NUnit.Framework.Assert.AreEqual(positive, new FilePath(db.Directory, toName).Exists
-				(), toName + (positive ? " " : " does not ") + "exist");
+			NUnit.Framework.Assert.AreEqual(positive, 
+			                                new FilePath(db.Directory, toName).Exists(), toName + (positive ? " " : " does not ") + "exist");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -859,7 +858,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FAST_FORWARD, updateRef.Update()
 				);
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead));
+			NUnit.Framework.Assert.AreEqual(oldHead, rb);
 			// assumption for this test
 			WriteReflog(db, rb, "Just a message", "refs/heads/a");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/a").Exists
@@ -896,7 +895,7 @@ namespace NGit.Storage.File
 			updateRef.SetForceUpdate(true);
 			NUnit.Framework.Assert.AreEqual(RefUpdate.Result.FORCED, updateRef.Update());
 			ObjectId oldHead = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(rb.Equals(oldHead));
+			NUnit.Framework.Assert.AreEqual(oldHead, rb);
 			// assumption for this test
 			WriteReflog(db, rb, "Just a message", "refs/heads/prefix/a");
 			NUnit.Framework.Assert.IsTrue(new FilePath(db.Directory, "logs/refs/heads/prefix/a"

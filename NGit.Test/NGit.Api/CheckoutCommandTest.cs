@@ -163,9 +163,12 @@ namespace NGit.Api
 			catch (IOException)
 			{
 			}
-			// the test makes only sense if deletion of
-			// a file with open stream fails
-			fis.Close();
+			finally
+			{
+				// the test makes only sense if deletion of
+				// a file with open stream fails
+				fis.Close();
+			}
 			FileUtils.Delete(testFile);
 			CheckoutCommand co = git.Checkout();
 			// delete Test.txt in branch test
@@ -244,6 +247,67 @@ namespace NGit.Api
 			FileUtils.Delete(dir, FileUtils.RECURSIVE);
 			git.Checkout().AddPath("dir/a.txt").Call();
 			NUnit.Framework.Assert.IsTrue(a.Exists());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutOfDirectoryShouldBeRecursive()
+		{
+			FilePath a = WriteTrashFile("dir/a.txt", "A");
+			FilePath b = WriteTrashFile("dir/sub/b.txt", "B");
+			git.Add().AddFilepattern("dir").Call();
+			git.Commit().SetMessage("Added dir").Call();
+			Write(a, "modified");
+			Write(b, "modified");
+			git.Checkout().AddPath("dir").Call();
+			NUnit.Framework.Assert.AreEqual(Read(a), "A");
+			NUnit.Framework.Assert.AreEqual(Read(b), "B");
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutAllPaths()
+		{
+			FilePath a = WriteTrashFile("dir/a.txt", "A");
+			FilePath b = WriteTrashFile("dir/sub/b.txt", "B");
+			git.Add().AddFilepattern("dir").Call();
+			git.Commit().SetMessage("Added dir").Call();
+			Write(a, "modified");
+			Write(b, "modified");
+			git.Checkout().SetAllPaths(true).Call();
+			NUnit.Framework.Assert.AreEqual(Read(a), "A");
+			NUnit.Framework.Assert.AreEqual(Read(b), "B");
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutWithStartPoint()
+		{
+			FilePath a = WriteTrashFile("a.txt", "A");
+			git.Add().AddFilepattern("a.txt").Call();
+			RevCommit first = git.Commit().SetMessage("Added a").Call();
+			Write(a, "other");
+			git.Commit().SetAll(true).SetMessage("Other").Call();
+			git.Checkout().SetCreateBranch(true).SetName("a").SetStartPoint(first.Id.GetName(
+				)).Call();
+			NUnit.Framework.Assert.AreEqual(Read(a), "A");
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCheckoutWithStartPointOnlyCertainFiles()
+		{
+			FilePath a = WriteTrashFile("a.txt", "A");
+			FilePath b = WriteTrashFile("b.txt", "B");
+			git.Add().AddFilepattern("a.txt").AddFilepattern("b.txt").Call();
+			RevCommit first = git.Commit().SetMessage("First").Call();
+			Write(a, "other");
+			Write(b, "other");
+			git.Commit().SetAll(true).SetMessage("Other").Call();
+			git.Checkout().SetCreateBranch(true).SetName("a").SetStartPoint(first.Id.GetName(
+				)).AddPath("a.txt").Call();
+			NUnit.Framework.Assert.AreEqual(Read(a), "A");
+			NUnit.Framework.Assert.AreEqual(Read(b), "other");
 		}
 
 		/// <exception cref="NGit.Api.Errors.JGitInternalException"></exception>

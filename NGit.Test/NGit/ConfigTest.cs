@@ -46,6 +46,7 @@ using System.Collections.Generic;
 using NGit;
 using NGit.Junit;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
@@ -105,7 +106,7 @@ namespace NGit
 			c.SetStringList("my", null, "somename", values);
 			object[] expArr = Sharpen.Collections.ToArray(values);
 			string[] actArr = c.GetStringList("my", null, "somename");
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(expArr, actArr));
+			CollectionAssert.AreEquivalent(expArr, actArr);
 			string expText = "[my]\n\tsomename = value1\n\tsomename = value2\n";
 			NUnit.Framework.Assert.AreEqual(expText, c.ToText());
 		}

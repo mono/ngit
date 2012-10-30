@@ -122,7 +122,7 @@ namespace NGit.Api
 				Call();
 			// check if HEAD points to initial commit now
 			ObjectId head = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(head.Equals(initialCommit));
+			NUnit.Framework.Assert.AreEqual(initialCommit, head);
 			// check if files were removed
 			NUnit.Framework.Assert.IsFalse(indexFile.Exists());
 			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
@@ -168,7 +168,7 @@ namespace NGit.Api
 				Call();
 			// check if HEAD points to initial commit now
 			ObjectId head = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(head.Equals(initialCommit));
+			NUnit.Framework.Assert.AreEqual(initialCommit, head);
 			// check if files still exist
 			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
 			NUnit.Framework.Assert.IsTrue(indexFile.Exists());
@@ -193,7 +193,7 @@ namespace NGit.Api
 				.Call();
 			// check if HEAD points to initial commit now
 			ObjectId head = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(head.Equals(initialCommit));
+			NUnit.Framework.Assert.AreEqual(initialCommit, head);
 			// check if files still exist
 			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
 			NUnit.Framework.Assert.IsTrue(indexFile.Exists());
@@ -261,7 +261,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(prestage.GetObjectId(), postReset.GetObjectId());
 			// check that HEAD hasn't moved
 			ObjectId head = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(head.Equals(secondCommit));
+			NUnit.Framework.Assert.AreEqual(secondCommit, head);
 			// check if files still exist
 			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
 			NUnit.Framework.Assert.IsTrue(indexFile.Exists());
@@ -288,7 +288,7 @@ namespace NGit.Api
 				);
 			// check that HEAD hasn't moved
 			ObjectId head = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(head.Equals(secondCommit));
+			NUnit.Framework.Assert.AreEqual(secondCommit, head);
 			// check if files still exist
 			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
 			NUnit.Framework.Assert.IsTrue(InHead("dir/b.txt"));
@@ -311,7 +311,7 @@ namespace NGit.Api
 				untrackedFile.GetName()).Call();
 			// check that HEAD hasn't moved
 			ObjectId head = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(head.Equals(secondCommit));
+			NUnit.Framework.Assert.AreEqual(secondCommit, head);
 			// check if files still exist
 			NUnit.Framework.Assert.IsTrue(untrackedFile.Exists());
 			NUnit.Framework.Assert.IsTrue(indexFile.Exists());
@@ -333,7 +333,7 @@ namespace NGit.Api
 			git.Add().AddFilepattern(untrackedFile.GetName()).Call();
 			git.Reset().SetRef(tagName).SetMode(ResetCommand.ResetType.HARD).Call();
 			ObjectId head = db.Resolve(Constants.HEAD);
-			NUnit.Framework.Assert.IsTrue(head.Equals(secondCommit));
+			NUnit.Framework.Assert.AreEqual(secondCommit, head);
 		}
 
 		/// <exception cref="System.Exception"></exception>

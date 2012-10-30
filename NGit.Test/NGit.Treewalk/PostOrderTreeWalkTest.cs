@@ -170,11 +170,7 @@ namespace NGit.Treewalk
 		/// <exception cref="System.Exception"></exception>
 		private DirCacheEntry MakeFile(string path)
 		{
-			DirCacheEntry ent = new DirCacheEntry(path);
-			ent.FileMode = FileMode.REGULAR_FILE;
-			ent.SetObjectId(new ObjectInserter.Formatter().IdFor(Constants.OBJ_BLOB, Constants
-				.Encode(path)));
-			return ent;
+			return CreateEntry(path, FileMode.REGULAR_FILE);
 		}
 
 		/// <exception cref="System.Exception"></exception>

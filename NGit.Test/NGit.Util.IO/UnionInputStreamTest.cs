@@ -157,14 +157,14 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.AreEqual(2, u.Skip(5));
 			NUnit.Framework.Assert.AreEqual(0, u.Skip(5));
 			NUnit.Framework.Assert.AreEqual(-1, u.Read());
-			u.Add(new _ByteArrayInputStream_163(new byte[] { 20, 30 }));
+			u.Add(new _ByteArrayInputStream_168(new byte[] { 20, 30 }));
 			NUnit.Framework.Assert.AreEqual(2, u.Skip(8));
 			NUnit.Framework.Assert.AreEqual(-1, u.Read());
 		}
 
-		private sealed class _ByteArrayInputStream_163 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_168 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_163(byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_168(byte[] baseArg1) : base(baseArg1)
 			{
 			}
 
@@ -180,8 +180,8 @@ namespace NGit.Util.IO
 		{
 			UnionInputStream u = new UnionInputStream();
 			bool[] closed = new bool[2];
-			u.Add(new _ByteArrayInputStream_176(closed, new byte[] { 1 }));
-			u.Add(new _ByteArrayInputStream_181(closed, new byte[] { 2 }));
+			u.Add(new _ByteArrayInputStream_182(closed, new byte[] { 1 }));
+			u.Add(new _ByteArrayInputStream_187(closed, new byte[] { 2 }));
 			NUnit.Framework.Assert.IsFalse(closed[0]);
 			NUnit.Framework.Assert.IsFalse(closed[1]);
 			NUnit.Framework.Assert.AreEqual(1, u.Read());
@@ -195,9 +195,9 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.IsTrue(closed[1]);
 		}
 
-		private sealed class _ByteArrayInputStream_176 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_182 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_176(bool[] closed, byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_182(bool[] closed, byte[] baseArg1) : base(baseArg1)
 			{
 				this.closed = closed;
 			}
@@ -210,9 +210,9 @@ namespace NGit.Util.IO
 			private readonly bool[] closed;
 		}
 
-		private sealed class _ByteArrayInputStream_181 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_187 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_181(bool[] closed, byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_187(bool[] closed, byte[] baseArg1) : base(baseArg1)
 			{
 				this.closed = closed;
 			}
@@ -231,8 +231,8 @@ namespace NGit.Util.IO
 		{
 			UnionInputStream u = new UnionInputStream();
 			bool[] closed = new bool[2];
-			u.Add(new _ByteArrayInputStream_207(closed, new byte[] { 1 }));
-			u.Add(new _ByteArrayInputStream_212(closed, new byte[] { 2 }));
+			u.Add(new _ByteArrayInputStream_213(closed, new byte[] { 1 }));
+			u.Add(new _ByteArrayInputStream_218(closed, new byte[] { 2 }));
 			NUnit.Framework.Assert.IsFalse(closed[0]);
 			NUnit.Framework.Assert.IsFalse(closed[1]);
 			u.Close();
@@ -240,9 +240,9 @@ namespace NGit.Util.IO
 			NUnit.Framework.Assert.IsTrue(closed[1]);
 		}
 
-		private sealed class _ByteArrayInputStream_207 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_213 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_207(bool[] closed, byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_213(bool[] closed, byte[] baseArg1) : base(baseArg1)
 			{
 				this.closed = closed;
 			}
@@ -255,9 +255,9 @@ namespace NGit.Util.IO
 			private readonly bool[] closed;
 		}
 
-		private sealed class _ByteArrayInputStream_212 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_218 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_212(bool[] closed, byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_218(bool[] closed, byte[] baseArg1) : base(baseArg1)
 			{
 				this.closed = closed;
 			}
@@ -274,7 +274,7 @@ namespace NGit.Util.IO
 		public virtual void TestExceptionDuringClose()
 		{
 			UnionInputStream u = new UnionInputStream();
-			u.Add(new _ByteArrayInputStream_230(new byte[] { 1 }));
+			u.Add(new _ByteArrayInputStream_236(new byte[] { 1 }));
 			try
 			{
 				u.Close();
@@ -286,9 +286,9 @@ namespace NGit.Util.IO
 			}
 		}
 
-		private sealed class _ByteArrayInputStream_230 : ByteArrayInputStream
+		private sealed class _ByteArrayInputStream_236 : ByteArrayInputStream
 		{
-			public _ByteArrayInputStream_230(byte[] baseArg1) : base(baseArg1)
+			public _ByteArrayInputStream_236(byte[] baseArg1) : base(baseArg1)
 			{
 			}
 
@@ -303,7 +303,7 @@ namespace NGit.Util.IO
 		[NUnit.Framework.Test]
 		public virtual void TestNonBlockingPartialRead()
 		{
-			InputStream errorReadStream = new _InputStream_245();
+			InputStream errorReadStream = new _InputStream_251();
 			UnionInputStream u = new UnionInputStream(new ByteArrayInputStream(new byte[] { 1
 				, 2, 3 }), errorReadStream);
 			byte[] buf = new byte[10];
@@ -321,9 +321,9 @@ namespace NGit.Util.IO
 			}
 		}
 
-		private sealed class _InputStream_245 : InputStream
+		private sealed class _InputStream_251 : InputStream
 		{
-			public _InputStream_245()
+			public _InputStream_251()
 			{
 			}
 

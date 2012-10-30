@@ -402,7 +402,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("1\nc(main)\n3\n", Read(new FilePath(db.WorkTree, 
 				"c/c/c")));
 			NUnit.Framework.Assert.AreEqual(null, result.GetConflicts());
-			NUnit.Framework.Assert.IsTrue(2 == result.GetMergedCommits().Length);
+			NUnit.Framework.Assert.AreEqual(2, result.GetMergedCommits().Length);
 			NUnit.Framework.Assert.AreEqual(thirdCommit, result.GetMergedCommits()[0]);
 			NUnit.Framework.Assert.AreEqual(secondCommit, result.GetMergedCommits()[1]);
 			Iterator<RevCommit> it = git.Log().Call().Iterator();
@@ -458,7 +458,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("--- dirty ---", Read(new FilePath(db.WorkTree, "d"
 				)));
 			NUnit.Framework.Assert.AreEqual(null, result.GetConflicts());
-			NUnit.Framework.Assert.IsTrue(2 == result.GetMergedCommits().Length);
+			NUnit.Framework.Assert.AreEqual(2, result.GetMergedCommits().Length);
 			NUnit.Framework.Assert.AreEqual(thirdCommit, result.GetMergedCommits()[0]);
 			NUnit.Framework.Assert.AreEqual(secondCommit, result.GetMergedCommits()[1]);
 			Iterator<RevCommit> it = git.Log().Call().Iterator();

@@ -141,6 +141,7 @@
 -methodMapping com.jcraft.jzlib.Deflate.deflate DoDeflate
 -methodMapping com.jcraft.jzlib.Inflate.inflate DoInflate
 
+-typeMapping java.lang.ref.WeakReference<> Sharpen.JavaWeakReference
 -namespaceMapping java.lang.ref Sharpen
 -namespaceMapping java.lang Sharpen
 -namespaceMapping java.io Sharpen

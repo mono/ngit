@@ -62,6 +62,14 @@ namespace NGit.Transport
 		/// <remarks>Hook to report on the commands after execution.</remarks>
 		private PostReceiveHook postReceive;
 
+		/// <summary>
+		/// If
+		/// <see cref="BasePackPushConnection.CAPABILITY_REPORT_STATUS">BasePackPushConnection.CAPABILITY_REPORT_STATUS
+		/// 	</see>
+		/// is enabled.
+		/// </summary>
+		private bool reportStatus;
+
 		private bool echoCommandFailures;
 
 		/// <summary>Create a new pack receive for an open repository.</summary>
@@ -171,10 +179,17 @@ namespace NGit.Transport
 			}
 		}
 
+		protected internal override void EnableCapabilities()
+		{
+			reportStatus = IsCapabilityEnabled(BasePackPushConnection.CAPABILITY_REPORT_STATUS
+				);
+			base.EnableCapabilities();
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		private void Service()
 		{
-			if (biDirectionalPipe)
+			if (IsBiDirectionalPipe())
 			{
 				SendAdvertisedRefs(new RefAdvertiser.PacketLineOutRefAdvertiser(pckOut));
 				pckOut.Flush();
@@ -223,7 +238,7 @@ namespace NGit.Transport
 				{
 					if (echoCommandFailures && msgOut != null)
 					{
-						SendStatusReport(false, unpackError, new _Reporter_199(this));
+						SendStatusReport(false, unpackError, new _Reporter_210(this));
 						msgOut.Flush();
 						try
 						{
@@ -234,14 +249,14 @@ namespace NGit.Transport
 						}
 					}
 					// Ignore an early wake up.
-					SendStatusReport(true, unpackError, new _Reporter_211(this));
+					SendStatusReport(true, unpackError, new _Reporter_222(this));
 					pckOut.End();
 				}
 				else
 				{
 					if (msgOut != null)
 					{
-						SendStatusReport(false, unpackError, new _Reporter_218(this));
+						SendStatusReport(false, unpackError, new _Reporter_229(this));
 					}
 				}
 				postReceive.OnPostReceive(this, FilterCommands(ReceiveCommand.Result.OK));
@@ -252,9 +267,9 @@ namespace NGit.Transport
 			}
 		}
 
-		private sealed class _Reporter_199 : BaseReceivePack.Reporter
+		private sealed class _Reporter_210 : BaseReceivePack.Reporter
 		{
-			public _Reporter_199(ReceivePack _enclosing)
+			public _Reporter_210(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -268,9 +283,9 @@ namespace NGit.Transport
 			private readonly ReceivePack _enclosing;
 		}
 
-		private sealed class _Reporter_211 : BaseReceivePack.Reporter
+		private sealed class _Reporter_222 : BaseReceivePack.Reporter
 		{
-			public _Reporter_211(ReceivePack _enclosing)
+			public _Reporter_222(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -284,9 +299,9 @@ namespace NGit.Transport
 			private readonly ReceivePack _enclosing;
 		}
 
-		private sealed class _Reporter_218 : BaseReceivePack.Reporter
+		private sealed class _Reporter_229 : BaseReceivePack.Reporter
 		{
-			public _Reporter_218(ReceivePack _enclosing)
+			public _Reporter_229(ReceivePack _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}

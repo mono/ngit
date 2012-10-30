@@ -324,6 +324,23 @@ namespace NGit.Storage.File
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestReadNotExistingBranchConfig()
+		{
+			NUnit.Framework.Assert.IsNull(refdir.GetRef("config"), "find branch config");
+			NUnit.Framework.Assert.IsNull(refdir.GetRef("refs/heads/config"), "find branch config"
+				);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestReadBranchConfig()
+		{
+			WriteLooseRef("refs/heads/config", A);
+			NUnit.Framework.Assert.IsNotNull(refdir.GetRef("config"), "find branch config");
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestGetRefs_HeadsOnly_AllLoose()
 		{
 			IDictionary<string, Ref> heads;
@@ -436,7 +453,7 @@ namespace NGit.Storage.File
 			WriteLooseRef("refs/heads/my/a/b/c", B);
 			int[] count = new int[1];
 			ListenerHandle listener = Repository.GetGlobalListenerList().AddRefsChangedListener
-				(new _RefsChangedListener_485(count));
+				(new _RefsChangedListener_498(count));
 			refs = refdir.GetRefs(RefDatabase.ALL);
 			refs = refdir.GetRefs(RefDatabase.ALL);
 			listener.Remove();
@@ -447,9 +464,9 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(B, refs.Get("refs/heads/my/a/b/c").GetObjectId());
 		}
 
-		private sealed class _RefsChangedListener_485 : RefsChangedListener
+		private sealed class _RefsChangedListener_498 : RefsChangedListener
 		{
-			public _RefsChangedListener_485(int[] count)
+			public _RefsChangedListener_498(int[] count)
 			{
 				this.count = count;
 			}
@@ -1099,7 +1116,7 @@ namespace NGit.Storage.File
 				>();
 			AtomicReference<IOException> exception = new AtomicReference<IOException>();
 			AtomicInteger changeCount = new AtomicInteger();
-			newRepo.Listeners.AddRefsChangedListener(new _RefsChangedListener_1143(refDb, changeCount
+			newRepo.Listeners.AddRefsChangedListener(new _RefsChangedListener_1156(refDb, changeCount
 				, error, exception));
 			refDb.GetRefs("ref");
 			refDb.GetRefs("ref");
@@ -1108,9 +1125,9 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(1, changeCount.Get());
 		}
 
-		private sealed class _RefsChangedListener_1143 : RefsChangedListener
+		private sealed class _RefsChangedListener_1156 : RefsChangedListener
 		{
-			public _RefsChangedListener_1143(RefDatabase refDb, AtomicInteger changeCount, AtomicReference
+			public _RefsChangedListener_1156(RefDatabase refDb, AtomicInteger changeCount, AtomicReference
 				<StackOverflowError> error, AtomicReference<IOException> exception)
 			{
 				this.refDb = refDb;

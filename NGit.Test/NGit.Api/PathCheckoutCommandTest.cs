@@ -255,5 +255,21 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("1", Read(test));
 			NUnit.Framework.Assert.AreEqual("a", Read(test2));
 		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void TestCheckoutOfConflictingFileShouldThrow()
+		{
+			// Setup
+			git.Checkout().SetCreateBranch(true).SetName("conflict").SetStartPoint(initialCommit
+				).Call();
+			WriteTrashFile(FILE1, "Conflicting");
+			RevCommit conflict = git.Commit().SetAll(true).SetMessage("Conflicting change").Call
+				();
+			git.Checkout().SetName("master").Call();
+			git.Merge().Include(conflict).Call();
+			NUnit.Framework.Assert.AreEqual(RepositoryState.MERGING, db.GetRepositoryState());
+			// Now check out the conflicting path
+			git.Checkout().AddPath(FILE1).Call();
+		}
 	}
 }

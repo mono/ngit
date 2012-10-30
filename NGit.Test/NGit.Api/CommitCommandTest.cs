@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using NGit;
@@ -73,7 +74,7 @@ namespace NGit.Api
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, true);
 			config.Save();
-			FS executableFs = new _FS_83();
+			FS executableFs = new _FS_87();
 			Git git = Git.Open(db.Directory, executableFs);
 			string path = "a.txt";
 			WriteTrashFile(path, "content");
@@ -82,7 +83,7 @@ namespace NGit.Api
 			TreeWalk walk = TreeWalk.ForPath(db, path, commit1.Tree);
 			NUnit.Framework.Assert.IsNotNull(walk);
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
-			FS nonExecutableFs = new _FS_128();
+			FS nonExecutableFs = new _FS_132();
 			config = ((FileBasedConfig)db.GetConfig());
 			config.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_FILEMODE
 				, false);
@@ -95,9 +96,9 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(FileMode.EXECUTABLE_FILE, walk.GetFileMode(0));
 		}
 
-		private sealed class _FS_83 : FS
+		private sealed class _FS_87 : FS
 		{
-			public _FS_83()
+			public _FS_87()
 			{
 			}
 
@@ -142,9 +143,9 @@ namespace NGit.Api
 			}
 		}
 
-		private sealed class _FS_128 : FS
+		private sealed class _FS_132 : FS
 		{
-			public _FS_128()
+			public _FS_132()
 			{
 			}
 
@@ -326,7 +327,7 @@ namespace NGit.Api
 			long indexTime = db.GetIndexFile().LastModified();
 			db.GetIndexFile().SetLastModified(indexTime - 5000);
 			Write(file1, "content4");
-			NUnit.Framework.Assert.IsTrue(file1.SetLastModified(file1.LastModified() + 1000));
+			NUnit.Framework.Assert.IsTrue(file1.SetLastModified(file1.LastModified() + 2500));
 			NUnit.Framework.Assert.IsNotNull(git.Commit().SetMessage("edit file").SetOnly("file1.txt"
 				).Call());
 			cache = db.ReadDirCache();
@@ -411,6 +412,51 @@ namespace NGit.Api
 				(Constants.HEAD).GetLastEntry().GetComment());
 			NUnit.Framework.Assert.AreEqual("commit: Squashed commit of the following:", db.GetReflogReader
 				(db.GetBranch()).GetLastEntry().GetComment());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void CommitAmendOnInitialShouldFail()
+		{
+			Git git = new Git(db);
+			git.Commit().SetAmend(true).SetMessage("initial commit").Call();
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void CommitAmendWithoutAuthorShouldSetOriginalAuthorAndAuthorTime(
+			)
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file1", "file1");
+			git.Add().AddFilepattern("file1").Call();
+			string authorName = "First Author";
+			string authorEmail = "author@example.org";
+			DateTime authorDate = Sharpen.Extensions.CreateDate(1349621117000L);
+			PersonIdent firstAuthor = new PersonIdent(authorName, authorEmail, authorDate, Sharpen.Extensions.GetTimeZone
+				("UTC"));
+			git.Commit().SetMessage("initial commit").SetAuthor(firstAuthor).Call();
+			RevCommit amended = git.Commit().SetAmend(true).SetMessage("amend commit").Call();
+			PersonIdent amendedAuthor = amended.GetAuthorIdent();
+			NUnit.Framework.Assert.AreEqual(authorName, amendedAuthor.GetName());
+			NUnit.Framework.Assert.AreEqual(authorEmail, amendedAuthor.GetEmailAddress());
+			NUnit.Framework.Assert.AreEqual(authorDate.GetTime(), amendedAuthor.GetWhen().GetTime
+				());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void CommitAmendWithAuthorShouldUseIt()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file1", "file1");
+			git.Add().AddFilepattern("file1").Call();
+			git.Commit().SetMessage("initial commit").Call();
+			RevCommit amended = git.Commit().SetAmend(true).SetAuthor("New Author", "newauthor@example.org"
+				).SetMessage("amend commit").Call();
+			PersonIdent amendedAuthor = amended.GetAuthorIdent();
+			NUnit.Framework.Assert.AreEqual("New Author", amendedAuthor.GetName());
+			NUnit.Framework.Assert.AreEqual("newauthor@example.org", amendedAuthor.GetEmailAddress
+				());
 		}
 	}
 }

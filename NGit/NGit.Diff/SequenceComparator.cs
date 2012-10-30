@@ -50,9 +50,11 @@ namespace NGit.Diff
 	/// Equivalence function for a
 	/// <see cref="Sequence">Sequence</see>
 	/// compared by difference algorithm.
+	/// <p>
 	/// Difference algorithms can use a comparator to compare portions of two
 	/// sequences and discover the minimal edits required to transform from one
 	/// sequence to the other sequence.
+	/// <p>
 	/// Indexes within a sequence are zero-based.
 	/// </summary>
 	/// <?></?>

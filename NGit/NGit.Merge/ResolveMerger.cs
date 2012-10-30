@@ -563,6 +563,15 @@ namespace NGit.Merge
 				{
 					return false;
 				}
+				// Don't attempt to resolve submodule link conflicts
+				if (IsGitLink(modeO) || IsGitLink(modeT))
+				{
+					Add(tw.RawPath, @base, DirCacheEntry.STAGE_1, 0, 0);
+					Add(tw.RawPath, ours, DirCacheEntry.STAGE_2, 0, 0);
+					Add(tw.RawPath, theirs, DirCacheEntry.STAGE_3, 0, 0);
+					unmergedPaths.AddItem(tw.PathString);
+					return true;
+				}
 				MergeResult<RawText> result = ContentMerge(@base, ours, theirs);
 				FilePath of = WriteMergedFile(result);
 				UpdateIndex(@base, ours, theirs, result, of);
@@ -841,6 +850,11 @@ namespace NGit.Merge
 		private static bool NonTree(int mode)
 		{
 			return mode != 0 && !FileMode.TREE.Equals(mode);
+		}
+
+		private static bool IsGitLink(int mode)
+		{
+			return FileMode.GITLINK.Equals(mode);
 		}
 
 		public override ObjectId GetResultTreeId()

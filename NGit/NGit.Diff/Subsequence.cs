@@ -50,6 +50,7 @@ namespace NGit.Diff
 	/// Wraps a
 	/// <see cref="Sequence">Sequence</see>
 	/// to have a narrower range of elements.
+	/// <p>
 	/// This sequence acts as a proxy for the real sequence, translating element
 	/// indexes on the fly by adding
 	/// <code>begin</code>

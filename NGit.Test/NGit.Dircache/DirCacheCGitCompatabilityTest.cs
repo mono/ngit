@@ -48,6 +48,7 @@ using NGit.Errors;
 using NGit.Junit;
 using NGit.Treewalk;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Dircache
@@ -222,7 +223,7 @@ namespace NGit.Dircache
 			dc.WriteTo(bos);
 			byte[] indexBytes = bos.ToByteArray();
 			byte[] expectedBytes = IOUtil.ReadFully(file);
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(expectedBytes, indexBytes));
+			CollectionAssert.AreEquivalent(expectedBytes, indexBytes);
 		}
 
 		private static void AssertV3TreeEntry(int indexPosition, string path, bool skipWorkTree
@@ -230,8 +231,8 @@ namespace NGit.Dircache
 		{
 			DirCacheEntry entry = dc.GetEntry(indexPosition);
 			NUnit.Framework.Assert.AreEqual(path, entry.PathString);
-			NUnit.Framework.Assert.AreEqual(skipWorkTree, entry.IsSkipWorkTree);
-			NUnit.Framework.Assert.AreEqual(intentToAdd, entry.IsIntentToAdd);
+			Assert.AreEqual(skipWorkTree, entry.IsSkipWorkTree);
+			Assert.AreEqual(intentToAdd, entry.IsIntentToAdd);
 		}
 
 		private FilePath PathOf(string name)

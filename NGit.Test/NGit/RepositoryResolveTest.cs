@@ -42,7 +42,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
+using NGit.Api;
 using NGit.Errors;
+using NGit.Revwalk;
+using NGit.Storage.File;
 using Sharpen;
 
 namespace NGit
@@ -118,6 +121,22 @@ namespace NGit
 
 		/// <exception cref="System.IO.IOException"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestObjectId_objectid_invalid_explicit_parent()
+		{
+			NUnit.Framework.Assert.AreEqual("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1", db.Resolve
+				("6462e7d8024396b14d7651e2ec11e2bbf07a05c4^1").Name);
+			NUnit.Framework.Assert.IsNull(db.Resolve("6462e7d8024396b14d7651e2ec11e2bbf07a05c4^2"
+				));
+			NUnit.Framework.Assert.AreEqual("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1", db.Resolve
+				("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1^0").Name);
+			NUnit.Framework.Assert.IsNull(db.Resolve("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1^1"
+				));
+			NUnit.Framework.Assert.IsNull(db.Resolve("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1^2"
+				));
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestRef_refname()
 		{
 			NUnit.Framework.Assert.AreEqual("49322bb17d3acc9146f98c97d078513228bbf3c0", db.Resolve
@@ -152,6 +171,34 @@ namespace NGit
 				("49322bb17d3acc9146f98c97d078513228bbf3c0~~1").Name);
 			NUnit.Framework.Assert.AreEqual("1203b03dc816ccbb67773f28b3c19318654b0bc8", db.Resolve
 				("49322bb17d3acc9146f98c97d078513228bbf3c0~~~0").Name);
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestDistance_past_root()
+		{
+			NUnit.Framework.Assert.AreEqual("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1", db.Resolve
+				("6462e7d8024396b14d7651e2ec11e2bbf07a05c4~1").Name);
+			NUnit.Framework.Assert.IsNull(db.Resolve("6462e7d8024396b14d7651e2ec11e2bbf07a05c4~~"
+				));
+			NUnit.Framework.Assert.IsNull(db.Resolve("6462e7d8024396b14d7651e2ec11e2bbf07a05c4^^"
+				));
+			NUnit.Framework.Assert.IsNull(db.Resolve("6462e7d8024396b14d7651e2ec11e2bbf07a05c4~2"
+				));
+			NUnit.Framework.Assert.IsNull(db.Resolve("6462e7d8024396b14d7651e2ec11e2bbf07a05c4~99"
+				));
+			NUnit.Framework.Assert.IsNull(db.Resolve("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1~~"
+				));
+			NUnit.Framework.Assert.IsNull(db.Resolve("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1^^"
+				));
+			NUnit.Framework.Assert.IsNull(db.Resolve("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1~2"
+				));
+			NUnit.Framework.Assert.IsNull(db.Resolve("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1~99"
+				));
+			NUnit.Framework.Assert.AreEqual("42e4e7c5e507e113ebbb7801b16b52cf867b7ce1", db.Resolve
+				("master~6").Name);
+			NUnit.Framework.Assert.IsNull(db.Resolve("master~7"));
+			NUnit.Framework.Assert.IsNull(db.Resolve("master~6~"));
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -306,6 +353,102 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(db.Resolve("not-a-branch:"), "no not-a-branch:");
 		}
 
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void ResolveExprSimple()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			git.Commit().SetMessage("create file").Call();
+			NUnit.Framework.Assert.AreEqual("master", db.Simplify("master"));
+			NUnit.Framework.Assert.AreEqual("refs/heads/master", db.Simplify("refs/heads/master"
+				));
+			NUnit.Framework.Assert.AreEqual("HEAD", db.Simplify("HEAD"));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void ResolveUpstream()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit c1 = git.Commit().SetMessage("create file").Call();
+			WriteTrashFile("file2.txt", "content");
+			RefUpdate updateRemoteRef = db.UpdateRef("refs/remotes/origin/main");
+			updateRemoteRef.SetNewObjectId(c1);
+			updateRemoteRef.Update();
+			((FileBasedConfig)db.GetConfig()).SetString("branch", "master", "remote", "origin"
+				);
+			((FileBasedConfig)db.GetConfig()).SetString("branch", "master", "merge", "refs/heads/main"
+				);
+			((FileBasedConfig)db.GetConfig()).SetString("remote", "origin", "url", "git://example.com/here"
+				);
+			((FileBasedConfig)db.GetConfig()).SetString("remote", "origin", "fetch", "+refs/heads/*:refs/remotes/origin/*"
+				);
+			git.Add().AddFilepattern("file2.txt").Call();
+			git.Commit().SetMessage("create file").Call();
+			NUnit.Framework.Assert.AreEqual("refs/remotes/origin/main", db.Simplify("@{upstream}"
+				));
+		}
+
+		/// <exception cref="NGit.Errors.AmbiguousObjectException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void InvalidNames()
+		{
+			NUnit.Framework.Assert.IsTrue(Repository.IsValidRefName("x/a"));
+			NUnit.Framework.Assert.IsTrue(Repository.IsValidRefName("x/a.b"));
+			NUnit.Framework.Assert.IsTrue(Repository.IsValidRefName("x/a@b"));
+			NUnit.Framework.Assert.IsTrue(Repository.IsValidRefName("x/a@b{x}"));
+			NUnit.Framework.Assert.IsTrue(Repository.IsValidRefName("x/a/b"));
+			NUnit.Framework.Assert.IsTrue(Repository.IsValidRefName("x/a]b"));
+			// odd, yes..
+			NUnit.Framework.Assert.IsTrue(Repository.IsValidRefName("x/\u00a0"));
+			// unicode is fine,
+			// even hard space
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/.a"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a."));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a..b"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x//a"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a/"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a//b"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a[b"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a^b"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a*b"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a?b"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a~1"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a\\b"));
+			NUnit.Framework.Assert.IsFalse(Repository.IsValidRefName("x/a\u0000"));
+			AssertUnparseable(".");
+			AssertUnparseable("x@{3");
+			AssertUnparseable("x[b");
+			AssertUnparseable("x y");
+			AssertUnparseable("x.");
+			AssertUnparseable(".x");
+			AssertUnparseable("a..b");
+			AssertUnparseable("x\\b");
+			AssertUnparseable("a~b");
+			AssertUnparseable("a^b");
+			AssertUnparseable("a\u0000");
+		}
+
+		/// <exception cref="NGit.Errors.AmbiguousObjectException"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private void AssertUnparseable(string s)
+		{
+			try
+			{
+				db.Resolve(s);
+				NUnit.Framework.Assert.Fail("'" + s + "' should be unparseable");
+			}
+			catch (RevisionSyntaxException)
+			{
+			}
+		}
+
+		// good
 		private static ObjectId Id(string name)
 		{
 			return ObjectId.FromString(name);

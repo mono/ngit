@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using System;
 using NGit;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit
@@ -57,7 +58,7 @@ namespace NGit
 			string src = "abc";
 			byte[] exp = new byte[] { (byte)('a'), (byte)('b'), (byte)('c') };
 			byte[] res = Constants.EncodeASCII(src);
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, res));
+			CollectionAssert.AreEquivalent(exp, res);
 			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(res, 0, res
 				.Length, "UTF-8"));
 		}
@@ -83,7 +84,7 @@ namespace NGit
 			long src = 13;
 			byte[] exp = new byte[] { (byte)('1'), (byte)('3') };
 			byte[] res = Constants.EncodeASCII(src);
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, res));
+			CollectionAssert.AreEquivalent(exp, res);
 		}
 
 		/// <exception cref="Sharpen.UnsupportedEncodingException"></exception>
@@ -93,7 +94,7 @@ namespace NGit
 			string src = "abc";
 			byte[] exp = new byte[] { (byte)('a'), (byte)('b'), (byte)('c') };
 			byte[] res = Constants.Encode(src);
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, res));
+			CollectionAssert.AreEquivalent(exp, res);
 			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(res, 0, res
 				.Length, "UTF-8"));
 		}
@@ -110,8 +111,8 @@ namespace NGit
 				(int)(0x64)), unchecked((int)(0x65)), unchecked((byte)unchecked((int)(0xCC))), unchecked(
 				(byte)unchecked((int)(0xBD))) };
 			byte[] res = Constants.Encode(src);
-			NUnit.Framework.CollectionAssert.AreEqual(exp, res);
-			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(exp, 0, exp
+			CollectionAssert.AreEquivalent(exp, res);
+			NUnit.Framework.Assert.AreEqual(src, Sharpen.Runtime.GetStringForBytes(res, 0, res
 				.Length, "UTF-8"));
 		}
 	}

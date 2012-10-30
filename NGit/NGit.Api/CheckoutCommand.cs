@@ -57,7 +57,41 @@ using Sharpen;
 
 namespace NGit.Api
 {
-	/// <summary>Checkout a branch to the working tree</summary>
+	/// <summary>Checkout a branch to the working tree.</summary>
+	/// <remarks>
+	/// Checkout a branch to the working tree.
+	/// <p>
+	/// Examples (<code>git</code> is a
+	/// <see cref="Git">Git</see>
+	/// instance):
+	/// <p>
+	/// Check out an existing branch:
+	/// <pre>
+	/// git.checkout().setName(&quot;feature&quot;).call();
+	/// </pre>
+	/// <p>
+	/// Check out paths from the index:
+	/// <pre>
+	/// git.checkout().addPath(&quot;file1.txt&quot;).addPath(&quot;file2.txt&quot;).call();
+	/// </pre>
+	/// <p>
+	/// Check out a path from a commit:
+	/// <pre>
+	/// git.checkout().setStartPoint(&quot;HEAD&circ;&quot;).addPath(&quot;file1.txt&quot;).call();
+	/// </pre>
+	/// <p>
+	/// Create a new branch and check it out:
+	/// <pre>
+	/// git.checkout().setCreateBranch(true).setName(&quot;newbranch&quot;).call();
+	/// </pre>
+	/// <p>
+	/// Create a new tracking branch for a remote branch and check it out:
+	/// <pre>
+	/// git.checkout().setCreateBranch(true).setName(&quot;stable&quot;)
+	/// .setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM)
+	/// .setStartPoint(&quot;origin/stable&quot;).call();
+	/// </pre>
+	/// </remarks>
 	/// <seealso><a
 	/// *      href="http://www.kernel.org/pub/software/scm/git/docs/git-checkout.html"
 	/// *      >Git documentation about Checkout</a></seealso>
@@ -242,7 +276,21 @@ namespace NGit.Api
 			return Repository.ShortenRefName(headRef.GetTarget().GetName());
 		}
 
-		/// <param name="path">Path to update in the working tree and index.</param>
+		/// <summary>Add a single path to the list of paths to check out.</summary>
+		/// <remarks>
+		/// Add a single path to the list of paths to check out. To check out all
+		/// paths, use
+		/// <see cref="SetAllPaths(bool)">SetAllPaths(bool)</see>
+		/// .
+		/// <p>
+		/// If this option is set, neither the
+		/// <see cref="SetCreateBranch(bool)">SetCreateBranch(bool)</see>
+		/// nor
+		/// <see cref="SetName(string)">SetName(string)</see>
+		/// option is considered. In other words, these
+		/// options are exclusive.
+		/// </remarks>
+		/// <param name="path">path to update in the working tree and index</param>
 		/// <returns>
 		/// 
 		/// <code>this</code>
@@ -254,16 +302,27 @@ namespace NGit.Api
 			return this;
 		}
 
-		/// <summary>
-		/// Set whether to checkout all paths
+		/// <summary>Set whether to checkout all paths.</summary>
+		/// <remarks>
+		/// Set whether to checkout all paths.
 		/// <p>
 		/// This options should be used when you want to do a path checkout on the
 		/// entire repository and so calling
 		/// <see cref="AddPath(string)">AddPath(string)</see>
 		/// is not possible
 		/// since empty paths are not allowed.
-		/// </summary>
-		/// <param name="all">true to checkout all paths, false otherwise</param>
+		/// <p>
+		/// If this option is set, neither the
+		/// <see cref="SetCreateBranch(bool)">SetCreateBranch(bool)</see>
+		/// nor
+		/// <see cref="SetName(string)">SetName(string)</see>
+		/// option is considered. In other words, these
+		/// options are exclusive.
+		/// </remarks>
+		/// <param name="all">
+		/// <code>true</code> to checkout all paths, <code>false</code>
+		/// otherwise
+		/// </param>
 		/// <returns>
 		/// 
 		/// <code>this</code>
@@ -310,8 +369,8 @@ namespace NGit.Api
 					{
 						ObjectId blobId = startWalk.GetObjectId(0);
 						FileMode mode = startWalk.GetFileMode(0);
-						editor.Add(new _PathEdit_300(this, blobId, mode, workTree, r, startWalk.PathString
-							));
+						editor.Add(new _PathEdit_349(this, checkoutIndex, blobId, mode, workTree, r, startWalk
+							.PathString));
 					}
 					editor.Commit();
 				}
@@ -329,12 +388,14 @@ namespace NGit.Api
 			return this;
 		}
 
-		private sealed class _PathEdit_300 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_349 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_300(CheckoutCommand _enclosing, ObjectId blobId, FileMode mode, 
-				FilePath workTree, ObjectReader r, string baseArg1) : base(baseArg1)
+			public _PathEdit_349(CheckoutCommand _enclosing, bool checkoutIndex, ObjectId blobId
+				, FileMode mode, FilePath workTree, ObjectReader r, string baseArg1) : base(baseArg1
+				)
 			{
 				this._enclosing = _enclosing;
+				this.checkoutIndex = checkoutIndex;
 				this.blobId = blobId;
 				this.mode = mode;
 				this.workTree = workTree;
@@ -343,6 +404,11 @@ namespace NGit.Api
 
 			public override void Apply(DirCacheEntry ent)
 			{
+				if (checkoutIndex && ent.Stage > DirCacheEntry.STAGE_0)
+				{
+					UnmergedPathException e = new UnmergedPathException(ent);
+					throw new JGitInternalException(e.Message, e);
+				}
 				ent.SetObjectId(blobId);
 				ent.FileMode = mode;
 				FilePath file = new FilePath(workTree, ent.PathString);
@@ -360,6 +426,8 @@ namespace NGit.Api
 			}
 
 			private readonly CheckoutCommand _enclosing;
+
+			private readonly bool checkoutIndex;
 
 			private readonly ObjectId blobId;
 
@@ -407,7 +475,34 @@ namespace NGit.Api
 			}
 		}
 
-		/// <param name="name">the name of the new branch</param>
+		/// <summary>
+		/// Specify the name of the branch or commit to check out, or the new branch
+		/// name.
+		/// </summary>
+		/// <remarks>
+		/// Specify the name of the branch or commit to check out, or the new branch
+		/// name.
+		/// <p>
+		/// When only checking out paths and not switching branches, use
+		/// <see cref="SetStartPoint(string)">SetStartPoint(string)</see>
+		/// or
+		/// <see cref="SetStartPoint(NGit.Revwalk.RevCommit)">SetStartPoint(NGit.Revwalk.RevCommit)
+		/// 	</see>
+		/// to
+		/// specify from which branch or commit to check out files.
+		/// <p>
+		/// When
+		/// <see cref="SetCreateBranch(bool)">SetCreateBranch(bool)</see>
+		/// is set to <code>true</code>, use
+		/// this method to set the name of the new branch to create and
+		/// <see cref="SetStartPoint(string)">SetStartPoint(string)</see>
+		/// or
+		/// <see cref="SetStartPoint(NGit.Revwalk.RevCommit)">SetStartPoint(NGit.Revwalk.RevCommit)
+		/// 	</see>
+		/// to
+		/// specify the start point of the branch.
+		/// </remarks>
+		/// <param name="name">the name of the branch or commit</param>
 		/// <returns>this instance</returns>
 		public virtual NGit.Api.CheckoutCommand SetName(string name)
 		{
@@ -416,6 +511,25 @@ namespace NGit.Api
 			return this;
 		}
 
+		/// <summary>Specify whether to create a new branch.</summary>
+		/// <remarks>
+		/// Specify whether to create a new branch.
+		/// <p>
+		/// If <code>true</code> is used, the name of the new branch must be set
+		/// using
+		/// <see cref="SetName(string)">SetName(string)</see>
+		/// . The commit at which to start the new
+		/// branch can be set using
+		/// <see cref="SetStartPoint(string)">SetStartPoint(string)</see>
+		/// or
+		/// <see cref="SetStartPoint(NGit.Revwalk.RevCommit)">SetStartPoint(NGit.Revwalk.RevCommit)
+		/// 	</see>
+		/// ; if not specified, HEAD is used. Also
+		/// see
+		/// <see cref="SetUpstreamMode(SetupUpstreamMode)">SetUpstreamMode(SetupUpstreamMode)
+		/// 	</see>
+		/// for setting up branch tracking.
+		/// </remarks>
 		/// <param name="createBranch">
 		/// if <code>true</code> a branch will be created as part of the
 		/// checkout and set to the specified start point
@@ -428,6 +542,8 @@ namespace NGit.Api
 			return this;
 		}
 
+		/// <summary>Specify to force the ref update in case of a branch switch.</summary>
+		/// <remarks>Specify to force the ref update in case of a branch switch.</remarks>
 		/// <param name="force">
 		/// if <code>true</code> and the branch with the given name
 		/// already exists, the start-point of an existing branch will be
@@ -442,10 +558,17 @@ namespace NGit.Api
 			return this;
 		}
 
-		/// <param name="startPoint">
-		/// corresponds to the start-point option; if <code>null</code>,
-		/// the current HEAD will be used
-		/// </param>
+		/// <summary>Set the name of the commit that should be checked out.</summary>
+		/// <remarks>
+		/// Set the name of the commit that should be checked out.
+		/// <p>
+		/// When checking out files and this is not specified or <code>null</code>,
+		/// the index is used.
+		/// <p>
+		/// When creating a new branch, this will be used as the start point. If not
+		/// specified or <code>null</code>, the current HEAD is used.
+		/// </remarks>
+		/// <param name="startPoint">commit name to check out</param>
 		/// <returns>this instance</returns>
 		public virtual NGit.Api.CheckoutCommand SetStartPoint(string startPoint)
 		{
@@ -455,10 +578,17 @@ namespace NGit.Api
 			return this;
 		}
 
-		/// <param name="startCommit">
-		/// corresponds to the start-point option; if <code>null</code>,
-		/// the current HEAD will be used
-		/// </param>
+		/// <summary>Set the commit that should be checked out.</summary>
+		/// <remarks>
+		/// Set the commit that should be checked out.
+		/// <p>
+		/// When creating a new branch, this will be used as the start point. If not
+		/// specified or <code>null</code>, the current HEAD is used.
+		/// <p>
+		/// When checking out files and this is not specified or <code>null</code>,
+		/// the index is used.
+		/// </remarks>
+		/// <param name="startCommit">commit to check out</param>
 		/// <returns>this instance</returns>
 		public virtual NGit.Api.CheckoutCommand SetStartPoint(RevCommit startCommit)
 		{
@@ -468,6 +598,12 @@ namespace NGit.Api
 			return this;
 		}
 
+		/// <summary>
+		/// When creating a branch with
+		/// <see cref="SetCreateBranch(bool)">SetCreateBranch(bool)</see>
+		/// , this can
+		/// be used to configure branch tracking.
+		/// </summary>
 		/// <param name="mode">
 		/// corresponds to the --track/--no-track options; may be
 		/// <code>null</code>
@@ -481,7 +617,7 @@ namespace NGit.Api
 			return this;
 		}
 
-		/// <returns>the result</returns>
+		/// <returns>the result, never <code>null</code></returns>
 		public virtual CheckoutResult GetResult()
 		{
 			if (status == null)

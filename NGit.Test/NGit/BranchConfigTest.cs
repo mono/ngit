@@ -96,6 +96,42 @@ namespace NGit
 			NUnit.Framework.Assert.IsNull(branchConfig.GetRemoteTrackingBranch());
 		}
 
+		[NUnit.Framework.Test]
+		public virtual void GetTrackingBranchShouldReturnMergeBranchForLocalBranch()
+		{
+			Config c = Parse(string.Empty + "[remote \"origin\"]\n" + "  fetch = +refs/heads/*:refs/remotes/origin/*\n"
+				 + "[branch \"master\"]\n" + "  remote = .\n" + "  merge = refs/heads/master\n");
+			//
+			BranchConfig branchConfig = new BranchConfig(c, "master");
+			NUnit.Framework.Assert.AreEqual("refs/heads/master", branchConfig.GetTrackingBranch
+				());
+		}
+
+		[NUnit.Framework.Test]
+		public virtual void GetTrackingBranchShouldReturnNullWithoutMergeBranchForLocalBranch
+			()
+		{
+			Config c = Parse(string.Empty + "[remote \"origin\"]\n" + "  fetch = +refs/heads/onlyone:refs/remotes/origin/onlyone\n"
+				 + "[branch \"master\"]\n" + "  remote = .\n");
+			//
+			//
+			BranchConfig branchConfig = new BranchConfig(c, "master");
+			NUnit.Framework.Assert.IsNull(branchConfig.GetTrackingBranch());
+		}
+
+		[NUnit.Framework.Test]
+		public virtual void GetTrackingBranchShouldHandleNormalCaseForRemoteTrackingBranch
+			()
+		{
+			Config c = Parse(string.Empty + "[remote \"origin\"]\n" + "  fetch = +refs/heads/*:refs/remotes/origin/*\n"
+				 + "[branch \"master\"]\n" + "  remote = origin\n" + "  merge = refs/heads/master\n"
+				);
+			//
+			BranchConfig branchConfig = new BranchConfig(c, "master");
+			NUnit.Framework.Assert.AreEqual("refs/remotes/origin/master", branchConfig.GetTrackingBranch
+				());
+		}
+
 		private Config Parse(string content)
 		{
 			Config c = new Config(null);

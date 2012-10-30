@@ -131,7 +131,7 @@ namespace NGit
 			NUnit.Framework.Assert.IsTrue(t.GetName() == null, "no name");
 			NUnit.Framework.Assert.IsTrue(t.GetNameUTF8() == null, "no nameUTF8");
 			NUnit.Framework.Assert.IsTrue(t.Members() != null, "has entries array");
-			NUnit.Framework.Assert.IsTrue(t.Members().Length == 0, "entries is empty");
+			NUnit.Framework.Assert.AreEqual(0, t.Members().Length, "entries is empty");
 			NUnit.Framework.Assert.AreEqual(string.Empty, t.GetFullName(), "full name is empty"
 				);
 			NUnit.Framework.Assert.IsTrue(t.GetId() == null, "no id");
@@ -194,7 +194,7 @@ namespace NGit
 			TreeEntry[] i = t.Members();
 			NUnit.Framework.Assert.IsTrue(i.Length > 0, "iterator is not empty");
 			NUnit.Framework.Assert.IsTrue(i[0] == f, "iterator returns file");
-			NUnit.Framework.Assert.IsTrue(i.Length == 1, "iterator is empty");
+			NUnit.Framework.Assert.AreEqual(1, i.Length, "iterator is empty");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

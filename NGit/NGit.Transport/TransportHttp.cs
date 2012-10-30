@@ -628,8 +628,13 @@ namespace NGit.Transport
 			conn.SetRequestProperty(HttpSupport.HDR_PRAGMA, "no-cache");
 			//$NON-NLS-1$
 			conn.SetRequestProperty(HttpSupport.HDR_USER_AGENT, userAgent);
-			conn.SetConnectTimeout(GetTimeout() * 1000);
-			conn.SetReadTimeout(GetTimeout() * 1000);
+			int timeOut = GetTimeout();
+			if (timeOut != -1)
+			{
+				int effTimeOut = timeOut * 1000;
+				conn.SetConnectTimeout(effTimeOut);
+				conn.SetReadTimeout(effTimeOut);
+			}
 			authMethod.ConfigureRequest(conn);
 			return conn;
 		}

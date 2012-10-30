@@ -54,6 +54,11 @@ namespace NGit.Util
 	/// <remarks>Handy utility functions to parse raw object contents.</remarks>
 	public sealed class RawParseUtils
 	{
+		/// <summary>UTF-8 charset constant.</summary>
+		/// <remarks>UTF-8 charset constant.</remarks>
+		public static readonly System.Text.Encoding UTF8_CHARSET = Sharpen.Extensions.GetEncoding
+			("UTF-8");
+
 		private static readonly byte[] digits10;
 
 		private static readonly sbyte[] digits16;

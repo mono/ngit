@@ -49,6 +49,7 @@ using NGit.Storage.File;
 using NGit.Storage.Pack;
 using NGit.Util;
 using NGit.Util.IO;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Storage.File
@@ -180,7 +181,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.IsNotNull(data1);
 			NUnit.Framework.Assert.AreNotSame(data1, data2);
 			// cache should be per-pack, not per object
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data1, data2));
+			CollectionAssert.AreEquivalent(data1, data2);
 			NUnit.Framework.Assert.AreEqual(load2.GetType(), load1.GetType());
 		}
 

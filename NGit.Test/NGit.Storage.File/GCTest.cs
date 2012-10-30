@@ -41,9 +41,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using NGit;
+using NGit.Internal;
 using NGit.Junit;
+using NGit.Merge;
 using NGit.Revwalk;
 using NGit.Storage.File;
 using NGit.Util;
@@ -77,6 +81,420 @@ namespace NGit.Storage.File
 		public override void TearDown()
 		{
 			base.TearDown();
+		}
+
+		// GC.packRefs tests
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void PackRefs_looseRefPacked()
+		{
+			RevBlob a = tr.Blob("a");
+			tr.LightweightTag("t", a);
+			gc.PackRefs();
+			NUnit.Framework.Assert.AreEqual(repo.GetRef("t").GetStorage(), RefStorage.PACKED);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void ConcurrentPackRefs_onlyOneWritesPackedRefs()
+		{
+			RevBlob a = tr.Blob("a");
+			tr.LightweightTag("t", a);
+			CyclicBarrier syncPoint = new CyclicBarrier(2);
+			Callable<int> packRefs = new _Callable_131(this, syncPoint);
+			ExecutorService pool = Executors.NewFixedThreadPool(2);
+			try
+			{
+				Future<int> p1 = pool.Submit(packRefs);
+				Future<int> p2 = pool.Submit(packRefs);
+				NUnit.Framework.Assert.AreEqual(1, p1.Get() + p2.Get());
+			}
+			finally
+			{
+				pool.Shutdown();
+				pool.AwaitTermination(long.MaxValue, TimeUnit.SECONDS);
+			}
+		}
+
+		private sealed class _Callable_131 : Callable<int>
+		{
+			public _Callable_131(GCTest _enclosing, CyclicBarrier syncPoint)
+			{
+				this._enclosing = _enclosing;
+				this.syncPoint = syncPoint;
+			}
+
+			/// <returns>0 for success, 1 in case of error when writing pack</returns>
+			/// <exception cref="System.Exception"></exception>
+			public int Call()
+			{
+				syncPoint.Await();
+				try
+				{
+					this._enclosing.gc.PackRefs();
+					return Sharpen.Extensions.ValueOf(0);
+				}
+				catch (IOException)
+				{
+					return Sharpen.Extensions.ValueOf(1);
+				}
+			}
+
+			private readonly GCTest _enclosing;
+
+			private readonly CyclicBarrier syncPoint;
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void PackRefsWhileRefLocked_refNotPackedNoError()
+		{
+			RevBlob a = tr.Blob("a");
+			tr.LightweightTag("t1", a);
+			tr.LightweightTag("t2", a);
+			LockFile refLock = new LockFile(new FilePath(repo.Directory, "refs/tags/t1"), repo
+				.FileSystem);
+			try
+			{
+				refLock.Lock();
+				gc.PackRefs();
+			}
+			finally
+			{
+				refLock.Unlock();
+			}
+			NUnit.Framework.Assert.AreEqual(repo.GetRef("refs/tags/t1").GetStorage(), RefStorage
+				.LOOSE);
+			NUnit.Framework.Assert.AreEqual(repo.GetRef("refs/tags/t2").GetStorage(), RefStorage
+				.PACKED);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void PackRefsWhileRefUpdated_refUpdateSucceeds()
+		{
+			RevBlob a = tr.Blob("a");
+			tr.LightweightTag("t", a);
+			RevBlob b = tr.Blob("b");
+			CyclicBarrier refUpdateLockedRef = new CyclicBarrier(2);
+			CyclicBarrier packRefsDone = new CyclicBarrier(2);
+			ExecutorService pool = Executors.NewFixedThreadPool(2);
+			try
+			{
+				Future<RefUpdate.Result> result = pool.Submit(new _Callable_185(this, b, refUpdateLockedRef
+					, packRefsDone));
+				pool.Submit<Void>(new _Callable_210(this, refUpdateLockedRef, packRefsDone));
+				NUnit.Framework.Assert.AreEqual(result.Get(), RefUpdate.Result.FORCED);
+			}
+			finally
+			{
+				pool.ShutdownNow();
+				pool.AwaitTermination(long.MaxValue, TimeUnit.SECONDS);
+			}
+			NUnit.Framework.Assert.AreEqual(repo.GetRef("refs/tags/t").GetObjectId(), b);
+		}
+
+		private sealed class _Callable_185 : Callable<RefUpdate.Result>
+		{
+			public _Callable_185(GCTest _enclosing, RevBlob b, CyclicBarrier refUpdateLockedRef
+				, CyclicBarrier packRefsDone)
+			{
+				this._enclosing = _enclosing;
+				this.b = b;
+				this.refUpdateLockedRef = refUpdateLockedRef;
+				this.packRefsDone = packRefsDone;
+			}
+
+			/// <exception cref="System.Exception"></exception>
+			public RefUpdate.Result Call()
+			{
+				RefUpdate update = new _RefDirectoryUpdate_190(refUpdateLockedRef, packRefsDone, 
+					(RefDirectory)this._enclosing.repo.RefDatabase, this._enclosing.repo.GetRef("refs/tags/t"
+					));
+				update.SetForceUpdate(true);
+				update.SetNewObjectId(b);
+				return update.Update();
+			}
+
+			private sealed class _RefDirectoryUpdate_190 : RefDirectoryUpdate
+			{
+				public _RefDirectoryUpdate_190(CyclicBarrier refUpdateLockedRef, CyclicBarrier packRefsDone
+					, RefDirectory baseArg1, Ref baseArg2) : base(baseArg1, baseArg2)
+				{
+					this.refUpdateLockedRef = refUpdateLockedRef;
+					this.packRefsDone = packRefsDone;
+				}
+
+				public override bool IsForceUpdate()
+				{
+					try
+					{
+						refUpdateLockedRef.Await();
+						packRefsDone.Await();
+					}
+					catch (Exception)
+					{
+						Sharpen.Thread.CurrentThread().Interrupt();
+					}
+					return base.IsForceUpdate();
+				}
+
+				private readonly CyclicBarrier refUpdateLockedRef;
+
+				private readonly CyclicBarrier packRefsDone;
+			}
+
+			private readonly GCTest _enclosing;
+
+			private readonly RevBlob b;
+
+			private readonly CyclicBarrier refUpdateLockedRef;
+
+			private readonly CyclicBarrier packRefsDone;
+		}
+
+		private sealed class _Callable_210 : Callable<Void>
+		{
+			public _Callable_210(GCTest _enclosing, CyclicBarrier refUpdateLockedRef, CyclicBarrier
+				 packRefsDone)
+			{
+				this._enclosing = _enclosing;
+				this.refUpdateLockedRef = refUpdateLockedRef;
+				this.packRefsDone = packRefsDone;
+			}
+
+			/// <exception cref="System.Exception"></exception>
+			public Void Call()
+			{
+				refUpdateLockedRef.Await();
+				this._enclosing.gc.PackRefs();
+				packRefsDone.Await();
+				return;
+			}
+
+			private readonly GCTest _enclosing;
+
+			private readonly CyclicBarrier refUpdateLockedRef;
+
+			private readonly CyclicBarrier packRefsDone;
+		}
+
+		// GC.repack tests
+		/// <exception cref="System.IO.IOException"></exception>
+		[NUnit.Framework.Test]
+		public virtual void RepackEmptyRepo_noPackCreated()
+		{
+			gc.Repack();
+			NUnit.Framework.Assert.AreEqual(0, ((ObjectDirectory)repo.ObjectDatabase).GetPacks
+				().Count);
+		}
+
+		CyclicBarrier syncPoint = new CyclicBarrier(2);
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void ConcurrentRepack()
+		{
+			//
+			// leave the syncPoint in broken state so any awaiting
+			// threads and any threads that call await in the future get
+			// the BrokenBarrierException
+			//
+			RevBlob a = tr.Blob("a");
+			tr.LightweightTag("t", a);
+			ExecutorService pool = Executors.NewFixedThreadPool(2);
+			try
+			{
+				_T187790690 repack1 = new _T187790690(this);
+				_T187790690 repack2 = new _T187790690(this);
+				Future<int> result1 = pool.Submit(repack1);
+				Future<int> result2 = pool.Submit(repack2);
+				NUnit.Framework.Assert.AreEqual(0, result1.Get() + result2.Get());
+			}
+			finally
+			{
+				pool.Shutdown();
+				pool.AwaitTermination(long.MaxValue, TimeUnit.SECONDS);
+			}
+		}
+
+		internal class _T187790690 : EmptyProgressMonitor, Callable<int>
+		{
+			public override void BeginTask(string title, int totalWork)
+			{
+				if (title.Equals(JGitText.Get().writingObjects))
+				{
+					try
+					{
+						_enclosing.syncPoint.Await();
+					}
+					catch (Exception)
+					{
+						Sharpen.Thread.CurrentThread().Interrupt();
+					}
+				}
+			}
+
+			/// <returns>0 for success, 1 in case of error when writing pack</returns>
+			/// <exception cref="System.Exception"></exception>
+			public virtual int Call()
+			{
+				try
+				{
+					this._enclosing.gc.SetProgressMonitor(this);
+					this._enclosing.gc.Repack();
+					return Sharpen.Extensions.ValueOf(0);
+				}
+				catch (IOException)
+				{
+					Sharpen.Thread.CurrentThread().Interrupt();
+					try
+					{
+						_enclosing.syncPoint.Await();
+					}
+					catch (Exception)
+					{
+					}
+					return Sharpen.Extensions.ValueOf(1);
+				}
+			}
+
+			internal _T187790690(GCTest _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			private readonly GCTest _enclosing;
+		}
+
+		// GC.prune tests
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void NonReferencedNonExpiredObject_notPruned()
+		{
+			RevBlob a = tr.Blob("a");
+			gc.SetExpire(Sharpen.Extensions.CreateDate(LastModified(a)));
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			NUnit.Framework.Assert.IsTrue(repo.HasObject(a));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void NonReferencedExpiredObject_pruned()
+		{
+			RevBlob a = tr.Blob("a");
+			gc.SetExpireAgeMillis(0);
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			NUnit.Framework.Assert.IsFalse(repo.HasObject(a));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void NonReferencedExpiredObjectTree_pruned()
+		{
+			RevBlob a = tr.Blob("a");
+			RevTree t = tr.Tree(tr.File("a", a));
+			gc.SetExpireAgeMillis(0);
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			NUnit.Framework.Assert.IsFalse(repo.HasObject(t));
+			NUnit.Framework.Assert.IsFalse(repo.HasObject(a));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void NonReferencedObjects_onlyExpiredPruned()
+		{
+			RevBlob a = tr.Blob("a");
+			gc.SetExpire(Sharpen.Extensions.CreateDate(LastModified(a) + 1));
+			FsTick();
+			RevBlob b = tr.Blob("b");
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			NUnit.Framework.Assert.IsFalse(repo.HasObject(a));
+			NUnit.Framework.Assert.IsTrue(repo.HasObject(b));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void LightweightTag_objectNotPruned()
+		{
+			RevBlob a = tr.Blob("a");
+			tr.LightweightTag("t", a);
+			gc.SetExpireAgeMillis(0);
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			NUnit.Framework.Assert.IsTrue(repo.HasObject(a));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void AnnotatedTag_objectNotPruned()
+		{
+			RevBlob a = tr.Blob("a");
+			RevTag t = tr.Tag("t", a);
+			// this doesn't create the refs/tags/t ref
+			tr.LightweightTag("t", t);
+			gc.SetExpireAgeMillis(0);
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			NUnit.Framework.Assert.IsTrue(repo.HasObject(t));
+			NUnit.Framework.Assert.IsTrue(repo.HasObject(a));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void Branch_historyNotPruned()
+		{
+			RevCommit tip = CommitChain(10);
+			tr.Branch("b").Update(tip);
+			gc.SetExpireAgeMillis(0);
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			do
+			{
+				NUnit.Framework.Assert.IsTrue(repo.HasObject(tip));
+				tr.ParseBody(tip);
+				RevTree t = tip.Tree;
+				NUnit.Framework.Assert.IsTrue(repo.HasObject(t));
+				NUnit.Framework.Assert.IsTrue(repo.HasObject(tr.Get(t, "a")));
+				tip = tip.ParentCount > 0 ? tip.GetParent(0) : null;
+			}
+			while (tip != null);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void DeleteBranch_historyPruned()
+		{
+			RevCommit tip = CommitChain(10);
+			tr.Branch("b").Update(tip);
+			RefUpdate update = repo.UpdateRef("refs/heads/b");
+			update.SetForceUpdate(true);
+			update.Delete();
+			gc.SetExpireAgeMillis(0);
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			NUnit.Framework.Assert.IsTrue(gc.GetStatistics().numberOfLooseObjects == 0);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void DeleteMergedBranch_historyNotPruned()
+		{
+			RevCommit parent = tr.Commit().Create();
+			RevCommit b1Tip = tr.Branch("b1").Commit().Parent(parent).Add("x", "x").Create();
+			RevCommit b2Tip = tr.Branch("b2").Commit().Parent(parent).Add("y", "y").Create();
+			// merge b1Tip and b2Tip and update refs/heads/b1 to the merge commit
+			Merger merger = ((ThreeWayMerger)MergeStrategy.SIMPLE_TWO_WAY_IN_CORE.NewMerger(repo
+				));
+			merger.Merge(b1Tip, b2Tip);
+			NGit.Junit.CommitBuilder cb = tr.Commit();
+			cb.Parent(b1Tip).Parent(b2Tip);
+			cb.SetTopLevelTree(merger.GetResultTreeId());
+			RevCommit mergeCommit = cb.Create();
+			RefUpdate u = repo.UpdateRef("refs/heads/b1");
+			u.SetNewObjectId(mergeCommit);
+			u.Update();
+			RefUpdate update = repo.UpdateRef("refs/heads/b2");
+			update.SetForceUpdate(true);
+			update.Delete();
+			gc.SetExpireAgeMillis(0);
+			gc.Prune(Collections.EmptySet<ObjectId>());
+			NUnit.Framework.Assert.IsTrue(repo.HasObject(b2Tip));
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -350,6 +768,51 @@ namespace NGit.Storage.File
 			gc.Prune(Sharpen.Collections.EmptySet<ObjectId>());
 			stats = gc.GetStatistics();
 			NUnit.Framework.Assert.AreEqual(8, stats.numberOfLooseObjects);
+		}
+
+		/// <summary>Create a chain of commits of given depth.</summary>
+		/// <remarks>
+		/// Create a chain of commits of given depth.
+		/// <p>
+		/// Each commit contains one file named "a" containing the index of the
+		/// commit in the chain as its content. The created commit chain is
+		/// referenced from any ref.
+		/// <p>
+		/// A chain of depth = N will create 3*N objects in Gits object database. For
+		/// each depth level three objects are created: the commit object, the
+		/// top-level tree object and a blob for the content of the file "a".
+		/// </remarks>
+		/// <param name="depth">the depth of the commit chain.</param>
+		/// <returns>the commit that is the tip of the commit chain</returns>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		private RevCommit CommitChain(int depth)
+		{
+			if (depth <= 0)
+			{
+				throw new ArgumentException("Chain depth must be > 0");
+			}
+			NGit.Junit.CommitBuilder cb = tr.Commit();
+			RevCommit tip;
+			do
+			{
+				--depth;
+				tip = cb.Add("a", string.Empty + depth).Message(string.Empty + depth).Create();
+				cb = cb.Child();
+			}
+			while (depth > 0);
+			return tip;
+		}
+
+		private long LastModified(AnyObjectId objectId)
+		{
+			return ((ObjectDirectory)repo.ObjectDatabase).FileFor(objectId).LastModified();
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		/// <exception cref="System.IO.IOException"></exception>
+		private static void FsTick()
+		{
+			RepositoryTestCase.FsTick(null);
 		}
 	}
 }

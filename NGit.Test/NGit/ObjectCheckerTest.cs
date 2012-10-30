@@ -73,7 +73,7 @@ namespace NGit
 			{
 				string m = e.Message;
 				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().corruptObjectInvalidType2
-					, Constants.OBJ_BAD), m);
+					, Sharpen.Extensions.ValueOf(Constants.OBJ_BAD)), m);
 			}
 		}
 

@@ -49,7 +49,7 @@ namespace NGit.Api.Errors
 	/// <summary>
 	/// Thrown when trying to create a
 	/// <see cref="NGit.Ref">NGit.Ref</see>
-	/// with the same name as an exsiting
+	/// with the same name as an existing
 	/// one
 	/// </summary>
 	[System.Serializable]

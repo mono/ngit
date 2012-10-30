@@ -133,13 +133,13 @@ namespace NGit.Merge
 				DirCacheBuilder b = treeB.Builder();
 				DirCacheBuilder o = treeO.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("libelf-po/a", FileMode.REGULAR_FILE));
-				b.Add(MakeEntry("libelf/c", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("Makefile", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("libelf-po/a", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("libelf/c", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("libelf-po/a", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("libelf/c", FileMode.REGULAR_FILE, "blah"));
+				b.Add(CreateEntry("libelf-po/a", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("libelf/c", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("Makefile", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("libelf-po/a", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("libelf/c", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("libelf-po/a", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("libelf/c", FileMode.REGULAR_FILE, "blah"));
 				b.Finish();
 				o.Finish();
 				t.Finish();
@@ -178,12 +178,12 @@ namespace NGit.Merge
 				DirCacheBuilder b = treeB.Builder();
 				DirCacheBuilder o = treeO.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				b.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("d/o", FileMode.REGULAR_FILE, "o !"));
-				o.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "t !"));
+				b.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("d/t", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("d/o", FileMode.REGULAR_FILE, "o !"));
+				o.Add(CreateEntry("d/t", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("d/t", FileMode.REGULAR_FILE, "t !"));
 				b.Finish();
 				o.Finish();
 				t.Finish();
@@ -219,12 +219,12 @@ namespace NGit.Merge
 				DirCacheBuilder b = treeB.Builder();
 				DirCacheBuilder o = treeO.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				b.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "o !"));
-				t.Add(MakeEntry("d/o", FileMode.REGULAR_FILE, "t !"));
-				t.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "t !"));
+				b.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("d/t", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("d/t", FileMode.REGULAR_FILE, "o !"));
+				t.Add(CreateEntry("d/o", FileMode.REGULAR_FILE, "t !"));
+				t.Add(CreateEntry("d/t", FileMode.REGULAR_FILE, "t !"));
 				b.Finish();
 				o.Finish();
 				t.Finish();
@@ -250,11 +250,11 @@ namespace NGit.Merge
 				DirCacheBuilder b = treeB.Builder();
 				DirCacheBuilder o = treeO.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				b.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("d", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "t !"));
+				b.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("d/t", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("d", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("d/t", FileMode.REGULAR_FILE, "t !"));
 				b.Finish();
 				o.Finish();
 				t.Finish();
@@ -280,11 +280,11 @@ namespace NGit.Merge
 				DirCacheBuilder b = treeB.Builder();
 				DirCacheBuilder o = treeO.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				b.Add(MakeEntry("d/t", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("d/t", FileMode.REGULAR_FILE, "o !"));
-				t.Add(MakeEntry("d", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("d/t", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("d/t", FileMode.REGULAR_FILE, "o !"));
+				t.Add(CreateEntry("d", FileMode.REGULAR_FILE));
 				b.Finish();
 				o.Finish();
 				t.Finish();
@@ -310,9 +310,9 @@ namespace NGit.Merge
 				DirCacheBuilder b = treeB.Builder();
 				DirCacheBuilder o = treeO.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("d", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("d", FileMode.REGULAR_FILE, "o !"));
-				t.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("d", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("d", FileMode.REGULAR_FILE, "o !"));
+				t.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
 				b.Finish();
 				o.Finish();
 				t.Finish();
@@ -338,9 +338,9 @@ namespace NGit.Merge
 				DirCacheBuilder b = treeB.Builder();
 				DirCacheBuilder o = treeO.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("d", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("d/o", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("d", FileMode.REGULAR_FILE, "t !"));
+				b.Add(CreateEntry("d", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("d/o", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("d", FileMode.REGULAR_FILE, "t !"));
 				b.Finish();
 				o.Finish();
 				t.Finish();
@@ -373,22 +373,6 @@ namespace NGit.Merge
 			ObjectId id = odi.Insert(c);
 			odi.Flush();
 			return id;
-		}
-
-		/// <exception cref="System.Exception"></exception>
-		private DirCacheEntry MakeEntry(string path, FileMode mode)
-		{
-			return MakeEntry(path, mode, path);
-		}
-
-		/// <exception cref="System.Exception"></exception>
-		private DirCacheEntry MakeEntry(string path, FileMode mode, string content)
-		{
-			DirCacheEntry ent = new DirCacheEntry(path);
-			ent.FileMode = mode;
-			ent.SetObjectId(new ObjectInserter.Formatter().IdFor(Constants.OBJ_BLOB, Constants
-				.Encode(content)));
-			return ent;
 		}
 	}
 }

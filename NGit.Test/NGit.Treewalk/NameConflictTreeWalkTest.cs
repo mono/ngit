@@ -70,10 +70,10 @@ namespace NGit.Treewalk
 			{
 				DirCacheBuilder b0 = tree0.Builder();
 				DirCacheBuilder b1 = tree1.Builder();
-				b0.Add(MakeEntry("a", REGULAR_FILE));
-				b0.Add(MakeEntry("a.b", EXECUTABLE_FILE));
-				b1.Add(MakeEntry("a/b", REGULAR_FILE));
-				b0.Add(MakeEntry("a0b", SYMLINK));
+				b0.Add(CreateEntry("a", REGULAR_FILE));
+				b0.Add(CreateEntry("a.b", EXECUTABLE_FILE));
+				b1.Add(CreateEntry("a/b", REGULAR_FILE));
+				b0.Add(CreateEntry("a0b", SYMLINK));
 				b0.Finish();
 				b1.Finish();
 				NUnit.Framework.Assert.AreEqual(3, tree0.GetEntryCount());
@@ -99,10 +99,10 @@ namespace NGit.Treewalk
 			{
 				DirCacheBuilder b0 = tree0.Builder();
 				DirCacheBuilder b1 = tree1.Builder();
-				b0.Add(MakeEntry("a", REGULAR_FILE));
-				b0.Add(MakeEntry("a.b", EXECUTABLE_FILE));
-				b1.Add(MakeEntry("a/b", REGULAR_FILE));
-				b0.Add(MakeEntry("a0b", SYMLINK));
+				b0.Add(CreateEntry("a", REGULAR_FILE));
+				b0.Add(CreateEntry("a.b", EXECUTABLE_FILE));
+				b1.Add(CreateEntry("a/b", REGULAR_FILE));
+				b0.Add(CreateEntry("a0b", SYMLINK));
 				b0.Finish();
 				b1.Finish();
 				NUnit.Framework.Assert.AreEqual(3, tree0.GetEntryCount());
@@ -132,11 +132,11 @@ namespace NGit.Treewalk
 			{
 				DirCacheBuilder b0 = tree0.Builder();
 				DirCacheBuilder b1 = tree1.Builder();
-				b0.Add(MakeEntry("a", REGULAR_FILE));
-				b0.Add(MakeEntry("a.b", EXECUTABLE_FILE));
-				b1.Add(MakeEntry("a.b", EXECUTABLE_FILE));
-				b1.Add(MakeEntry("a/b", REGULAR_FILE));
-				b0.Add(MakeEntry("a0b", SYMLINK));
+				b0.Add(CreateEntry("a", REGULAR_FILE));
+				b0.Add(CreateEntry("a.b", EXECUTABLE_FILE));
+				b1.Add(CreateEntry("a.b", EXECUTABLE_FILE));
+				b1.Add(CreateEntry("a/b", REGULAR_FILE));
+				b0.Add(CreateEntry("a0b", SYMLINK));
 				b0.Finish();
 				b1.Finish();
 				NUnit.Framework.Assert.AreEqual(3, tree0.GetEntryCount());
@@ -166,11 +166,11 @@ namespace NGit.Treewalk
 			{
 				DirCacheBuilder b0 = tree0.Builder();
 				DirCacheBuilder b1 = tree1.Builder();
-				b0.Add(MakeEntry("a", REGULAR_FILE));
-				b1.Add(MakeEntry("a.b", EXECUTABLE_FILE));
-				b1.Add(MakeEntry("a/b", REGULAR_FILE));
-				b0.Add(MakeEntry("a0b", SYMLINK));
-				b1.Add(MakeEntry("a0b", SYMLINK));
+				b0.Add(CreateEntry("a", REGULAR_FILE));
+				b1.Add(CreateEntry("a.b", EXECUTABLE_FILE));
+				b1.Add(CreateEntry("a/b", REGULAR_FILE));
+				b0.Add(CreateEntry("a0b", SYMLINK));
+				b1.Add(CreateEntry("a0b", SYMLINK));
 				b0.Finish();
 				b1.Finish();
 				NUnit.Framework.Assert.AreEqual(2, tree0.GetEntryCount());
@@ -200,12 +200,12 @@ namespace NGit.Treewalk
 			{
 				DirCacheBuilder b0 = tree0.Builder();
 				DirCacheBuilder b1 = tree1.Builder();
-				b0.Add(MakeEntry("0", REGULAR_FILE));
-				b0.Add(MakeEntry("a", REGULAR_FILE));
-				b1.Add(MakeEntry("0", REGULAR_FILE));
-				b1.Add(MakeEntry("a.b", REGULAR_FILE));
-				b1.Add(MakeEntry("a/b", REGULAR_FILE));
-				b1.Add(MakeEntry("a/c/e", REGULAR_FILE));
+				b0.Add(CreateEntry("0", REGULAR_FILE));
+				b0.Add(CreateEntry("a", REGULAR_FILE));
+				b1.Add(CreateEntry("0", REGULAR_FILE));
+				b1.Add(CreateEntry("a.b", REGULAR_FILE));
+				b1.Add(CreateEntry("a/b", REGULAR_FILE));
+				b1.Add(CreateEntry("a/c/e", REGULAR_FILE));
 				b0.Finish();
 				b1.Finish();
 				NUnit.Framework.Assert.AreEqual(2, tree0.GetEntryCount());
@@ -229,16 +229,6 @@ namespace NGit.Treewalk
 			NUnit.Framework.Assert.IsTrue(tw.IsDirectoryFileConflict());
 			AssertModes("a.b", MISSING, REGULAR_FILE, tw);
 			NUnit.Framework.Assert.IsFalse(tw.IsDirectoryFileConflict());
-		}
-
-		/// <exception cref="System.Exception"></exception>
-		private DirCacheEntry MakeEntry(string path, FileMode mode)
-		{
-			DirCacheEntry ent = new DirCacheEntry(path);
-			ent.FileMode = mode;
-			ent.SetObjectId(new ObjectInserter.Formatter().IdFor(Constants.OBJ_BLOB, Constants
-				.Encode(path)));
-			return ent;
 		}
 
 		/// <exception cref="System.Exception"></exception>

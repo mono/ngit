@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -102,6 +103,8 @@ namespace NGit.Api
 
 		private static readonly string ONTO = "onto";
 
+		private static readonly string ONTO_NAME = "onto-name";
+
 		private static readonly string PATCH = "patch";
 
 		private static readonly string REBASE_HEAD = "head";
@@ -118,6 +121,8 @@ namespace NGit.Api
 		private RebaseCommand.Operation operation = RebaseCommand.Operation.BEGIN;
 
 		private RevCommit upstreamCommit;
+
+		private string upstreamCommitName;
 
 		private ProgressMonitor monitor = NullProgressMonitor.INSTANCE;
 
@@ -176,8 +181,18 @@ namespace NGit.Api
 					case RebaseCommand.Operation.CONTINUE:
 					{
 						// fall through
-						string upstreamCommitName = ReadFile(rebaseDir, ONTO);
-						this.upstreamCommit = walk.ParseCommit(repo.Resolve(upstreamCommitName));
+						string upstreamCommitId = ReadFile(rebaseDir, ONTO);
+						try
+						{
+							upstreamCommitName = ReadFile(rebaseDir, ONTO_NAME);
+						}
+						catch (FileNotFoundException)
+						{
+							// Fall back to commit ID if file doesn't exist (e.g. rebase
+							// was started by C Git)
+							upstreamCommitName = upstreamCommitId;
+						}
+						this.upstreamCommit = walk.ParseCommit(repo.Resolve(upstreamCommitId));
 						break;
 					}
 
@@ -242,8 +257,9 @@ namespace NGit.Api
 							// TODO if the content of this commit is already merged
 							// here we should skip this step in order to avoid
 							// confusing pseudo-changed
+							string ourCommitName = GetOurCommitName();
 							CherryPickResult cherryPickResult = new Git(repo).CherryPick().Include(commitToPick
-								).Call();
+								).SetOurCommitName(ourCommitName).Call();
 							switch (cherryPickResult.GetStatus())
 							{
 								case CherryPickResult.CherryPickStatus.FAILED:
@@ -294,6 +310,15 @@ namespace NGit.Api
 			{
 				throw new JGitInternalException(ioe.Message, ioe);
 			}
+		}
+
+		private string GetOurCommitName()
+		{
+			// If onto is different from upstream, this should say "onto", but
+			// RebaseCommand doesn't support a different "onto" at the moment.
+			string ourCommitName = "Upstream, based on " + Repository.ShortenRefName(upstreamCommitName
+				);
+			return ourCommitName;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -636,6 +661,7 @@ namespace NGit.Api
 			CreateFile(rebaseDir, REBASE_HEAD, headId.Name);
 			CreateFile(rebaseDir, HEAD_NAME, headName);
 			CreateFile(rebaseDir, ONTO, upstreamCommit.Name);
+			CreateFile(rebaseDir, ONTO_NAME, upstreamCommitName);
 			CreateFile(rebaseDir, INTERACTIVE, string.Empty);
 			BufferedWriter fw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream
 				(new FilePath(rebaseDir, GIT_REBASE_TODO)), Constants.CHARACTER_ENCODING));
@@ -791,7 +817,8 @@ namespace NGit.Api
 			if (this.operation != RebaseCommand.Operation.BEGIN)
 			{
 				// these operations are only possible while in a rebasing state
-				if (repo.GetRepositoryState() != RepositoryState.REBASING_INTERACTIVE)
+				if (s != RepositoryState.REBASING_INTERACTIVE && s != RepositoryState.REBASING &&
+					 s != RepositoryState.REBASING_REBASING && s != RepositoryState.REBASING_MERGE)
 				{
 					throw new WrongRepositoryStateException(MessageFormat.Format(JGitText.Get().wrongRepositoryState
 						, repo.GetRepositoryState().Name()));
@@ -1026,6 +1053,7 @@ namespace NGit.Api
 		public virtual NGit.Api.RebaseCommand SetUpstream(RevCommit upstream)
 		{
 			this.upstreamCommit = upstream;
+			this.upstreamCommitName = upstream.Name;
 			return this;
 		}
 
@@ -1039,6 +1067,7 @@ namespace NGit.Api
 			try
 			{
 				this.upstreamCommit = walk.ParseCommit(upstream);
+				this.upstreamCommitName = upstream.Name;
 			}
 			catch (IOException e)
 			{
@@ -1066,12 +1095,38 @@ namespace NGit.Api
 						, upstream));
 				}
 				upstreamCommit = walk.ParseCommit(repo.Resolve(upstream));
+				upstreamCommitName = upstream;
 				return this;
 			}
 			catch (IOException ioe)
 			{
 				throw new JGitInternalException(ioe.Message, ioe);
 			}
+		}
+
+		/// <summary>Optionally override the name of the upstream.</summary>
+		/// <remarks>
+		/// Optionally override the name of the upstream. If this is used, it has to
+		/// come after any
+		/// <see cref="SetUpstream(NGit.Revwalk.RevCommit)">SetUpstream(NGit.Revwalk.RevCommit)
+		/// 	</see>
+		/// call.
+		/// </remarks>
+		/// <param name="upstreamName">the name which will be used to refer to upstream in conflicts
+		/// 	</param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.RebaseCommand SetUpstreamName(string upstreamName)
+		{
+			if (upstreamCommit == null)
+			{
+				throw new InvalidOperationException("setUpstreamName must be called after setUpstream."
+					);
+			}
+			this.upstreamCommitName = upstreamName;
+			return this;
 		}
 
 		/// <param name="operation">the operation to perform</param>

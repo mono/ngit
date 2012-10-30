@@ -42,6 +42,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using NGit;
+using NGit.Junit;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
 using Sharpen;

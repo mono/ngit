@@ -82,7 +82,7 @@ namespace NGit.Revwalk
 		{
 			RevFlag flag1 = rw.NewFlag("flag_1");
 			RevFlag flag2 = rw.NewFlag("flag_2");
-			NUnit.Framework.Assert.IsTrue((flag1.mask & flag2.mask) == 0);
+			NUnit.Framework.Assert.AreEqual(0, (flag1.mask & flag2.mask));
 			RevFlagSet set = new RevFlagSet();
 			NUnit.Framework.Assert.IsTrue(set.AddItem(flag1));
 			NUnit.Framework.Assert.IsTrue(set.AddItem(flag2));
@@ -114,7 +114,7 @@ namespace NGit.Revwalk
 			RevFlagSet set = new RevFlagSet();
 			NUnit.Framework.Assert.IsTrue(set.AddItem(flag1));
 			NUnit.Framework.Assert.IsTrue(set.AddItem(flag2));
-			NUnit.Framework.Assert.IsTrue(new RevFlagSet(set).Equals(set));
+			NUnit.Framework.Assert.AreEqual(set, new RevFlagSet(set));
 			NUnit.Framework.Assert.IsTrue(new RevFlagSet(Arrays.AsList(new RevFlag[] { flag1, 
 				flag2 })).Equals(set));
 		}

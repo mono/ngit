@@ -51,25 +51,6 @@ namespace NGit.Util
 {
 	internal class FS_Win32 : FS
 	{
-		internal static bool IsWin32()
-		{
-			string osDotName = AccessController.DoPrivileged(new _PrivilegedAction_59());
-			return osDotName != null && StringUtils.ToLowerCase(osDotName).IndexOf("windows")
-				 != -1;
-		}
-
-		private sealed class _PrivilegedAction_59 : PrivilegedAction<string>
-		{
-			public _PrivilegedAction_59()
-			{
-			}
-
-			public string Run()
-			{
-				return Runtime.GetProperty("os.name");
-			}
-		}
-
 		public FS_Win32() : base()
 		{
 		}

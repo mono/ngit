@@ -95,7 +95,7 @@ namespace NGit.Api
 				string fullNewName;
 				if (repo.GetRef(newName) != null)
 				{
-					throw new RefAlreadyExistsException(MessageFormat.Format(JGitText.Get().refAlreadyExists
+					throw new RefAlreadyExistsException(MessageFormat.Format(JGitText.Get().refAlreadyExists1
 						, newName));
 				}
 				if (oldName != null)

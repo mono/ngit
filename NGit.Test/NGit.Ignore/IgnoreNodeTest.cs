@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using System.Text;
 using NGit;
 using NGit.Ignore;
+using NGit.Junit;
 using NGit.Treewalk;
 using NGit.Util;
 using Sharpen;

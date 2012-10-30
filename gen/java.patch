@@ -1,3 +1,58 @@
+diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/api/CheckoutCommandTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/api/CheckoutCommandTest.java
+index 3f0bc04..8cdc066 100644
+--- a/org.eclipse.jgit.test/tst/org/eclipse/jgit/api/CheckoutCommandTest.java
++++ b/org.eclipse.jgit.test/tst/org/eclipse/jgit/api/CheckoutCommandTest.java
+@@ -43,8 +43,6 @@
+  */
+ package org.eclipse.jgit.api;
+ 
+-import static org.hamcrest.MatcherAssert.assertThat;
+-import static org.hamcrest.Matchers.is;
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertFalse;
+ import static org.junit.Assert.assertNotNull;
+@@ -248,8 +246,8 @@ public void testCheckoutOfDirectoryShouldBeRecursive() throws Exception {
+ 		write(b, "modified");
+ 		git.checkout().addPath("dir").call();
+ 
+-		assertThat(read(a), is("A"));
+-		assertThat(read(b), is("B"));
++		assertEquals(read(a), "A");
++		assertEquals(read(b), "B");
+ 	}
+ 
+ 	@Test
+@@ -263,8 +261,8 @@ public void testCheckoutAllPaths() throws Exception {
+ 		write(b, "modified");
+ 		git.checkout().setAllPaths(true).call();
+ 
+-		assertThat(read(a), is("A"));
+-		assertThat(read(b), is("B"));
++		assertEquals(read(a), "A");
++		assertEquals(read(b), "B");
+ 	}
+ 
+ 	@Test
+@@ -279,7 +277,7 @@ public void testCheckoutWithStartPoint() throws Exception {
+ 		git.checkout().setCreateBranch(true).setName("a")
+ 				.setStartPoint(first.getId().getName()).call();
+ 
+-		assertThat(read(a), is("A"));
++		assertEquals(read(a), "A");
+ 	}
+ 
+ 	@Test
+@@ -296,8 +294,8 @@ public void testCheckoutWithStartPointOnlyCertainFiles() throws Exception {
+ 		git.checkout().setCreateBranch(true).setName("a")
+ 				.setStartPoint(first.getId().getName()).addPath("a.txt").call();
+ 
+-		assertThat(read(a), is("A"));
+-		assertThat(read(b), is("other"));
++		assertEquals(read(a), "A");
++		assertEquals(read(b), "other");
+ 	}
+ 
+ 	@Test
 diff --git a/org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/DirCacheCheckoutMaliciousPathTest.java b/org.eclipse.jgit.test/tst/org/eclipse/jgit/lib/DirCacheCheckoutMaliciousPathTest.java
 deleted file mode 100644
 index fb9cc2c..0000000
@@ -662,7 +717,7 @@ index 484039e..fb36482 100644
  			// to store the end of this chunk (end of the last conflicting range)
  			int endOfChunk = 0;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
-index 9f8aa7b..a597141 100644
+index 6f87349..5c3a9f6 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/api/RebaseCommand.java
 @@ -85,6 +85,7 @@
@@ -673,7 +728,7 @@ index 9f8aa7b..a597141 100644
  import org.eclipse.jgit.lib.RefUpdate.Result;
  import org.eclipse.jgit.lib.Repository;
  import org.eclipse.jgit.revwalk.RevCommit;
-@@ -697,30 +698,27 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
+@@ -719,33 +720,30 @@ private RevCommit tryFastForward(String headName, RevCommit oldCommit,
  	}
  
  	private void checkParameters() throws WrongRepositoryStateException {
@@ -682,9 +737,15 @@ index 9f8aa7b..a597141 100644
  			// these operations are only possible while in a rebasing state
 -			switch (repo.getRepositoryState()) {
 -			case REBASING_INTERACTIVE:
+-			case REBASING:
+-			case REBASING_REBASING:
+-			case REBASING_MERGE:
 -				break;
 -			default:
-+			if (repo.getRepositoryState() != RepositoryState.REBASING_INTERACTIVE)
++			if (s != RepositoryState.REBASING_INTERACTIVE &&
++				s != RepositoryState.REBASING &&
++				s != RepositoryState.REBASING_REBASING &&
++				s != RepositoryState.REBASING_MERGE)
  				throw new WrongRepositoryStateException(MessageFormat.format(
  						JGitText.get().wrongRepositoryState, repo
  								.getRepositoryState().name()));
@@ -710,7 +771,7 @@ index 9f8aa7b..a597141 100644
  	}
  
  	private void createFile(File parentDir, String name, String content)
-@@ -943,10 +941,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
+@@ -988,10 +986,10 @@ public RebaseCommand setProgressMonitor(ProgressMonitor monitor) {
  		return this;
  	}
  
@@ -975,6 +1036,18 @@ index f119c44..d961602 100644
  
  		private final boolean loose;
  
+diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/Repository.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/Repository.java
+index 76f5378..7fbfcb2 100644
+--- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/Repository.java
++++ b/org.eclipse.jgit/src/org/eclipse/jgit/lib/Repository.java
+@@ -775,7 +775,6 @@ private RevCommit resolveReflog(RevWalk rw, Ref ref, String time)
+ 			throw new RevisionSyntaxException(MessageFormat.format(
+ 					JGitText.get().invalidReflogRevision, time));
+ 		}
+-		assert number >= 0;
+ 		ReflogReader reader = new ReflogReader(this, ref.getName());
+ 		ReflogEntry entry = reader.getReverseEntry(number);
+ 		if (entry == null)
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
 index 7e3ba51..4a7034d 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/RepositoryState.java
@@ -1340,7 +1413,7 @@ index 9e8e256..b774b1b 100644
  			doUpdates();
  			process.acquire();
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
-index 212938e..6df41cb 100644
+index 1782bb2..7ca4267 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/merge/ResolveMerger.java
 @@ -104,7 +104,7 @@
@@ -1620,7 +1693,7 @@ index 3b25870..9b7b7ac 100644
 +	}
  }
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
-index 32b8302..8069698 100644
+index c2cda54..95069a3 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/transport/UploadPack.java
 @@ -252,7 +252,7 @@ public String getLine() {
@@ -1680,7 +1753,7 @@ index 315d909..98cedfa 100644
  
  		private final FileMode mode;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
-index 8d0555b..db1c4af 100644
+index 9ee5f8b..648d597 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/treewalk/WorkingTreeIterator.java
 @@ -135,6 +135,12 @@
@@ -1696,7 +1769,7 @@ index 8d0555b..db1c4af 100644
  	 * Create a new iterator with no parent.
  	 *
  	 * @param options
-@@ -567,6 +573,8 @@ public boolean isEntryIgnored() throws IOException {
+@@ -569,6 +575,8 @@ public boolean isEntryIgnored() throws IOException {
  	 *             a relevant ignore rule file exists but cannot be read.
  	 */
  	protected boolean isEntryIgnored(final int pLen) throws IOException {
@@ -1705,7 +1778,7 @@ index 8d0555b..db1c4af 100644
  		IgnoreNode rules = getIgnoreNode();
  		if (rules != null) {
  			// The ignore code wants path to start with a '/' if possible.
-@@ -579,15 +587,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
+@@ -581,15 +589,20 @@ protected boolean isEntryIgnored(final int pLen) throws IOException {
  			String p = TreeWalk.pathOf(path, pOff, pLen);
  			switch (rules.isIgnored(p, FileMode.TREE.equals(mode))) {
  			case IGNORED:
@@ -1728,7 +1801,7 @@ index 8d0555b..db1c4af 100644
  		return false;
  	}
  
-@@ -755,8 +768,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
+@@ -757,8 +770,10 @@ public MetadataDiff compareMetadata(DirCacheEntry entry) {
  		// only. Otherwise we compare the timestamp at millisecond precision.
  		long cacheLastModified = entry.getLastModified();
  		long fileLastModified = getEntryLastModified();
@@ -1764,20 +1837,57 @@ index acc1ae6..686d65a 100644
  					return true;
  			return false;
  		}
+diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/util/GitDateParser.java b/org.eclipse.jgit/src/org/eclipse/jgit/util/GitDateParser.java
+index f1743d4..b76ecc6 100644
+--- a/org.eclipse.jgit/src/org/eclipse/jgit/util/GitDateParser.java
++++ b/org.eclipse.jgit/src/org/eclipse/jgit/util/GitDateParser.java
+@@ -97,17 +97,30 @@ private static SimpleDateFormat getDateFormat(ParseableSimpleDateFormat f) {
+ 	// like "yesterday" or "1 week ago") which this parser can parse but which
+ 	// are not listed here because they are parsed without the help of a
+ 	// SimpleDateFormat.
+-	enum ParseableSimpleDateFormat {
+-		ISO("yyyy-MM-dd HH:mm:ss Z"), //
+-		RFC("EEE, dd MMM yyyy HH:mm:ss Z"), //
+-		SHORT("yyyy-MM-dd"), //
+-		SHORT_WITH_DOTS_REVERSE("dd.MM.yyyy"), //
+-		SHORT_WITH_DOTS("yyyy.MM.dd"), //
+-		SHORT_WITH_SLASH("MM/dd/yyyy"), //
+-		DEFAULT("EEE MMM dd HH:mm:ss yyyy Z"), //
+-		LOCAL("EEE MMM dd HH:mm:ss yyyy");
+-
+-		String formatStr;
++	public static class ParseableSimpleDateFormat {
++		public static ParseableSimpleDateFormat ISO = new ParseableSimpleDateFormat ("yyyy-MM-dd HH:mm:ss Z"); //
++		public static ParseableSimpleDateFormat RFC = new ParseableSimpleDateFormat ("EEE, dd MMM yyyy HH:mm:ss Z"); //
++		public static ParseableSimpleDateFormat SHORT = new ParseableSimpleDateFormat ("yyyy-MM-dd"); //
++		public static ParseableSimpleDateFormat SHORT_WITH_DOTS_REVERSE = new ParseableSimpleDateFormat("dd.MM.yyyy"); //
++		public static ParseableSimpleDateFormat SHORT_WITH_DOTS = new ParseableSimpleDateFormat("yyyy.MM.dd"); //
++		public static ParseableSimpleDateFormat SHORT_WITH_SLASH = new ParseableSimpleDateFormat("MM/dd/yyyy"); //
++		public static ParseableSimpleDateFormat DEFAULT = new ParseableSimpleDateFormat ("EEE MMM dd HH:mm:ss yyyy Z"); //
++		public static ParseableSimpleDateFormat LOCAL = new ParseableSimpleDateFormat("EEE MMM dd HH:mm:ss yyyy");
++		public static ParseableSimpleDateFormat[] values ()
++		{
++			return new ParseableSimpleDateFormat[] {
++				ISO,
++				RFC,
++				SHORT,
++				SHORT_WITH_DOTS_REVERSE,
++				SHORT_WITH_DOTS,
++				SHORT_WITH_SLASH,
++				DEFAULT,
++				LOCAL
++			};
++		}		
++
++		public String formatStr;
+ 
+ 		private ParseableSimpleDateFormat(String formatStr) {
+ 			this.formatStr = formatStr;
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java b/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
-index 4181a2f..1784cbc 100644
+index e9d9953..196e0e7 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/util/SystemReader.java
-@@ -67,7 +67,7 @@
-  */
- public abstract class SystemReader {
- 	private static SystemReader INSTANCE = new SystemReader() {
--		private volatile String hostname;
-+		private String hostname;
- 
- 		public String getenv(String variable) {
- 			return System.getenv(variable);
-@@ -110,7 +110,6 @@ public String getHostname() {
+@@ -112,7 +112,6 @@ public String getHostname() {
  					// we do nothing
  					hostname = "localhost";
  				}

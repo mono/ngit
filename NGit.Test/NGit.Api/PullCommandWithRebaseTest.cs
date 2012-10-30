@@ -134,8 +134,8 @@ namespace NGit.Api
 			// nothing to update since we don't have different data yet
 			NUnit.Framework.Assert.IsTrue(res.GetFetchResult().GetTrackingRefUpdates().IsEmpty
 				());
-			NUnit.Framework.Assert.IsTrue(res.GetRebaseResult().GetStatus().Equals(RebaseResult.Status
-				.UP_TO_DATE));
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.UP_TO_DATE, res.GetRebaseResult
+				().GetStatus());
 			AssertFileContentsEqual(targetFile, "Hello world");
 			// change the source file
 			WriteToFile(sourceFile, "Source change");
@@ -146,11 +146,13 @@ namespace NGit.Api
 			target.Add().AddFilepattern("SomeFile.txt").Call();
 			target.Commit().SetMessage("Target change in local").Call();
 			res = target.Pull().Call();
+			string remoteUri = target.GetRepository().GetConfig().GetString(ConfigConstants.CONFIG_REMOTE_SECTION
+				, "origin", ConfigConstants.CONFIG_KEY_URL);
 			NUnit.Framework.Assert.IsFalse(res.GetFetchResult().GetTrackingRefUpdates().IsEmpty
 				());
-			NUnit.Framework.Assert.IsTrue(res.GetRebaseResult().GetStatus().Equals(RebaseResult.Status
-				.STOPPED));
-			string result = "<<<<<<< OURS\nSource change\n=======\nTarget change\n>>>>>>> THEIRS\n";
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetRebaseResult(
+				).GetStatus());
+			string result = "<<<<<<< Upstream, based on branch 'master' of " + remoteUri + "\nSource change\n=======\nTarget change\n>>>>>>> 42453fd Target change in local\n";
 			AssertFileContentsEqual(targetFile, result);
 			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, target.GetRepository
 				().GetRepositoryState());
@@ -188,7 +190,8 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsNull(res.GetFetchResult());
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetRebaseResult(
 				).GetStatus());
-			string result = "<<<<<<< OURS\nMaster change\n=======\nSlave change\n>>>>>>> THEIRS\n";
+			string result = "<<<<<<< Upstream, based on branch 'master' of local repository\n"
+				 + "Master change\n=======\nSlave change\n>>>>>>> 4049c9e Source change in based on master\n";
 			AssertFileContentsEqual(targetFile, result);
 			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, target.GetRepository
 				().GetRepositoryState());

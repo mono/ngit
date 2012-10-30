@@ -114,9 +114,9 @@ namespace NGit.Storage.File
 		public virtual void TestContructor()
 		{
 			writer = new PackWriter(config, db.NewObjectReader());
-			NUnit.Framework.Assert.AreEqual(false, writer.IsDeltaBaseAsOffset());
-			NUnit.Framework.Assert.AreEqual(true, config.IsReuseDeltas());
-			NUnit.Framework.Assert.AreEqual(true, config.IsReuseObjects());
+			NUnit.Framework.Assert.IsFalse(writer.IsDeltaBaseAsOffset());
+			NUnit.Framework.Assert.IsTrue(config.IsReuseDeltas());
+			NUnit.Framework.Assert.IsTrue(config.IsReuseObjects());
 			NUnit.Framework.Assert.AreEqual(0, writer.GetObjectCount());
 		}
 
@@ -128,13 +128,13 @@ namespace NGit.Storage.File
 			config.SetReuseDeltas(false);
 			config.SetReuseObjects(false);
 			config.SetDeltaBaseAsOffset(false);
-			NUnit.Framework.Assert.AreEqual(false, config.IsReuseDeltas());
-			NUnit.Framework.Assert.AreEqual(false, config.IsReuseObjects());
-			NUnit.Framework.Assert.AreEqual(false, config.IsDeltaBaseAsOffset());
+			NUnit.Framework.Assert.IsFalse(config.IsReuseDeltas());
+			NUnit.Framework.Assert.IsFalse(config.IsReuseObjects());
+			NUnit.Framework.Assert.IsFalse(config.IsDeltaBaseAsOffset());
 			writer = new PackWriter(config, db.NewObjectReader());
 			writer.SetDeltaBaseAsOffset(true);
-			NUnit.Framework.Assert.AreEqual(true, writer.IsDeltaBaseAsOffset());
-			NUnit.Framework.Assert.AreEqual(false, config.IsDeltaBaseAsOffset());
+			NUnit.Framework.Assert.IsTrue(writer.IsDeltaBaseAsOffset());
+			NUnit.Framework.Assert.IsFalse(config.IsDeltaBaseAsOffset());
 		}
 
 		/// <summary>
@@ -688,7 +688,7 @@ namespace NGit.Storage.File
 			{
 				entries.AddItem(me.CloneEntry());
 			}
-			entries.Sort(new _IComparer_659());
+			entries.Sort(new _IComparer_660());
 			int i = 0;
 			foreach (PackIndex.MutableEntry me_1 in entries)
 			{
@@ -697,9 +697,9 @@ namespace NGit.Storage.File
 			}
 		}
 
-		private sealed class _IComparer_659 : IComparer<PackIndex.MutableEntry>
+		private sealed class _IComparer_660 : IComparer<PackIndex.MutableEntry>
 		{
-			public _IComparer_659()
+			public _IComparer_660()
 			{
 			}
 

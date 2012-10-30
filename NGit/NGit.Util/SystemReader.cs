@@ -62,13 +62,13 @@ namespace NGit.Util
 	/// </remarks>
 	public abstract class SystemReader
 	{
-		private sealed class _SystemReader_69 : SystemReader
+		private sealed class _SystemReader_71 : SystemReader
 		{
-			public _SystemReader_69()
+			public _SystemReader_71()
 			{
 			}
 
-			private string hostname;
+			private volatile string hostname;
 
 			public override string Getenv(string variable)
 			{
@@ -85,7 +85,7 @@ namespace NGit.Util
 				FilePath prefix = fs.GitPrefix();
 				if (prefix == null)
 				{
-					return new _FileBasedConfig_83(null, fs);
+					return new _FileBasedConfig_85(null, fs);
 				}
 				// empty, do not load
 				// regular class would bomb here
@@ -94,9 +94,9 @@ namespace NGit.Util
 				return new FileBasedConfig(parent, config, fs);
 			}
 
-			private sealed class _FileBasedConfig_83 : FileBasedConfig
+			private sealed class _FileBasedConfig_85 : FileBasedConfig
 			{
-				public _FileBasedConfig_83(FilePath baseArg1, FS baseArg2) : base(baseArg1, baseArg2
+				public _FileBasedConfig_85(FilePath baseArg1, FS baseArg2) : base(baseArg1, baseArg2
 					)
 				{
 				}
@@ -146,7 +146,9 @@ namespace NGit.Util
 			}
 		}
 
-		private static SystemReader INSTANCE = new _SystemReader_69();
+		private static SystemReader DEFAULT = new _SystemReader_71();
+
+		private static SystemReader INSTANCE = DEFAULT;
 
 		/// <returns>the live instance to read system properties.</returns>
 		public static SystemReader GetInstance()
@@ -157,7 +159,14 @@ namespace NGit.Util
 		/// <param name="newReader">the new instance to use when accessing properties.</param>
 		public static void SetInstance(SystemReader newReader)
 		{
-			INSTANCE = newReader;
+			if (newReader == null)
+			{
+				INSTANCE = DEFAULT;
+			}
+			else
+			{
+				INSTANCE = newReader;
+			}
 		}
 
 		/// <summary>Gets the hostname of the local host.</summary>
@@ -253,6 +262,50 @@ namespace NGit.Util
 		public virtual DateFormat GetDateTimeInstance(int dateStyle, int timeStyle)
 		{
 			return DateFormat.GetDateTimeInstance(dateStyle, timeStyle);
+		}
+
+		/// <returns>true if we are running on a Windows.</returns>
+		public virtual bool IsWindows()
+		{
+			string osDotName = AccessController.DoPrivileged(new _PrivilegedAction_251(this));
+			return osDotName.StartsWith("Windows");
+		}
+
+		private sealed class _PrivilegedAction_251 : PrivilegedAction<string>
+		{
+			public _PrivilegedAction_251(SystemReader _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public string Run()
+			{
+				return this._enclosing.GetProperty("os.name");
+			}
+
+			private readonly SystemReader _enclosing;
+		}
+
+		/// <returns>true if we are running on Mac OS X</returns>
+		public virtual bool IsMacOS()
+		{
+			string osDotName = AccessController.DoPrivileged(new _PrivilegedAction_264(this));
+			return "Mac OS X".Equals(osDotName) || "Darwin".Equals(osDotName);
+		}
+
+		private sealed class _PrivilegedAction_264 : PrivilegedAction<string>
+		{
+			public _PrivilegedAction_264(SystemReader _enclosing)
+			{
+				this._enclosing = _enclosing;
+			}
+
+			public string Run()
+			{
+				return this._enclosing.GetProperty("os.name");
+			}
+
+			private readonly SystemReader _enclosing;
 		}
 	}
 }

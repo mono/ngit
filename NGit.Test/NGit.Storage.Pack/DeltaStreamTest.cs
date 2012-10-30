@@ -47,6 +47,7 @@ using NGit.Internal;
 using NGit.Junit;
 using NGit.Storage.Pack;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Storage.Pack
@@ -187,16 +188,16 @@ namespace NGit.Storage.Pack
 			// Skip should not open the base as we move past it, but it
 			// will open when we need to start copying data from it.
 			bool[] opened = new bool[1];
-			in_1 = new _DeltaStream_179(this, opened, new ByteArrayInputStream(delta));
+			in_1 = new _DeltaStream_180(this, opened, new ByteArrayInputStream(delta));
 			IOUtil.SkipFully(in_1, 7);
 			NUnit.Framework.Assert.IsFalse(opened[0], "not yet open");
 			NUnit.Framework.Assert.AreEqual(data[7], in_1.Read());
 			NUnit.Framework.Assert.IsTrue(opened[0], "now open");
 		}
 
-		private sealed class _DeltaStream_179 : DeltaStream
+		private sealed class _DeltaStream_180 : DeltaStream
 		{
-			public _DeltaStream_179(DeltaStreamTest _enclosing, bool[] opened, InputStream baseArg1
+			public _DeltaStream_180(DeltaStreamTest _enclosing, bool[] opened, InputStream baseArg1
 				) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -228,7 +229,7 @@ namespace NGit.Storage.Pack
 			Init(4, 4);
 			Copy(0, 4);
 			AssertValidState();
-			DeltaStream @in = new _DeltaStream_203(this, new ByteArrayInputStream(delta));
+			DeltaStream @in = new _DeltaStream_204(this, new ByteArrayInputStream(delta));
 			try
 			{
 				@in.Read(new byte[4]);
@@ -238,7 +239,7 @@ namespace NGit.Storage.Pack
 			{
 				NUnit.Framework.Assert.AreEqual(JGitText.Get().baseLengthIncorrect, e.Message);
 			}
-			@in = new _DeltaStream_221(new ByteArrayInputStream(delta));
+			@in = new _DeltaStream_222(new ByteArrayInputStream(delta));
 			try
 			{
 				@in.Read(new byte[4]);
@@ -250,9 +251,9 @@ namespace NGit.Storage.Pack
 			}
 		}
 
-		private sealed class _DeltaStream_203 : DeltaStream
+		private sealed class _DeltaStream_204 : DeltaStream
 		{
-			public _DeltaStream_203(DeltaStreamTest _enclosing, InputStream baseArg1) : base(
+			public _DeltaStream_204(DeltaStreamTest _enclosing, InputStream baseArg1) : base(
 				baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -273,9 +274,9 @@ namespace NGit.Storage.Pack
 			private readonly DeltaStreamTest _enclosing;
 		}
 
-		private sealed class _DeltaStream_221 : DeltaStream
+		private sealed class _DeltaStream_222 : DeltaStream
 		{
-			public _DeltaStream_221(InputStream baseArg1) : base(baseArg1)
+			public _DeltaStream_222(InputStream baseArg1) : base(baseArg1)
 			{
 			}
 
@@ -333,8 +334,7 @@ namespace NGit.Storage.Pack
 			delta = deltaBuf.ToByteArray();
 			NUnit.Framework.Assert.AreEqual(@base.Length, BinaryDelta.GetBaseSize(delta));
 			NUnit.Framework.Assert.AreEqual(data.Length, BinaryDelta.GetResultSize(delta));
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data, BinaryDelta.Apply(@base, delta)
-				));
+			CollectionAssert.AreEquivalent(data, BinaryDelta.Apply(@base, delta));
 			// Assert that a single bulk read produces the correct result.
 			//
 			byte[] act = new byte[data.Length];
@@ -367,12 +367,12 @@ namespace NGit.Storage.Pack
 		/// <exception cref="System.IO.IOException"></exception>
 		private DeltaStream Open()
 		{
-			return new _DeltaStream_298(this, new ByteArrayInputStream(delta));
+			return new _DeltaStream_299(this, new ByteArrayInputStream(delta));
 		}
 
-		private sealed class _DeltaStream_298 : DeltaStream
+		private sealed class _DeltaStream_299 : DeltaStream
 		{
-			public _DeltaStream_298(DeltaStreamTest _enclosing, InputStream baseArg1) : base(
+			public _DeltaStream_299(DeltaStreamTest _enclosing, InputStream baseArg1) : base(
 				baseArg1)
 			{
 				this._enclosing = _enclosing;

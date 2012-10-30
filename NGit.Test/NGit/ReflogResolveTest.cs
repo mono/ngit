@@ -70,6 +70,40 @@ namespace NGit
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void ResolveUnnamedCurrentBranchCommits()
+		{
+			Git git = new Git(db);
+			WriteTrashFile("file.txt", "content");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit c1 = git.Commit().SetMessage("create file").Call();
+			WriteTrashFile("file.txt", "content2");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit c2 = git.Commit().SetMessage("edit file").Call();
+			NUnit.Framework.Assert.AreEqual(c2, db.Resolve("master@{0}"));
+			NUnit.Framework.Assert.AreEqual(c1, db.Resolve("master@{1}"));
+			git.Checkout().SetCreateBranch(true).SetName("newbranch").SetStartPoint(c1).Call(
+				);
+			// same as current branch, e.g. master
+			NUnit.Framework.Assert.AreEqual(c1, db.Resolve("@{0}"));
+			try
+			{
+				NUnit.Framework.Assert.AreEqual(c1, db.Resolve("@{1}"));
+				NUnit.Framework.Assert.Fail();
+			}
+			catch (RevisionSyntaxException e)
+			{
+				// Looking at wrong ref, e.g HEAD
+				NUnit.Framework.Assert.IsNotNull(e);
+			}
+			// detached head, read HEAD reflog
+			git.Checkout().SetName(c2.GetName()).Call();
+			NUnit.Framework.Assert.AreEqual(c2, db.Resolve("@{0}"));
+			NUnit.Framework.Assert.AreEqual(c1, db.Resolve("@{1}"));
+			NUnit.Framework.Assert.AreEqual(c2, db.Resolve("@{2}"));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void ResolveReflogParent()
 		{
 			Git git = new Git(db);
@@ -95,21 +129,35 @@ namespace NGit
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
-		public virtual void ResolveNegativeEntryNumber()
+		public virtual void ResolvePreviousBranch()
 		{
 			Git git = new Git(db);
 			WriteTrashFile("file.txt", "content");
 			git.Add().AddFilepattern("file.txt").Call();
-			git.Commit().SetMessage("create file").Call();
+			RevCommit c1 = git.Commit().SetMessage("create file").Call();
+			WriteTrashFile("file.txt", "content2");
+			git.Add().AddFilepattern("file.txt").Call();
+			RevCommit c2 = git.Commit().SetMessage("edit file").Call();
+			git.Checkout().SetCreateBranch(true).SetName("newbranch").SetStartPoint(c1).Call(
+				);
+			git.Checkout().SetName(c1.GetName()).Call();
+			git.Checkout().SetName("master").Call();
+			NUnit.Framework.Assert.AreEqual(c1.GetName(), db.Simplify("@{-1}"));
+			NUnit.Framework.Assert.AreEqual("newbranch", db.Simplify("@{-2}"));
+			NUnit.Framework.Assert.AreEqual("master", db.Simplify("@{-3}"));
+			// chained expression
 			try
 			{
-				db.Resolve("master@{-12}");
-				NUnit.Framework.Assert.Fail("Exception not thrown");
+				// Cannot refer to reflog of detached head
+				db.Resolve("@{-1}@{0}");
+				NUnit.Framework.Assert.Fail();
 			}
-			catch (RevisionSyntaxException e)
+			catch (RevisionSyntaxException)
 			{
-				NUnit.Framework.Assert.IsNotNull(e);
 			}
+			// good
+			NUnit.Framework.Assert.AreEqual(c1.GetName(), db.Resolve("@{-2}@{0}").GetName());
+			NUnit.Framework.Assert.AreEqual(c2.GetName(), db.Resolve("@{-3}@{0}").GetName());
 		}
 
 		/// <exception cref="System.Exception"></exception>

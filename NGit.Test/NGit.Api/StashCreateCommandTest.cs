@@ -290,7 +290,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsNotNull(stashed);
 			NUnit.Framework.Assert.AreEqual("content", Read(committedFile));
 			ValidateStashedCommit(stashed);
-			NUnit.Framework.Assert.IsTrue(stashed.Tree.Equals(stashed.GetParent(1).Tree));
+			NUnit.Framework.Assert.AreEqual(stashed.GetParent(1).Tree, stashed.Tree);
 			IList<DiffEntry> workingDiffs = DiffWorkingAgainstHead(stashed);
 			NUnit.Framework.Assert.AreEqual(1, workingDiffs.Count);
 			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.MODIFY, workingDiffs[0].GetChangeType
@@ -321,7 +321,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsNotNull(stashed);
 			NUnit.Framework.Assert.IsFalse(added.Exists());
 			ValidateStashedCommit(stashed);
-			NUnit.Framework.Assert.IsTrue(stashed.Tree.Equals(stashed.GetParent(1).Tree));
+			NUnit.Framework.Assert.AreEqual(stashed.GetParent(1).Tree, stashed.Tree);
 			IList<DiffEntry> workingDiffs = DiffWorkingAgainstHead(stashed);
 			NUnit.Framework.Assert.AreEqual(1, workingDiffs.Count);
 			NUnit.Framework.Assert.AreEqual(DiffEntry.ChangeType.ADD, workingDiffs[0].GetChangeType
@@ -406,6 +406,16 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(stashed, entry.GetNewId());
 			NUnit.Framework.Assert.AreEqual(who, entry.GetWho());
 			NUnit.Framework.Assert.AreEqual(stashed.GetFullMessage(), entry.GetComment());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		public virtual void UnmergedPathsShouldCauseException()
+		{
+			CommitFile("file.txt", "master", "base");
+			RevCommit side = CommitFile("file.txt", "side", "side");
+			CommitFile("file.txt", "master", "master");
+			git.Merge().Include(side).Call();
+			git.StashCreate().Call();
 		}
 	}
 }

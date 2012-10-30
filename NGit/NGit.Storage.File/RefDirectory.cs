@@ -257,11 +257,22 @@ namespace NGit.Storage.File
 			Ref @ref = null;
 			foreach (string prefix in SEARCH_PATH)
 			{
-				@ref = ReadRef(prefix + needle, packed);
-				if (@ref != null)
+				try
 				{
-					@ref = Resolve(@ref, 0, null, null, packed);
-					break;
+					@ref = ReadRef(prefix + needle, packed);
+					if (@ref != null)
+					{
+						@ref = Resolve(@ref, 0, null, null, packed);
+						break;
+					}
+				}
+				catch (IOException e)
+				{
+					if (!(!needle.Contains("/") && string.Empty.Equals(prefix) && e.InnerException is
+						 InvalidObjectIdException))
+					{
+						throw;
+					}
 				}
 			}
 			FireRefsChanged();
@@ -1004,12 +1015,12 @@ namespace NGit.Storage.File
 		private void CommitPackedRefs(LockFile lck, RefList<Ref> refs, RefDirectory.PackedRefList
 			 oldPackedList)
 		{
-			new _RefWriter_818(this, lck, oldPackedList, refs, refs).WritePackedRefs();
+			new _RefWriter_826(this, lck, oldPackedList, refs, refs).WritePackedRefs();
 		}
 
-		private sealed class _RefWriter_818 : RefWriter
+		private sealed class _RefWriter_826 : RefWriter
 		{
-			public _RefWriter_818(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
+			public _RefWriter_826(RefDirectory _enclosing, LockFile lck, RefDirectory.PackedRefList
 				 oldPackedList, RefList<Ref> refs, RefList<Ref> baseArg1) : base(baseArg1)
 			{
 				this._enclosing = _enclosing;
@@ -1184,15 +1195,17 @@ namespace NGit.Storage.File
 					return @ref;
 				}
 			}
-			catch (ArgumentException)
+			catch (ArgumentException notRef)
 			{
 				while (0 < n && char.IsWhiteSpace((char)buf[n - 1]))
 				{
 					n--;
 				}
 				string content = RawParseUtils.Decode(buf, 0, n);
-				throw new IOException(MessageFormat.Format(JGitText.Get().notARef, name, content)
-					);
+				IOException ioException = new IOException(MessageFormat.Format(JGitText.Get().notARef
+					, name, content));
+				Sharpen.Extensions.InitCause(ioException, notRef);
+				throw ioException;
 			}
 			return new RefDirectory.LooseUnpeeled(otherSnapshot, name, id);
 		}

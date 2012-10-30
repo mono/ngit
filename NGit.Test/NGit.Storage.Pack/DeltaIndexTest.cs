@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Junit;
 using NGit.Storage.Pack;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Storage.Pack
@@ -267,8 +268,7 @@ namespace NGit.Storage.Pack
 			NUnit.Framework.Assert.IsTrue(actDelta.Length > 0, "delta is not empty");
 			NUnit.Framework.Assert.AreEqual(src.Length, BinaryDelta.GetBaseSize(actDelta));
 			NUnit.Framework.Assert.AreEqual(dst.Length, BinaryDelta.GetResultSize(actDelta));
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(dst, BinaryDelta.Apply(src, actDelta)
-				));
+			CollectionAssert.AreEquivalent(dst, BinaryDelta.Apply(src, actDelta));
 		}
 	}
 }

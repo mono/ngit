@@ -66,13 +66,13 @@ namespace NGit
 					FsTick(lastFile);
 				}
 			}
-			modTimes.AddItem(FsTick(lastFile));
+			modTimes.AddItem(Sharpen.Extensions.ValueOf(FsTick(lastFile)));
 			for (int i_1 = 0; i_1 < 10; i_1++)
 			{
 				lastFile = new FilePath(db.WorkTree, "1." + i_1);
 				FileUtils.CreateNewFile(lastFile);
 			}
-			modTimes.AddItem(FsTick(lastFile));
+			modTimes.AddItem(Sharpen.Extensions.ValueOf(FsTick(lastFile)));
 			for (int i_2 = 0; i_2 < 10; i_2++)
 			{
 				lastFile = new FilePath(db.WorkTree, "2." + i_2);
@@ -143,13 +143,13 @@ namespace NGit
 			FilePath lastFile;
 			// wait to ensure that modtimes of the file doesn't match last index
 			// file modtime
-			modTimes.AddItem(FsTick(db.GetIndexFile()));
+			modTimes.AddItem(Sharpen.Extensions.ValueOf(FsTick(db.GetIndexFile())));
 			// create two files
 			AddToWorkDir("a", "a");
 			lastFile = AddToWorkDir("b", "b");
 			// wait to ensure that file-modTimes and therefore index entry modTime
 			// doesn't match the modtime of index-file after next persistance
-			modTimes.AddItem(FsTick(lastFile));
+			modTimes.AddItem(Sharpen.Extensions.ValueOf(FsTick(lastFile)));
 			// now add both files to the index. No racy git expected
 			ResetIndex(new FileTreeIteratorWithTimeControl(db, modTimes));
 			NUnit.Framework.Assert.AreEqual("[a, mode:100644, time:t0, length:1, content:a]" 

@@ -58,16 +58,6 @@ namespace NGit.Treewalk
 		private static readonly FileMode EXECUTABLE_FILE = FileMode.EXECUTABLE_FILE;
 
 		/// <exception cref="System.Exception"></exception>
-		private DirCacheEntry MakeEntry(string path, FileMode mode)
-		{
-			DirCacheEntry ent = new DirCacheEntry(path);
-			ent.FileMode = mode;
-			ent.SetObjectId(new ObjectInserter.Formatter().IdFor(Constants.OBJ_BLOB, Constants
-				.Encode(path)));
-			return ent;
-		}
-
-		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestFindObjects()
 		{
@@ -75,13 +65,13 @@ namespace NGit.Treewalk
 			DirCacheBuilder b0 = tree0.Builder();
 			ObjectReader or = db.NewObjectReader();
 			ObjectInserter oi = db.NewObjectInserter();
-			DirCacheEntry aDotB = MakeEntry("a.b", EXECUTABLE_FILE);
+			DirCacheEntry aDotB = CreateEntry("a.b", EXECUTABLE_FILE);
 			b0.Add(aDotB);
-			DirCacheEntry aSlashB = MakeEntry("a/b", REGULAR_FILE);
+			DirCacheEntry aSlashB = CreateEntry("a/b", REGULAR_FILE);
 			b0.Add(aSlashB);
-			DirCacheEntry aSlashCSlashD = MakeEntry("a/c/d", REGULAR_FILE);
+			DirCacheEntry aSlashCSlashD = CreateEntry("a/c/d", REGULAR_FILE);
 			b0.Add(aSlashCSlashD);
-			DirCacheEntry aZeroB = MakeEntry("a0b", SYMLINK);
+			DirCacheEntry aZeroB = CreateEntry("a0b", SYMLINK);
 			b0.Add(aZeroB);
 			b0.Finish();
 			NUnit.Framework.Assert.AreEqual(4, tree0.GetEntryCount());

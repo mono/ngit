@@ -284,6 +284,12 @@ namespace NGit.Storage.File
 			}
 			cfg.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_LOGALLREFUPDATES
 				, !bare);
+			if (SystemReader.GetInstance().IsMacOS())
+			{
+				// Java has no other way
+				cfg.SetBoolean(ConfigConstants.CONFIG_CORE_SECTION, null, ConfigConstants.CONFIG_KEY_PRECOMPOSEUNICODE
+					, true);
+			}
 			cfg.Save();
 		}
 

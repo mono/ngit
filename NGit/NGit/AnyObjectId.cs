@@ -556,7 +556,8 @@ namespace NGit
 		/// <summary>Return an abbreviation (prefix) of this object SHA-1.</summary>
 		/// <remarks>
 		/// Return an abbreviation (prefix) of this object SHA-1.
-		/// This implementation does not guaranteeing uniqueness. Callers should
+		/// <p>
+		/// This implementation does not guarantee uniqueness. Callers should
 		/// instead use
 		/// <see cref="ObjectReader.Abbreviate(AnyObjectId, int)">ObjectReader.Abbreviate(AnyObjectId, int)
 		/// 	</see>

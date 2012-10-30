@@ -252,7 +252,7 @@ namespace NGit.Transport
 			Init("0008NAK\n");
 			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.NAK, @in.ReadACK(actid
 				));
-			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
+			NUnit.Framework.Assert.AreEqual(expid, actid);
 			AssertEOF();
 		}
 
@@ -265,7 +265,7 @@ namespace NGit.Transport
 			Init("0031ACK fcfcfb1fd94829c1a1704f894fc111d14770d34e\n");
 			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.ACK, @in.ReadACK(actid
 				));
-			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
+			NUnit.Framework.Assert.AreEqual(expid, actid);
 			AssertEOF();
 		}
 
@@ -278,7 +278,7 @@ namespace NGit.Transport
 			Init("003aACK fcfcfb1fd94829c1a1704f894fc111d14770d34e continue\n");
 			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.ACK_CONTINUE, @in.ReadACK
 				(actid));
-			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
+			NUnit.Framework.Assert.AreEqual(expid, actid);
 			AssertEOF();
 		}
 
@@ -291,7 +291,7 @@ namespace NGit.Transport
 			Init("0038ACK fcfcfb1fd94829c1a1704f894fc111d14770d34e common\n");
 			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.ACK_COMMON, @in.ReadACK
 				(actid));
-			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
+			NUnit.Framework.Assert.AreEqual(expid, actid);
 			AssertEOF();
 		}
 
@@ -304,7 +304,7 @@ namespace NGit.Transport
 			Init("0037ACK fcfcfb1fd94829c1a1704f894fc111d14770d34e ready\n");
 			NUnit.Framework.Assert.AreEqual(PacketLineIn.AckNackResult.ACK_READY, @in.ReadACK
 				(actid));
-			NUnit.Framework.Assert.IsTrue(actid.Equals(expid));
+			NUnit.Framework.Assert.AreEqual(expid, actid);
 			AssertEOF();
 		}
 

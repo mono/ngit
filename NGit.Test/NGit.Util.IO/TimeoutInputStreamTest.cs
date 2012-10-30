@@ -45,6 +45,7 @@ using System.Collections.Generic;
 using System.Threading;
 using NGit.Util;
 using NGit.Util.IO;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Util.IO
@@ -132,7 +133,7 @@ namespace NGit.Util.IO
 			byte[] act = new byte[exp.Length];
 			@out.Write(exp);
 			IOUtil.ReadFully(@is, act, 0, act.Length);
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, act));
+			 CollectionAssert.AreEquivalent(exp, act);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -145,7 +146,7 @@ namespace NGit.Util.IO
 			IOUtil.ReadFully(@is, act, 0, 1);
 			IOUtil.ReadFully(@is, act, 1, 1);
 			IOUtil.ReadFully(@is, act, 2, 1);
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(exp, act));
+			 CollectionAssert.AreEquivalent(exp, act);
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

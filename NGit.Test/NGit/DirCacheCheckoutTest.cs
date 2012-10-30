@@ -250,9 +250,8 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual(objectId, GetUpdated().Get("foo"));
 			merge = BuildTree(Mkmap("foo", "a"));
 			tw = TreeWalk.ForPath(db, "foo", merge);
-			ObjectId anotherId = tw.GetObjectId(0);
 			PrescanTwoTrees(head, merge);
-			NUnit.Framework.Assert.AreEqual(anotherId, GetUpdated().Get("foo"));
+			AssertConflict("foo");
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
@@ -278,15 +277,15 @@ namespace NGit
 					ObjectInserter inserter = db.NewObjectInserter();
 					ObjectId id = inserter.Insert(Constants.OBJ_BLOB, Constants.Encode(e.Value));
 					editor.Add(new DirCacheEditor.DeletePath(e.Key));
-					editor.Add(new _PathEdit_288(id, e.Key));
+					editor.Add(new _PathEdit_287(id, e.Key));
 				}
 				NUnit.Framework.Assert.IsTrue(editor.Commit());
 			}
 		}
 
-		private sealed class _PathEdit_288 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_287 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_288(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_287(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -495,10 +494,9 @@ namespace NGit
 		[NUnit.Framework.Test]
 		public virtual void TestDirectoryFileConflicts_3()
 		{
-			// 3 - the first to break!
+			// 3
 			Doit(Mk("DF/DF"), Mk("DF/DF"), Mk("DF"));
-			AssertUpdated("DF/DF");
-			AssertRemoved("DF");
+			AssertNoConflicts();
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -507,8 +505,7 @@ namespace NGit
 		{
 			// 4 (basically same as 3, just with H and M different)
 			Doit(Mk("DF/DF"), Mkmap("DF/DF", "foo"), Mk("DF"));
-			AssertUpdated("DF/DF");
-			AssertRemoved("DF");
+			AssertConflict("DF/DF");
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -961,7 +958,7 @@ namespace NGit
 			{
 				AssertIndex(Mk("foo"));
 				AssertWorkDir(Mkmap("foo", "different"));
-				NUnit.Framework.Assert.IsTrue(GetConflicts().Equals(Arrays.AsList("foo")));
+				NUnit.Framework.Assert.AreEqual(Arrays.AsList("foo"), GetConflicts());
 				NUnit.Framework.Assert.IsTrue(new FilePath(trash, "foo").IsFile());
 			}
 		}

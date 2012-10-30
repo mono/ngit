@@ -54,10 +54,9 @@ using Sharpen;
 
 namespace NGit.Blame
 {
-	/// <summary>Generate author information for lines based on introduction to the file.
-	/// 	</summary>
+	/// <summary>Generate author information for lines based on a provided file.</summary>
 	/// <remarks>
-	/// Generate author information for lines based on introduction to the file.
+	/// Generate author information for lines based on a provided file.
 	/// <p>
 	/// Applications that want a simple one-shot computation of blame for a file
 	/// should use
@@ -141,9 +140,15 @@ namespace NGit.Blame
 		/// <remarks>Blame is currently assigned to this source.</remarks>
 		private Candidate currentSource;
 
-		/// <summary>Create a blame generator for the repository and path</summary>
+		/// <summary>
+		/// Create a blame generator for the repository and path (relative to
+		/// repository)
+		/// </summary>
 		/// <param name="repository">repository to access revision data from.</param>
-		/// <param name="path">initial path of the file to start scanning.</param>
+		/// <param name="path">
+		/// initial path of the file to start scanning (relative to the
+		/// repository).
+		/// </param>
 		public BlameGenerator(Repository repository, string path)
 		{
 			this.repository = repository;

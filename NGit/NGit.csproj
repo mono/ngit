@@ -581,6 +581,8 @@
     <Compile Include="NGit.Merge\SquashMessageFormatter.cs" />
     <Compile Include="NGit.Transport\BaseReceivePack.cs" />
     <Compile Include="NGit.Storage.File\GC.cs" />
+    <Compile Include="NGit.Util\GitDateParser.cs" />
+    <Compile Include="NGit\EmptyProgressMonitor.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

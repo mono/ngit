@@ -53,6 +53,7 @@ namespace NGit.Diff
 	/// s to create an
 	/// <see cref="EditList">EditList</see>
 	/// of changes.
+	/// <p>
 	/// An algorithm's
 	/// <code>diff</code>
 	/// method must be callable from concurrent threads

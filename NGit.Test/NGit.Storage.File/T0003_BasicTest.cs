@@ -383,7 +383,7 @@ namespace NGit.Storage.File
 			{
 				NUnit.Framework.Assert.AreEqual(unchecked((int)(0x78)), xis.ReadUInt8());
 				NUnit.Framework.Assert.AreEqual(unchecked((int)(0x9c)), xis.ReadUInt8());
-				NUnit.Framework.Assert.IsTrue(unchecked((int)(0x789c)) % 31 == 0);
+				NUnit.Framework.Assert.AreEqual(0, unchecked((int)(0x789c)) % 31);
 			}
 			finally
 			{

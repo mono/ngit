@@ -161,6 +161,11 @@ namespace NGit.Api
 				}
 				// determine the current HEAD and the commit it is referring to
 				ObjectId headId = repo.Resolve(Constants.HEAD + "^{commit}");
+				if (headId == null && amend)
+				{
+					throw new WrongRepositoryStateException(JGitText.Get().commitAmendOnInitialNotPossible
+						);
+				}
 				if (headId != null)
 				{
 					if (amend)
@@ -170,6 +175,10 @@ namespace NGit.Api
 						for (int i = 0; i < p.Length; i++)
 						{
 							parents.Add(0, p[i].Id);
+						}
+						if (author == null)
+						{
+							author = previousCommit.GetAuthorIdent();
 						}
 					}
 					else
@@ -395,7 +404,7 @@ namespace NGit.Api
 							}
 						}
 						// update index
-						dcEditor.Add(new _PathEdit_369(dcEntry, path));
+						dcEditor.Add(new _PathEdit_375(dcEntry, path));
 						// add to temporary in-core index
 						dcBuilder.Add(dcEntry);
 						if (emptyCommit && (hTree == null || !hTree.IdEqual(fTree) || hTree.EntryRawMode 
@@ -455,9 +464,9 @@ namespace NGit.Api
 			return inCoreIndex;
 		}
 
-		private sealed class _PathEdit_369 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_375 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_369(DirCacheEntry dcEntry, string baseArg1) : base(baseArg1)
+			public _PathEdit_375(DirCacheEntry dcEntry, string baseArg1) : base(baseArg1)
 			{
 				this.dcEntry = dcEntry;
 			}
@@ -522,7 +531,7 @@ namespace NGit.Api
 			{
 				committer = new PersonIdent(repo);
 			}
-			if (author == null)
+			if (author == null && !amend)
 			{
 				author = committer;
 			}
@@ -627,10 +636,8 @@ namespace NGit.Api
 		/// Sets the committer for this
 		/// <code>commit</code>
 		/// . If no committer is explicitly
-		/// specified because this method is never called or called with
-		/// <code>null</code>
-		/// value then the committer will be deduced from config info in repository,
-		/// with current time.
+		/// specified because this method is never called then the committer will be
+		/// deduced from config info in repository, with current time.
 		/// </summary>
 		/// <param name="name">
 		/// the name of the committer used for the
@@ -672,7 +679,8 @@ namespace NGit.Api
 		/// . If no author is explicitly
 		/// specified because this method is never called or called with
 		/// <code>null</code>
-		/// value then the author will be set to the committer.
+		/// value then the author will be set to the committer or to the original
+		/// author when amending.
 		/// </summary>
 		/// <param name="author">
 		/// the author used for the
@@ -693,9 +701,8 @@ namespace NGit.Api
 		/// Sets the author for this
 		/// <code>commit</code>
 		/// . If no author is explicitly
-		/// specified because this method is never called or called with
-		/// <code>null</code>
-		/// value then the author will be set to the committer.
+		/// specified because this method is never called then the author will be set
+		/// to the committer or to the original author when amending.
 		/// </summary>
 		/// <param name="name">
 		/// the name of the author used for the

@@ -74,6 +74,8 @@ namespace NGit.Api
 	{
 		private IList<Ref> commits = new List<Ref>();
 
+		private string ourCommitName = null;
+
 		/// <param name="repo"></param>
 		protected internal CherryPickCommand(Repository repo) : base(repo)
 		{
@@ -139,10 +141,14 @@ namespace NGit.Api
 					}
 					RevCommit srcParent = srcCommit.GetParent(0);
 					revWalk.ParseHeaders(srcParent);
+					string ourName = CalculateOurName(headRef);
+					string cherryPickName = srcCommit.Id.Abbreviate(7).Name + " " + srcCommit.GetShortMessage
+						();
 					ResolveMerger merger = (ResolveMerger)((ThreeWayMerger)MergeStrategy.RESOLVE.NewMerger
 						(repo));
 					merger.SetWorkingTreeIterator(new FileTreeIterator(repo));
 					merger.SetBase(srcParent.Tree);
+					merger.SetCommitNames(new string[] { "BASE", ourName, cherryPickName });
 					if (merger.Merge(headCommit, srcCommit))
 					{
 						if (AnyObjectId.Equals(headCommit.Tree.Id, merger.GetResultTreeId()))
@@ -222,6 +228,31 @@ namespace NGit.Api
 			)
 		{
 			return Include(new ObjectIdRef.Unpeeled(RefStorage.LOOSE, name, commit.Copy()));
+		}
+
+		/// <param name="ourCommitName">
+		/// the name that should be used in the "OURS" place for conflict
+		/// markers
+		/// </param>
+		/// <returns>
+		/// 
+		/// <code>this</code>
+		/// </returns>
+		public virtual NGit.Api.CherryPickCommand SetOurCommitName(string ourCommitName)
+		{
+			this.ourCommitName = ourCommitName;
+			return this;
+		}
+
+		private string CalculateOurName(Ref headRef)
+		{
+			if (ourCommitName != null)
+			{
+				return ourCommitName;
+			}
+			string targetRefName = headRef.GetTarget().GetName();
+			string headName = Repository.ShortenRefName(targetRefName);
+			return headName;
 		}
 	}
 }

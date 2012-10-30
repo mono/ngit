@@ -92,7 +92,7 @@ namespace NGit.Util
 		/// <returns>detected file system abstraction</returns>
 		public static NGit.Util.FS Detect(bool? cygwinUsed)
 		{
-			if (FS_Win32.IsWin32())
+			if (SystemReader.GetInstance().IsWindows())
 			{
 				if (cygwinUsed == null)
 				{

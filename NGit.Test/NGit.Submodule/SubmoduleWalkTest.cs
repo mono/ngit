@@ -144,7 +144,7 @@ namespace NGit.Submodule
 			builder.Build().Create();
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_152(id, path));
+			editor.Add(new _PathEdit_153(id, path));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(gen.Next());
@@ -166,9 +166,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_152 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_153 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_152(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_153(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -204,7 +204,7 @@ namespace NGit.Submodule
 			builder.Build().Create();
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_201(id, path));
+			editor.Add(new _PathEdit_203(id, path));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(gen.Next());
@@ -226,9 +226,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_201 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_203 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_201(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_203(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -251,7 +251,7 @@ namespace NGit.Submodule
 			string path = "sub/dir/final";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_236(id, path));
+			editor.Add(new _PathEdit_238(id, path));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(gen.Next());
@@ -268,9 +268,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_236 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_238 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_236(ObjectId id, string baseArg1) : base(baseArg1)
+			public _PathEdit_238(ObjectId id, string baseArg1) : base(baseArg1)
 			{
 				this.id = id;
 			}
@@ -294,8 +294,8 @@ namespace NGit.Submodule
 			string path2 = "sub2";
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_269(id1, path1));
-			editor.Add(new _PathEdit_276(id2, path2));
+			editor.Add(new _PathEdit_271(id1, path1));
+			editor.Add(new _PathEdit_278(id2, path2));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			gen.SetFilter(PathFilter.Create(path1));
@@ -305,9 +305,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_269 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_271 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_269(ObjectId id1, string baseArg1) : base(baseArg1)
+			public _PathEdit_271(ObjectId id1, string baseArg1) : base(baseArg1)
 			{
 				this.id1 = id1;
 			}
@@ -321,9 +321,9 @@ namespace NGit.Submodule
 			private readonly ObjectId id1;
 		}
 
-		private sealed class _PathEdit_276 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_278 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_276(ObjectId id2, string baseArg1) : base(baseArg1)
+			public _PathEdit_278(ObjectId id2, string baseArg1) : base(baseArg1)
 			{
 				this.id2 = id2;
 			}
@@ -355,8 +355,8 @@ namespace NGit.Submodule
 			WriteTrashFile(Constants.DOT_GIT_MODULES, gitmodules.ToText());
 			DirCache cache = db.LockDirCache();
 			DirCacheEditor editor = cache.Editor();
-			editor.Add(new _PathEdit_313(subId, path));
-			editor.Add(new _PathEdit_320(gitmodulesBlob, Constants.DOT_GIT_MODULES));
+			editor.Add(new _PathEdit_315(subId, path));
+			editor.Add(new _PathEdit_322(gitmodulesBlob, Constants.DOT_GIT_MODULES));
 			editor.Commit();
 			SubmoduleWalk gen = SubmoduleWalk.ForIndex(db);
 			NUnit.Framework.Assert.IsTrue(gen.Next());
@@ -373,9 +373,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_313 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_315 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_313(ObjectId subId, string baseArg1) : base(baseArg1)
+			public _PathEdit_315(ObjectId subId, string baseArg1) : base(baseArg1)
 			{
 				this.subId = subId;
 			}
@@ -389,9 +389,9 @@ namespace NGit.Submodule
 			private readonly ObjectId subId;
 		}
 
-		private sealed class _PathEdit_320 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_322 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_320(RevBlob gitmodulesBlob, string baseArg1) : base(baseArg1)
+			public _PathEdit_322(RevBlob gitmodulesBlob, string baseArg1) : base(baseArg1)
 			{
 				this.gitmodulesBlob = gitmodulesBlob;
 			}
@@ -417,7 +417,7 @@ namespace NGit.Submodule
 			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
 				.CONFIG_KEY_URL, "git://example.com/sub");
 			RevCommit commit = testDb.GetRevWalk().ParseCommit(testDb.Commit().NoParents().Add
-				(Constants.DOT_GIT_MODULES, gitmodules.ToText()).Edit(new _PathEdit_358(subId, path
+				(Constants.DOT_GIT_MODULES, gitmodules.ToText()).Edit(new _PathEdit_360(subId, path
 				)).Create());
 			SubmoduleWalk gen = SubmoduleWalk.ForPath(db, commit.Tree, "sub");
 			NUnit.Framework.Assert.AreEqual(path, gen.GetPath());
@@ -433,9 +433,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_358 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_360 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_358(ObjectId subId, string baseArg1) : base(baseArg1)
+			public _PathEdit_360(ObjectId subId, string baseArg1) : base(baseArg1)
 			{
 				this.subId = subId;
 			}
@@ -461,7 +461,7 @@ namespace NGit.Submodule
 			gitmodules.SetString(ConfigConstants.CONFIG_SUBMODULE_SECTION, path, ConfigConstants
 				.CONFIG_KEY_URL, "git://example.com/sub");
 			RevCommit commit = testDb.GetRevWalk().ParseCommit(testDb.Commit().NoParents().Add
-				(Constants.DOT_GIT_MODULES, gitmodules.ToText()).Edit(new _PathEdit_395(subId, path
+				(Constants.DOT_GIT_MODULES, gitmodules.ToText()).Edit(new _PathEdit_397(subId, path
 				)).Create());
 			CanonicalTreeParser p = new CanonicalTreeParser();
 			p.Reset(testDb.GetRevWalk().GetObjectReader(), commit.Tree);
@@ -479,9 +479,9 @@ namespace NGit.Submodule
 			NUnit.Framework.Assert.IsFalse(gen.Next());
 		}
 
-		private sealed class _PathEdit_395 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_397 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_395(ObjectId subId, string baseArg1) : base(baseArg1)
+			public _PathEdit_397(ObjectId subId, string baseArg1) : base(baseArg1)
 			{
 				this.subId = subId;
 			}

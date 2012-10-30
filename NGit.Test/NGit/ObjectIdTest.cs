@@ -72,7 +72,7 @@ namespace NGit
 			ObjectId a = ObjectId.FromString(x);
 			ObjectId b = ObjectId.FromString(x);
 			NUnit.Framework.Assert.AreEqual(a.GetHashCode(), b.GetHashCode());
-			NUnit.Framework.Assert.IsTrue(a.Equals(b), "a and b are same");
+			NUnit.Framework.Assert.AreEqual(b, a, "a and b are same");
 		}
 
 		[NUnit.Framework.Test]

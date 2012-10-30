@@ -81,7 +81,7 @@ namespace NGit.Api
 		public virtual void TestListNotes()
 		{
 			IList<Note> notes = git.NotesList().Call();
-			NUnit.Framework.Assert.IsTrue(notes.Count == 1);
+			NUnit.Framework.Assert.AreEqual(1, notes.Count);
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -95,7 +95,7 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(content, "data");
 			git.NotesRemove().SetObjectId(commit2).Call();
 			IList<Note> notes = git.NotesList().Call();
-			NUnit.Framework.Assert.IsTrue(notes.Count == 1);
+			NUnit.Framework.Assert.AreEqual(1, notes.Count);
 		}
 	}
 }

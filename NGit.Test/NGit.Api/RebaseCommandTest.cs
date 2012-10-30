@@ -369,7 +369,7 @@ namespace NGit.Api
 			RebaseResult res = git.Rebase().SetUpstream("refs/heads/master").Call();
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
 			NUnit.Framework.Assert.AreEqual(conflicting, res.GetCurrentCommit());
-			CheckFile(FILE1, "<<<<<<< OURS\n1master\n=======\n1topic\n>>>>>>> THEIRS\n2\n3\ntopic4"
+			CheckFile(FILE1, "<<<<<<< Upstream, based on master\n1master\n=======\n1topic", ">>>>>>> e0d1dea change file1 in topic\n2\n3\ntopic4"
 				);
 			NUnit.Framework.Assert.AreEqual(RepositoryState.REBASING_INTERACTIVE, db.GetRepositoryState
 				());
@@ -679,8 +679,8 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
 			res = git.Rebase().SetOperation(RebaseCommand.Operation.SKIP).Call();
 			// TODO is this correct? It is what the command line returns
-			CheckFile(FILE1, "1master\n2\n<<<<<<< OURS\n3master\n=======\n3topic\n>>>>>>> THEIRS\n4\n5topic"
-				);
+			CheckFile(FILE1, "1master\n2\n<<<<<<< Upstream, based on master\n3master\n=======\n3topic"
+				, ">>>>>>> 5afc8df change file1 in topic again\n4\n5topic");
 			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.STOPPED, res.GetStatus());
 		}
 
@@ -1255,6 +1255,36 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual("unstaged modified file0", Read(file0));
 			// index shall be unchanged
 			NUnit.Framework.Assert.AreEqual(indexState, IndexState(CONTENT));
+			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestRebaseWithUncommittedDelete()
+		{
+			// create file0 + file1, add and commit
+			FilePath file0 = WriteTrashFile("file0", "file0");
+			WriteTrashFile(FILE1, "file1");
+			git.Add().AddFilepattern("file0").AddFilepattern(FILE1).Call();
+			RevCommit commit = git.Commit().SetMessage("commit1").Call();
+			// create topic branch
+			CreateBranch(commit, "refs/heads/topic");
+			// still on master / modify file1, add and commit
+			WriteTrashFile(FILE1, "modified file1");
+			git.Add().AddFilepattern(FILE1).Call();
+			git.Commit().SetMessage("commit2").Call();
+			// checkout topic branch / delete file0 and add to index
+			CheckoutBranch("refs/heads/topic");
+			git.Rm().AddFilepattern("file0").Call();
+			// do not commit
+			// rebase
+			RebaseResult result = git.Rebase().SetUpstream("refs/heads/master").Call();
+			NUnit.Framework.Assert.AreEqual(RebaseResult.Status.FAST_FORWARD, result.GetStatus
+				());
+			NUnit.Framework.Assert.IsFalse(file0.Exists(), "File should still be deleted");
+			// index should only have updated file1
+			NUnit.Framework.Assert.AreEqual("[file1, mode:100644, content:modified file1]", IndexState
+				(CONTENT));
 			NUnit.Framework.Assert.AreEqual(RepositoryState.SAFE, db.GetRepositoryState());
 		}
 

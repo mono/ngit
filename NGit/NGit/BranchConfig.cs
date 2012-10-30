@@ -72,8 +72,31 @@ namespace NGit
 		}
 
 		/// <returns>
-		/// the full remote-tracking branch name or <code>null</code> if it
-		/// could not be determined
+		/// the full tracking branch name or <code>null</code> if it could
+		/// not be determined
+		/// </returns>
+		public virtual string GetTrackingBranch()
+		{
+			string remote = GetRemote();
+			string mergeRef = GetMergeBranch();
+			if (remote == null || mergeRef == null)
+			{
+				return null;
+			}
+			if (remote.Equals("."))
+			{
+				return mergeRef;
+			}
+			return FindRemoteTrackingBranch(remote, mergeRef);
+		}
+
+		/// <returns>
+		/// the full remote-tracking branch name or
+		/// <code>null</code>
+		/// if it could
+		/// not be determined. If you also want local tracked branches use
+		/// <see cref="GetTrackingBranch()">GetTrackingBranch()</see>
+		/// instead.
 		/// </returns>
 		public virtual string GetRemoteTrackingBranch()
 		{
@@ -83,6 +106,18 @@ namespace NGit
 			{
 				return null;
 			}
+			return FindRemoteTrackingBranch(remote, mergeRef);
+		}
+
+		/// <summary>Finds the tracked remote tracking branch</summary>
+		/// <param name="remote">Remote name</param>
+		/// <param name="mergeRef">
+		/// merge Ref of the local branch tracking the remote tracking
+		/// branch
+		/// </param>
+		/// <returns>full remote tracking branch name or null</returns>
+		private string FindRemoteTrackingBranch(string remote, string mergeRef)
+		{
 			RemoteConfig remoteConfig;
 			try
 			{

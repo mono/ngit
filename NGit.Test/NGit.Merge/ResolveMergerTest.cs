@@ -53,12 +53,15 @@ using Sharpen;
 
 namespace NGit.Merge
 {
-	[NUnit.Framework.TestFixture]
 	public class ResolveMergerTest : RepositoryTestCase
 	{
+		[Datapoint]
+		public static MergeStrategy resolve = MergeStrategy.RESOLVE;
+
 		/// <exception cref="System.Exception"></exception>
-		[NUnit.Framework.Test]
-		public virtual void FailingPathsShouldNotResultInOKReturnValue()
+		[Theory]
+		public virtual void FailingPathsShouldNotResultInOKReturnValue(MergeStrategy strategy
+			)
 		{
 			FilePath folder1 = new FilePath(db.WorkTree, "folder1");
 			FileUtils.Mkdir(folder1);
@@ -76,12 +79,12 @@ namespace NGit.Merge
 			git.Checkout().SetName(@base.Name).Call();
 			file = new FilePath(db.WorkTree, "unrelated.txt");
 			Write(file, "unrelated");
-			git.Add().AddFilepattern("unrelated").Call();
+			git.Add().AddFilepattern("unrelated.txt").Call();
 			RevCommit head = git.Commit().SetMessage("Adding another file").Call();
 			// Untracked file to cause failing path for delete() of folder1
 			file = new FilePath(folder1, "file3.txt");
 			Write(file, "folder1--file3.txt");
-			ResolveMerger merger = new ResolveMerger(db, false);
+			ResolveMerger merger = (ResolveMerger)strategy.NewMerger(db, false);
 			merger.SetCommitNames(new string[] { "BASE", "HEAD", "other" });
 			merger.SetWorkingTreeIterator(new FileTreeIterator(db));
 			bool ok = merger.Merge(head.Id, other.Id);
@@ -97,9 +100,11 @@ namespace NGit.Merge
 		/// Merging two conflicting subtrees when the index does not contain any file
 		/// in that subtree should lead to a conflicting state.
 		/// </remarks>
+		/// <param name="strategy"></param>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckMergeConflictingTreesWithoutIndex()
+		[Theory]
+		public virtual void CheckMergeConflictingTreesWithoutIndex(MergeStrategy strategy
+			)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("d/1", "orig");
@@ -113,9 +118,10 @@ namespace NGit.Merge
 			git.Commit().SetAll(true).SetMessage("modified d/1 on side").Call();
 			git.Rm().AddFilepattern("d/1").Call();
 			git.Rm().AddFilepattern("d").Call();
-			MergeCommandResult mergeRes = git.Merge().Include(masterCommit).Call();
-			NUnit.Framework.Assert.IsTrue(MergeStatus.CONFLICTING.Equals(mergeRes.GetMergeStatus
-				()));
+			MergeCommandResult mergeRes = git.Merge().SetStrategy(strategy).Include(masterCommit
+				).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, mergeRes.GetMergeStatus(
+				));
 			NUnit.Framework.Assert.AreEqual("[d/1, mode:100644, stage:1, content:orig][d/1, mode:100644, stage:2, content:side][d/1, mode:100644, stage:3, content:master]"
 				, IndexState(CONTENT));
 		}
@@ -128,9 +134,10 @@ namespace NGit.Merge
 		/// Merging two different but mergeable subtrees when the index does not
 		/// contain any file in that subtree should lead to a merged state.
 		/// </remarks>
+		/// <param name="strategy"></param>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckMergeMergeableTreesWithoutIndex()
+		[Theory]
+		public virtual void CheckMergeMergeableTreesWithoutIndex(MergeStrategy strategy)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("d/1", "1\n2\n3");
@@ -144,9 +151,9 @@ namespace NGit.Merge
 			git.Commit().SetAll(true).SetMessage("modified d/1 on side").Call();
 			git.Rm().AddFilepattern("d/1").Call();
 			git.Rm().AddFilepattern("d").Call();
-			MergeCommandResult mergeRes = git.Merge().Include(masterCommit).Call();
-			NUnit.Framework.Assert.IsTrue(MergeStatus.MERGED.Equals(mergeRes.GetMergeStatus()
-				));
+			MergeCommandResult mergeRes = git.Merge().SetStrategy(strategy).Include(masterCommit
+				).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, mergeRes.GetMergeStatus());
 			NUnit.Framework.Assert.AreEqual("[d/1, mode:100644, content:1master\n2\n3side\n]"
 				, IndexState(CONTENT));
 		}
@@ -159,9 +166,10 @@ namespace NGit.Merge
 		/// Merging two equal subtrees when the index does not contain any file in
 		/// that subtree should lead to a merged state.
 		/// </remarks>
+		/// <param name="strategy"></param>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckMergeEqualTreesWithoutIndex()
+		[Theory]
+		public virtual void CheckMergeEqualTreesWithoutIndex(MergeStrategy strategy)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("d/1", "orig");
@@ -175,9 +183,9 @@ namespace NGit.Merge
 			git.Commit().SetAll(true).SetMessage("modified d/1 on side").Call();
 			git.Rm().AddFilepattern("d/1").Call();
 			git.Rm().AddFilepattern("d").Call();
-			MergeCommandResult mergeRes = git.Merge().Include(masterCommit).Call();
-			NUnit.Framework.Assert.IsTrue(MergeStatus.MERGED.Equals(mergeRes.GetMergeStatus()
-				));
+			MergeCommandResult mergeRes = git.Merge().SetStrategy(strategy).Include(masterCommit
+				).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, mergeRes.GetMergeStatus());
 			NUnit.Framework.Assert.AreEqual("[d/1, mode:100644, content:modified]", IndexState
 				(CONTENT));
 		}
@@ -190,9 +198,10 @@ namespace NGit.Merge
 		/// Merging two equal subtrees with an incore merger should lead to a merged
 		/// state (The 'Gerrit' use case).
 		/// </remarks>
+		/// <param name="strategy"></param>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckMergeEqualTreesInCore()
+		[Theory]
+		public virtual void CheckMergeEqualTreesInCore(MergeStrategy strategy)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("d/1", "orig");
@@ -207,8 +216,7 @@ namespace NGit.Merge
 				).Call();
 			git.Rm().AddFilepattern("d/1").Call();
 			git.Rm().AddFilepattern("d").Call();
-			ThreeWayMerger resolveMerger = ((ThreeWayMerger)MergeStrategy.RESOLVE.NewMerger(db
-				, true));
+			ThreeWayMerger resolveMerger = (ThreeWayMerger)strategy.NewMerger(db, true);
 			bool noProblems = resolveMerger.Merge(masterCommit, sideCommit);
 			NUnit.Framework.Assert.IsTrue(noProblems);
 		}
@@ -221,9 +229,10 @@ namespace NGit.Merge
 		/// Merging two equal subtrees when the index and HEAD does not contain any
 		/// file in that subtree should lead to a merged state.
 		/// </remarks>
+		/// <param name="strategy"></param>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckMergeEqualNewTrees()
+		[Theory]
+		public virtual void CheckMergeEqualNewTrees(MergeStrategy strategy)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("2", "orig");
@@ -239,9 +248,9 @@ namespace NGit.Merge
 			git.Commit().SetAll(true).SetMessage("added d/1 on side").Call();
 			git.Rm().AddFilepattern("d/1").Call();
 			git.Rm().AddFilepattern("d").Call();
-			MergeCommandResult mergeRes = git.Merge().Include(masterCommit).Call();
-			NUnit.Framework.Assert.IsTrue(MergeStatus.MERGED.Equals(mergeRes.GetMergeStatus()
-				));
+			MergeCommandResult mergeRes = git.Merge().SetStrategy(strategy).Include(masterCommit
+				).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.MERGED, mergeRes.GetMergeStatus());
 			NUnit.Framework.Assert.AreEqual("[2, mode:100644, content:orig][d/1, mode:100644, content:orig]"
 				, IndexState(CONTENT));
 		}
@@ -254,9 +263,10 @@ namespace NGit.Merge
 		/// Merging two conflicting subtrees when the index and HEAD does not contain
 		/// any file in that subtree should lead to a conflicting state.
 		/// </remarks>
+		/// <param name="strategy"></param>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckMergeConflictingNewTrees()
+		[Theory]
+		public virtual void CheckMergeConflictingNewTrees(MergeStrategy strategy)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("2", "orig");
@@ -272,9 +282,10 @@ namespace NGit.Merge
 			git.Commit().SetAll(true).SetMessage("added d/1 on side").Call();
 			git.Rm().AddFilepattern("d/1").Call();
 			git.Rm().AddFilepattern("d").Call();
-			MergeCommandResult mergeRes = git.Merge().Include(masterCommit).Call();
-			NUnit.Framework.Assert.IsTrue(MergeStatus.CONFLICTING.Equals(mergeRes.GetMergeStatus
-				()));
+			MergeCommandResult mergeRes = git.Merge().SetStrategy(strategy).Include(masterCommit
+				).Call();
+			NUnit.Framework.Assert.AreEqual(MergeStatus.CONFLICTING, mergeRes.GetMergeStatus(
+				));
 			NUnit.Framework.Assert.AreEqual("[2, mode:100644, content:orig][d/1, mode:100644, stage:2, content:side][d/1, mode:100644, stage:3, content:master]"
 				, IndexState(CONTENT));
 		}
@@ -287,9 +298,11 @@ namespace NGit.Merge
 		/// Merging two conflicting files when the index contains a tree for that
 		/// path should lead to a failed state.
 		/// </remarks>
+		/// <param name="strategy"></param>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckMergeConflictingFilesWithTreeInIndex()
+		[Theory]
+		public virtual void CheckMergeConflictingFilesWithTreeInIndex(MergeStrategy strategy
+			)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("0", "orig");
@@ -304,7 +317,8 @@ namespace NGit.Merge
 			git.Rm().AddFilepattern("0").Call();
 			WriteTrashFile("0/0", "side");
 			git.Add().AddFilepattern("0/0").Call();
-			MergeCommandResult mergeRes = git.Merge().Include(masterCommit).Call();
+			MergeCommandResult mergeRes = git.Merge().SetStrategy(strategy).Include(masterCommit
+				).Call();
 			NUnit.Framework.Assert.AreEqual(MergeStatus.FAILED, mergeRes.GetMergeStatus());
 		}
 
@@ -316,9 +330,11 @@ namespace NGit.Merge
 		/// Merging two equal files when the index contains a tree for that path
 		/// should lead to a failed state.
 		/// </remarks>
+		/// <param name="strategy"></param>
 		/// <exception cref="System.Exception">System.Exception</exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckMergeMergeableFilesWithTreeInIndex()
+		[Theory]
+		public virtual void CheckMergeMergeableFilesWithTreeInIndex(MergeStrategy strategy
+			)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("0", "orig");
@@ -336,7 +352,7 @@ namespace NGit.Merge
 			git.Add().AddFilepattern("0/0").Call();
 			try
 			{
-				git.Merge().Include(masterCommit).Call();
+				git.Merge().SetStrategy(strategy).Include(masterCommit).Call();
 				NUnit.Framework.Assert.Fail("Didn't get the expected exception");
 			}
 			catch (NGit.Api.Errors.CheckoutConflictException e)
@@ -347,8 +363,8 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckLockedFilesToBeDeleted()
+		[Theory]
+		public virtual void CheckLockedFilesToBeDeleted(MergeStrategy strategy)
 		{
 			Git git = Git.Wrap(db);
 			WriteTrashFile("a.txt", "orig");
@@ -367,7 +383,8 @@ namespace NGit.Merge
 			git.Commit().SetMessage("added c.txt").Call();
 			// Get a handle to the the file so on windows it can't be deleted.
 			FileInputStream fis = new FileInputStream(new FilePath(db.WorkTree, "b.txt"));
-			MergeCommandResult mergeRes = git.Merge().Include(masterCommit).Call();
+			MergeCommandResult mergeRes = git.Merge().SetStrategy(strategy).Include(masterCommit
+				).Call();
 			if (mergeRes.GetMergeStatus().Equals(MergeStatus.FAILED))
 			{
 				// probably windows
@@ -381,8 +398,8 @@ namespace NGit.Merge
 		}
 
 		/// <exception cref="System.Exception"></exception>
-		[NUnit.Framework.Test]
-		public virtual void CheckForCorrectIndex()
+		[Theory]
+		public virtual void CheckForCorrectIndex(MergeStrategy strategy)
 		{
 			FilePath f;
 			long lastTs4;
@@ -455,7 +472,7 @@ namespace NGit.Merge
 			lastTsIndex = indexFile.LastModified();
 			// merge master and side. Should only touch "0," "2" and "3"
 			FsTick(indexFile);
-			git.Merge().Include(masterCommit).Call();
+			git.Merge().SetStrategy(strategy).Include(masterCommit).Call();
 			CheckConsistentLastModified("0", "1", "2", "4");
 			CheckModificationTimeStampOrder("4", "*" + lastTs4, "<1", "<*" + lastTsIndex, "<0"
 				, "2", "3", ".git/index");

@@ -110,7 +110,7 @@ namespace NGit.Api
 					);
 				if (!force && exists)
 				{
-					throw new RefAlreadyExistsException(MessageFormat.Format(JGitText.Get().refAlreadyExists
+					throw new RefAlreadyExistsException(MessageFormat.Format(JGitText.Get().refAlreadyExists1
 						, name));
 				}
 				ObjectId startAt = GetStartPoint();

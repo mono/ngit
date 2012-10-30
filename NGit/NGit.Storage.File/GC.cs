@@ -68,11 +68,15 @@ namespace NGit.Storage.File
 	/// </summary>
 	public class GC
 	{
+		private static readonly string PRUNE_EXPIRE_DEFAULT = "2.weeks.ago";
+
 		private readonly FileRepository repo;
 
 		private ProgressMonitor pm;
 
-		private long expireAgeMillis;
+		private long expireAgeMillis = -1;
+
+		private DateTime? expire;
 
 		/// <summary>
 		/// the refs which existed during the last call to
@@ -107,7 +111,6 @@ namespace NGit.Storage.File
 		{
 			this.repo = repo;
 			this.pm = NullProgressMonitor.INSTANCE;
-			this.expireAgeMillis = 14 * 24 * 60 * 60 * 1000L;
 		}
 
 		/// <summary>
@@ -127,8 +130,13 @@ namespace NGit.Storage.File
 		/// 's which are newly created
 		/// </returns>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		/// <exception cref="Sharpen.ParseException">
+		/// If the configuration parameter "gc.pruneexpire" couldn't be
+		/// parsed
+		/// </exception>
 		public virtual ICollection<PackFile> Gc()
 		{
+			pm.Start(6);
 			PackRefs();
 			// TODO: implement reflog_expire(pm, repo);
 			ICollection<PackFile> newPacks = Repack();
@@ -276,10 +284,32 @@ namespace NGit.Storage.File
 		/// <param name="objectsToKeep">a set of objects which should explicitly not be pruned
 		/// 	</param>
 		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		/// <exception cref="Sharpen.ParseException">
+		/// If the configuration parameter "gc.pruneexpire" couldn't be
+		/// parsed
+		/// </exception>
 		public virtual void Prune(ICollection<ObjectId> objectsToKeep)
 		{
-			long expireDate = (expireAgeMillis == 0) ? long.MaxValue : Runtime.CurrentTimeMillis
-				() - expireAgeMillis;
+			long expireDate = long.MaxValue;
+			if (expire == null && expireAgeMillis == -1)
+			{
+				string pruneExpireStr = ((FileBasedConfig)repo.GetConfig()).GetString(ConfigConstants
+					.CONFIG_GC_SECTION, null, ConfigConstants.CONFIG_KEY_PRUNEEXPIRE);
+				if (pruneExpireStr == null)
+				{
+					pruneExpireStr = PRUNE_EXPIRE_DEFAULT;
+				}
+				expire = GitDateParser.Parse(pruneExpireStr, null);
+				expireAgeMillis = -1;
+			}
+			if (expire != null)
+			{
+				expireDate = expire.Value.GetTime();
+			}
+			if (expireAgeMillis != -1)
+			{
+				expireDate = Runtime.CurrentTimeMillis() - expireAgeMillis;
+			}
 			// Collect all loose objects which are old enough, not referenced from
 			// the index and not in objectsToKeep
 			IDictionary<ObjectId, FilePath> deletionCandidates = new Dictionary<ObjectId, FilePath
@@ -290,53 +320,60 @@ namespace NGit.Storage.File
 			if (fanout != null && fanout.Length > 0)
 			{
 				pm.BeginTask(JGitText.Get().pruneLooseUnreferencedObjects, fanout.Length);
-				foreach (string d in fanout)
+				try
 				{
-					pm.Update(1);
-					if (d.Length != 2)
+					foreach (string d in fanout)
 					{
-						continue;
-					}
-					FilePath[] entries = new FilePath(objects, d).ListFiles();
-					if (entries == null)
-					{
-						continue;
-					}
-					foreach (FilePath f in entries)
-					{
-						string fName = f.GetName();
-						if (fName.Length != Constants.OBJECT_ID_STRING_LENGTH - 2)
+						pm.Update(1);
+						if (d.Length != 2)
 						{
 							continue;
 						}
-						if (f.LastModified() >= expireDate)
+						FilePath[] entries = new FilePath(objects, d).ListFiles();
+						if (entries == null)
 						{
 							continue;
 						}
-						try
+						foreach (FilePath f in entries)
 						{
-							ObjectId id = ObjectId.FromString(d + fName);
-							if (objectsToKeep.Contains(id))
+							string fName = f.GetName();
+							if (fName.Length != Constants.OBJECT_ID_STRING_LENGTH - 2)
 							{
 								continue;
 							}
-							if (indexObjects == null)
-							{
-								indexObjects = ListNonHEADIndexObjects();
-							}
-							if (indexObjects.Contains(id))
+							if (f.LastModified() >= expireDate)
 							{
 								continue;
 							}
-							deletionCandidates.Put(id, f);
-						}
-						catch (ArgumentException)
-						{
-							// ignoring the file that does not represent loose
-							// object
-							continue;
+							try
+							{
+								ObjectId id = ObjectId.FromString(d + fName);
+								if (objectsToKeep.Contains(id))
+								{
+									continue;
+								}
+								if (indexObjects == null)
+								{
+									indexObjects = ListNonHEADIndexObjects();
+								}
+								if (indexObjects.Contains(id))
+								{
+									continue;
+								}
+								deletionCandidates.Put(id, f);
+							}
+							catch (ArgumentException)
+							{
+								// ignoring the file that does not represent loose
+								// object
+								continue;
+							}
 						}
 					}
+				}
+				finally
+				{
+					pm.EndTask();
 				}
 			}
 			if (deletionCandidates.IsEmpty())
@@ -890,6 +927,22 @@ namespace NGit.Storage.File
 			/// <remarks>The number of objects stored as loose objects.</remarks>
 			public long numberOfLooseObjects;
 
+			/// <summary>The sum of the sizes of all files used to persist loose objects.</summary>
+			/// <remarks>The sum of the sizes of all files used to persist loose objects.</remarks>
+			public long sizeOfLooseObjects;
+
+			/// <summary>The sum of the sizes of all pack files.</summary>
+			/// <remarks>The sum of the sizes of all pack files.</remarks>
+			public long sizeOfPackedObjects;
+
+			/// <summary>The number of loose refs.</summary>
+			/// <remarks>The number of loose refs.</remarks>
+			public long numberOfLooseRefs;
+
+			/// <summary>The number of refs stored in pack files.</summary>
+			/// <remarks>The number of refs stored in pack files.</remarks>
+			public long numberOfPackedRefs;
+
 			internal RepoStatistics(GC _enclosing)
 			{
 				this._enclosing = _enclosing;
@@ -912,8 +965,9 @@ namespace NGit.Storage.File
 			foreach (PackFile f in packs)
 			{
 				ret.numberOfPackedObjects += f.GetIndex().GetObjectCount();
+				ret.numberOfPackFiles++;
+				ret.sizeOfPackedObjects += f.GetPackFile().Length();
 			}
-			ret.numberOfPackFiles = packs.Count;
 			FilePath objDir = repo.ObjectsDirectory;
 			string[] fanout = objDir.List();
 			if (fanout != null && fanout.Length > 0)
@@ -924,19 +978,33 @@ namespace NGit.Storage.File
 					{
 						continue;
 					}
-					string[] entries = new FilePath(objDir, d).List();
+					FilePath[] entries = new FilePath(objDir, d).ListFiles();
 					if (entries == null)
 					{
 						continue;
 					}
-					foreach (string e in entries)
+					foreach (FilePath f_1 in entries)
 					{
-						if (e.Length != Constants.OBJECT_ID_STRING_LENGTH - 2)
+						if (f_1.GetName().Length != Constants.OBJECT_ID_STRING_LENGTH - 2)
 						{
 							continue;
 						}
 						ret.numberOfLooseObjects++;
+						ret.sizeOfLooseObjects += f_1.Length();
 					}
+				}
+			}
+			RefDatabase refDb = repo.RefDatabase;
+			foreach (Ref r in refDb.GetRefs(RefDatabase.ALL).Values)
+			{
+				RefStorage storage = r.GetStorage();
+				if (storage == RefStorage.LOOSE || storage == RefStorage.LOOSE_PACKED)
+				{
+					ret.numberOfLooseRefs++;
+				}
+				if (storage == RefStorage.PACKED || storage == RefStorage.LOOSE_PACKED)
+				{
+					ret.numberOfPackedRefs++;
 				}
 			}
 			return ret;
@@ -968,6 +1036,29 @@ namespace NGit.Storage.File
 		public virtual void SetExpireAgeMillis(long expireAgeMillis)
 		{
 			this.expireAgeMillis = expireAgeMillis;
+			expire = null;
+		}
+
+		/// <summary>
+		/// During gc() or prune() each unreferenced, loose object which has been
+		/// created or modified after or at <code>expire</code> will not be pruned.
+		/// </summary>
+		/// <remarks>
+		/// During gc() or prune() each unreferenced, loose object which has been
+		/// created or modified after or at <code>expire</code> will not be pruned.
+		/// Only older objects may be pruned. If set to null then every object is a
+		/// candidate for pruning.
+		/// </remarks>
+		/// <param name="expire">
+		/// instant in time which defines object expiration
+		/// objects with modification time before this instant are expired
+		/// objects with modification time newer or equal to this instant
+		/// are not expired
+		/// </param>
+		public virtual void SetExpire(DateTime expire)
+		{
+			this.expire = expire;
+			expireAgeMillis = -1;
 		}
 	}
 }

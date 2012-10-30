@@ -73,5 +73,15 @@ namespace NGit
 			NUnit.Framework.Assert.AreEqual("A U Thor <author@example.com> 1142878501 +0230", 
 				p.ToExternalString());
 		}
+
+		public virtual void NullForNameShouldThrowIllegalArgumentException()
+		{
+			new PersonIdent(null, "author@example.com");
+		}
+
+		public virtual void NullForEmailShouldThrowIllegalArgumentException()
+		{
+			new PersonIdent("A U Thor", null);
+		}
 	}
 }

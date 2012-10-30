@@ -50,11 +50,13 @@ namespace NGit.Diff
 	/// Wraps a
 	/// <see cref="Sequence">Sequence</see>
 	/// to assign hash codes to elements.
+	/// <p>
 	/// This sequence acts as a proxy for the real sequence, caching element hash
 	/// codes so they don't need to be recomputed each time. Sequences of this type
 	/// must be used with a
 	/// <see cref="HashedSequenceComparator{S}">HashedSequenceComparator&lt;S&gt;</see>
 	/// .
+	/// <p>
 	/// To construct an instance of this type use
 	/// <see cref="HashedSequencePair{S}">HashedSequencePair&lt;S&gt;</see>
 	/// .

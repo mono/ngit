@@ -401,7 +401,7 @@ namespace NGit.Api
 		{
 			string subdir = "subdir";
 			string fname = "file2.txt";
-			string path = subdir + Runtime.GetProperty("file.separator") + fname;
+			string path = subdir + "/" + fname;
 			string otherBranch = "otherbranch";
 			WriteTrashFile(subdir, fname, "content2");
 			git.Add().AddFilepattern(path).Call();

@@ -132,7 +132,9 @@ namespace NGit.Util.IO
 					read += readNow;
 				}
 				NUnit.Framework.Assert.AreEqual(expected.Length, read);
+				cis2.Close();
 			}
+			cis1.Close();
 		}
 
 		private static byte[] AsBytes(string @in)

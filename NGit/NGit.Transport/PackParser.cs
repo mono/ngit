@@ -122,8 +122,6 @@ namespace NGit.Transport
 
 		private bool allowThin;
 
-		private bool checkObjectCollisions;
-
 		private bool needBaseObjectIds;
 
 		private bool checkEofAfterPackFooter;
@@ -197,7 +195,6 @@ namespace NGit.Transport
 			objectDigest = Constants.NewMessageDigest();
 			tempObjectId = new MutableObjectId();
 			packDigest = Constants.NewMessageDigest();
-			checkObjectCollisions = true;
 		}
 
 		/// <returns>true if a thin pack (missing base objects) is permitted.</returns>
@@ -217,36 +214,6 @@ namespace NGit.Transport
 		public virtual void SetAllowThin(bool allow)
 		{
 			allowThin = allow;
-		}
-
-		/// <returns>if true received objects are verified to prevent collisions.</returns>
-		public virtual bool IsCheckObjectCollisions()
-		{
-			return checkObjectCollisions;
-		}
-
-		/// <summary>Enable checking for collisions with existing objects.</summary>
-		/// <remarks>
-		/// Enable checking for collisions with existing objects.
-		/// <p>
-		/// By default PackParser looks for each received object in the repository.
-		/// If the object already exists, the existing object is compared
-		/// byte-for-byte with the newly received copy to ensure they are identical.
-		/// The receive is aborted with an exception if any byte differs. This check
-		/// is necessary to prevent an evil attacker from supplying a replacement
-		/// object into this repository in the event that a discovery enabling SHA-1
-		/// collisions is made.
-		/// <p>
-		/// This check may be very costly to perform, and some repositories may have
-		/// other ways to segregate newly received object data. The check is enabled
-		/// by default, but can be explicitly disabled if the implementation can
-		/// provide the same guarantee, or is willing to accept the risks associated
-		/// with bypassing the check.
-		/// </remarks>
-		/// <param name="check">true to enable collision checking (strongly encouraged).</param>
-		public virtual void SetCheckObjectCollisions(bool check)
-		{
-			checkObjectCollisions = check;
 		}
 
 		/// <summary>Configure this index pack instance to keep track of new objects.</summary>
@@ -1142,7 +1109,7 @@ namespace NGit.Transport
 				}
 				inf.Close();
 				tempObjectId.FromRaw(objectDigest.Digest(), 0);
-				checkContentLater = IsCheckObjectCollisions() && readCurs.Has(tempObjectId);
+				checkContentLater = readCurs.Has(tempObjectId);
 				data = null;
 			}
 			else
@@ -1181,20 +1148,17 @@ namespace NGit.Transport
 						.TypeString(type), id.Name, e.Message));
 				}
 			}
-			if (IsCheckObjectCollisions())
+			try
 			{
-				try
+				ObjectLoader ldr = readCurs.Open(id, type);
+				byte[] existingData = ldr.GetCachedBytes(data.Length);
+				if (!Arrays.Equals(data, existingData))
 				{
-					ObjectLoader ldr = readCurs.Open(id, type);
-					byte[] existingData = ldr.GetCachedBytes(data.Length);
-					if (!Arrays.Equals(data, existingData))
-					{
-						throw new IOException(MessageFormat.Format(JGitText.Get().collisionOn, id.Name));
-					}
+					throw new IOException(MessageFormat.Format(JGitText.Get().collisionOn, id.Name));
 				}
-				catch (MissingObjectException)
-				{
-				}
+			}
+			catch (MissingObjectException)
+			{
 			}
 		}
 

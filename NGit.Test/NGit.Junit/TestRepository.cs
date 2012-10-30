@@ -631,6 +631,24 @@ namespace NGit.Junit
 			return new BranchBuilder(this, @ref);
 		}
 
+		/// <summary>Tag an object using a lightweight tag.</summary>
+		/// <remarks>Tag an object using a lightweight tag.</remarks>
+		/// <param name="name">
+		/// the tag name. The /refs/tags/ prefix will be added if the name
+		/// doesn't start with it
+		/// </param>
+		/// <param name="obj">the object to tag</param>
+		/// <returns>the tagged object</returns>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		public virtual ObjectId LightweightTag(string name, ObjectId obj)
+		{
+			if (!name.StartsWith(Constants.R_TAGS))
+			{
+				name = Constants.R_TAGS + name;
+			}
+			return Update(name, obj);
+		}
+
 		/// <summary>Run consistency checks against the object database.</summary>
 		/// <remarks>
 		/// Run consistency checks against the object database.
@@ -864,6 +882,8 @@ namespace NGit.Junit
 
 			private readonly DirCache tree = DirCache.NewInCore();
 
+			private ObjectId topLevelTree;
+
 			private readonly IList<RevCommit> parents = new AList<RevCommit>(2);
 
 			private int tick = 1;
@@ -933,6 +953,12 @@ namespace NGit.Junit
 				return this;
 			}
 
+			public virtual CommitBuilder SetTopLevelTree(ObjectId treeId)
+			{
+				this.topLevelTree = treeId;
+				return this;
+			}
+
 			/// <exception cref="System.Exception"></exception>
 			public virtual CommitBuilder Add(string path, string content)
 			{
@@ -942,12 +968,12 @@ namespace NGit.Junit
 			/// <exception cref="System.Exception"></exception>
 			public virtual CommitBuilder Add(string path, RevBlob id)
 			{
-				return this.Edit(new _PathEdit_796(id, path));
+				return this.Edit(new _PathEdit_820(id, path));
 			}
 
-			private sealed class _PathEdit_796 : DirCacheEditor.PathEdit
+			private sealed class _PathEdit_820 : DirCacheEditor.PathEdit
 			{
-				public _PathEdit_796(RevBlob id, string baseArg1) : base(baseArg1)
+				public _PathEdit_820(RevBlob id, string baseArg1) : base(baseArg1)
 				{
 					this.id = id;
 				}
@@ -1004,7 +1030,14 @@ namespace NGit.Junit
 					ObjectId commitId;
 					try
 					{
-						c.TreeId = this.tree.WriteTree(this._enclosing.inserter);
+						if (this.topLevelTree != null)
+						{
+							c.TreeId = this.topLevelTree;
+						}
+						else
+						{
+							c.TreeId = this.tree.WriteTree(this._enclosing.inserter);
+						}
 						commitId = this._enclosing.inserter.Insert(c);
 						this._enclosing.inserter.Flush();
 					}

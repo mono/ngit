@@ -79,6 +79,9 @@ namespace NGit
 		/// <summary>The "submodule" section</summary>
 		public static readonly string CONFIG_SUBMODULE_SECTION = "submodule";
 
+		/// <summary>The "gc" section</summary>
+		public static readonly string CONFIG_GC_SECTION = "gc";
+
 		/// <summary>The "pack" section</summary>
 		public static readonly string CONFIG_PACK_SECTION = "pack";
 
@@ -201,5 +204,11 @@ namespace NGit
 
 		/// <summary>The "indexversion" key</summary>
 		public static readonly string CONFIG_KEY_INDEXVERSION = "indexversion";
+
+		/// <summary>The "precomposeunicode" key</summary>
+		public static readonly string CONFIG_KEY_PRECOMPOSEUNICODE = "precomposeunicode";
+
+		/// <summary>The "pruneexpire" key</summary>
+		public static readonly string CONFIG_KEY_PRUNEEXPIRE = "pruneexpire";
 	}
 }

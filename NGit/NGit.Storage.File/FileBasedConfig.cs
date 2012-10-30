@@ -59,6 +59,8 @@ namespace NGit.Storage.File
 
 		private readonly FS fs;
 
+		private bool utf8Bom;
+
 		private volatile FileSnapshot snapshot;
 
 		private volatile ObjectId hash;
@@ -135,7 +137,19 @@ namespace NGit.Storage.File
 				}
 				else
 				{
-					FromText(RawParseUtils.Decode(@in));
+					string decoded;
+					if (@in.Length >= 3 && @in[0] == unchecked((byte)unchecked((int)(0xEF))) && @in[1
+						] == unchecked((byte)unchecked((int)(0xBB))) && @in[2] == unchecked((byte)unchecked(
+						(int)(0xBF))))
+					{
+						decoded = RawParseUtils.Decode(RawParseUtils.UTF8_CHARSET, @in, 3, @in.Length);
+						utf8Bom = true;
+					}
+					else
+					{
+						decoded = RawParseUtils.Decode(@in);
+					}
+					FromText(decoded);
 					snapshot = newSnapshot;
 					hash = newHash;
 				}
@@ -172,7 +186,22 @@ namespace NGit.Storage.File
 		/// <exception cref="System.IO.IOException">the file could not be written.</exception>
 		public override void Save()
 		{
-			byte[] @out = Constants.Encode(ToText());
+			byte[] @out;
+			string text = ToText();
+			if (utf8Bom)
+			{
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				bos.Write(unchecked((int)(0xEF)));
+				bos.Write(unchecked((int)(0xBB)));
+				bos.Write(unchecked((int)(0xBF)));
+				bos.Write(Sharpen.Runtime.GetBytesForString(text, RawParseUtils.UTF8_CHARSET.Name
+					()));
+				@out = bos.ToByteArray();
+			}
+			else
+			{
+				@out = Constants.Encode(text);
+			}
 			LockFile lf = new LockFile(GetFile(), fs);
 			if (!lf.Lock())
 			{

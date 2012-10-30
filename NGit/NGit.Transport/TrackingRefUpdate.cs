@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.Text;
 using NGit;
 using NGit.Transport;
 using Sharpen;
@@ -231,6 +232,25 @@ namespace NGit.Transport
 			}
 
 			private readonly TrackingRefUpdate _enclosing;
+		}
+
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append("TrackingRefUpdate[");
+			sb.Append(remoteName);
+			sb.Append(" -> ");
+			sb.Append(localName);
+			if (forceUpdate)
+			{
+				sb.Append(" (forced)");
+			}
+			sb.Append(" ");
+			sb.Append(oldObjectId == null ? string.Empty : oldObjectId.Abbreviate(7).Name);
+			sb.Append("..");
+			sb.Append(newObjectId == null ? string.Empty : newObjectId.Abbreviate(7).Name);
+			sb.Append("]");
+			return sb.ToString();
 		}
 	}
 }

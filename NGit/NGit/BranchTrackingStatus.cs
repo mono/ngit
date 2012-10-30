@@ -68,12 +68,12 @@ namespace NGit
 			)
 		{
 			BranchConfig branchConfig = new BranchConfig(repository.GetConfig(), branchName);
-			string remoteTrackingBranch = branchConfig.GetRemoteTrackingBranch();
-			if (remoteTrackingBranch == null)
+			string trackingBranch = branchConfig.GetTrackingBranch();
+			if (trackingBranch == null)
 			{
 				return null;
 			}
-			Ref tracking = repository.GetRef(remoteTrackingBranch);
+			Ref tracking = repository.GetRef(trackingBranch);
 			if (tracking == null)
 			{
 				return null;
@@ -94,8 +94,7 @@ namespace NGit
 			walk.SetRevFilter(RevFilter.ALL);
 			int aheadCount = RevWalkUtils.Count(walk, localCommit, mergeBase);
 			int behindCount = RevWalkUtils.Count(walk, trackingCommit, mergeBase);
-			return new NGit.BranchTrackingStatus(remoteTrackingBranch, aheadCount, behindCount
-				);
+			return new NGit.BranchTrackingStatus(trackingBranch, aheadCount, behindCount);
 		}
 
 		private readonly string remoteTrackingBranch;

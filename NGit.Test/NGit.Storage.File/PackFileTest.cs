@@ -51,6 +51,7 @@ using NGit.Storage.File;
 using NGit.Storage.Pack;
 using NGit.Transport;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Storage.File
@@ -208,7 +209,7 @@ namespace NGit.Storage.File
 			NUnit.Framework.Assert.AreEqual(data3.Length, ol.GetSize());
 			NUnit.Framework.Assert.IsFalse(ol.IsLarge(), "is large");
 			NUnit.Framework.Assert.IsNotNull(ol.GetCachedBytes());
-			NUnit.Framework.Assert.IsTrue(Arrays.Equals(data3, ol.GetCachedBytes()));
+			CollectionAssert.AreEquivalent(data3, ol.GetCachedBytes());
 			ObjectStream @in = ol.OpenStream();
 			NUnit.Framework.Assert.IsNotNull(@in, "have stream");
 			NUnit.Framework.Assert.AreEqual(Constants.OBJ_BLOB, @in.GetType());

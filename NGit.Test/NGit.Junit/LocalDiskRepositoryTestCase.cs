@@ -105,7 +105,7 @@ namespace NGit.Junit
 			{
 				if (shutdownHook == null)
 				{
-					shutdownHook = new _Thread_118(this);
+					shutdownHook = new _Thread_117(this);
 					// On windows accidentally open files or memory
 					// mapped regions may prevent files from being deleted.
 					// Suggesting a GC increases the likelihood that our
@@ -134,9 +134,9 @@ namespace NGit.Junit
 			WindowCache.Reconfigure(c);
 		}
 
-		private sealed class _Thread_118 : Sharpen.Thread
+		private sealed class _Thread_117 : Sharpen.Thread
 		{
-			public _Thread_118(LocalDiskRepositoryTestCase _enclosing)
+			public _Thread_117(LocalDiskRepositoryTestCase _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -466,19 +466,10 @@ namespace NGit.Junit
 			JGitTestUtil.Write(f, body);
 		}
 
-		/// <summary>Fully read a UTF-8 file and return as a string.</summary>
-		/// <remarks>Fully read a UTF-8 file and return as a string.</remarks>
-		/// <param name="f">file to read the content of.</param>
-		/// <returns>
-		/// UTF-8 decoded content of the file, empty string if the file
-		/// exists but has no content.
-		/// </returns>
-		/// <exception cref="System.IO.IOException">the file does not exist, or could not be read.
-		/// 	</exception>
+		/// <exception cref="System.IO.IOException"></exception>
 		protected internal virtual string Read(FilePath f)
 		{
-			byte[] body = IOUtil.ReadFully(f);
-			return Sharpen.Runtime.GetStringForBytes(body, 0, body.Length, "UTF-8");
+			return JGitTestUtil.Read(f);
 		}
 
 		private static string[] ToEnvArray(IDictionary<string, string> env)

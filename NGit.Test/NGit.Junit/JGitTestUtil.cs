@@ -178,6 +178,28 @@ namespace NGit.Junit
 			}
 		}
 
+		/// <summary>Fully read a UTF-8 file and return as a string.</summary>
+		/// <remarks>Fully read a UTF-8 file and return as a string.</remarks>
+		/// <param name="file">file to read the content of.</param>
+		/// <returns>
+		/// UTF-8 decoded content of the file, empty string if the file
+		/// exists but has no content.
+		/// </returns>
+		/// <exception cref="System.IO.IOException">the file does not exist, or could not be read.
+		/// 	</exception>
+		public static string Read(FilePath file)
+		{
+			byte[] body = IOUtil.ReadFully(file);
+			return Sharpen.Runtime.GetStringForBytes(body, 0, body.Length, "UTF-8");
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
+		public static string Read(FileRepository db, string name)
+		{
+			FilePath file = new FilePath(db.WorkTree, name);
+			return Read(file);
+		}
+
 		/// <exception cref="System.IO.IOException"></exception>
 		public static void DeleteTrashFile(FileRepository db, string name)
 		{

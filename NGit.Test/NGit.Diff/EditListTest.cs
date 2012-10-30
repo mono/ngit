@@ -55,9 +55,9 @@ namespace NGit.Diff
 			EditList l = new EditList();
 			NUnit.Framework.Assert.AreEqual(0, l.Count);
 			NUnit.Framework.Assert.IsTrue(l.IsEmpty());
-//			NUnit.Framework.Assert.AreEqual("EditList[]", l.ToString());
-			NUnit.Framework.Assert.IsTrue(l.Equals(l));
-			NUnit.Framework.Assert.IsTrue(l.Equals(new EditList()));
+			NUnit.Framework.Assert.AreEqual("EditList[]", l.ToString());
+			NUnit.Framework.Assert.AreEqual(l, l);
+			NUnit.Framework.Assert.AreEqual(new EditList(), l);
 			NUnit.Framework.Assert.IsFalse(l.Equals(string.Empty));
 			NUnit.Framework.Assert.AreEqual(l.GetHashCode(), new EditList().GetHashCode());
 		}
@@ -72,12 +72,12 @@ namespace NGit.Diff
 			NUnit.Framework.Assert.IsFalse(l.IsEmpty());
 			NUnit.Framework.Assert.AreSame(e, l[0]);
 			NUnit.Framework.Assert.AreSame(e, l.Iterator().Next());
-			NUnit.Framework.Assert.IsTrue(l.Equals(l));
+			NUnit.Framework.Assert.AreEqual(l, l);
 			NUnit.Framework.Assert.IsFalse(l.Equals(new EditList()));
 			EditList l2 = new EditList();
 			l2.AddItem(e);
-			NUnit.Framework.Assert.IsTrue(l.Equals(l2));
-			NUnit.Framework.Assert.IsTrue(l2.Equals(l));
+			NUnit.Framework.Assert.AreEqual(l2, l);
+			NUnit.Framework.Assert.AreEqual(l, l2);
 			NUnit.Framework.Assert.AreEqual(l.GetHashCode(), l2.GetHashCode());
 		}
 
@@ -95,13 +95,13 @@ namespace NGit.Diff
 			Iterator<Edit> i = l.Iterator();
 			NUnit.Framework.Assert.AreSame(e1, i.Next());
 			NUnit.Framework.Assert.AreSame(e2, i.Next());
-			NUnit.Framework.Assert.IsTrue(l.Equals(l));
+			NUnit.Framework.Assert.AreEqual(l, l);
 			NUnit.Framework.Assert.IsFalse(l.Equals(new EditList()));
 			EditList l2 = new EditList();
 			l2.AddItem(e1);
 			l2.AddItem(e2);
-			NUnit.Framework.Assert.IsTrue(l.Equals(l2));
-			NUnit.Framework.Assert.IsTrue(l2.Equals(l));
+			NUnit.Framework.Assert.AreEqual(l2, l);
+			NUnit.Framework.Assert.AreEqual(l, l2);
 			NUnit.Framework.Assert.AreEqual(l.GetHashCode(), l2.GetHashCode());
 		}
 

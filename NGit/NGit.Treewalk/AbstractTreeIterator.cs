@@ -805,5 +805,10 @@ namespace NGit.Treewalk
 		{
 			System.Array.Copy(path, pathOffset, buffer, offset, pathLen - pathOffset);
 		}
+
+		public override string ToString()
+		{
+			return GetType().Name + "[" + EntryPathString + "]";
+		}
 	}
 }

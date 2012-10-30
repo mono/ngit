@@ -47,6 +47,7 @@ using NGit;
 using NGit.Api;
 using NGit.Api.Errors;
 using NGit.Dircache;
+using NGit.Errors;
 using NGit.Internal;
 using NGit.Revwalk;
 using NGit.Treewalk;
@@ -269,6 +270,11 @@ namespace NGit.Api
 						WorkingTreeIterator wtIter = treeWalk.GetTree<WorkingTreeIterator>(2);
 						if (headIter != null && indexIter != null && wtIter != null)
 						{
+							if (!indexIter.GetDirCacheEntry().IsMerged())
+							{
+								throw new UnmergedPathsException(new UnmergedPathException(indexIter.GetDirCacheEntry
+									()));
+							}
 							if (wtIter.IdEqual(indexIter) || wtIter.IdEqual(headIter))
 							{
 								continue;
@@ -288,7 +294,7 @@ namespace NGit.Api
 							{
 								@in.Close();
 							}
-							wtEdits.AddItem(new _PathEdit_267(entry, entry));
+							wtEdits.AddItem(new _PathEdit_273(entry, entry));
 						}
 						else
 						{
@@ -355,9 +361,9 @@ namespace NGit.Api
 			}
 		}
 
-		private sealed class _PathEdit_267 : DirCacheEditor.PathEdit
+		private sealed class _PathEdit_273 : DirCacheEditor.PathEdit
 		{
-			public _PathEdit_267(DirCacheEntry entry, DirCacheEntry baseArg1) : base(baseArg1
+			public _PathEdit_273(DirCacheEntry entry, DirCacheEntry baseArg1) : base(baseArg1
 				)
 			{
 				this.entry = entry;

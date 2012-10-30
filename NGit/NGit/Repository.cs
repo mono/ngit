@@ -51,6 +51,7 @@ using NGit.Events;
 using NGit.Internal;
 using NGit.Revwalk;
 using NGit.Storage.File;
+using NGit.Transport;
 using NGit.Treewalk;
 using NGit.Util;
 using NGit.Util.IO;
@@ -399,7 +400,53 @@ namespace NGit
 			RevWalk rw = new RevWalk(this);
 			try
 			{
-				return Resolve(rw, revstr);
+				object resolved = Resolve(rw, revstr);
+				if (resolved is string)
+				{
+					return GetRef((string)resolved).GetLeaf().GetObjectId();
+				}
+				else
+				{
+					return (ObjectId)resolved;
+				}
+			}
+			finally
+			{
+				rw.Release();
+			}
+		}
+
+		/// <summary>
+		/// Simplify an expression, but unlike
+		/// <see cref="Resolve(string)">Resolve(string)</see>
+		/// it will not
+		/// resolve a branch passed or resulting from the expression, such as @{-}.
+		/// Thus this method can be used to process an expression to a method that
+		/// expects a branch or revision id.
+		/// </summary>
+		/// <param name="revstr"></param>
+		/// <returns>object id or ref name from resolved expression</returns>
+		/// <exception cref="NGit.Errors.AmbiguousObjectException">NGit.Errors.AmbiguousObjectException
+		/// 	</exception>
+		/// <exception cref="System.IO.IOException">System.IO.IOException</exception>
+		public virtual string Simplify(string revstr)
+		{
+			RevWalk rw = new RevWalk(this);
+			try
+			{
+				object resolved = Resolve(rw, revstr);
+				if (resolved != null)
+				{
+					if (resolved is string)
+					{
+						return (string)resolved;
+					}
+					else
+					{
+						return ((AnyObjectId)resolved).GetName();
+					}
+				}
+				return null;
 			}
 			finally
 			{
@@ -408,10 +455,12 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		private ObjectId Resolve(RevWalk rw, string revstr)
+		private object Resolve(RevWalk rw, string revstr)
 		{
 			char[] revChars = revstr.ToCharArray();
 			RevObject rev = null;
+			string name = null;
+			int done = 0;
 			for (int i = 0; i < revChars.Length; ++i)
 			{
 				switch (revChars[i])
@@ -420,7 +469,20 @@ namespace NGit
 					{
 						if (rev == null)
 						{
-							rev = ParseSimple(rw, new string(revChars, 0, i));
+							if (name == null)
+							{
+								if (done == 0)
+								{
+									name = new string(revChars, done, i);
+								}
+								else
+								{
+									done = i + 1;
+									break;
+								}
+							}
+							rev = ParseSimple(rw, name);
+							name = null;
 							if (rev == null)
 							{
 								return null;
@@ -474,6 +536,7 @@ namespace NGit
 										}
 									}
 									i = j - 1;
+									done = j;
 									break;
 								}
 
@@ -530,6 +593,7 @@ namespace NGit
 									{
 										throw new RevisionSyntaxException(revstr);
 									}
+									done = k;
 									break;
 								}
 
@@ -576,6 +640,7 @@ namespace NGit
 								throw new IncorrectObjectTypeException(rev, Constants.TYPE_COMMIT);
 							}
 						}
+						done = i + 1;
 						break;
 					}
 
@@ -583,7 +648,20 @@ namespace NGit
 					{
 						if (rev == null)
 						{
-							rev = ParseSimple(rw, new string(revChars, 0, i));
+							if (name == null)
+							{
+								if (done == 0)
+								{
+									name = new string(revChars, done, i);
+								}
+								else
+								{
+									done = i + 1;
+									break;
+								}
+							}
+							rev = ParseSimple(rw, name);
+							name = null;
 							if (rev == null)
 							{
 								return null;
@@ -633,11 +711,20 @@ namespace NGit
 							--dist;
 						}
 						i = l - 1;
+						done = l;
 						break;
 					}
 
 					case '@':
 					{
+						if (rev != null)
+						{
+							throw new RevisionSyntaxException(revstr);
+						}
+						if (i + 1 < revChars.Length && revChars[i + 1] != '{')
+						{
+							continue;
+						}
 						int m;
 						string time = null;
 						for (m = i + 2; m < revChars.Length; ++m)
@@ -650,18 +737,115 @@ namespace NGit
 						}
 						if (time != null)
 						{
-							string refName = new string(revChars, 0, i);
-							Ref resolved = RefDatabase.GetRef(refName);
-							if (resolved == null)
+							if (time.Equals("upstream"))
 							{
-								return null;
+								if (name == null)
+								{
+									name = new string(revChars, done, i);
+								}
+								if (name.Equals(string.Empty))
+								{
+									// Currently checked out branch, HEAD if
+									// detached
+									name = Constants.HEAD;
+								}
+								if (!NGit.Repository.IsValidRefName("x/" + name))
+								{
+									throw new RevisionSyntaxException(revstr);
+								}
+								Ref @ref = GetRef(name);
+								name = null;
+								if (@ref == null)
+								{
+									return null;
+								}
+								if (@ref.IsSymbolic())
+								{
+									@ref = @ref.GetLeaf();
+								}
+								name = @ref.GetName();
+								RemoteConfig remoteConfig;
+								try
+								{
+									remoteConfig = new RemoteConfig(GetConfig(), "origin");
+								}
+								catch (URISyntaxException)
+								{
+									throw new RevisionSyntaxException(revstr);
+								}
+								string remoteBranchName = GetConfig().GetString(ConfigConstants.CONFIG_BRANCH_SECTION
+									, NGit.Repository.ShortenRefName(@ref.GetName()), ConfigConstants.CONFIG_KEY_MERGE
+									);
+								IList<RefSpec> fetchRefSpecs = remoteConfig.FetchRefSpecs;
+								foreach (RefSpec refSpec in fetchRefSpecs)
+								{
+									if (refSpec.MatchSource(remoteBranchName))
+									{
+										RefSpec expandFromSource = refSpec.ExpandFromSource(remoteBranchName);
+										name = expandFromSource.GetDestination();
+										break;
+									}
+								}
+								if (name == null)
+								{
+									throw new RevisionSyntaxException(revstr);
+								}
 							}
-							rev = ResolveReflog(rw, resolved, time);
+							else
+							{
+								if (time.Matches("^-\\d+$"))
+								{
+									if (name != null)
+									{
+										throw new RevisionSyntaxException(revstr);
+									}
+									else
+									{
+										string previousCheckout = ResolveReflogCheckout(-System.Convert.ToInt32(time));
+										if (ObjectId.IsId(previousCheckout))
+										{
+											rev = ParseSimple(rw, previousCheckout);
+										}
+										else
+										{
+											name = previousCheckout;
+										}
+									}
+								}
+								else
+								{
+									if (name == null)
+									{
+										name = new string(revChars, done, i);
+									}
+									if (name.Equals(string.Empty))
+									{
+										name = Constants.HEAD;
+									}
+									if (!NGit.Repository.IsValidRefName("x/" + name))
+									{
+										throw new RevisionSyntaxException(revstr);
+									}
+									Ref @ref = GetRef(name);
+									name = null;
+									if (@ref == null)
+									{
+										return null;
+									}
+									// @{n} means current branch, not HEAD@{1} unless
+									// detached
+									if (@ref.IsSymbolic())
+									{
+										@ref = @ref.GetLeaf();
+									}
+									rev = ResolveReflog(rw, @ref, time);
+								}
+							}
 							i = m;
 						}
 						else
 						{
-							i = m - 1;
+							throw new RevisionSyntaxException(revstr);
 						}
 						break;
 					}
@@ -671,33 +855,22 @@ namespace NGit
 						RevTree tree;
 						if (rev == null)
 						{
-							// We might not yet have parsed the left hand side.
-							ObjectId id;
-							try
+							if (name == null)
 							{
-								if (i == 0)
-								{
-									id = Resolve(rw, Constants.HEAD);
-								}
-								else
-								{
-									id = Resolve(rw, new string(revChars, 0, i));
-								}
+								name = new string(revChars, done, i);
 							}
-							catch (RevisionSyntaxException)
+							if (name.Equals(string.Empty))
 							{
-								throw new RevisionSyntaxException(revstr);
+								name = Constants.HEAD;
 							}
-							if (id == null)
-							{
-								return null;
-							}
-							tree = rw.ParseTree(id);
+							rev = ParseSimple(rw, name);
+							name = null;
 						}
-						else
+						if (rev == null)
 						{
-							tree = rw.ParseTree(rev);
+							return null;
 						}
+						tree = rw.ParseTree(rev);
 						if (i == revChars.Length - 1)
 						{
 							return tree.Copy();
@@ -717,7 +890,28 @@ namespace NGit
 					}
 				}
 			}
-			return rev != null ? rev.Copy() : ResolveSimple(revstr);
+			if (rev != null)
+			{
+				return rev.Copy();
+			}
+			if (name != null)
+			{
+				return name;
+			}
+			if (rev == null && done == revstr.Length)
+			{
+				return null;
+			}
+			name = Sharpen.Runtime.Substring(revstr, done);
+			if (!NGit.Repository.IsValidRefName("x/" + name))
+			{
+				throw new RevisionSyntaxException(revstr);
+			}
+			if (GetRef(name) != null)
+			{
+				return name;
+			}
+			return ResolveSimple(name);
 		}
 
 		private static bool IsHex(char c)
@@ -753,10 +947,13 @@ namespace NGit
 			{
 				return ObjectId.FromString(revstr);
 			}
-			Ref r = RefDatabase.GetRef(revstr);
-			if (r != null)
+			if (NGit.Repository.IsValidRefName("x/" + revstr))
 			{
-				return r.GetObjectId();
+				Ref r = RefDatabase.GetRef(revstr);
+				if (r != null)
+				{
+					return r.GetObjectId();
+				}
 			}
 			if (AbbreviatedObjectId.IsId(revstr))
 			{
@@ -777,6 +974,25 @@ namespace NGit
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
+		private string ResolveReflogCheckout(int checkoutNo)
+		{
+			IList<ReflogEntry> reflogEntries = new ReflogReader(this, Constants.HEAD).GetReverseEntries
+				();
+			foreach (ReflogEntry entry in reflogEntries)
+			{
+				CheckoutEntry checkout = entry.ParseCheckout();
+				if (checkout != null)
+				{
+					if (checkoutNo-- == 1)
+					{
+						return checkout.GetFromBranch();
+					}
+				}
+			}
+			return null;
+		}
+
+		/// <exception cref="System.IO.IOException"></exception>
 		private RevCommit ResolveReflog(RevWalk rw, Ref @ref, string time)
 		{
 			int number;
@@ -785,11 +1001,6 @@ namespace NGit
 				number = System.Convert.ToInt32(time);
 			}
 			catch (FormatException)
-			{
-				throw new RevisionSyntaxException(MessageFormat.Format(JGitText.Get().invalidReflogRevision
-					, time));
-			}
-			if (number < 0)
 			{
 				throw new RevisionSyntaxException(MessageFormat.Format(JGitText.Get().invalidReflogRevision
 					, time));
@@ -1147,13 +1358,13 @@ namespace NGit
 		{
 			// we want DirCache to inform us so that we can inform registered
 			// listeners about index changes
-			IndexChangedListener l = new _IndexChangedListener_902(this);
+			IndexChangedListener l = new _IndexChangedListener_1042(this);
 			return DirCache.Lock(this, l);
 		}
 
-		private sealed class _IndexChangedListener_902 : IndexChangedListener
+		private sealed class _IndexChangedListener_1042 : IndexChangedListener
 		{
-			public _IndexChangedListener_902(Repository _enclosing)
+			public _IndexChangedListener_1042(Repository _enclosing)
 			{
 				this._enclosing = _enclosing;
 			}
@@ -1317,6 +1528,10 @@ namespace NGit
 						{
 							return false;
 						}
+						if (p == '/')
+						{
+							return false;
+						}
 						components++;
 						break;
 					}
@@ -1337,6 +1552,7 @@ namespace NGit
 					case '[':
 					case '*':
 					case '\\':
+					case '\u007F':
 					{
 						return false;
 					}

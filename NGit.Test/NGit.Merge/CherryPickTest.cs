@@ -71,13 +71,13 @@ namespace NGit.Merge
 				DirCacheBuilder o = treeO.Builder();
 				DirCacheBuilder p = treeP.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("a", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("a", FileMode.REGULAR_FILE));
-				o.Add(MakeEntry("o", FileMode.REGULAR_FILE));
-				p.Add(MakeEntry("a", FileMode.REGULAR_FILE, "q"));
-				p.Add(MakeEntry("p-fail", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("a", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("t", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("a", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("a", FileMode.REGULAR_FILE));
+				o.Add(CreateEntry("o", FileMode.REGULAR_FILE));
+				p.Add(CreateEntry("a", FileMode.REGULAR_FILE, "q"));
+				p.Add(CreateEntry("p-fail", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("a", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("t", FileMode.REGULAR_FILE));
 				b.Finish();
 				o.Finish();
 				p.Finish();
@@ -128,12 +128,12 @@ namespace NGit.Merge
 				DirCacheBuilder b = treeB.Builder();
 				DirCacheBuilder p = treeP.Builder();
 				DirCacheBuilder t = treeT.Builder();
-				b.Add(MakeEntry("a", FileMode.REGULAR_FILE));
-				p.Add(MakeEntry("a", FileMode.REGULAR_FILE, "q"));
-				p.Add(MakeEntry("p-fail", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("a", FileMode.REGULAR_FILE, "q"));
-				t.Add(MakeEntry("p-fail", FileMode.REGULAR_FILE));
-				t.Add(MakeEntry("t", FileMode.REGULAR_FILE));
+				b.Add(CreateEntry("a", FileMode.REGULAR_FILE));
+				p.Add(CreateEntry("a", FileMode.REGULAR_FILE, "q"));
+				p.Add(CreateEntry("p-fail", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("a", FileMode.REGULAR_FILE, "q"));
+				t.Add(CreateEntry("p-fail", FileMode.REGULAR_FILE));
+				t.Add(CreateEntry("t", FileMode.REGULAR_FILE));
 				b.Finish();
 				p.Finish();
 				t.Finish();
@@ -177,22 +177,6 @@ namespace NGit.Merge
 			ObjectId id = odi.Insert(c);
 			odi.Flush();
 			return id;
-		}
-
-		/// <exception cref="System.Exception"></exception>
-		private DirCacheEntry MakeEntry(string path, FileMode mode)
-		{
-			return MakeEntry(path, mode, path);
-		}
-
-		/// <exception cref="System.Exception"></exception>
-		private DirCacheEntry MakeEntry(string path, FileMode mode, string content)
-		{
-			DirCacheEntry ent = new DirCacheEntry(path);
-			ent.FileMode = mode;
-			ent.SetObjectId(new ObjectInserter.Formatter().IdFor(Constants.OBJ_BLOB, Constants
-				.Encode(content)));
-			return ent;
 		}
 	}
 }

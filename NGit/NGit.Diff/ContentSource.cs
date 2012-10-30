@@ -56,6 +56,7 @@ namespace NGit.Diff
 	/// Supplies the content of a file for
 	/// <see cref="DiffFormatter">DiffFormatter</see>
 	/// .
+	/// <p>
 	/// A content source is not thread-safe. Sources may contain state, including
 	/// information about the last ObjectLoader they returned. Callers must be
 	/// careful to ensure there is no more than one ObjectLoader pending on any

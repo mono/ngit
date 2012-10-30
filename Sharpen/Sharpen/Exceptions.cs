@@ -123,6 +123,17 @@ namespace Sharpen
 	{
 	}
 
+	public class ParseException : Exception
+	{
+		public ParseException ()
+		{
+		}
+
+		public ParseException (string msg, int errorOffset) : base(string.Format ("Msg: msg. Error Offset: {1}", msg, errorOffset))
+		{ 
+		}
+	}
+
 	public class RuntimeException : Exception
 	{
 		public RuntimeException ()

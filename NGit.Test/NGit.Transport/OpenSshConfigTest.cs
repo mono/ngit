@@ -227,7 +227,7 @@ namespace NGit.Transport
 		{
 			OpenSshConfig.Host h = osc.Lookup("orcz");
 			NUnit.Framework.Assert.IsNotNull(h);
-			NUnit.Framework.Assert.AreEqual(false, h.IsBatchMode());
+			NUnit.Framework.Assert.IsFalse(h.IsBatchMode());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -237,7 +237,7 @@ namespace NGit.Transport
 			Config("Host orcz\n" + "\tBatchMode yes\n");
 			OpenSshConfig.Host h = osc.Lookup("orcz");
 			NUnit.Framework.Assert.IsNotNull(h);
-			NUnit.Framework.Assert.AreEqual(true, h.IsBatchMode());
+			NUnit.Framework.Assert.IsTrue(h.IsBatchMode());
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -248,7 +248,7 @@ namespace NGit.Transport
 				);
 			OpenSshConfig.Host h = osc.Lookup("orcz");
 			NUnit.Framework.Assert.IsNotNull(h);
-			NUnit.Framework.Assert.AreEqual(true, h.IsBatchMode());
+			NUnit.Framework.Assert.IsTrue(h.IsBatchMode());
 		}
 	}
 }

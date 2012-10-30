@@ -62,7 +62,7 @@ namespace NGit.Patch
 				FormatError e = p.GetErrors()[0];
 				NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().truncatedHunkLinesMissingForAncestor
-					, 1, 1), e.GetMessage());
+					, Sharpen.Extensions.ValueOf(1), Sharpen.Extensions.ValueOf(1)), e.GetMessage());
 				NUnit.Framework.Assert.AreEqual(346, e.GetOffset());
 				NUnit.Framework.Assert.IsTrue(e.GetLineText().StartsWith("@@@ -55,12 -163,13 +163,15 @@@ public "
 					));
@@ -71,7 +71,7 @@ namespace NGit.Patch
 				FormatError e = p.GetErrors()[1];
 				NUnit.Framework.Assert.AreEqual(FormatError.Severity.ERROR, e.GetSeverity());
 				NUnit.Framework.Assert.AreEqual(MessageFormat.Format(JGitText.Get().truncatedHunkLinesMissingForAncestor
-					, 2, 2), e.GetMessage());
+					, Sharpen.Extensions.ValueOf(2), Sharpen.Extensions.ValueOf(2)), e.GetMessage());
 				NUnit.Framework.Assert.AreEqual(346, e.GetOffset());
 				NUnit.Framework.Assert.IsTrue(e.GetLineText().StartsWith("@@@ -55,12 -163,13 +163,15 @@@ public "
 					));

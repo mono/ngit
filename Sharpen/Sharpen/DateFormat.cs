@@ -22,6 +22,8 @@ namespace Sharpen
 		public DateFormat ()
 		{
 		}
+
+		public abstract DateTime Parse (string value);
 		
 		public TimeZoneInfo GetTimeZone ()
 		{

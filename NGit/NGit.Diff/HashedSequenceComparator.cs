@@ -50,11 +50,13 @@ namespace NGit.Diff
 	/// Wrap another comparator for use with
 	/// <see cref="HashedSequence{S}">HashedSequence&lt;S&gt;</see>
 	/// .
+	/// <p>
 	/// This comparator acts as a proxy for the real comparator, evaluating the
 	/// cached hash code before testing the underlying comparator's equality.
 	/// Comparators of this type must be used with a
 	/// <see cref="HashedSequence{S}">HashedSequence&lt;S&gt;</see>
 	/// .
+	/// <p>
 	/// To construct an instance of this type use
 	/// <see cref="HashedSequencePair{S}">HashedSequencePair&lt;S&gt;</see>
 	/// .

@@ -78,8 +78,8 @@ namespace NGit.Transport
 			PUSH
 		}
 
-		private static readonly IList<WeakReference<TransportProtocol>> protocols = new CopyOnWriteArrayList
-			<WeakReference<TransportProtocol>>();
+		private static readonly IList< JavaWeakReference<TransportProtocol>> protocols = 
+			new CopyOnWriteArrayList< JavaWeakReference<TransportProtocol>>();
 
 		static Transport()
 		{
@@ -238,7 +238,7 @@ namespace NGit.Transport
 		/// <param name="proto">the protocol definition. Must not be null.</param>
 		public static void Register(TransportProtocol proto)
 		{
-			protocols.Add(0, new WeakReference<TransportProtocol>(proto));
+			protocols.Add(0, new  JavaWeakReference<TransportProtocol>(proto));
 		}
 
 		/// <summary>Unregister a TransportProtocol instance.</summary>
@@ -256,7 +256,7 @@ namespace NGit.Transport
 		/// <param name="proto">the exact object previously given to register.</param>
 		public static void Unregister(TransportProtocol proto)
 		{
-			foreach (WeakReference<TransportProtocol> @ref in protocols)
+			foreach ( JavaWeakReference<TransportProtocol> @ref in protocols)
 			{
 				TransportProtocol refProto = @ref.Get();
 				if (refProto == null || refProto == proto)
@@ -273,7 +273,7 @@ namespace NGit.Transport
 		{
 			int cnt = protocols.Count;
 			IList<TransportProtocol> res = new AList<TransportProtocol>(cnt);
-			foreach (WeakReference<TransportProtocol> @ref in protocols)
+			foreach ( JavaWeakReference<TransportProtocol> @ref in protocols)
 			{
 				TransportProtocol proto = @ref.Get();
 				if (proto != null)
@@ -610,7 +610,7 @@ namespace NGit.Transport
 		public static NGit.Transport.Transport Open(Repository local, URIish uri, string 
 			remoteName)
 		{
-			foreach (WeakReference<TransportProtocol> @ref in protocols)
+			foreach ( JavaWeakReference<TransportProtocol> @ref in protocols)
 			{
 				TransportProtocol proto = @ref.Get();
 				if (proto == null)
@@ -635,7 +635,7 @@ namespace NGit.Transport
 		/// <exception cref="NGit.Errors.TransportException">NGit.Errors.TransportException</exception>
 		public static NGit.Transport.Transport Open(URIish uri)
 		{
-			foreach (WeakReference<TransportProtocol> @ref in protocols)
+			foreach ( JavaWeakReference<TransportProtocol> @ref in protocols)
 			{
 				TransportProtocol proto = @ref.Get();
 				if (proto == null)

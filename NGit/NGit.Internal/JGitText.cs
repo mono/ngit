@@ -170,6 +170,8 @@ namespace NGit.Internal
 
 		public string cannotOpenService;
 
+		public string cannotParseDate;
+
 		public string cannotParseGitURIish;
 
 		public string cannotPullOnARepoWithState;
@@ -229,6 +231,8 @@ namespace NGit.Internal
 		public string commitMessageNotSpecified;
 
 		public string commitOnRepoWithoutHEADCurrentlyNotSupported;
+
+		public string commitAmendOnInitialNotPossible;
 
 		public string compressingObjects;
 
@@ -811,6 +815,8 @@ namespace NGit.Internal
 		public string receivingObjects;
 
 		public string refAlreadyExists;
+
+		public string refAlreadyExists1;
 
 		public string reflogEntryNotFound;
 

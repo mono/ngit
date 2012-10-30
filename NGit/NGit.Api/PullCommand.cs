@@ -237,20 +237,20 @@ namespace NGit.Api
 						, e);
 				}
 			}
+			string upstreamName = "branch \'" + Repository.ShortenRefName(remoteBranchName) +
+				 "\' of " + remoteUri;
 			PullResult result;
 			if (doRebase)
 			{
 				RebaseCommand rebase = new RebaseCommand(repo);
-				RebaseResult rebaseRes = rebase.SetUpstream(commitToMerge).SetProgressMonitor(monitor
-					).SetOperation(RebaseCommand.Operation.BEGIN).Call();
+				RebaseResult rebaseRes = rebase.SetUpstream(commitToMerge).SetUpstreamName(upstreamName
+					).SetProgressMonitor(monitor).SetOperation(RebaseCommand.Operation.BEGIN).Call();
 				result = new PullResult(fetchRes, remote, rebaseRes);
 			}
 			else
 			{
 				MergeCommand merge = new MergeCommand(repo);
-				string name = "branch \'" + Repository.ShortenRefName(remoteBranchName) + "\' of "
-					 + remoteUri;
-				merge.Include(name, commitToMerge);
+				merge.Include(upstreamName, commitToMerge);
 				MergeCommandResult mergeRes = merge.Call();
 				monitor.Update(1);
 				result = new PullResult(fetchRes, remote, mergeRes);

@@ -194,6 +194,33 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCherryPickConflictMarkers()
+		{
+			Git git = new Git(db);
+			RevCommit sideCommit = PrepareCherryPick(git);
+			CherryPickResult result = git.CherryPick().Include(sideCommit.Id).Call();
+			NUnit.Framework.Assert.AreEqual(CherryPickResult.CherryPickStatus.CONFLICTING, result
+				.GetStatus());
+			string expected = "<<<<<<< master\na(master)\n=======\na(side)\n>>>>>>> 527460a side\n";
+			CheckFile(new FilePath(db.WorkTree, "a"), expected);
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestCherryPickOurCommitName()
+		{
+			Git git = new Git(db);
+			RevCommit sideCommit = PrepareCherryPick(git);
+			CherryPickResult result = git.CherryPick().Include(sideCommit.Id).SetOurCommitName
+				("custom name").Call();
+			NUnit.Framework.Assert.AreEqual(CherryPickResult.CherryPickStatus.CONFLICTING, result
+				.GetStatus());
+			string expected = "<<<<<<< custom name\na(master)\n=======\na(side)\n>>>>>>> 527460a side\n";
+			CheckFile(new FilePath(db.WorkTree, "a"), expected);
+		}
+
+		/// <exception cref="System.Exception"></exception>
 		private RevCommit PrepareCherryPick(Git git)
 		{
 			// create, add and commit file a
