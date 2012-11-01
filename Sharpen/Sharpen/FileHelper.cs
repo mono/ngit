@@ -122,10 +122,15 @@ namespace Sharpen
 			return false;
 		}
 
-		public virtual void SetReadOnly (FilePath path)
+		public virtual bool SetReadOnly (FilePath path)
 		{
-			var fileAttributes = File.GetAttributes (path) | FileAttributes.ReadOnly;
-			File.SetAttributes (path, fileAttributes);
+			try {
+				var fileAttributes = File.GetAttributes (path) | FileAttributes.ReadOnly;
+				File.SetAttributes (path, fileAttributes);
+				return true;
+			} catch {
+				return false;
+			}
 		}
 
 		public virtual bool SetLastModified(FilePath path, long milis)

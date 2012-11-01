@@ -269,9 +269,9 @@ namespace Sharpen
 			return FileHelper.Instance.SetLastModified(this, milis);
 		}
 
-		public void SetReadOnly ()
+		public bool SetReadOnly ()
 		{
-			FileHelper.Instance.SetReadOnly (this);
+			return FileHelper.Instance.SetReadOnly (this);
 		}
 		
 		public Uri ToURI ()

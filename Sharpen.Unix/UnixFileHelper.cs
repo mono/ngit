@@ -136,11 +136,16 @@ namespace Sharpen.Unix
 			return base.SetLastModified(path, milis);
 		}
 		
-		public override void SetReadOnly (FilePath path)
+		public override bool SetReadOnly (FilePath path)
 		{
-			var info = GetUnixFileInfo (path);
-			if (info != null)
-				info.FileAccessPermissions &= ~ (FileAccessPermissions.GroupWrite | FileAccessPermissions.OtherWrite | FileAccessPermissions.UserWrite);
+			try {
+				var info = GetUnixFileInfo (path);
+				if (info != null)
+					info.FileAccessPermissions &= ~ (FileAccessPermissions.GroupWrite | FileAccessPermissions.OtherWrite | FileAccessPermissions.UserWrite);
+				return true;
+			} catch {
+				return false;
+			}
 		}
 	}
 }
