@@ -42,6 +42,9 @@ namespace Sharpen
 			case 6:
 				Time.AddMonths (value);
 				break;
+			case 7:
+				Time.AddDays (7 * value);
+				break;
 			default:
 				throw new NotSupportedException ();
 			}
@@ -85,7 +88,7 @@ namespace Sharpen
 
 		public void SetTimeInMillis (long milliseconds)
 		{
-			Time = new DateTime (1970, 0, 0).AddMilliseconds (milliseconds);
+			Time = new DateTime (milliseconds * TimeSpan.TicksPerMillisecond);
 		}
 	}
 
