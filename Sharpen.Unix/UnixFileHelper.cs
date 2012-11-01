@@ -101,7 +101,9 @@ namespace Sharpen.Unix
 				newFile.CreateSymbolicLinkTo (symlink.ContentsPath);
 				return true;
 			} else {
-				return base.RenameTo (path, name);
+				// This call replaces the file if it already exists.
+				// File.Move throws an exception if dest already exists
+				return Mono.Unix.Native.Stdlib.rename (path, name) == 0;
 			}
 		}
 		
