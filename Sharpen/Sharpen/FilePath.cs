@@ -67,10 +67,12 @@ namespace Sharpen
 
 		public bool CreateNewFile ()
 		{
-			if (Exists ())
+			try {
+				File.Open (path, FileMode.CreateNew).Close ();
+				return true;
+			} catch {
 				return false;
-			File.OpenWrite (path).Close ();
-			return true;
+			}
 		}
 
 		public static FilePath CreateTempFile ()
