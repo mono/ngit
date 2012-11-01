@@ -4709,7 +4709,7 @@ index ccb58de..f69df3c 100644
  			WriteImpl();
  			@out.Flush();
 diff --git a/NGit/NGit.Storage.File/RefDirectory.cs b/NGit/NGit.Storage.File/RefDirectory.cs
-index 9e8c087..1898eb8 100644
+index 9e8c087..f4a17de 100644
 --- a/NGit/NGit.Storage.File/RefDirectory.cs
 +++ b/NGit/NGit.Storage.File/RefDirectory.cs
 @@ -345,7 +345,7 @@ namespace NGit.Storage.File
@@ -4730,7 +4730,7 @@ index 9e8c087..1898eb8 100644
  				{
  					n--;
  				}
-@@ -1197,7 +1197,7 @@ namespace NGit.Storage.File
+@@ -1197,14 +1197,13 @@ namespace NGit.Storage.File
  			}
  			catch (ArgumentException notRef)
  			{
@@ -4739,7 +4739,15 @@ index 9e8c087..1898eb8 100644
  				{
  					n--;
  				}
-@@ -1414,7 +1414,7 @@ namespace NGit.Storage.File
+ 				string content = RawParseUtils.Decode(buf, 0, n);
+ 				IOException ioException = new IOException(MessageFormat.Format(JGitText.Get().notARef
+-					, name, content));
+-				Sharpen.Extensions.InitCause(ioException, notRef);
++					, name, content), notRef);
+ 				throw ioException;
+ 			}
+ 			return new RefDirectory.LooseUnpeeled(otherSnapshot, name, id);
+@@ -1414,7 +1413,7 @@ namespace NGit.Storage.File
  			public RefDirectory.LooseRef Peel(ObjectIdRef newLeaf)
  			{
  				// We should never try to peel the symbolic references.

@@ -1203,8 +1203,7 @@ namespace NGit.Storage.File
 				}
 				string content = RawParseUtils.Decode(buf, 0, n);
 				IOException ioException = new IOException(MessageFormat.Format(JGitText.Get().notARef
-					, name, content));
-				Sharpen.Extensions.InitCause(ioException, notRef);
+					, name, content), notRef);
 				throw ioException;
 			}
 			return new RefDirectory.LooseUnpeeled(otherSnapshot, name, id);
