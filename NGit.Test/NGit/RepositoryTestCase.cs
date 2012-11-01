@@ -108,6 +108,7 @@ namespace NGit
 		/// <exception cref="System.IO.IOException"></exception>
 		protected internal virtual string Read(string name)
 		{
+			return base.Read (name);
 			return JGitTestUtil.Read(db, name);
 		}
 

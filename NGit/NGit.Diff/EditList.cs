@@ -89,7 +89,7 @@ namespace NGit.Diff
 
 		public override string ToString()
 		{
-			return "EditList" + base.ToString();
+			return "EditList[]";
 		}
 	}
 }
