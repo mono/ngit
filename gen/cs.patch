@@ -1400,7 +1400,7 @@ index 42914ff..5fb1561 100644
  		}
  
 diff --git a/NGit.Test/NGit.Storage.File/GCTest.cs b/NGit.Test/NGit.Storage.File/GCTest.cs
-index 0706615..45e18f5 100644
+index 0706615..9ccca84 100644
 --- a/NGit.Test/NGit.Storage.File/GCTest.cs
 +++ b/NGit.Test/NGit.Storage.File/GCTest.cs
 @@ -183,7 +183,7 @@ namespace NGit.Storage.File
@@ -1408,7 +1408,7 @@ index 0706615..45e18f5 100644
  				Future<RefUpdate.Result> result = pool.Submit(new _Callable_185(this, b, refUpdateLockedRef
  					, packRefsDone));
 -				pool.Submit(new _Callable_210(this, refUpdateLockedRef, packRefsDone));
-+				pool.Submit<Void>(new _Callable_210(this, refUpdateLockedRef, packRefsDone));
++				pool.Submit<object>(new _Callable_210(this, refUpdateLockedRef, packRefsDone));
  				NUnit.Framework.Assert.AreEqual(result.Get(), RefUpdate.Result.FORCED);
  			}
  			finally
@@ -1423,15 +1423,24 @@ index 0706615..45e18f5 100644
  					return base.IsForceUpdate();
  				}
  
-@@ -273,7 +269,7 @@ namespace NGit.Storage.File
- 				refUpdateLockedRef.Await();
- 				this._enclosing.gc.PackRefs();
- 				packRefsDone.Await();
--				return null;
-+				return;
+@@ -257,7 +253,7 @@ namespace NGit.Storage.File
+ 			private readonly CyclicBarrier packRefsDone;
+ 		}
+ 
+-		private sealed class _Callable_210 : Callable<Void>
++		private sealed class _Callable_210 : Callable<object>
+ 		{
+ 			public _Callable_210(GCTest _enclosing, CyclicBarrier refUpdateLockedRef, CyclicBarrier
+ 				 packRefsDone)
+@@ -268,7 +264,7 @@ namespace NGit.Storage.File
  			}
  
- 			private readonly GCTest _enclosing;
+ 			/// <exception cref="System.Exception"></exception>
+-			public Void Call()
++			public object Call()
+ 			{
+ 				refUpdateLockedRef.Await();
+ 				this._enclosing.gc.PackRefs();
 @@ -297,22 +293,22 @@ namespace NGit.Storage.File
  		[NUnit.Framework.Test]
  		public virtual void ConcurrentRepack()
@@ -1713,7 +1722,7 @@ index b2dc836..d2aa159 100644
  	}
  }
 diff --git a/NGit.Test/NGit.Storage.Pack/DeltaStreamTest.cs b/NGit.Test/NGit.Storage.Pack/DeltaStreamTest.cs
-index d3bc878..b037ea7 100644
+index d3bc878..b6c77f7 100644
 --- a/NGit.Test/NGit.Storage.Pack/DeltaStreamTest.cs
 +++ b/NGit.Test/NGit.Storage.Pack/DeltaStreamTest.cs
 @@ -205,13 +205,13 @@ namespace NGit.Storage.Pack
@@ -1772,16 +1781,20 @@ index d3bc878..b037ea7 100644
  		}
  
  		/// <exception cref="System.IO.IOException"></exception>
-@@ -333,7 +334,7 @@ namespace NGit.Storage.Pack
+@@ -333,7 +334,11 @@ namespace NGit.Storage.Pack
  			delta = deltaBuf.ToByteArray();
  			NUnit.Framework.Assert.AreEqual(@base.Length, BinaryDelta.GetBaseSize(delta));
  			NUnit.Framework.Assert.AreEqual(data.Length, BinaryDelta.GetResultSize(delta));
 -			Assert.AssertArrayEquals(data, BinaryDelta.Apply(@base, delta));
-+			CollectionAssert.AreEquivalent(data, BinaryDelta.Apply(@base, delta));
++			var appliedDelta = BinaryDelta.Apply (@base, delta);
++			Assert.AreEqual (data.Length, appliedDelta.Length);
++			for (int i = 0; i < data.Length; i++)
++				Assert.AreEqual (data[i], appliedDelta[i]);
++
  			// Assert that a single bulk read produces the correct result.
  			//
  			byte[] act = new byte[data.Length];
-@@ -378,13 +379,13 @@ namespace NGit.Storage.Pack
+@@ -378,13 +383,13 @@ namespace NGit.Storage.Pack
  			}
  
  			/// <exception cref="System.IO.IOException"></exception>
@@ -2602,7 +2615,7 @@ index 8375f53..0a0f4ec 100644
  
  		[NUnit.Framework.Test]
 diff --git a/NGit.Test/NGit.Util/RefMapTest.cs b/NGit.Test/NGit.Util/RefMapTest.cs
-index ed84d83..29cef76 100644
+index ed84d83..046c9ae 100644
 --- a/NGit.Test/NGit.Util/RefMapTest.cs
 +++ b/NGit.Test/NGit.Util/RefMapTest.cs
 @@ -209,15 +209,18 @@ namespace NGit.Util
@@ -2625,7 +2638,15 @@ index ed84d83..29cef76 100644
  		}
  
  		// expected
-@@ -462,10 +465,15 @@ namespace NGit.Util
+@@ -436,6 +439,7 @@ namespace NGit.Util
+ 		}
+ 
+ 		[NUnit.Framework.Test]
++		[NUnit.Framework.Ignore ("This test compares ToString and GetHashCode between .NETs KeyValuePair and Java's equivalent. They're semantically different")]
+ 		public virtual void TestEntryType()
+ 		{
+ 			Ref a = NewRef("refs/heads/A", ID_ONE);
+@@ -462,10 +466,15 @@ namespace NGit.Util
  			KeyValuePair<string, Ref> ent = map.EntrySet().Iterator().Next();
  			NUnit.Framework.Assert.AreEqual("A", ent.Key);
  			NUnit.Framework.Assert.AreSame(refA_one, ent.Value);
@@ -2646,177 +2667,196 @@ index ed84d83..29cef76 100644
  
  		private RefList<Ref> ToList(params Ref[] refs)
 diff --git a/NGit.Test/NGit.Util/TemporaryBufferTest.cs b/NGit.Test/NGit.Util/TemporaryBufferTest.cs
-index 9ffdcf9..59ecfe1 100644
+index 9ffdcf9..405a0eb 100644
 --- a/NGit.Test/NGit.Util/TemporaryBufferTest.cs
 +++ b/NGit.Test/NGit.Util/TemporaryBufferTest.cs
-@@ -124,7 +124,7 @@ namespace NGit.Util
+@@ -124,7 +124,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);;
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -132,7 +132,7 @@ namespace NGit.Util
+@@ -132,7 +133,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  			}
  			finally
-@@ -160,7 +160,7 @@ namespace NGit.Util
+@@ -160,7 +162,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -168,7 +168,7 @@ namespace NGit.Util
+@@ -168,7 +171,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  			}
  			finally
-@@ -196,7 +196,7 @@ namespace NGit.Util
+@@ -196,7 +200,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -204,7 +204,7 @@ namespace NGit.Util
+@@ -204,7 +209,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  			}
  			finally
-@@ -231,7 +231,7 @@ namespace NGit.Util
+@@ -231,7 +237,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -239,7 +239,7 @@ namespace NGit.Util
+@@ -239,7 +246,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  			}
  			finally
-@@ -264,7 +264,7 @@ namespace NGit.Util
+@@ -264,7 +272,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -272,7 +272,7 @@ namespace NGit.Util
+@@ -272,7 +281,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  			}
  			finally
-@@ -293,7 +293,7 @@ namespace NGit.Util
+@@ -293,7 +303,8 @@ namespace NGit.Util
  			InputStream @in = b.OpenInputStream();
  			byte[] act = new byte[cnt];
  			IOUtil.ReadFully(@in, act, 0, cnt);
 -			Assert.AssertArrayEquals(test, act);
-+			 CollectionAssert.AreEquivalent(test, act);
++			for (int i = 0; i < test.Length; i ++)
++				Assert.AreEqual (test[i], act[i]);
  		}
  
  		/// <exception cref="System.IO.IOException"></exception>
-@@ -313,7 +313,7 @@ namespace NGit.Util
+@@ -313,7 +324,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -321,7 +321,7 @@ namespace NGit.Util
+@@ -321,7 +333,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  			}
  			finally
-@@ -347,7 +347,7 @@ namespace NGit.Util
+@@ -347,7 +360,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -355,7 +355,7 @@ namespace NGit.Util
+@@ -355,7 +369,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  			}
  			finally
-@@ -383,7 +383,7 @@ namespace NGit.Util
+@@ -383,7 +398,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -391,7 +391,7 @@ namespace NGit.Util
+@@ -391,7 +407,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(test.Length, r.Length);
 -					Assert.AssertArrayEquals(test, r);
-+					 CollectionAssert.AreEquivalent(test, r);
++					for (int i = 0; i < test.Length; i ++)
++						Assert.AreEqual (test[i], r[i]);
  				}
  			}
  			finally
-@@ -453,7 +453,7 @@ namespace NGit.Util
+@@ -453,7 +470,8 @@ namespace NGit.Util
  					byte[] r = b.ToByteArray();
  					NUnit.Framework.Assert.IsNotNull(r);
  					NUnit.Framework.Assert.AreEqual(expect.Length, r.Length);
 -					Assert.AssertArrayEquals(expect, r);
-+					 CollectionAssert.AreEquivalent(expect, r);
++					for (int i = 0; i < expect.Length; i ++)
++						Assert.AreEqual (expect[i], r[i]);
  				}
  				{
  					ByteArrayOutputStream o = new ByteArrayOutputStream();
-@@ -461,7 +461,7 @@ namespace NGit.Util
+@@ -461,7 +479,8 @@ namespace NGit.Util
  					o.Close();
  					byte[] r = o.ToByteArray();
  					NUnit.Framework.Assert.AreEqual(expect.Length, r.Length);
 -					Assert.AssertArrayEquals(expect, r);
-+					 CollectionAssert.AreEquivalent(expect, r);
++					for (int i = 0; i < expect.Length; i ++)
++						Assert.AreEqual (expect[i], r[i]);
  				}
  			}
  			finally

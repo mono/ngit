@@ -439,6 +439,7 @@ namespace NGit.Util
 		}
 
 		[NUnit.Framework.Test]
+		[NUnit.Framework.Ignore ("This test compares ToString and GetHashCode between .NETs KeyValuePair and Java's equivalent. They're semantically different")]
 		public virtual void TestEntryType()
 		{
 			Ref a = NewRef("refs/heads/A", ID_ONE);

@@ -183,7 +183,7 @@ namespace NGit.Storage.File
 			{
 				Future<RefUpdate.Result> result = pool.Submit(new _Callable_185(this, b, refUpdateLockedRef
 					, packRefsDone));
-				pool.Submit<Void>(new _Callable_210(this, refUpdateLockedRef, packRefsDone));
+				pool.Submit<object>(new _Callable_210(this, refUpdateLockedRef, packRefsDone));
 				NUnit.Framework.Assert.AreEqual(result.Get(), RefUpdate.Result.FORCED);
 			}
 			finally
@@ -253,7 +253,7 @@ namespace NGit.Storage.File
 			private readonly CyclicBarrier packRefsDone;
 		}
 
-		private sealed class _Callable_210 : Callable<Void>
+		private sealed class _Callable_210 : Callable<object>
 		{
 			public _Callable_210(GCTest _enclosing, CyclicBarrier refUpdateLockedRef, CyclicBarrier
 				 packRefsDone)
@@ -264,12 +264,12 @@ namespace NGit.Storage.File
 			}
 
 			/// <exception cref="System.Exception"></exception>
-			public Void Call()
+			public object Call()
 			{
 				refUpdateLockedRef.Await();
 				this._enclosing.gc.PackRefs();
 				packRefsDone.Await();
-				return;
+				return null;
 			}
 
 			private readonly GCTest _enclosing;

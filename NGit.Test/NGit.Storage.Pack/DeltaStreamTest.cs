@@ -334,7 +334,11 @@ namespace NGit.Storage.Pack
 			delta = deltaBuf.ToByteArray();
 			NUnit.Framework.Assert.AreEqual(@base.Length, BinaryDelta.GetBaseSize(delta));
 			NUnit.Framework.Assert.AreEqual(data.Length, BinaryDelta.GetResultSize(delta));
-			CollectionAssert.AreEquivalent(data, BinaryDelta.Apply(@base, delta));
+			var appliedDelta = BinaryDelta.Apply (@base, delta);
+			Assert.AreEqual (data.Length, appliedDelta.Length);
+			for (int i = 0; i < data.Length; i++)
+				Assert.AreEqual (data[i], appliedDelta[i]);
+
 			// Assert that a single bulk read produces the correct result.
 			//
 			byte[] act = new byte[data.Length];
