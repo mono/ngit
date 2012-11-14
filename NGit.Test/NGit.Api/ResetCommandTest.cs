@@ -243,6 +243,30 @@ namespace NGit.Api
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+		public virtual void TestMixedResetWithUnmerged()
+		{
+			git = new Git(db);
+			string file = "a.txt";
+			WriteTrashFile(file, "data");
+			string file2 = "b.txt";
+			WriteTrashFile(file2, "data");
+			git.Add().AddFilepattern(file).AddFilepattern(file2).Call();
+			git.Commit().SetMessage("commit").Call();
+			DirCache index = db.LockDirCache();
+			DirCacheBuilder builder = index.Builder();
+			builder.Add(CreateEntry(file, FileMode.REGULAR_FILE, 1, string.Empty));
+			builder.Add(CreateEntry(file, FileMode.REGULAR_FILE, 2, string.Empty));
+			builder.Add(CreateEntry(file, FileMode.REGULAR_FILE, 3, string.Empty));
+			NUnit.Framework.Assert.IsTrue(builder.Commit());
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, stage:1]" + "[a.txt, mode:100644, stage:2]"
+				 + "[a.txt, mode:100644, stage:3]", IndexState(0));
+			git.Reset().SetMode(ResetCommand.ResetType.MIXED).Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644]" + "[b.txt, mode:100644]", 
+				IndexState(0));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
 		public virtual void TestPathsReset()
 		{
 			SetupRepository();
@@ -318,6 +342,29 @@ namespace NGit.Api
 			NUnit.Framework.Assert.IsTrue(InHead(indexFile.GetName()));
 			NUnit.Framework.Assert.IsFalse(InIndex(indexFile.GetName()));
 			NUnit.Framework.Assert.IsFalse(InIndex(untrackedFile.GetName()));
+		}
+
+		/// <exception cref="System.Exception"></exception>
+		[NUnit.Framework.Test]
+		public virtual void TestPathsResetWithUnmerged()
+		{
+			SetupRepository();
+			string file = "a.txt";
+			WriteTrashFile(file, "data");
+			git.Add().AddFilepattern(file).Call();
+			git.Commit().SetMessage("commit").Call();
+			DirCache index = db.LockDirCache();
+			DirCacheBuilder builder = index.Builder();
+			builder.Add(CreateEntry(file, FileMode.REGULAR_FILE, 1, string.Empty));
+			builder.Add(CreateEntry(file, FileMode.REGULAR_FILE, 2, string.Empty));
+			builder.Add(CreateEntry(file, FileMode.REGULAR_FILE, 3, string.Empty));
+			builder.Add(CreateEntry("b.txt", FileMode.REGULAR_FILE));
+			NUnit.Framework.Assert.IsTrue(builder.Commit());
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644, stage:1]" + "[a.txt, mode:100644, stage:2]"
+				 + "[a.txt, mode:100644, stage:3]" + "[b.txt, mode:100644]", IndexState(0));
+			git.Reset().AddPath(file).Call();
+			NUnit.Framework.Assert.AreEqual("[a.txt, mode:100644]" + "[b.txt, mode:100644]", 
+				IndexState(0));
 		}
 
 		/// <exception cref="System.Exception"></exception>

@@ -1037,7 +1037,7 @@ index f119c44..d961602 100644
  		private final boolean loose;
  
 diff --git a/org.eclipse.jgit/src/org/eclipse/jgit/lib/Repository.java b/org.eclipse.jgit/src/org/eclipse/jgit/lib/Repository.java
-index 76f5378..7fbfcb2 100644
+index 911b1f6..5727433 100644
 --- a/org.eclipse.jgit/src/org/eclipse/jgit/lib/Repository.java
 +++ b/org.eclipse.jgit/src/org/eclipse/jgit/lib/Repository.java
 @@ -775,7 +775,6 @@ private RevCommit resolveReflog(RevWalk rw, Ref ref, String time)

@@ -898,7 +898,7 @@ namespace NGit
 			{
 				return name;
 			}
-			if (rev == null && done == revstr.Length)
+			if (done == revstr.Length)
 			{
 				return null;
 			}

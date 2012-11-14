@@ -91,6 +91,8 @@ namespace NGit.Api
 				);
 			NUnit.Framework.Assert.AreEqual(reflogs[2].GetNewId(), commit1.Id);
 			NUnit.Framework.Assert.AreEqual(reflogs[2].GetOldId(), ObjectId.ZeroId);
+			NUnit.Framework.Assert.AreEqual(reflogs[1].GetComment(), "checkout: moving from master to b1"
+				);
 			NUnit.Framework.Assert.AreEqual(reflogs[1].GetNewId(), commit1.Id);
 			NUnit.Framework.Assert.AreEqual(reflogs[1].GetOldId(), commit1.Id);
 			NUnit.Framework.Assert.AreEqual(reflogs[0].GetComment(), "commit: Removed file");
@@ -112,8 +114,39 @@ namespace NGit.Api
 			NUnit.Framework.Assert.AreEqual(reflogs[0].GetComment(), "commit: Removed file");
 			NUnit.Framework.Assert.AreEqual(reflogs[0].GetNewId(), commit2.Id);
 			NUnit.Framework.Assert.AreEqual(reflogs[0].GetOldId(), commit1.Id);
+			NUnit.Framework.Assert.AreEqual(reflogs[1].GetComment(), "branch: Created from commit Initial commit"
+				);
 			NUnit.Framework.Assert.AreEqual(reflogs[1].GetNewId(), commit1.Id);
 			NUnit.Framework.Assert.AreEqual(reflogs[1].GetOldId(), ObjectId.ZeroId);
+		}
+
+		/// <summary>Test getting the reflog for an amend commit</summary>
+		/// <exception cref="System.Exception">System.Exception</exception>
+		[NUnit.Framework.Test]
+		public virtual void TestAmendReflog()
+		{
+			RevCommit commit2a = git.Commit().SetAmend(true).SetMessage("Deleted file").Call(
+				);
+			ICollection<ReflogEntry> reflog = git.Reflog().Call();
+			NUnit.Framework.Assert.IsNotNull(reflog);
+			NUnit.Framework.Assert.AreEqual(4, reflog.Count);
+			ReflogEntry[] reflogs = Sharpen.Collections.ToArray(reflog, new ReflogEntry[reflog
+				.Count]);
+			NUnit.Framework.Assert.AreEqual(reflogs[3].GetComment(), "commit: Initial commit"
+				);
+			NUnit.Framework.Assert.AreEqual(reflogs[3].GetNewId(), commit1.Id);
+			NUnit.Framework.Assert.AreEqual(reflogs[3].GetOldId(), ObjectId.ZeroId);
+			NUnit.Framework.Assert.AreEqual(reflogs[2].GetComment(), "checkout: moving from master to b1"
+				);
+			NUnit.Framework.Assert.AreEqual(reflogs[2].GetNewId(), commit1.Id);
+			NUnit.Framework.Assert.AreEqual(reflogs[2].GetOldId(), commit1.Id);
+			NUnit.Framework.Assert.AreEqual(reflogs[1].GetComment(), "commit: Removed file");
+			NUnit.Framework.Assert.AreEqual(reflogs[1].GetNewId(), commit2.Id);
+			NUnit.Framework.Assert.AreEqual(reflogs[1].GetOldId(), commit1.Id);
+			NUnit.Framework.Assert.AreEqual(reflogs[0].GetComment(), "commit (amend): Deleted file"
+				);
+			NUnit.Framework.Assert.AreEqual(reflogs[0].GetNewId(), commit2a.Id);
+			NUnit.Framework.Assert.AreEqual(reflogs[0].GetOldId(), commit2.Id);
 		}
 	}
 }

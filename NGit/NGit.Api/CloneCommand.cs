@@ -134,7 +134,7 @@ namespace NGit.Api
 			{
 				directory = new FilePath(u.GetHumanishName(), Constants.DOT_GIT);
 			}
-			if (directory.Exists() && directory.ListFiles().Length != 0)
+			if (directory.IsFile () || (directory.Exists() && directory.ListFiles().Length != 0))
 			{
 				throw new JGitInternalException(MessageFormat.Format(JGitText.Get().cloneNonEmptyDirectory
 					, directory.GetName()));

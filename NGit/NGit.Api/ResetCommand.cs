@@ -270,39 +270,29 @@ namespace NGit.Api
 		private void ResetIndexForPaths(RevCommit commit)
 		{
 			DirCache dc = null;
-			DirCacheEditor edit;
 			try
 			{
 				dc = repo.LockDirCache();
-				edit = dc.Editor();
+				DirCacheBuilder builder = dc.Builder();
 				TreeWalk tw = new TreeWalk(repo);
-				tw.AddTree(new DirCacheIterator(dc));
+				tw.AddTree(new DirCacheBuildIterator(builder));
 				tw.AddTree(commit.Tree);
 				tw.Filter = PathFilterGroup.CreateFromStrings(filepaths);
 				tw.Recursive = true;
 				while (tw.Next())
 				{
-					string path = tw.PathString;
-					// DirCacheIterator dci = tw.getTree(0, DirCacheIterator.class);
 					CanonicalTreeParser tree = tw.GetTree<CanonicalTreeParser>(1);
-					if (tree == null)
-					{
-						// file is not in the commit, remove from index
-						edit.Add(new DirCacheEditor.DeletePath(path));
-					}
-					else
+					// only keep file in index if it's in the commit
+					if (tree != null)
 					{
 						// revert index to commit
-						// it seams that there is concurrent access to tree
-						// variable, therefore we need to keep references to
-						// entryFileMode and entryObjectId in local
-						// variables
-						FileMode entryFileMode = tree.EntryFileMode;
-						ObjectId entryObjectId = tree.EntryObjectId;
-						edit.Add(new _PathEdit_305(entryFileMode, entryObjectId, path));
+						DirCacheEntry entry = new DirCacheEntry(tw.RawPath);
+						entry.FileMode = tree.EntryFileMode;
+						entry.SetObjectId(tree.EntryObjectId);
+						builder.Add(entry);
 					}
 				}
-				edit.Commit();
+				builder.Commit();
 			}
 			catch (IOException e)
 			{
@@ -317,27 +307,6 @@ namespace NGit.Api
 			}
 		}
 
-		private sealed class _PathEdit_305 : DirCacheEditor.PathEdit
-		{
-			public _PathEdit_305(FileMode entryFileMode, ObjectId entryObjectId, string baseArg1
-				) : base(baseArg1)
-			{
-				this.entryFileMode = entryFileMode;
-				this.entryObjectId = entryObjectId;
-			}
-
-			public override void Apply(DirCacheEntry ent)
-			{
-				ent.FileMode = entryFileMode;
-				ent.SetObjectId(entryObjectId);
-				ent.LastModified = 0;
-			}
-
-			private readonly FileMode entryFileMode;
-
-			private readonly ObjectId entryObjectId;
-		}
-
 		/// <exception cref="System.IO.IOException"></exception>
 		private void ResetIndex(RevCommit commit)
 		{
@@ -345,7 +314,7 @@ namespace NGit.Api
 			TreeWalk walk = null;
 			try
 			{
-				DirCacheEditor editor = dc.Editor();
+				DirCacheBuilder builder = dc.Builder();
 				walk = new TreeWalk(repo);
 				walk.AddTree(commit.Tree);
 				walk.AddTree(new DirCacheIterator(dc));
@@ -355,7 +324,7 @@ namespace NGit.Api
 					AbstractTreeIterator cIter = walk.GetTree<AbstractTreeIterator>(0);
 					if (cIter == null)
 					{
-						editor.Add(new DirCacheEditor.DeletePath(walk.PathString));
+						// Not in commit, don't add to new index
 						continue;
 					}
 					DirCacheEntry entry = new DirCacheEntry(walk.RawPath);
@@ -368,9 +337,9 @@ namespace NGit.Api
 						entry.LastModified = indexEntry.LastModified;
 						entry.SetLength(indexEntry.Length);
 					}
-					editor.Add(new _PathEdit_356(entry, entry));
+					builder.Add(entry);
 				}
-				editor.Commit();
+				builder.Commit();
 			}
 			finally
 			{
@@ -380,22 +349,6 @@ namespace NGit.Api
 					walk.Release();
 				}
 			}
-		}
-
-		private sealed class _PathEdit_356 : DirCacheEditor.PathEdit
-		{
-			public _PathEdit_356(DirCacheEntry entry, DirCacheEntry baseArg1) : base(baseArg1
-				)
-			{
-				this.entry = entry;
-			}
-
-			public override void Apply(DirCacheEntry ent)
-			{
-				ent.CopyMetaData(entry);
-			}
-
-			private readonly DirCacheEntry entry;
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>

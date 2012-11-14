@@ -435,7 +435,7 @@ namespace NGit.Blame
 
 			internal override PersonIdent GetAuthor()
 			{
-				return new PersonIdent(description, null);
+				return new PersonIdent(description, string.Empty);
 			}
 		}
 	}

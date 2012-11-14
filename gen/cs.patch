@@ -3225,6 +3225,19 @@ index 60b6b4d..fe92e99 100644
  
  		private bool dryRun;
  
+diff --git a/NGit/NGit.Api/CloneCommand.cs b/NGit/NGit.Api/CloneCommand.cs
+index 795c632..a822735 100644
+--- a/NGit/NGit.Api/CloneCommand.cs
++++ b/NGit/NGit.Api/CloneCommand.cs
+@@ -134,7 +134,7 @@ namespace NGit.Api
+ 			{
+ 				directory = new FilePath(u.GetHumanishName(), Constants.DOT_GIT);
+ 			}
+-			if (directory.Exists() && directory.ListFiles().Length != 0)
++			if (directory.IsFile () || (directory.Exists() && directory.ListFiles().Length != 0))
+ 			{
+ 				throw new JGitInternalException(MessageFormat.Format(JGitText.Get().cloneNonEmptyDirectory
+ 					, directory.GetName()));
 diff --git a/NGit/NGit.Api/CreateBranchCommand.cs b/NGit/NGit.Api/CreateBranchCommand.cs
 index e27a811..b17b517 100644
 --- a/NGit/NGit.Api/CreateBranchCommand.cs
@@ -3492,7 +3505,7 @@ index 2c56e73..e14f768 100644
  					) + "]";
  			}
 diff --git a/NGit/NGit.Api/ResetCommand.cs b/NGit/NGit.Api/ResetCommand.cs
-index 00b328e..a35f829 100644
+index ece2c31..8417bb8 100644
 --- a/NGit/NGit.Api/ResetCommand.cs
 +++ b/NGit/NGit.Api/ResetCommand.cs
 @@ -84,7 +84,7 @@ namespace NGit.Api
@@ -4947,38 +4960,9 @@ index 9577942..7cdfd6f 100644
  		}
  	}
 diff --git a/NGit/NGit.Storage.Pack/PackWriter.cs b/NGit/NGit.Storage.Pack/PackWriter.cs
-index cee7655..898fad6 100644
+index 66bdfff..d91f429 100644
 --- a/NGit/NGit.Storage.Pack/PackWriter.cs
 +++ b/NGit/NGit.Storage.Pack/PackWriter.cs
-@@ -108,8 +108,8 @@ namespace NGit.Storage.Pack
- 	{
- 		private const int PACK_VERSION_GENERATED = 2;
- 
--		private static readonly IDictionary<JavaWeakReference<><NGit.Storage.Pack.PackWriter
--			>, bool> instances = new ConcurrentHashMap<JavaWeakReference<><NGit.Storage.Pack.PackWriter
-+		private static readonly IDictionary< JavaWeakReference<NGit.Storage.Pack.PackWriter
-+			>, bool> instances = new ConcurrentHashMap< JavaWeakReference<NGit.Storage.Pack.PackWriter
- 			>, bool>();
- 
- 		private sealed class _Iterable_150 : Iterable<NGit.Storage.Pack.PackWriter>
-@@ -130,7 +130,7 @@ namespace NGit.Storage.Pack
- 					this.it = NGit.Storage.Pack.PackWriter.instances.Keys.Iterator();
- 				}
- 
--				private readonly Iterator<JavaWeakReference<><NGit.Storage.Pack.PackWriter>> it;
-+				private readonly Iterator< JavaWeakReference<NGit.Storage.Pack.PackWriter>> it;
- 
- 				private NGit.Storage.Pack.PackWriter next;
- 
-@@ -142,7 +142,7 @@ namespace NGit.Storage.Pack
- 					}
- 					while (this.it.HasNext())
- 					{
--						JavaWeakReference<><NGit.Storage.Pack.PackWriter> @ref = this.it.Next();
-+						 JavaWeakReference<NGit.Storage.Pack.PackWriter> @ref = this.it.Next();
- 						this.next = @ref.Get();
- 						if (this.next != null)
- 						{
 @@ -166,7 +166,7 @@ namespace NGit.Storage.Pack
  
  				public override void Remove()
@@ -5005,24 +4989,6 @@ index cee7655..898fad6 100644
 +		private ICollection<ObjectId> tagTargets = Sharpen.Collections.EmptySet<ObjectId>();
  
  		private PackIndex[] excludeInPacks;
- 
-@@ -212,7 +212,7 @@ namespace NGit.Storage.Pack
- 
- 		private readonly PackWriter.MutableState state;
- 
--		private readonly JavaWeakReference<><NGit.Storage.Pack.PackWriter> selfRef;
-+		private readonly  JavaWeakReference<NGit.Storage.Pack.PackWriter> selfRef;
- 
- 		private PackWriter.Statistics.ObjectType typeStats;
- 
-@@ -338,7 +338,7 @@ namespace NGit.Storage.Pack
- 			// be paranoid by default
- 			stats = new PackWriter.Statistics();
- 			state = new PackWriter.MutableState(this);
--			selfRef = new JavaWeakReference<><NGit.Storage.Pack.PackWriter>(this);
-+			selfRef = new  JavaWeakReference<NGit.Storage.Pack.PackWriter>(this);
- 			instances.Put(selfRef, true);
- 		}
  
 @@ -518,8 +518,7 @@ namespace NGit.Storage.Pack
  		/// objects which used to be shallow on the client, but are being
@@ -6723,7 +6689,7 @@ index 47a1df5..9533dcf 100644
  				this._enclosing = _enclosing;
  			}
 diff --git a/NGit/NGit.Transport/Transport.cs b/NGit/NGit.Transport/Transport.cs
-index a5b1cc5..d659799 100644
+index 5c21525..e0a3df9 100644
 --- a/NGit/NGit.Transport/Transport.cs
 +++ b/NGit/NGit.Transport/Transport.cs
 @@ -51,7 +51,6 @@ using NGit.Internal;
@@ -6734,17 +6700,7 @@ index a5b1cc5..d659799 100644
  
  namespace NGit.Transport
  {
-@@ -79,24 +78,24 @@ namespace NGit.Transport
- 			PUSH
- 		}
- 
--		private static readonly IList<JavaWeakReference<><TransportProtocol>> protocols = 
--			new CopyOnWriteArrayList<JavaWeakReference<><TransportProtocol>>();
-+		private static readonly IList< JavaWeakReference<TransportProtocol>> protocols = 
-+			new CopyOnWriteArrayList< JavaWeakReference<TransportProtocol>>();
- 
- 		static Transport()
- 		{
+@@ -87,15 +86,15 @@ namespace NGit.Transport
  			// Registration goes backwards in order of priority.
  			Register(TransportLocal.PROTO_LOCAL);
  			Register(TransportBundleFile.PROTO_BUNDLE);
@@ -6758,12 +6714,11 @@ index a5b1cc5..d659799 100644
 -			RegisterByService();
 +//			RegisterByService();
  		}
- 
--		private static void RegisterByService()
-+/*		private static void RegisterByService()
+-
++		/*
+ 		private static void RegisterByService()
  		{
  			ClassLoader ldr = Sharpen.Thread.CurrentThread().GetContextClassLoader();
- 			if (ldr == null)
 @@ -218,6 +217,7 @@ namespace NGit.Transport
  				}
  			}
@@ -6772,42 +6727,6 @@ index a5b1cc5..d659799 100644
  
  		/// <summary>Register a TransportProtocol instance for use during open.</summary>
  		/// <remarks>
-@@ -238,7 +238,7 @@ namespace NGit.Transport
- 		/// <param name="proto">the protocol definition. Must not be null.</param>
- 		public static void Register(TransportProtocol proto)
- 		{
--			protocols.Add(0, new JavaWeakReference<><TransportProtocol>(proto));
-+			protocols.Add(0, new  JavaWeakReference<TransportProtocol>(proto));
- 		}
- 
- 		/// <summary>Unregister a TransportProtocol instance.</summary>
-@@ -256,7 +256,7 @@ namespace NGit.Transport
- 		/// <param name="proto">the exact object previously given to register.</param>
- 		public static void Unregister(TransportProtocol proto)
- 		{
--			foreach (JavaWeakReference<><TransportProtocol> @ref in protocols)
-+			foreach ( JavaWeakReference<TransportProtocol> @ref in protocols)
- 			{
- 				TransportProtocol refProto = @ref.Get();
- 				if (refProto == null || refProto == proto)
-@@ -273,7 +273,7 @@ namespace NGit.Transport
- 		{
- 			int cnt = protocols.Count;
- 			IList<TransportProtocol> res = new AList<TransportProtocol>(cnt);
--			foreach (JavaWeakReference<><TransportProtocol> @ref in protocols)
-+			foreach ( JavaWeakReference<TransportProtocol> @ref in protocols)
- 			{
- 				TransportProtocol proto = @ref.Get();
- 				if (proto != null)
-@@ -610,7 +610,7 @@ namespace NGit.Transport
- 		public static NGit.Transport.Transport Open(Repository local, URIish uri, string 
- 			remoteName)
- 		{
--			foreach (JavaWeakReference<><TransportProtocol> @ref in protocols)
-+			foreach ( JavaWeakReference<TransportProtocol> @ref in protocols)
- 			{
- 				TransportProtocol proto = @ref.Get();
- 				if (proto == null)
 @@ -623,7 +623,7 @@ namespace NGit.Transport
  					return proto.Open(uri, local, remoteName);
  				}
@@ -6817,15 +6736,6 @@ index a5b1cc5..d659799 100644
  				, uri));
  		}
  
-@@ -635,7 +635,7 @@ namespace NGit.Transport
- 		/// <exception cref="NGit.Errors.TransportException">NGit.Errors.TransportException</exception>
- 		public static NGit.Transport.Transport Open(URIish uri)
- 		{
--			foreach (JavaWeakReference<><TransportProtocol> @ref in protocols)
-+			foreach ( JavaWeakReference<TransportProtocol> @ref in protocols)
- 			{
- 				TransportProtocol proto = @ref.Get();
- 				if (proto == null)
 @@ -648,7 +648,7 @@ namespace NGit.Transport
  					return proto.Open(uri);
  				}
@@ -9432,7 +9342,7 @@ index 8913cf3..3099dbf 100644
  			public _AsyncObjectSizeQueue_354(ObjectReader _enclosing, Iterator<T> idItr)
  			{
 diff --git a/NGit/NGit/Repository.cs b/NGit/NGit/Repository.cs
-index 859f5ab..be2a059 100644
+index 37656ec..b5f81a2 100644
 --- a/NGit/NGit/Repository.cs
 +++ b/NGit/NGit/Repository.cs
 @@ -1173,7 +1173,7 @@ namespace NGit
