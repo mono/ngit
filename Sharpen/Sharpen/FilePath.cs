@@ -33,6 +33,10 @@ namespace Sharpen
 			} else {
 				while (child != null && child.Length > 0 && (child[0] == Path.DirectorySeparatorChar || child[0] == Path.AltDirectorySeparatorChar))
 					child = child.Substring (1);
+
+				if (!string.IsNullOrEmpty(other) && other[other.Length - 1] == Path.VolumeSeparatorChar)
+					other += Path.DirectorySeparatorChar;
+
 				this.path = Path.Combine (other, child);
 			}
 		}
