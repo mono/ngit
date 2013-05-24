@@ -762,6 +762,7 @@ namespace Sharpen
 		{
 			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			s.Bind (new IPEndPoint (addr, port));
+			s.Listen (backlog);
 			return s;
 		}
 		
