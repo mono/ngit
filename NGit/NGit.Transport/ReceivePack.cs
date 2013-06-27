@@ -75,7 +75,7 @@ namespace NGit.Transport
 		/// <summary>Create a new pack receive for an open repository.</summary>
 		/// <remarks>Create a new pack receive for an open repository.</remarks>
 		/// <param name="into">the destination repository.</param>
-		protected internal ReceivePack(Repository into) : base(into)
+		public ReceivePack(Repository into) : base(into)
 		{
 			preReceive = PreReceiveHook.NULL;
 			postReceive = PostReceiveHook.NULL;
