@@ -10110,3 +10110,25 @@ index 1dd7c60..394e130 100644
  			{
  				byte b = _path[i_1];
  				if (b == '\\' || b == '?' || b == '*')
+diff --git a/NGit/NGit/UserConfig.cs b/NGit/NGit/UserConfig.cs
+index 396d481..9e33284 100755
+--- a/NGit/NGit/UserConfig.cs
++++ b/NGit/NGit/UserConfig.cs
+@@ -214,7 +214,7 @@ namespace NGit
+  	/// try to get user name of the logged on user from the operating
+ 		/// system
+ 		/// </returns>
+-		private static string GetDefaultUserName()
++		public static string GetDefaultUserName()
+ 		{
+ 			// get the system user name
+ 			string username = System().GetProperty(Constants.OS_USER_NAME_KEY);
+@@ -241,7 +241,7 @@ namespace NGit
+ 		/// try to construct email for logged on user using system
+ 		/// information
+ 		/// </returns>
+-		private static string GetDefaultEmail()
++		public static string GetDefaultEmail()
+ 		{
+ 			// try to construct an email
+ 			string username = GetDefaultUserName();
