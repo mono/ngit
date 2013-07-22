@@ -65,6 +65,17 @@ namespace Sharpen
 				throw new ArgumentException ("Invalid argument index: " + narg);
 			
 			object arg = args [narg];
+
+			// This is so we handle exception messages when we do a message format.
+			// And we don't have to change code in NGit.
+			if (arg is Exception) {
+				Exception e = (Exception)arg;
+				sb.Append (e.Message);
+				while ((e = e.InnerException) != null)
+					sb.Append (e.Message);
+				return;
+			}
+
 			sb.Append (arg);
 			
 			// TODO: handle format types and styles
