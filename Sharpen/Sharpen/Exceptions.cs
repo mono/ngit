@@ -159,6 +159,13 @@ namespace Sharpen
 
 	internal class UnknownHostException : Exception
 	{
+		public UnknownHostException ()
+		{
+		}
+
+		public UnknownHostException (Exception ex): base ("Host not found", ex)
+		{
+		}
 	}
 
 	internal class UnsupportedEncodingException : Exception

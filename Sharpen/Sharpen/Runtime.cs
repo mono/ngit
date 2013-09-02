@@ -75,7 +75,11 @@ namespace Sharpen
 
 		internal static IPAddress GetLocalHost ()
 		{
-			return Dns.GetHostEntry (Dns.GetHostName ()).AddressList[0];
+			try {
+				return Dns.GetHostEntry (Dns.GetHostName ()).AddressList[0];
+			} catch (System.Net.Sockets.SocketException ex) {
+				throw new UnknownHostException (ex);
+			}
 		}
 		
 		static Hashtable properties;
