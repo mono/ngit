@@ -57,7 +57,7 @@ namespace NGit.Api
 	/// *      >Git documentation about Branch</a></seealso>
 	public class ListBranchCommand : GitCommand<IList<Ref>>
 	{
-		private ListBranchCommand.ListMode listMode;
+		private ListBranchCommand.ListMode listMode = ListMode.ALL;
 
 		/// <summary>
 		/// The modes available for listing branches (corresponding to the -r and -a
@@ -66,7 +66,8 @@ namespace NGit.Api
 		public enum ListMode
 		{
 			ALL,
-			REMOTE
+			REMOTE,
+			HEAD
 		}
 
 		/// <param name="repo"></param>
@@ -81,7 +82,7 @@ namespace NGit.Api
 			IDictionary<string, Ref> refList;
 			try
 			{
-				if (listMode == null)
+				if (listMode == ListMode.HEAD)
 				{
 					refList = repo.RefDatabase.GetRefs(Constants.R_HEADS);
 				}
