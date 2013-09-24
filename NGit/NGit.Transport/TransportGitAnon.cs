@@ -146,7 +146,7 @@ namespace NGit.Transport
 				s.Bind2(null);
 				s.Connect(new IPEndPoint(host, port), tms);
 			}
-			catch (IOException c)
+			catch (System.Exception c)
 			{
 				try
 				{

@@ -7259,7 +7259,7 @@ index b4c0715..d0efa32 100644
  		}
  
 diff --git a/NGit/NGit.Transport/TransportGitAnon.cs b/NGit/NGit.Transport/TransportGitAnon.cs
-index 03263b1..65c5454 100644
+index 03263b1..c6de9b2 100644
 --- a/NGit/NGit.Transport/TransportGitAnon.cs
 +++ b/NGit/NGit.Transport/TransportGitAnon.cs
 @@ -139,7 +139,7 @@ namespace NGit.Transport
@@ -7271,6 +7271,15 @@ index 03263b1..65c5454 100644
  			try
  			{
  				IPAddress host = Sharpen.Extensions.GetAddressByName(uri.GetHost());
+@@ -146,7 +146,7 @@ namespace NGit.Transport
+ 				s.Bind2(null);
+ 				s.Connect(new IPEndPoint(host, port), tms);
+ 			}
+-			catch (IOException c)
++			catch (System.Exception c)
+ 			{
+ 				try
+ 				{
 @@ -194,7 +194,7 @@ namespace NGit.Transport
  			private Socket sock;
  
