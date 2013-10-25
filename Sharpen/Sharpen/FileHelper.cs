@@ -15,7 +15,10 @@ namespace Sharpen
 			if (Environment.OSVersion.Platform.ToString ().StartsWith ("Win"))
 				Instance = new FileHelper ();
 			else {
-				var ufh = Type.GetType("Sharpen.Unix.UnixFileHelper, Sharpen.Unix");
+				var ufh = Type.GetType("Sharpen.Unix.UnixFileHelper");
+				if (ufh == null) {
+					ufh = Type.GetType("Sharpen.Unix.UnixFileHelper, Sharpen.Unix");
+				}
 				if (ufh == null) {
 					var path = ((FilePath) typeof (FileHelper).Assembly.Location).GetParent();
 					var assembly = Assembly.LoadFile(Path.Combine(path, "Sharpen.Unix.dll"));
