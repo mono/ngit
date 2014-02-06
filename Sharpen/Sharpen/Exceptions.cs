@@ -129,7 +129,7 @@ namespace Sharpen
 		{
 		}
 
-		public ParseException (string msg, int errorOffset) : base(string.Format ("Msg: msg. Error Offset: {1}", msg, errorOffset))
+		public ParseException (string msg, int errorOffset) : base(string.Format ("Msg: {0}. Error Offset: {1}", msg, errorOffset))
 		{ 
 		}
 	}
