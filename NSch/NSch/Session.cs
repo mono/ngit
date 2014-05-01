@@ -886,7 +886,7 @@ loop_break: ;
 			}
 			if (i == HostKeyRepository.OK && JSch.GetLogger().IsEnabled(Logger.INFO))
 			{
-				JSch.GetLogger().Log(Logger.INFO, "Host '" + host + "' is known and mathces the "
+				JSch.GetLogger().Log(Logger.INFO, "Host '" + host + "' is known and matches the "
 					 + key_type + " host key");
 			}
 			if (insert && JSch.GetLogger().IsEnabled(Logger.WARN))
