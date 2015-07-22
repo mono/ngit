@@ -81,17 +81,15 @@ namespace Sharpen
 				throw new UnknownHostException (ex);
 			}
 		}
-		
+
 		static Hashtable properties;
-		
+
 		public static Hashtable GetProperties ()
 		{
 			if (properties == null) {
 				properties = new Hashtable ();
 				properties ["jgit.fs.debug"] = "false";
-				var home = Environment.GetFolderPath (Environment.SpecialFolder.UserProfile).Trim ();
-				if (string.IsNullOrEmpty (home))
-					home = Environment.GetFolderPath (Environment.SpecialFolder.Personal).Trim ();
+				var home = Environment.GetFolderPath (Environment.SpecialFolder.Personal).Trim ();
 				properties ["user.home"] = home;
 				properties ["java.library.path"] = Environment.GetEnvironmentVariable ("PATH");
 				if (Path.DirectorySeparatorChar != '\\')
@@ -106,7 +104,7 @@ namespace Sharpen
 		{
 			return ((string) GetProperties ()[key]);
 		}
-		
+
 		public static void SetProperty (string key, string value)
 		{
 			GetProperties () [key] = value;
@@ -139,12 +137,12 @@ namespace Sharpen
 				this.Runnable.Run ();
 			}
 		}
-		
+
 		internal static void DeleteCharAt (StringBuilder sb, int index)
 		{
 			sb.Remove (index, 1);
 		}
-		
+
 		internal static byte[] GetBytesForString (string str)
 		{
 			return Encoding.UTF8.GetBytes (str);
@@ -194,7 +192,7 @@ namespace Sharpen
 		{
 			return Monitor.Wait (ob, (int)milis);
 		}
-		
+
 		internal static Type GetType (string name)
 		{
 			foreach (Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) {
@@ -204,22 +202,22 @@ namespace Sharpen
 			}
 			throw new InvalidOperationException ("Type not found: " + name);
 		}
-		
+
 		internal static void SetCharAt (StringBuilder sb, int index, char c)
 		{
 			sb [index] = c;
 		}
-		
+
 		internal static bool EqualsIgnoreCase (string s1, string s2)
 		{
 			return s1.Equals (s2, StringComparison.CurrentCultureIgnoreCase);
 		}
-		
+
 		internal static long NanoTime ()
 		{
 			return Environment.TickCount * 1000 * 1000;
 		}
-		
+
 		internal static int CompareOrdinal (string s1, string s2)
 		{
 			return string.CompareOrdinal (s1, s2);
@@ -244,7 +242,7 @@ namespace Sharpen
 		{
 			return GetEncoding (encoding).Decode (chars, start, len);
 		}
-		
+
 		internal static Encoding GetEncoding (string name)
 		{
 //			Encoding e = Encoding.GetEncoding (name, EncoderFallback.ExceptionFallback, DecoderFallback.ExceptionFallback);

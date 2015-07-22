@@ -10,6 +10,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Sharpen.Unix</RootNamespace>
     <AssemblyName>Sharpen.Unix</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
