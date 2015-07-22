@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- http://docs.nuget.org/docs/reference/nuspec-reference -->
+<package >
+	<metadata>
+		<id>RedGate.ThirdParty.NGit</id>
+		<version>$version$</version>
+		<title>NGit .NET 3.5</title>
+		<authors>Mono</authors>
+		<owners>Red Gate Software</owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>A backport of Mono.Security for the NGit backport to use</description>
+		<copyright>Copyright 2015</copyright>
+		<projectUrl>https://github.com/red-gate/ngit</projectUrl>
+	</metadata>
+	<files>
+		<file src="bin\ICSharpCode.SharpZipLib.dll" target="lib" />
+		<file src="bin\NGit.dll" target="lib" />
+		<file src="bin\NGit.pdb" target="lib" />
+		<file src="bin\NSch.dll" target="lib" />
+		<file src="bin\NSch.pdb" target="lib" />
+		<file src="bin\Sharpen.dll" target="lib" />
+		<file src="bin\Sharpen.pdb" target="lib" />
+	</files>
+</package>
