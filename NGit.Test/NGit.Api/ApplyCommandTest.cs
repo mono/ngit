@@ -44,6 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 using NGit;
 using NGit.Api;
 using NGit.Diff;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Api
@@ -91,6 +92,16 @@ namespace NGit.Api
 				()[0]);
 			CheckFile(new FilePath(db.WorkTree, "A1"), b.GetString(0, b.Size(), false));
 		}
+
+	    [Test]
+	    public void TestThatPatchingWhichMakesFileEmptyCanBeApplied()
+	    {
+            ApplyResult result = Init("ToEmpty", true, true);
+            NUnit.Framework.Assert.AreEqual(1, result.GetUpdatedFiles().Count);
+            NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, "ToEmpty"), result.GetUpdatedFiles
+                ()[0]);
+            CheckFile(new FilePath(db.WorkTree, "ToEmpty"), b.GetString(0, b.Size(), false));
+        }
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
