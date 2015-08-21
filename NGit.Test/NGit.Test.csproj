@@ -299,6 +299,9 @@
     <None Include="resources\global\dircache.testRemovedSubtree">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="resources\NGit.Diff\ToEmpty.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\ToEmpty_PreImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\ToEmpty_PostImage" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
