@@ -41,8 +41,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NGit;
 using NGit.Api;
@@ -253,13 +255,14 @@ namespace NGit.Api
 
 						case '-':
 						{
-							if (!newLines[hh.GetNewStartLine() - 1 + pos].Equals(Sharpen.Runtime.Substring(hunkLine
+						    var index = Math.Max(hh.GetNewStartLine() - 1 + pos, 0);
+						    if (!newLines[index].Equals(Sharpen.Runtime.Substring(hunkLine
 								, 1)))
 							{
 								throw new PatchApplyException(MessageFormat.Format(JGitText.Get().patchApplyException
 									, hh));
 							}
-							newLines.Remove(hh.GetNewStartLine() - 1 + pos);
+							newLines.Remove(index);
 							break;
 						}
 
@@ -297,7 +300,10 @@ namespace NGit.Api
 					sb.Append(eol);
 				}
 			}
-			Sharpen.Runtime.DeleteCharAt(sb, sb.Length - 1);
+		    if (sb.Length > 0)
+		    {
+		        Sharpen.Runtime.DeleteCharAt(sb, sb.Length - 1);
+		    }
 			FileWriter fw = new FileWriter(f);
 			fw.Write(sb.ToString());
 			fw.Close();
@@ -321,9 +327,15 @@ namespace NGit.Api
 
 		private bool IsNoNewlineAtEndOfFile(FileHeader fh)
 		{
-			HunkHeader lastHunk = fh.GetHunks()[fh.GetHunks().Count - 1];
-			RawText lhrt = new RawText(lastHunk.GetBuffer());
-			return lhrt.GetString(lhrt.Size() - 1).Equals("\\ No newline at end of file");
+		    var hunks = fh.GetHunks();
+		    if (hunks.Any())
+		    {
+                HunkHeader lastHunk = hunks[hunks.Count - 1];
+                RawText lhrt = new RawText(lastHunk.GetBuffer());
+                return lhrt.GetString(lhrt.Size() - 1).Equals("\\ No newline at end of file");
+            }
+		    return false;
+
 		}
 		//$NON-NLS-1$
 	}
