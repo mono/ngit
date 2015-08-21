@@ -54,7 +54,7 @@ namespace NGit
 		public virtual void Test001_NewIdent()
 		{
 			PersonIdent p = new PersonIdent("A U Thor", "author@example.com", Sharpen.Extensions.CreateDate
-				(1142878501000L), Sharpen.Extensions.GetTimeZone("EST"));
+				(1142878501000L), Sharpen.Extensions.GetTimeZone("Eastern Standard Time"));
 			NUnit.Framework.Assert.AreEqual("A U Thor", p.GetName());
 			NUnit.Framework.Assert.AreEqual("author@example.com", p.GetEmailAddress());
 			NUnit.Framework.Assert.AreEqual(1142878501000L, p.GetWhen().GetTime());
