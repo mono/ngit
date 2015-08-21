@@ -42,10 +42,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 using System;
+using System.Linq;
 using NGit.Diff;
 using NGit.Junit;
 using NGit.Patch;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Diff
@@ -176,10 +178,17 @@ namespace NGit.Diff
 		/// <exception cref="System.IO.IOException"></exception>
 		private void AssertFormatted()
 		{
-			AssertFormatted(Sharpen.Extensions.GetTestName() + ".out");
+			AssertFormatted(GetTestName() + ".out");
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
+	    private static string GetTestName()
+	    {
+	        var testName = TestContext.CurrentContext.Test.Name;
+	        var firstChar = testName.First().ToString();
+	        return string.Format("{0}{1}", firstChar.ToLower(), testName.Substring(1));
+	    }
+
+	    /// <exception cref="System.IO.IOException"></exception>
 		private void AssertFormatted(string name)
 		{
 			fmt.Format(file, a, b);
