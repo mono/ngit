@@ -268,7 +268,7 @@ namespace NGit.Api
 
 						case '+':
 						{
-							newLines.Add(hh.GetNewStartLine() - 1 + pos, Sharpen.Runtime.Substring(hunkLine, 
+							newLines.Add(hh.GetNewStartLine() - 1 + pos, Sharpen.Runtime.Substring(hunkLine,
 								1));
 							pos++;
 							break;
@@ -327,10 +327,9 @@ namespace NGit.Api
 
 		private bool IsNoNewlineAtEndOfFile(FileHeader fh)
 		{
-		    var hunks = fh.GetHunks();
-		    if (hunks.Any())
+		    var lastHunk = fh.GetHunks().LastOrDefault();
+		    if (lastHunk != null)
 		    {
-                HunkHeader lastHunk = hunks[hunks.Count - 1];
                 RawText lhrt = new RawText(lastHunk.GetBuffer());
                 return lhrt.GetString(lhrt.Size() - 1).Equals("\\ No newline at end of file");
             }
