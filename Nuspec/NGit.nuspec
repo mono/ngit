@@ -24,5 +24,6 @@
 		<file src="bin\Sharpen.dll" target="lib" />
 		<file src="bin\Sharpen.pdb" target="lib" />
 		<file src="Install\WiX2\Source Files\Export\RedGate.ThirdParty.NGit.wxs" target="wix2" />
+		<file src="Install\WiX2\Source Files\Export\ICSharpCode.SharpZipLib.wxs" target="wix2" />
 	</files>
 </package>

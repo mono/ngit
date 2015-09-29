@@ -1,0 +1,13 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Fragment Id="SharpZip">
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="SharpZip" Guid="{B4345D56-1280-4CED-8B60-5845F7DCE42F}" DiskId="1">
+        <File Id="ICSharpCode.SharpZipLib.dll" Name="SharpZip.dll" LongName="ICSharpCode.SharpZipLib.dll" Source="..\Files\ICSharpCode.SharpZipLib.dll" />
+      </Component>
+    </DirectoryRef>
+
+    <FeatureRef Id="Product">
+      <ComponentRef Id="SharpZip"/>
+    </FeatureRef>
+  </Fragment>
+</Wix>
