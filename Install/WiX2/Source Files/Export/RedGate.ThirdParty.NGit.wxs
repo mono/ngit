@@ -1,0 +1,18 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2003/01/wi">
+  <Fragment Id="NGit">
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="NGit" Guid="{914081CA-6DA5-439D-B656-87B4DB2982D4}" DiskId="1">
+        <File Id="NGit.dll" Name="NGit.dll" LongName="NGit.dll" Source="..\Files\NGit.dll" />
+        <File Id="NSch.dll" Name="NSch.dll" LongName="NSch.dll" Source="..\Files\NSch.dll" />
+        <File Id="Sharpen.dll" Name="Sharpen.dll" LongName="Sharpen.dll" Source="..\Files\Sharpen.dll" />
+      </Component>
+    </DirectoryRef>
+
+    <FeatureRef Id="Product">
+      <ComponentRef Id="NGit"/>
+    </FeatureRef>
+
+    <FragmentRef Id="MonoSec" />
+    <FragmentRef Id="SharpZip" />
+  </Fragment>
+</Wix>
