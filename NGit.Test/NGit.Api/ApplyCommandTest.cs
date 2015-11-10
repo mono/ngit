@@ -95,26 +95,26 @@ namespace NGit.Api
 			CheckFile(new FilePath(db.WorkTree, "A1"), b.GetString(0, b.Size(), false));
 		}
 
-	    [Test]
-	    public void TestThatPatchingWhichMakesFileEmptyCanBeApplied()
-	    {
-            ApplyResult result = Init("ToEmpty", true, true);
-            NUnit.Framework.Assert.AreEqual(1, result.GetUpdatedFiles().Count);
-            NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, "ToEmpty"), result.GetUpdatedFiles
-                ()[0]);
-            CheckFile(new FilePath(db.WorkTree, "ToEmpty"), b.GetString(0, b.Size(), false));
-        }
+		[Test]
+		public void TestThatPatchingWhichMakesFileEmptyCanBeApplied()
+		{
+			ApplyResult result = Init("ToEmpty", true, true);
+			NUnit.Framework.Assert.AreEqual(1, result.GetUpdatedFiles().Count);
+			NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, "ToEmpty"), result.GetUpdatedFiles
+				()[0]);
+			CheckFile(new FilePath(db.WorkTree, "ToEmpty"), b.GetString(0, b.Size(), false));
+		}
 
-	    [Test, Description("The files in this test should start with the UTF-8 byte order mark (EF BB BF in hex). The patch should contain the BOM too.")]
-	    public void TestThatPatchWhichHasUtf8ByteOrderMarkInContextCanBeApplied()
-	    {
-            ApplyResult result = Init("FileStartingWithUtf8Bom", true, true);
-            Assert.AreEqual(1, result.GetUpdatedFiles().Count);
-            Assert.AreEqual(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom"), result.GetUpdatedFiles()[0]);
-	        Assert.That(
-	            File.ReadAllBytes(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom")),
-	            Is.EqualTo(Encoding.UTF8.GetBytes(b.GetString(0, b.Size(), false))));
-	    }
+		[Test, Description("The files in this test should start with the UTF-8 byte order mark (EF BB BF in hex). The patch should contain the BOM too.")]
+		public void TestThatPatchWhichHasUtf8ByteOrderMarkInContextCanBeApplied()
+		{
+			ApplyResult result = Init("FileStartingWithUtf8Bom", true, true);
+			Assert.AreEqual(1, result.GetUpdatedFiles().Count);
+			Assert.AreEqual(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom"), result.GetUpdatedFiles()[0]);
+			Assert.That(
+				File.ReadAllBytes(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom")),
+				Is.EqualTo(Encoding.UTF8.GetBytes(b.GetString(0, b.Size(), false))));
+		}
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
