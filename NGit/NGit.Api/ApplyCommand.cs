@@ -224,12 +224,8 @@ namespace NGit.Api
 			IList<string> newLines = new AList<string>(oldLines);
 			foreach (HunkHeader hh in fh.GetHunks())
 			{
-				StringBuilder hunk = new StringBuilder();
-				for (int j = hh.GetStartOffset(); j < hh.GetEndOffset(); j++)
-				{
-					hunk.Append((char)hh.GetBuffer()[j]);
-				}
-				RawText hrt = new RawText(Sharpen.Runtime.GetBytesForString(hunk.ToString()));
+				var buffer = Sharpen.Runtime.GetStringForBytes(hh.GetBuffer(), hh.GetStartOffset(), hh.GetEndOffset() - hh.GetStartOffset());
+				RawText hrt = new RawText(Sharpen.Runtime.GetBytesForString(buffer));
 				IList<string> hunkLines = new AList<string>(hrt.Size());
 				for (int i_1 = 0; i_1 < hrt.Size(); i_1++)
 				{
