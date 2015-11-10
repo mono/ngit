@@ -41,6 +41,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System.IO;
+using System.Text;
 using NGit;
 using NGit.Api;
 using NGit.Diff;
@@ -107,11 +109,12 @@ namespace NGit.Api
 	    public void TestThatPatchWhichHasUtf8ByteOrderMarkInContextCanBeApplied()
 	    {
             ApplyResult result = Init("FileStartingWithUtf8Bom", true, true);
-            NUnit.Framework.Assert.AreEqual(1, result.GetUpdatedFiles().Count);
-            NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom"), result.GetUpdatedFiles
-                ()[0]);
-            CheckFile(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom"), b.GetString(0, b.Size(), false));
-        }
+            Assert.AreEqual(1, result.GetUpdatedFiles().Count);
+            Assert.AreEqual(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom"), result.GetUpdatedFiles()[0]);
+	        Assert.That(
+	            File.ReadAllBytes(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom")),
+	            Is.EqualTo(Encoding.UTF8.GetBytes(b.GetString(0, b.Size(), false))));
+	    }
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
