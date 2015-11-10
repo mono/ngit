@@ -224,7 +224,7 @@ namespace NGit.Api
 			IList<string> newLines = new AList<string>(oldLines);
 			foreach (HunkHeader hh in fh.GetHunks())
 			{
-				var buffer = Encoding.UTF8.GetString(hh.GetBuffer(), hh.GetStartOffset(), hh.GetEndOffset() - hh.GetStartOffset());
+				var buffer = Sharpen.Runtime.GetStringForBytes(hh.GetBuffer(), hh.GetStartOffset(), hh.GetEndOffset() - hh.GetStartOffset());
 				RawText hrt = new RawText(Sharpen.Runtime.GetBytesForString(buffer));
 				IList<string> hunkLines = new AList<string>(hrt.Size());
 				for (int i_1 = 0; i_1 < hrt.Size(); i_1++)
