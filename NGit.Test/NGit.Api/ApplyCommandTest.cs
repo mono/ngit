@@ -105,7 +105,7 @@ namespace NGit.Api
             CheckFile(new FilePath(db.WorkTree, "ToEmpty"), b.GetString(0, b.Size(), false));
         }
 
-	    [Test]
+	    [Test, Description("The files in this test should start with the UTF-8 byte order mark (EF BB BF in hex). The patch should contain the BOM too.")]
 	    public void TestThatPatchWhichHasUtf8ByteOrderMarkInContextCanBeApplied()
 	    {
             ApplyResult result = Init("FileStartingWithUtf8Bom", true, true);
