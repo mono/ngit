@@ -225,12 +225,9 @@ namespace NGit.Api
 			foreach (HunkHeader hh in fh.GetHunks())
 			{
 				StringBuilder hunk = new StringBuilder();
-			    var buffer = hh.GetBuffer();
-			    for (int j = hh.GetStartOffset(); j < hh.GetEndOffset(); j++)
-				{
-				    hunk.Append((char)buffer[j]);
-				}
-				RawText hrt = new RawText(Sharpen.Runtime.GetBytesForString(hunk.ToString()));
+                var buffer = Encoding.UTF8.GetString(hh.GetBuffer(), hh.GetStartOffset(), hh.GetEndOffset() - hh.GetStartOffset());
+                hunk.Append(buffer);
+                RawText hrt = new RawText(Sharpen.Runtime.GetBytesForString(hunk.ToString()));
 				IList<string> hunkLines = new AList<string>(hrt.Size());
 				for (int i_1 = 0; i_1 < hrt.Size(); i_1++)
 				{
