@@ -103,6 +103,16 @@ namespace NGit.Api
             CheckFile(new FilePath(db.WorkTree, "ToEmpty"), b.GetString(0, b.Size(), false));
         }
 
+	    [Test]
+	    public void TestThatPatchWhichHasUtf8ByteOrderMarkInContextCanBeApplied()
+	    {
+            ApplyResult result = Init("FileStartingWithUtf8Bom", true, true);
+            NUnit.Framework.Assert.AreEqual(1, result.GetUpdatedFiles().Count);
+            NUnit.Framework.Assert.AreEqual(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom"), result.GetUpdatedFiles
+                ()[0]);
+            CheckFile(new FilePath(db.WorkTree, "FileStartingWithUtf8Bom"), b.GetString(0, b.Size(), false));
+        }
+
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
 		public virtual void TestAddA2()

@@ -302,6 +302,9 @@
     <EmbeddedResource Include="resources\NGit.Diff\ToEmpty.patch" />
     <EmbeddedResource Include="resources\NGit.Diff\ToEmpty_PreImage" />
     <EmbeddedResource Include="resources\NGit.Diff\ToEmpty_PostImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\FileStartingWithUtf8Bom.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\FileStartingWithUtf8Bom_PostImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\FileStartingWithUtf8Bom_PreImage" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

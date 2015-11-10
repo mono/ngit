@@ -1,0 +1,9 @@
+diff --git a/FileStartingWithUtf8Bom b/FileStartingWithUtf8Bom
+index 0e44da4..4145647 100644
+--- a/FileStartingWithUtf8Bom
++++ b/FileStartingWithUtf8Bom
+@@ -1,3 +1,3 @@
+ ﻿red
+-yellow
++blue
+ green
