@@ -3,6 +3,7 @@
     <DirectoryRef Id="INSTALLDIR">
       <Component Id="MonoSec" Guid="{9489042B-5008-4AD0-89B7-76D9409288B8}" DiskId="1">
         <File Id="Mono.Security.dll" Name="MonoSec.dll" LongName="Mono.Security.dll" Source="..\Files\Mono.Security.dll" />
+        <File Id="Monolic" Name="Monolic.txt" LongName="Mono.Security.license.txt" Source="..\Files\Mono.Security.license.txt" />
       </Component>
     </DirectoryRef>
 
