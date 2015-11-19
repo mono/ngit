@@ -17,7 +17,7 @@
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugType>full</DebugType>
+    <DebugType>full</DebugType>
     <Optimize>False</Optimize>
     <OutputPath>..\bin</OutputPath>
     <DefineConstants>DEBUG</DefineConstants>
@@ -33,8 +33,8 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Security">
-      <HintPath>..\packages\RedGate.ThirdParty.Mono.Security.3.2.1\lib\Mono.Security.dll</HintPath>
+    <Reference Include="Mono.Security, Version=1.0.0.0, Culture=neutral, PublicKeyToken=2a696c5857117d6c, processorArchitecture=MSIL">
+      <HintPath>..\packages\RedGate.ThirdParty.Mono.Security.3.2.9\lib\Mono.Security.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -204,14 +204,13 @@
     <Compile Include="NSch\LocalIdentityRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sharpen\Sharpen.csproj">
       <Project>{72944A6C-45FF-4EF8-B349-8C9CABF519D4}</Project>
       <Name>Sharpen</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>
