@@ -288,17 +288,16 @@ namespace NGit.Api
 			StringBuilder sb = new StringBuilder();
 			string eol = rt.Size() == 0 || (rt.Size() == 1 && rt.IsMissingNewlineAtEnd()) ? "\n"
 				 : rt.GetLineDelimiter();
-			foreach (string l in newLines)
-			{
-				sb.Append(l);
-				if (eol != null)
-				{
-					sb.Append(eol);
-				}
-			}
-		    if (sb.Length > 0)
+
+		    for (int index = 0; index < newLines.Count; index++)
 		    {
-		        Sharpen.Runtime.DeleteCharAt(sb, sb.Length - 1);
+		        sb.Append(newLines[index]);
+
+		        var moreLinesToCome = index < newLines.Count - 1;
+		        if (moreLinesToCome && eol != null)
+		        {
+		            sb.Append(eol);
+		        }
 		    }
 			FileWriter fw = new FileWriter(f);
 			fw.Write(sb.ToString());
