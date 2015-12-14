@@ -41,18 +41,32 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
+using System.IO;
+using System.Text;
 using NGit;
 using NGit.Diff;
 using NGit.Junit;
 using NGit.Patch;
+using NGit.Test.NGit.Util.IO;
+using NGit.Util.IO;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Patch
 {
-	[NUnit.Framework.TestFixture]
+	[NUnit.Framework.TestFixture(true)]
+	[NUnit.Framework.TestFixture(false)]
 	public class PatchTest
 	{
-		[NUnit.Framework.Test]
+	    private readonly bool m_Crlf;
+
+	    public PatchTest(bool crlf)
+	    {
+	        m_Crlf = crlf;
+	    }
+
+	    [NUnit.Framework.Test]
 		public virtual void TestEmpty()
 		{
 			NGit.Patch.Patch p = new NGit.Patch.Patch();
@@ -336,27 +350,33 @@ namespace NGit.Patch
 			}
 		}
 
-		/// <exception cref="System.IO.IOException"></exception>
-		private NGit.Patch.Patch ParseTestPatchFile()
+	    private static Patch Parse(InputStream crlfStream)
+	    {
+	        NGit.Patch.Patch p = new Patch();
+	        p.Parse(crlfStream);
+	        return p;
+	    }
+
+	    /// <exception cref="System.IO.IOException"></exception>
+        private NGit.Patch.Patch ParseTestPatchFile()
 		{
-			string patchFile = Sharpen.Extensions.GetTestName() + ".patch";
-			InputStream @in = GetType().GetResourceAsStream(patchFile);
-			if (@in == null)
-			{
-				NUnit.Framework.Assert.Fail("No " + patchFile + " test vector");
-				return null;
-			}
-			// Never happens
-			try
-			{
-				NGit.Patch.Patch p = new NGit.Patch.Patch();
-				p.Parse(@in);
-				return p;
-			}
-			finally
-			{
-				@in.Close();
-			}
+	        using (var @in = GetResourceStream())
+	        {
+	            NGit.Patch.Patch p = new NGit.Patch.Patch();
+	            p.Parse(@in);
+	            return p;
+	        }
 		}
+
+	    private InputStream GetResourceStream(string patchFilename = null)
+	    {
+	        string patchFile = patchFilename ?? Sharpen.Extensions.GetTestName() + ".patch";
+	        var @in = GetType().GetResourceAsStream(patchFile, m_Crlf);
+	        if (@in == null)
+	        {
+	            NUnit.Framework.Assert.Fail("No " + patchFile + " test vector");
+	        }
+	        return @in;
+	    }
 	}
 }

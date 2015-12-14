@@ -61,7 +61,7 @@ namespace NGit.Storage.Pack
 	/// each object as they are written to the output stream.
 	/// </summary>
 	[System.Serializable]
-	public class ObjectToPack : PackedObjectInfo
+	public class ObjectToPack : PackedObjectInfo, System.IComparable<ObjectToPack>
 	{
 		private const int WANT_WRITE = 1 << 0;
 
@@ -448,7 +448,12 @@ namespace NGit.Storage.Pack
 		}
 
 		// Empty by default.
-		public override string ToString()
+	    public int CompareTo(ObjectToPack other)
+	    {
+	        return base.CompareTo(other);
+	    }
+
+	    public override string ToString()
 		{
 			StringBuilder buf = new StringBuilder();
 			buf.Append("ObjectToPack[");

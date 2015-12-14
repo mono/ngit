@@ -46,6 +46,7 @@ using NGit;
 using NGit.Diff;
 using NGit.Junit;
 using NGit.Patch;
+using NGit.Test.NGit.Util.IO;
 using Sharpen;
 
 namespace NGit.Patch

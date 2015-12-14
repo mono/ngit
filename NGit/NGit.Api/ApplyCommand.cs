@@ -41,8 +41,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NGit;
 using NGit.Api;
@@ -222,12 +224,8 @@ namespace NGit.Api
 			IList<string> newLines = new AList<string>(oldLines);
 			foreach (HunkHeader hh in fh.GetHunks())
 			{
-				StringBuilder hunk = new StringBuilder();
-				for (int j = hh.GetStartOffset(); j < hh.GetEndOffset(); j++)
-				{
-					hunk.Append((char)hh.GetBuffer()[j]);
-				}
-				RawText hrt = new RawText(Sharpen.Runtime.GetBytesForString(hunk.ToString()));
+				var buffer = Sharpen.Runtime.GetStringForBytes(hh.GetBuffer(), hh.GetStartOffset(), hh.GetEndOffset() - hh.GetStartOffset());
+				RawText hrt = new RawText(Sharpen.Runtime.GetBytesForString(buffer));
 				IList<string> hunkLines = new AList<string>(hrt.Size());
 				for (int i_1 = 0; i_1 < hrt.Size(); i_1++)
 				{
@@ -253,19 +251,20 @@ namespace NGit.Api
 
 						case '-':
 						{
-							if (!newLines[hh.GetNewStartLine() - 1 + pos].Equals(Sharpen.Runtime.Substring(hunkLine
+						    var index = Math.Max(hh.GetNewStartLine() - 1 + pos, 0);
+						    if (!newLines[index].Equals(Sharpen.Runtime.Substring(hunkLine
 								, 1)))
 							{
 								throw new PatchApplyException(MessageFormat.Format(JGitText.Get().patchApplyException
 									, hh));
 							}
-							newLines.Remove(hh.GetNewStartLine() - 1 + pos);
+							newLines.Remove(index);
 							break;
 						}
 
 						case '+':
 						{
-							newLines.Add(hh.GetNewStartLine() - 1 + pos, Sharpen.Runtime.Substring(hunkLine, 
+							newLines.Add(hh.GetNewStartLine() - 1 + pos, Sharpen.Runtime.Substring(hunkLine,
 								1));
 							pos++;
 							break;
@@ -289,15 +288,17 @@ namespace NGit.Api
 			StringBuilder sb = new StringBuilder();
 			string eol = rt.Size() == 0 || (rt.Size() == 1 && rt.IsMissingNewlineAtEnd()) ? "\n"
 				 : rt.GetLineDelimiter();
-			foreach (string l in newLines)
-			{
-				sb.Append(l);
-				if (eol != null)
-				{
-					sb.Append(eol);
-				}
-			}
-			Sharpen.Runtime.DeleteCharAt(sb, sb.Length - 1);
+
+		    for (int index = 0; index < newLines.Count; index++)
+		    {
+		        sb.Append(newLines[index]);
+
+		        var moreLinesToCome = index < newLines.Count - 1;
+		        if (moreLinesToCome && eol != null)
+		        {
+		            sb.Append(eol);
+		        }
+		    }
 			FileWriter fw = new FileWriter(f);
 			fw.Write(sb.ToString());
 			fw.Close();
@@ -321,9 +322,14 @@ namespace NGit.Api
 
 		private bool IsNoNewlineAtEndOfFile(FileHeader fh)
 		{
-			HunkHeader lastHunk = fh.GetHunks()[fh.GetHunks().Count - 1];
-			RawText lhrt = new RawText(lastHunk.GetBuffer());
-			return lhrt.GetString(lhrt.Size() - 1).Equals("\\ No newline at end of file");
+		    var lastHunk = fh.GetHunks().LastOrDefault();
+		    if (lastHunk != null)
+		    {
+                RawText lhrt = new RawText(lastHunk.GetBuffer());
+                return lhrt.GetString(lhrt.Size() - 1).Equals("\\ No newline at end of file");
+            }
+		    return false;
+
 		}
 		//$NON-NLS-1$
 	}
