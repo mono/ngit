@@ -48,6 +48,7 @@ using NGit;
 using NGit.Diff;
 using NGit.Junit;
 using NGit.Patch;
+using NGit.Test.NGit.Util.IO;
 using NGit.Util.IO;
 using NUnit.Framework;
 using Sharpen;
@@ -359,43 +360,23 @@ namespace NGit.Patch
 	    /// <exception cref="System.IO.IOException"></exception>
         private NGit.Patch.Patch ParseTestPatchFile()
 		{
-	        using (var @in = ResourceStreamWithStandardLineEndings())
+	        using (var @in = GetResourceStream())
 	        {
-	            try
-	            {
-	                NGit.Patch.Patch p = new NGit.Patch.Patch();
-	                p.Parse(@in);
-	                return p;
-	            }
-	            finally
-	            {
-	                @in.Close();
-	            }
+	            NGit.Patch.Patch p = new NGit.Patch.Patch();
+	            p.Parse(@in);
+	            return p;
 	        }
 		}
-
-	    private InputStream ResourceStreamWithStandardLineEndings()
-	    {
-	        var resourceStream = GetResourceStream();
-	        return m_Crlf
-	            ? UseCrlf(resourceStream)
-	            : (InputStream) new EolCanonicalizingInputStream(resourceStream, false);
-	    }
 
 	    private InputStream GetResourceStream(string patchFilename = null)
 	    {
 	        string patchFile = patchFilename ?? Sharpen.Extensions.GetTestName() + ".patch";
-	        var @in = GetType().GetResourceAsStream(patchFile);
+	        var @in = GetType().GetResourceAsStream(patchFile, m_Crlf);
 	        if (@in == null)
 	        {
 	            NUnit.Framework.Assert.Fail("No " + patchFile + " test vector");
 	        }
 	        return @in;
-	    }
-
-	    private static MemoryStream UseCrlf(InputStream inputStream)
-	    {
-	        return new MemoryStream(Encoding.UTF8.GetBytes(new StreamReader(inputStream).ReadToEnd().Replace("\r\n", "\n").Replace("\n", "\r\n")));
 	    }
 	}
 }

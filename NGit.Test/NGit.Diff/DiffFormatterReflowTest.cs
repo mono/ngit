@@ -46,6 +46,7 @@ using System.Linq;
 using NGit.Diff;
 using NGit.Junit;
 using NGit.Patch;
+using NGit.Test.NGit.Util.IO;
 using NGit.Util;
 using NUnit.Framework;
 using Sharpen;

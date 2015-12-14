@@ -43,6 +43,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using NGit.Diff;
 using NGit.Patch;
+using NGit.Test.NGit.Util.IO;
 using Sharpen;
 
 namespace NGit.Patch

@@ -46,19 +46,31 @@ using System.Text;
 using NGit;
 using NGit.Api;
 using NGit.Diff;
+using NGit.Test.NGit.Util.IO;
 using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Api
 {
-	[NUnit.Framework.TestFixture]
+	[NUnit.Framework.TestFixture(false, false)]
+	[NUnit.Framework.TestFixture(false, true)]
+	[NUnit.Framework.TestFixture(true, false)]
+	[NUnit.Framework.TestFixture(true, true)]
 	public class ApplyCommandTest : RepositoryTestCase
 	{
 		private RawText a;
 
 		private RawText b;
+	    private readonly bool m_UseCrlfFiles;
+	    private readonly bool m_UseCrlfPatches;
 
-		/// <exception cref="System.Exception"></exception>
+	    public ApplyCommandTest(bool useCrlfFiles, bool useCrlfPatches)
+	    {
+	        m_UseCrlfFiles = useCrlfFiles;
+	        m_UseCrlfPatches = useCrlfPatches;
+	    }
+
+	    /// <exception cref="System.Exception"></exception>
 		private ApplyResult Init(string name)
 		{
 			return Init(name, true, true);
@@ -70,7 +82,7 @@ namespace NGit.Api
 			Git git = new Git(db);
 			if (preExists)
 			{
-				a = new RawText(ReadFile(name + "_PreImage"));
+				a = new RawText(ReadFile(name + "_PreImage", m_UseCrlfFiles));
 				Write(new FilePath(db.Directory.GetParent(), name), a.GetString(0, a.Size(), false
 					));
 				git.Add().AddFilepattern(name).Call();
@@ -78,10 +90,10 @@ namespace NGit.Api
 			}
 			if (postExists)
 			{
-				b = new RawText(ReadFile(name + "_PostImage"));
+				b = new RawText(ReadFile(name + "_PostImage", a != null && a.GetLineDelimiter() == "\r\n"));
 			}
 			return git.Apply().SetPatch(typeof(DiffFormatterReflowTest).GetResourceAsStream(name
-				 + ".patch")).Call();
+				 + ".patch", m_UseCrlfPatches)).Call();
 		}
 
 		/// <exception cref="System.Exception"></exception>
@@ -182,8 +194,8 @@ namespace NGit.Api
 			CheckFile(new FilePath(db.WorkTree, "X"), b.GetString(0, b.Size(), false));
 		}
 
-		/// <exception cref="System.Exception"></exception>
-		[NUnit.Framework.Test]
+        /// <exception cref="System.Exception"></exception>
+        [NUnit.Framework.Test]
 		public virtual void TestModifyY()
 		{
 			ApplyResult result = Init("Y");
@@ -205,9 +217,9 @@ namespace NGit.Api
 		}
 
 		/// <exception cref="System.IO.IOException"></exception>
-		private byte[] ReadFile(string patchFile)
+		private byte[] ReadFile(string patchFile, bool useCrlfFiles)
 		{
-			InputStream @in = typeof(DiffFormatterReflowTest).GetResourceAsStream(patchFile);
+			InputStream @in = typeof(DiffFormatterReflowTest).GetResourceAsStream(patchFile, useCrlfFiles);
 			if (@in == null)
 			{
 				NUnit.Framework.Assert.Fail("No " + patchFile + " test vector");
