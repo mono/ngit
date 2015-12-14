@@ -42,6 +42,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NGit.Util.IO\TypeExtensions.cs" />
     <Compile Include="NGit\AbbreviatedObjectIdTest.cs" />
     <Compile Include="NGit\ConfigTest.cs" />
     <Compile Include="NGit\ConstantsEncodingTest.cs" />

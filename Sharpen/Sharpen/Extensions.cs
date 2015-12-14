@@ -237,19 +237,7 @@ namespace Sharpen
 			return (int)tzone.GetUtcOffset (MillisToDateTimeOffset (date, 0).DateTime).TotalMilliseconds;
 		}
 
-		public static InputStream GetResourceAsStream (this Type type, string name)
-		{
-			string str2 = type.Assembly.GetName ().Name + ".resources";
-			string[] textArray1 = new string[] { str2, ".", type.Namespace, ".", name };
-			string str = string.Concat (textArray1);
-			Stream manifestResourceStream = type.Assembly.GetManifestResourceStream (str);
-			if (manifestResourceStream == null) {
-				return null;
-			}
-			return InputStream.Wrap (manifestResourceStream);
-		}
-
-		public static long GetTime (this DateTime dateTime)
+        public static long GetTime (this DateTime dateTime)
 		{
 			return new DateTimeOffset (DateTime.SpecifyKind (dateTime, DateTimeKind.Utc), TimeSpan.Zero).ToMillisecondsSinceEpoch ();
 		}
