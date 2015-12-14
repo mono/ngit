@@ -53,6 +53,7 @@ using NGit.Diff;
 using NGit.Internal;
 using NGit.Patch;
 using NGit.Util;
+using NGit.Util.IO;
 using Sharpen;
 
 namespace NGit.Api
@@ -65,6 +66,7 @@ namespace NGit.Api
 	public class ApplyCommand : GitCommand<ApplyResult>
 	{
 		private InputStream @in;
+	    private bool patchContainedCrlf;
 
 		/// <summary>Constructs the command if the patch is to be applied to the index.</summary>
 		/// <remarks>Constructs the command if the patch is to be applied to the index.</remarks>
@@ -110,15 +112,8 @@ namespace NGit.Api
 			try
 			{
 				NGit.Patch.Patch p = new NGit.Patch.Patch();
-				try
-				{
-					p.Parse(@in);
-				}
-				finally
-				{
-					@in.Close();
-				}
-				if (!p.GetErrors().IsEmpty())
+                patchContainedCrlf = p.Parse(@in);
+                if (!p.GetErrors().IsEmpty())
 				{
 					throw new PatchFormatException(p.GetErrors());
 				}
@@ -286,8 +281,9 @@ namespace NGit.Api
 			}
 			// don't touch the file
 			StringBuilder sb = new StringBuilder();
-			string eol = rt.Size() == 0 || (rt.Size() == 1 && rt.IsMissingNewlineAtEnd()) ? "\n"
-				 : rt.GetLineDelimiter();
+		    string eol = rt.Size() == 0 || (rt.Size() == 1 && rt.IsMissingNewlineAtEnd())
+		        ? patchContainedCrlf ? "\r\n" : "\n"
+		        : rt.GetLineDelimiter();
 
 		    for (int index = 0; index < newLines.Count; index++)
 		    {

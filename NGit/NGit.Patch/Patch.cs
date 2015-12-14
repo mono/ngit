@@ -137,13 +137,15 @@ namespace NGit.Patch
 		/// until EOF is reached.
 		/// </param>
 		/// <exception cref="System.IO.IOException">there was an error reading from the input stream.
-		/// 	</exception>
-		public virtual void Parse(InputStream @is)
+		/// </exception>
+	    /// <returns>true iff CLRFs were detected and replaced during parsing</returns>
+	    public virtual bool Parse(InputStream @is)
 		{
 		    using (var lfOnlyStream = new EolCanonicalizingInputStream(@is, false))
 		    {
 		        byte[] buf = ReadFully(lfOnlyStream);
 		        Parse(buf, 0, buf.Length);
+		        return lfOnlyStream.HasReplacedCrlf;
 		    }
 		}
 
