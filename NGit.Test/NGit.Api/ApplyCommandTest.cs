@@ -90,10 +90,10 @@ namespace NGit.Api
 			}
 			if (postExists)
 			{
-				b = new RawText(ReadFile(name + "_PostImage", a != null && a.GetLineDelimiter() == "\r\n"));
+			    bool postShouldHaveCrlf = preExists && a.GetLineDelimiter() != null ? a.GetLineDelimiter() != "\n" : m_UseCrlfPatches;
+			    b = new RawText(ReadFile(name + "_PostImage", postShouldHaveCrlf));
 			}
-			return git.Apply().SetPatch(typeof(DiffFormatterReflowTest).GetResourceAsStream(name
-				 + ".patch", m_UseCrlfPatches)).Call();
+		    return git.Apply().SetPatch(typeof (DiffFormatterReflowTest).GetResourceAsStream(name + ".patch", m_UseCrlfPatches)).Call();
 		}
 
 		/// <exception cref="System.Exception"></exception>
