@@ -282,7 +282,7 @@ namespace NGit.Api
 			// don't touch the file
 			StringBuilder sb = new StringBuilder();
 		    string eol = rt.Size() == 0 || (rt.Size() == 1 && rt.IsMissingNewlineAtEnd())
-		        ? patchContainedCrlf ? "\r\n" : "\n"
+		        ? GetLineDelimiter(patchContainedCrlf)
 		        : rt.GetLineDelimiter();
 
 		    for (int index = 0; index < newLines.Count; index++)
@@ -300,7 +300,12 @@ namespace NGit.Api
 			fw.Close();
 		}
 
-		private bool IsChanged(IList<string> ol, IList<string> nl)
+	    private string GetLineDelimiter(bool useCrlf)
+	    {
+	        return useCrlf ? "\r\n" : "\n";
+	    }
+
+	    private bool IsChanged(IList<string> ol, IList<string> nl)
 		{
 			if (ol.Count != nl.Count)
 			{
