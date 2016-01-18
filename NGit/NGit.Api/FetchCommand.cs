@@ -139,10 +139,6 @@ namespace NGit.Api
 				throw new InvalidRemoteException(MessageFormat.Format(JGitText.Get().invalidRemote
 					, remote), e);
 			}
-			catch (NGit.Errors.TransportException e)
-			{
-				throw new NGit.Errors.TransportException(e.Message, e);
-			}
 			catch (URISyntaxException)
 			{
 				throw new InvalidRemoteException(MessageFormat.Format(JGitText.Get().invalidRemote
