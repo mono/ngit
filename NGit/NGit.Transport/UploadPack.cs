@@ -41,6 +41,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using NGit;
@@ -699,17 +700,17 @@ namespace NGit.Transport
 			}
 			catch (IOException err)
 			{
-				ReportErrorDuringNegotiate(JGitText.Get().internalServerError);
+				ReportErrorDuringNegotiate(JGitText.Get().internalServerError + " " + err.Message);
 				throw;
 			}
 			catch (RuntimeException err)
 			{
-				ReportErrorDuringNegotiate(JGitText.Get().internalServerError);
+				ReportErrorDuringNegotiate(JGitText.Get().internalServerError + " " + err.Message);
 				throw;
 			}
 			catch (Error err)
 			{
-				ReportErrorDuringNegotiate(JGitText.Get().internalServerError);
+				ReportErrorDuringNegotiate(JGitText.Get().internalServerError + " " + err.Message);
 				throw;
 			}
 			if (sendPack)
@@ -1296,7 +1297,7 @@ namespace NGit.Transport
 				}
 				catch (IOException err)
 				{
-					if (ReportInternalServerErrorOverSideband())
+					if (ReportInternalServerErrorOverSideband(err))
 					{
 						throw new UploadPackInternalServerErrorException(err);
 					}
@@ -1307,7 +1308,7 @@ namespace NGit.Transport
 				}
 				catch (RuntimeException err)
 				{
-					if (ReportInternalServerErrorOverSideband())
+					if (ReportInternalServerErrorOverSideband(err))
 					{
 						throw new UploadPackInternalServerErrorException(err);
 					}
@@ -1318,7 +1319,7 @@ namespace NGit.Transport
 				}
 				catch (Error err)
 				{
-					if (ReportInternalServerErrorOverSideband())
+					if (ReportInternalServerErrorOverSideband(err))
 					{
 						throw new UploadPackInternalServerErrorException(err);
 					}
@@ -1334,13 +1335,13 @@ namespace NGit.Transport
 			}
 		}
 
-		private bool ReportInternalServerErrorOverSideband()
+		private bool ReportInternalServerErrorOverSideband(Exception error)
 		{
 			try
 			{
 				SideBandOutputStream err = new SideBandOutputStream(SideBandOutputStream.CH_ERROR
 					, SideBandOutputStream.SMALL_BUF, rawOut);
-				err.Write(Constants.Encode(JGitText.Get().internalServerError));
+				err.Write(Constants.Encode(JGitText.Get().internalServerError + "  " + error.Message));
 				err.Flush();
 				return true;
 			}
