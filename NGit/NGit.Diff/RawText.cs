@@ -170,7 +170,7 @@ namespace NGit.Diff
 		/// index of the line to extract. Note this is 0-based, so line
 		/// number 1 is actually index 0.
 		/// </param>
-		/// <returns>the text for the line, without a trailing LF.</returns>
+		/// <returns>the text for the line, without a trailing CRLF or LF.</returns>
 		public virtual string GetString(int i)
 		{
 			return GetString(i, i + 1, true);
@@ -184,7 +184,7 @@ namespace NGit.Diff
 		/// </param>
 		/// <param name="end">index of one past the last line to extract.</param>
 		/// <param name="dropLF">
-		/// if true the trailing LF ('\n') of the last returned line is
+		/// if true the trailing CRLF or LF ('\n' or '\r\n') of the last returned line is
 		/// dropped, if present.
 		/// </param>
 		/// <returns>
@@ -203,7 +203,11 @@ namespace NGit.Diff
 			if (dropLF && content[e - 1] == '\n')
 			{
 				e--;
-			}
+                if (e > 0 && content[e - 1] == '\r')
+                {
+                    e--;
+                }
+            }
 			return Decode(s, e);
 		}
 

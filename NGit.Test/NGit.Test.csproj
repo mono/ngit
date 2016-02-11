@@ -9,6 +9,10 @@
     <OutputType>Library</OutputType>
     <RootNamespace>NGit.Test</RootNamespace>
     <AssemblyName>NGit.Test</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>../rgMono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -29,14 +33,16 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="ICSharpCode.SharpZipLib" />
     <Reference Include="System.Core" />
-    <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NGit.Util.IO\TypeExtensions.cs" />
     <Compile Include="NGit\AbbreviatedObjectIdTest.cs" />
     <Compile Include="NGit\ConfigTest.cs" />
     <Compile Include="NGit\ConstantsEncodingTest.cs" />
@@ -290,9 +296,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="resources\global\dircache.testRemovedSubtree">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <EmbeddedResource Include="resources\NGit.Diff\ToEmpty.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\ToEmpty_PreImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\ToEmpty_PostImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\FileStartingWithUtf8Bom.patch" />
+    <EmbeddedResource Include="resources\NGit.Diff\FileStartingWithUtf8Bom_PostImage" />
+    <EmbeddedResource Include="resources\NGit.Diff\FileStartingWithUtf8Bom_PreImage" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

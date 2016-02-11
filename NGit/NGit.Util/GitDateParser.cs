@@ -71,17 +71,7 @@ namespace NGit.Util
 		public static readonly DateTime NEVER = Sharpen.Extensions.CreateDate(long.MaxValue
 			);
 
-		private sealed class _ThreadLocal_74 : ThreadLocal<IDictionary<GitDateParser.ParseableSimpleDateFormat
-			, SimpleDateFormat>>
-		{
-			public _ThreadLocal_74()
-				: base (() => new Dictionary<GitDateParser.ParseableSimpleDateFormat, SimpleDateFormat>())
-			{
-			}
-		}
-
-		private static ThreadLocal<IDictionary<GitDateParser.ParseableSimpleDateFormat, SimpleDateFormat
-			>> formatCache = new _ThreadLocal_74();
+	    [ThreadStatic] private static IDictionary<GitDateParser.ParseableSimpleDateFormat, SimpleDateFormat> formatCache;
 
 		// Gets an instance of a SimpleDateFormat. If there is not already an
 		// appropriate instance in the (ThreadLocal) cache the create one and put in
@@ -89,15 +79,15 @@ namespace NGit.Util
 		private static SimpleDateFormat GetDateFormat(GitDateParser.ParseableSimpleDateFormat
 			 f)
 		{
-			IDictionary<GitDateParser.ParseableSimpleDateFormat, SimpleDateFormat> map = formatCache
-				.Value;
-			SimpleDateFormat dateFormat = map.Get(f);
+            formatCache = formatCache ?? new Dictionary<GitDateParser.ParseableSimpleDateFormat
+            , SimpleDateFormat>();
+		    SimpleDateFormat dateFormat = formatCache.Get(f);
 			if (dateFormat != null)
 			{
 				return dateFormat;
 			}
 			SimpleDateFormat df = SystemReader.GetInstance().GetSimpleDateFormat(f.formatStr);
-			map.Put(f, df);
+			formatCache.Put(f, df);
 			return df;
 		}
 
@@ -112,7 +102,7 @@ namespace NGit.Util
 			public static GitDateParser.ParseableSimpleDateFormat SHORT = new GitDateParser.ParseableSimpleDateFormat
 				("yyyy-MM-dd");
 
-			public static GitDateParser.ParseableSimpleDateFormat SHORT_WITH_DOTS_REVERSE = new 
+			public static GitDateParser.ParseableSimpleDateFormat SHORT_WITH_DOTS_REVERSE = new
 				GitDateParser.ParseableSimpleDateFormat("dd.MM.yyyy");
 
 			public static GitDateParser.ParseableSimpleDateFormat SHORT_WITH_DOTS = new GitDateParser.ParseableSimpleDateFormat
@@ -246,7 +236,7 @@ namespace NGit.Util
 			// check for the static words "yesterday" or "now"
 			if ("now".Equals(dateStr))
 			{
-				return ((now == null) ? Sharpen.Extensions.CreateDate(sysRead.GetCurrentTime()) : 
+				return ((now == null) ? Sharpen.Extensions.CreateDate(sysRead.GetCurrentTime()) :
 					now.GetTime());
 			}
 			if (now == null)
@@ -343,4 +333,51 @@ namespace NGit.Util
 			return cal.GetTime();
 		}
 	}
+
+    public class ThreadLocal<T>
+    {
+        [ThreadStatic]
+        private static Dictionary<object, T> _lookupTable;
+
+        private Dictionary<object, T> LookupTable
+        {
+            get
+            {
+                if (_lookupTable == null)
+                    _lookupTable = new Dictionary<object, T>();
+
+                return _lookupTable;
+            }
+        }
+
+
+        private object key = new object(); //lazy hash key creation handles replacement
+        private T originalValue;
+        public ThreadLocal(Func<T> getValue) : this(getValue())
+        {
+        }
+        public ThreadLocal(T value)
+        {
+            originalValue = value;
+        }
+
+        ~ThreadLocal()
+        {
+            LookupTable.Remove(key);
+        }
+
+        public void Set(T value)
+        {
+            LookupTable[key] = value;
+        }
+
+        public T Get()
+        {
+            T returnValue = default(T);
+            if (!LookupTable.TryGetValue(key, out returnValue))
+                Set(originalValue);
+
+            return returnValue;
+        }
+    }
 }

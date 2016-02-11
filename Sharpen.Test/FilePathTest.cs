@@ -8,6 +8,7 @@ namespace Sharpen.Test
 	public class FilePathTest
 	{
 		static bool RunningOnLinux = !Environment.OSVersion.Platform.ToString().StartsWith("Win");
+	    private static string CurrentDriveLetter = Path.GetPathRoot(Environment.CurrentDirectory);
 
 		[Test]
 		public void SetLastWriteTime_Directory ()
@@ -46,35 +47,35 @@ namespace Sharpen.Test
 		[Test]
 		public void CombineTwoAbsolutes_Unix ()
 		{
-			var result = RunningOnLinux ? "/Foo/Bar" : @"C:\Foo\Bar";
+			var result = RunningOnLinux ? "/Foo/Bar" : Path.Combine(Path.Combine(CurrentDriveLetter, "Foo"), "Bar");
 			Assert.AreEqual(result, new FilePath("/Foo", "/Bar").GetAbsolutePath());
 		}
 
 		[Test]
 		public void CombineTwoAbsolutes_DoubleSeperator_Unix ()
 		{
-			var result = RunningOnLinux ? "/Foo/Bar" : @"C:\Foo\Bar";
-			Assert.AreEqual (result, new FilePath ("/Foo", "////Bar").GetAbsolutePath ());
+			var result = RunningOnLinux ? "/Foo/Bar" : Path.Combine(Path.Combine(CurrentDriveLetter, "Foo"), "Bar");
+            Assert.AreEqual (result, new FilePath ("/Foo", "////Bar").GetAbsolutePath ());
 		}
 
 		[Test]
 		public void CombineTwoAbsolutes_NullParentFilePath_Unix ()
 		{
-			var result = RunningOnLinux ? "/Bar" : @"C:\Bar";
-			Assert.AreEqual(result, new FilePath((FilePath)null, "/Bar").GetAbsolutePath());
+			var result = RunningOnLinux ? "/Bar" : Path.Combine(CurrentDriveLetter, "Bar");
+            Assert.AreEqual(result, new FilePath((FilePath)null, "/Bar").GetAbsolutePath());
 		}
 
 		[Test]
 		public void CombineTwoAbsolutes_NullParentString_Unix ()
 		{
-			var result = RunningOnLinux ? "/Bar" : @"C:\Bar";
+			var result = RunningOnLinux ? "/Bar" : Path.Combine(CurrentDriveLetter, "Bar");
 			Assert.AreEqual(result, new FilePath((string)null, "/Bar").GetAbsolutePath());
 		}
 
 		[Test]
 		public void CombineTwoAbsolutes_WindowsStyle_Unix ()
 		{
-			var result = RunningOnLinux ? @"/Foo/\Bar" : @"C:\Foo\Bar";
+			var result = RunningOnLinux ? @"/Foo/\Bar" : Path.Combine(Path.Combine(CurrentDriveLetter, "Foo"), "Bar");
 			Assert.AreEqual(result, new FilePath("/Foo", @"\Bar").GetAbsolutePath());
 		}
 	}

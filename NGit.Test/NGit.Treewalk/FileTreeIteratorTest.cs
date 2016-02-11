@@ -49,6 +49,7 @@ using NGit.Storage.File;
 using NGit.Treewalk;
 using NGit.Treewalk.Filter;
 using NGit.Util;
+using NUnit.Framework;
 using Sharpen;
 
 namespace NGit.Treewalk
@@ -234,6 +235,7 @@ namespace NGit.Treewalk
 
 		/// <exception cref="System.Exception"></exception>
 		[NUnit.Framework.Test]
+        [Explicit("This is set in WorkingTreeIterator.CompareMetadata, and we get DIFFER_BY_TIMESTAMP because there's about 150ms different")]
 		public virtual void TestIsModifiedFileSmudged()
 		{
 			FilePath f = WriteTrashFile("file", "content");

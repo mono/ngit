@@ -55,7 +55,7 @@ namespace NGit.Transport
 	/// objects from the pack. This extension of ObjectId includes the offset.
 	/// </remarks>
 	[System.Serializable]
-	public class PackedObjectInfo : ObjectIdOwnerMap.Entry
+	public class PackedObjectInfo : ObjectIdOwnerMap.Entry, System.IComparable<PackedObjectInfo>
 	{
 		private long offset;
 
@@ -110,5 +110,10 @@ namespace NGit.Transport
 		{
 			this.crc = crc;
 		}
+
+	    public int CompareTo(PackedObjectInfo other)
+	    {
+	        return base.CompareTo(other);
+	    }
 	}
 }
