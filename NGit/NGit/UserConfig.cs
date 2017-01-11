@@ -214,7 +214,7 @@ namespace NGit
 		/// try to get user name of the logged on user from the operating
 		/// system
 		/// </returns>
-		private static string GetDefaultUserName()
+		public static string GetDefaultUserName()
 		{
 			// get the system user name
 			string username = System().GetProperty(Constants.OS_USER_NAME_KEY);
@@ -241,7 +241,7 @@ namespace NGit
 		/// try to construct email for logged on user using system
 		/// information
 		/// </returns>
-		private static string GetDefaultEmail()
+		public static string GetDefaultEmail()
 		{
 			// try to construct an email
 			string username = GetDefaultUserName();
