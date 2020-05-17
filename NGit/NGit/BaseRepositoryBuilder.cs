@@ -796,13 +796,14 @@ namespace NGit
 			if (GetGitDir() == null && GetWorkTree() != null)
 			{
 				FilePath dotGit = new FilePath(GetWorkTree(), Constants.DOT_GIT);
-				if (!dotGit.IsFile())
+				//Don't use dotGit.IsFile() since it will return true on symlinks to directories
+				if (File.Exists(dotGit.GetAbsolutePath()))
 				{
-					SetGitDir(dotGit);
+					SetGitDir(GetSymRef(GetWorkTree(), dotGit));
 				}
 				else
 				{
-					SetGitDir(GetSymRef(GetWorkTree(), dotGit));
+					SetGitDir(dotGit);
 				}
 			}
 		}
